@@ -1,0 +1,76 @@
+#!/bin/bash
+create(){
+	export NEWS_FILE="$(date +%Y%m%d_%H%M%S)"
+	vi $NEWS_FILE
+	echo "Renaming..."
+	TITLE="$(head -n 1 $NEWS_FILE)"
+	TO_FILE=$NEWS_FILE-$(echo $TITLE | tr '[:upper:]' '[:lower:]' | sed -e 's/ /\_/g' )
+	IPFS_FILE=$(ipfs add -q $NEWS_FILE)
+	sed -e 's/Qm.*/'$IPFS_FILE'/' README
+	add $TO_FILE
+	mv $NEWS_FILE news/$TO_FILE
+	echo "Adding to git repo..."
+	git add news/$TO_FILE
+	git commit -m "Added $TO_FILE with $(head -n 1 news/$TO_FILE)"
+}
+index(){
+	FILES="$(ls -1 news)"
+	i=0
+	for FILE in $FILES
+	do
+		DATE=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
+		TITLE=$(head -n 1 news/$FILE)
+		echo $i \| $DATE \| $TITLE
+		let i+=1
+	done	
+}
+title(){
+	echo	ak-news-cli
+	echo "--------------"
+}
+import(){
+	echo "#TODO"
+	echo $1
+}
+add(){
+	if [ -f $1 ]; then
+		FILE="$1"
+		echo "Adding news from " $FILE
+		DATETIME=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
+		TITLE=$(head -n 1 $FILE)
+		FILE_IPFS_HASH=$(ipfs add -q $FILE)
+		FILE_SIGN_FILE=$FILE".asc"
+		gpg2 --detach-sign --sign-with $FINGERPRINT --armor --output $FILE_SIGN_FILE $FILE
+		FILE_SIGNATURE=$(ipfs add -q $FILE_SIGN_FILE)
+		cat > data <<EOF
+{
+   "datetime":"$DATETIME",
+   "title":"$TITLE",
+   "filename":$FILE",
+   "ipfs":"$FILE_IPFS_HASH",
+   "detach":"$FILE_SIGNATURE"
+}
+EOF
+	else echo "File $FILE doesn't exist";
+	fi
+	sh bin/pack_z_block "news/add" data	
+}
+usage(){
+	echo "#TODO"
+	echo "All you need to know is that there are two options available:"
+	echo "help		Prints this help message"
+	echo "index		Prints an indexed table of your news files"
+	echo "import <file>	#TODO"
+	echo "add <file>	Creates a data file from the news file you point to"
+}
+title
+if [ ! -z $1 ]; then
+	case $1 in
+		help) usage;exit;; 
+		index) index;break;;
+		import) import $2; break;;
+		add) add $2; break;;
+		* ) usage;;
+	esac
+else usage
+fi
