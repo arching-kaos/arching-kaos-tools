@@ -53,5 +53,6 @@ install(){
 which ipfs > /dev/null 2>&1
 if [ $? != 0 ]; then
 	install
+	ipfs init
 else logthis "Found IPFS"
 fi
