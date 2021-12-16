@@ -30,8 +30,9 @@ grep "source ~/$HAK/rc" $HOME/$SHELLRC > /dev/null 2>&1
 if [ $? == 0 ]; then
 	logthis "Already installed";
 else
-	echo "source ~/$HAK/rc" >> $HOME/$SHELLRC
-	logthis "$HAK installed at $HOME and sourced it in $SHELLRC";
+	echo "source $HOME/$HAK/rc" >> $HOME/$SHELLRC
+	logthis "$HAK installed at $HOME and sourced it in $SHELLRC"
+	source $HOME/$HAK/rc;
 fi
-sh init.sh
 sh ipfs-check-install-setup-init-update
+sh init.sh
