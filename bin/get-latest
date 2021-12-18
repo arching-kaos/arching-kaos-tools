@@ -1,0 +1,2 @@
+#!/bin/bash
+ipfs files stat /zlatest | head -n 1

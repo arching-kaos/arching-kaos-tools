@@ -1,0 +1,27 @@
+#!/bin/bash
+title(){
+	echo "Zchain reset"
+	echo "------------"
+}
+usage(){
+	echo "Usage: $0 reset"
+	exit 0
+}
+reset (){
+	cp $ZGENESIS $ZLATEST
+	ipfs name publish --key=zchain /ipfs/$ZLATEST
+	ipfs files mkdir /zarchive
+	ipfs files cp /zlatest /zarchive/$(date -u +%s)-$(ipfs files stat /zlatest | head -n 1)
+	ipfs files rm /zlatest
+	ipfs files cp /ipfs/$(cat $ZLATEST) /zlatest
+	echo "Probably reset"
+	exit 0
+}
+if [ ! -z $1 ]; then
+	case $1 in
+		reset) reset; exit;;
+		* ) usage;;
+	esac
+else usage
+fi
+

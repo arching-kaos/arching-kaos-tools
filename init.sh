@@ -36,6 +36,10 @@ fi
 # TODO The thing is done, we are sitting on a genesis.
 # We also have an IPNS name to use.
 
-if [[ ! -f $BINDIR/json2bash ]] ; then cp json2bash $BINDIR ;fi
-if [[ ! -f $BINDIR/ipfs-starter ]] ; then cp ipfs-starter $BINDIR ;fi
-if [[ ! -f $BINDIR/pack_z_block ]] ; then cp pack_z_block $BINDIR ;fi
+# Find scripts and create symlinks
+
+binfiles=$(ls -1 $(pwd)/bin)
+for b in $binfiles
+do
+	if [[ ! -L $BINDIR/$b ]] ; then ln -s $(pwd)/bin/$b $BINDIR/$b ;fi
+done
