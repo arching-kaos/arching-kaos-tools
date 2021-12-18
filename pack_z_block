@@ -12,7 +12,7 @@
 #FINGERPRINT="CHANGE THIS TO YOUR DEFAULT FINGERPRINT"
 # We acquire the GPG fingerprint by email address
 # The following example finds kaos@kaos.kaos' GPG fingerprint like this
-FINGERPRINT="$(gpg2 --list-keys | grep kaos@kaos.kaos -1 | head -n1 | awk '{print $1}')"
+# FINGERPRINT="$(gpg2 --list-keys | grep kaos@kaos.kaos -1 | head -n1 | awk '{print $1}')"
 
 # Below, the usage information
 usage(){
@@ -42,7 +42,7 @@ main(){
 	GPG_PUB_KEY=$(ipfs add -q $KEY)
 
 	# Acquire last block of information, to chain this one with previous posted
-	PREVIOUS=$(ipfs files stat /ZLATEST | head -n 1)
+	PREVIOUS=$(ipfs files stat /zlatest | head -n 1)
 
 	# We create a block of json like this:
 	cat > block <<EOF
@@ -79,8 +79,8 @@ EOF
 }
 
 title(){
-	echo "AK zblock creator from ACTION and FILE"
-	echo "======================================"
+	echo "AK zblock creator"
+	echo "================="
 }
 
 title
@@ -93,19 +93,21 @@ then
 		main
 	else
 		echo "File does not exist. Aborting..."
-		usage
+		exit 1
 	fi
 
 	# cat $PWD/zblock | json_pp
 	# Optional or extending with
 	# python send_as_ak_tx $ZBLOCK
 	# or for "offline" use
+	echo $ZBLOCK > $ZLATEST
 	ipfs name publish --key=zchain $ZBLOCK
 	ipfs files mkdir /zarchive
-	ipfs files cp /ZLATEST /zarchive/$(date -u +%s)-$(head -n 1 $(ipfs files stat /ZLATEST))
-	ipfs files rm /ZLATEST
-	ipfs files cp /ipfs/$ZBLOCK /ZLATEST
+	ipfs files cp /zlatest /zarchive/$(date -u +%s)-$(ipfs files stat /zlatest | head -n 1)
+	ipfs files rm /zlatest
+	ipfs files cp /ipfs/$ZBLOCK /zlatest
 else
 	usage
+	exit 0
 fi
 
