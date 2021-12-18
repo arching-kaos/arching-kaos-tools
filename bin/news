@@ -46,6 +46,7 @@ title(){
 import(){
 	echo "#TODO"
 	echo $1
+	exit 224
 }
 add(){
 	if [ -f $1 ]; then
@@ -55,7 +56,7 @@ add(){
 		TITLE=$(head -n 1 $FILE)
 		FILE_IPFS_HASH=$(ipfs add -q $FILE)
 		FILE_SIGN_FILE=$FILE".asc"
-		gpg2 --detach-sign --sign-with $FINGERPRINT --armor --output $FILE_SIGN_FILE $FILE
+		gpg --detach-sign --sign-with $FINGERPRINT --armor --output $FILE_SIGN_FILE $FILE
 		FILE_SIGNATURE=$(ipfs add -q $FILE_SIGN_FILE)
 		cat > data <<EOF
 {
@@ -66,9 +67,19 @@ add(){
    "detach":"$FILE_SIGNATURE"
 }
 EOF
-	else echo "File $FILE doesn't exist";
+	else
+		echo "File $FILE doesn't exist";
+		exit 2
 	fi
 	pack_z_block "news/add" data
+	if [ $? == 0 ]
+	then
+		echo "News added successfully"
+		exit 0
+	else
+		echo "error??"
+		exit 1
+	fi
 }
 usage(){
 	echo "#TODO"
@@ -78,15 +89,16 @@ usage(){
 	echo "import <file>	#TODO"
 	echo "add <file>	Creates a data file from the news file you point to"
 	echo "create		Vim is going to pop up, you will write and save your"
-        echo "                  newsletter and it's going to be saved"
+	echo "                  newsletter and it's going to be saved"
+	exit 0
 }
 title
 if [ ! -z $1 ]; then
 	case $1 in
-		help) usage;exit;; 
-		index) index;break;;
-		import) import $2; break;;
-		add) add $2; break;;
+		help) usage; exit;;
+		index) index; exit;;
+		import) import $2; exit;;
+		add) add $2; exit;;
 		create) create; exit;;
 		* ) usage;;
 	esac
