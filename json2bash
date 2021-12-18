@@ -1,0 +1,11 @@
+#!/bin/bash
+#
+# json2bash
+# 
+# Kaotisk Hund <kaotisk/kaotiskhund>
+# 
+# Strips " , { } from input and replaces ":" with =
+#
+# Usage:
+# ipfs cat <hash> | json2bash
+sed -e 's/{//g' | sed -e 's/}//g' | sed -e 's/":"/=/g' | sed -e 's/"//g' | sed -e 's/,//g' | sed -e 's/ //g'
