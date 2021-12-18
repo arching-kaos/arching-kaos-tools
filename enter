@@ -1,32 +1,83 @@
 #!/bin/bash
+# By default we enter from the latest block
+# We can alter this by changing this value
 entrance="$(cat $ZLATEST)"
+
+# Start of tests
 #entrance="QmW5WVXCJfhb4peHG6cbEdamC24vZzMX2Vz386vpENh38U"
 #entrance="QmNjQq7GkuXGF8kFT1z2Mv3i4JhY7sBXVUmHDiR1zkQjoE"
 #entrance="QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH"
-end="QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH"
-previous="$entrance"
+# End of tests
+
+# We assign the IPFS CIDv0 of an empty file as this is used
+# as our GENESIS block, hence the "seed" that the tree grows
+# from.
+seed="$(cat $ZGENESIS)"
+
+# We assume that we found the entrance inside a block, hence
+# ZBLOCK is labeled as previous
+zblock="$entrance"
+
+# The loop
+# We break the loop from inside the loop
 while true
 do
-	if [ ! -v $previous ]
+	# Check if $zblock exists as variable
+	if [ ! -v $zblock ]
 	then
-		if [ "$previous" != "$end" ]
+		# Check if it is not our seed cause if it is we skip this part
+		if [ "$zblock" != "$seed" ]
 		then
-			ipfs cat $previous | json2bash > tmp-zblock
+			# Announce to stdout which ZBLOCK is being read at the moment
+			echo "Examining $zblock"
+
+			# We create files named after each ZBLOCK IPFS CID for later
+			# reference. Files are empty.
+			touch $ZBLOCKDIR/$zblock
+
+			# We concatenate the zblock's contents, pipe them through filter
+			# json2bash and output them to tmp-file
+			ipfs cat $zblock | json2bash > tmp-zblock
+
+			# Supposingly you are on a safe environment and you only have
+			# access to your chain, I would consider mild secure to source
+			# the files into your bash.
+			# File an issue/pull request if you think it can be done better!!
 			source tmp-zblock
+
+			# Same as above applies to BLOCK and DATA subparts of each ZBLOCK
+			# BLOCKS
 			ipfs cat $block | json2bash > tmp-block
 			source tmp-block
+			touch $BLOCKDIR/$block
+
+			# DATA (but we don't source it's stuff)
+			# Only print to stdout
+			ipfs cat $data
+			touch $DATADIR/$data
+
+			# Now, since we sourced the BLOCK to our terminal, we can search
+			# for $previous variable. In case we don't find one, we exit with
+			# code 3
 			if [ -v $previous ]
 			then
-				echo "$block has no previous zblock"
+				echo "Block $block has no previous zblock"
 				exit 3
+
+			# Otherwise, we inform of the sequence
 			else
-				echo "$block after $previous"
+				echo "$zblock after $previous"
+				zblock=$previous
 			fi
-		elif [ "$previous" == "$end" ]
+
+		# Now check if it is equal to the seed
+		# which apparently means we reached the seed.
+		elif [ "$zblock" == "$seed" ]
 		then
-			echo "$previous is GENESIS block"
+			echo "$zblock is GENESIS block"
 			exit 0
 		fi
+	# And finally, if nothing is there exit with error
 	else 
 		echo "Check not passed... No previous IPFS CID"
 		exit 1
