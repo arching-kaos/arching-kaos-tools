@@ -1,0 +1,34 @@
+#!/bin/bash
+entrance="$(cat $ZLATEST)"
+#entrance="QmW5WVXCJfhb4peHG6cbEdamC24vZzMX2Vz386vpENh38U"
+#entrance="QmNjQq7GkuXGF8kFT1z2Mv3i4JhY7sBXVUmHDiR1zkQjoE"
+#entrance="QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH"
+end="QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH"
+previous="$entrance"
+while true
+do
+	if [ ! -v $previous ]
+	then
+		if [ "$previous" != "$end" ]
+		then
+			ipfs cat $previous | json2bash > tmp-zblock
+			source tmp-zblock
+			ipfs cat $block | json2bash > tmp-block
+			source tmp-block
+			if [ -v $previous ]
+			then
+				echo "$block has no previous zblock"
+				exit 3
+			else
+				echo "$block after $previous"
+			fi
+		elif [ "$previous" == "$end" ]
+		then
+			echo "$previous is GENESIS block"
+			exit 0
+		fi
+	else 
+		echo "Check not passed... No previous IPFS CID"
+		exit 1
+	fi
+done
