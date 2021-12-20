@@ -1,0 +1,6 @@
+FROM fedora:latest
+RUN sudo dnf update -y && sudo dnf install wget which git -y 
+COPY . /repo
+RUN cd /repo && /repo/install.sh
+ENTRYPOINT ["sleep","10000000"]
+

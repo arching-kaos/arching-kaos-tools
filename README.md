@@ -15,6 +15,14 @@ nice to know which the new versions are.
 
 If bash or zsh get that much updated that they can't take it no more... If you can, fix it!
 
+Update: it seems to be a list lately...
+
+- bash/zsh
+- wget
+- curl
+- git
+- which
+
 Clone
 -----
 
@@ -37,6 +45,21 @@ TODO
 [ ] - Install on zsh (export ~/bin to $PATH in .zshrc file)
 [ ] - Install on bash (the same but to .bashrc file
 [ ] - Make a useful tool of this
+
+Tools
+
+- IPFS tool (installer, checker, updater, swarm settings)
+[ ] - Installer
+[ ] - Checker
+[ ] - Updater
+[ ] - Swarm setting
+
+- Rename IPFS tool to storage or something
+[ ] - Modular (call per command)
+ - [ ] - installer
+ - [ ] - checker
+ - [ ] - updater
+ - [ ] - swarm setting
 
 Examples
 --------
