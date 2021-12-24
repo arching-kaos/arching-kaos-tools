@@ -7,15 +7,17 @@
 # or whatever...
 
 logthis(){
-	logger -t arching-kaos $1
+	echo "IPFS TOOL:  $1" >> $WORKDIR/logs
 }
 install(){
 	logthis "ipfs-check-install-setup-init"
 	IPFS_VERSION="$(curl https://github.com/ipfs/go-ipfs/releases/latest | sed -e 's/.*releases//g' | sed -e 's/".*//' | sed -e 's/\/tag\///')"
 	SWARMSHA512SUM="7001e37412758c43d372a969e977ca11511e034c8c1e233a58dc3ce1c6f3c1aa7d2da8cba9944a5eabaa8885742bfe6cc6794224c146b7129da8f633b53b9cfc"
 	IPFS_TARGET_FILE="go-ipfs_"$IPFS_VERSION"_linux-amd64.tar.gz"
-	AKBIN="$BINDIR"
+	AKBIN="$WORKDIR/bin"
+	mkdir $AKBIN
 	AKAR="$ARCHIVESDIR"
+	mkdir $AKAR
 	if [ ! -d $AKAR ]; then
 		mkdir $AKAR
 		if [ $? != 0 ]; then
@@ -34,7 +36,7 @@ install(){
 		mkdir $TEMPASSIN
 		cd $TEMPASSIN
 		tar xf $AKAR/$IPFS_TARGET_FILE
-		cp go-ipfs/ipfs $AKBIN
+		cp go-ipfs/ipfs $AKBIN/ipfs
 	fi
 	logthis "ipfs installed on $AKBIN"
 	if [ ! -d $HOME/.ipfs ]; then
