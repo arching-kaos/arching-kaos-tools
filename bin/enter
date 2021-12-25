@@ -1,7 +1,4 @@
 #!/bin/bash
-# By default we enter from the latest block
-# We can alter this by changing this value
-entrance="$(cat $ZLATEST)"
 
 # Start of tests
 #entrance="QmW5WVXCJfhb4peHG6cbEdamC24vZzMX2Vz386vpENh38U"
@@ -9,6 +6,15 @@ entrance="$(cat $ZLATEST)"
 #entrance="QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH"
 # End of tests
 
+if [ ! -z "$1" ]
+then
+	echo """ #TODO Start from specific zblock """
+	entrance="$1"
+else
+	# By default we enter from the latest block
+	# We can alter this by changing this value
+	entrance="$(cat $ZLATEST)"
+fi
 # We assign the IPFS CIDv0 of an empty file as this is used
 # as our GENESIS block, hence the "seed" that the tree grows
 # from.
@@ -17,6 +23,11 @@ seed="$(cat $ZGENESIS)"
 # We assume that we found the entrance inside a block, hence
 # ZBLOCK is labeled as previous
 zblock="$entrance"
+
+# Enter temp folder
+TEMPASSIN="/tmp/aktmp_$(date -u +%s)"
+mkdir $TEMPASSIN
+cd $TEMPASSIN
 
 # The loop
 # We break the loop from inside the loop
@@ -34,26 +45,35 @@ do
 			# We create files named after each ZBLOCK IPFS CID for later
 			# reference. Files are empty.
 			touch $ZBLOCKDIR/$zblock
+			echo "Created reference"
 
 			# We concatenate the zblock's contents, pipe them through filter
 			# json2bash and output them to tmp-file
-			ipfs cat $zblock | json2bash > tmp-zblock
+			ipfs cat $zblock | json2bash > $TEMPASSIN/tmp-zblock
+			echo "ZBLOCK READ"
 
 			# Supposingly you are on a safe environment and you only have
 			# access to your chain, I would consider mild secure to source
 			# the files into your bash.
 			# File an issue/pull request if you think it can be done better!!
-			source tmp-zblock
+			source $TEMPASSIN/tmp-zblock
+			echo "ZBLOCK SOURCED"
 
 			# Same as above applies to BLOCK and DATA subparts of each ZBLOCK
 			# BLOCKS
-			ipfs cat $block | json2bash > tmp-block
-			source tmp-block
+			ipfs cat $block | json2bash > $TEMPASSIN/tmp-block
+			source $TEMPASSIN/tmp-block
+			echo "BLOCK SOURCED"
 			touch $BLOCKDIR/$block
-
+			echo "BLOCK REFERENCED"
+			module="$(echo $action | sed -e 's/\// /g' | awk '{ print $1 }')"
+			echo "DATA is $module module."
+			command="$(echo $action | sed -e 's/\// /g' | awk '{ print $2 }')"
+			echo "COMMAND is $command"
+			profile show $data
 			# DATA (but we don't source it's stuff)
 			# Only print to stdout
-			ipfs cat $data
+			#ipfs cat $data
 			touch $DATADIR/$data
 
 			# Now, since we sourced the BLOCK to our terminal, we can search
