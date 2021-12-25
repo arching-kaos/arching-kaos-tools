@@ -21,6 +21,7 @@ usage(){
 	echo ""
 	echo "action		 An action for the render to grasp"
 	echo "data_file	  A data file that according to the action is valid"
+	echo ""
 }
 
 main(){
