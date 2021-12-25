@@ -17,5 +17,5 @@ export ZZCHAIN="$CONFIGDIR/zzchain"
 export ZLIST="$WORKDIR/zlist"
 export ZLATEST="$WORKDIR/zlatest"
 export LOGSFILE="$WORKDIR/logs"
-export FINGERPRINT="$(gpg2 --list-keys | grep kaos@kaos.kaos -1 | head -n1 | awk '{print $1}')"
+export FINGERPRINT="$(gpg --list-keys | grep kaos@kaos.kaos -1 | head -n1 | awk '{print $1}')"
 
