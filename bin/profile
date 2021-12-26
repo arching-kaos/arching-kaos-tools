@@ -1,0 +1,221 @@
+#!/bin/bash
+ZPROFILEDIR="$WORKDIR/profile"
+TEMP="/tmp/aktmp"
+if [ ! -d $ZPROFILEDIR ]; then
+	mkdir $ZPROFILEDIR
+	cd $ZPROFILEDIR
+	git init
+	echo "Profile repository" > README
+	echo "Qmetc" >> README
+	git add README
+	git commit -m "Initiated profile repository"
+	logthis "zprofiledir created along with git repo"
+else
+	logthis "zprofiledir found"
+fi
+tempassin(){
+	if [ ! -z $1 ]
+	then
+		TEMPASSIN="$1"
+	else
+		TIMESTAMP="$(date -u +%s)"
+		TEMPASSIN="/tmp/aktmp_$TIMESTAMP"
+	fi
+	if [ ! -d $TEMPASSIN ]; then
+		mkdir $TEMPASSIN
+	fi
+	cd $TEMPASSIN
+	echo "$TEMPASSASIN"
+}
+# This is working with DATA blocks. DATA that matched profile/add ACTION
+#
+show(){
+	if [ ! -z $1 ]
+	then
+		echo "Working with $1"
+		ipfs cat $1
+	else
+		echo "No DATA provided"
+		exit 1
+	fi
+}
+propget(){
+	if [ ! -z $1 ]
+	then
+		if [ ! -f $ZPROFILEDIR/$1 ]
+		then
+			echo "property not found"
+		else
+			cat $ZPROFILEDIR/$1
+		fi
+	else
+		echo "No particular property... indexing"
+		index
+	fi
+}
+propwrite(){
+	cat > $ZPROPERTY_FILE << EOF
+{
+    "$ZPROPERTY_KEY":"${ZPROPERTY_VALUE}"
+}
+EOF
+	if [ $? == 0 ]
+	then
+		echo "Added successfully... proceeding"
+#		add $ZPROPERTY_FILE
+		IPFS_FILE=$(ipfs add -q $ZPROPERTY_FILE)
+		echo "Prop writting,,, $IPFS_FILE"
+	#	mv $PROFILE_FILE $ZPROFILEDIR/$TO_FILE
+		sed -e 's,Qm.*,'"$IPFS_FILE"',g' $ZPROFILEDIR/README
+		add $ZPROPERTY_KEY
+		echo "Adding to git repo..."
+		cd $ZPROFILEDIR
+		git add $ZPROPERTY_KEY README
+		git commit -m "Added ${ZPROPERTY_KEY} with ${ZPROPERTY_VALUE}"
+		git clean --force
+	else
+		echo "error"
+		exit 244
+	fi
+}
+propset(){
+	if [ ! -z $1 ]
+	then
+		ZPROPERTY_FILE="$ZPROFILEDIR/$1"
+		ZPROPERTY_KEY="$1"
+		if [ ! -f $ZPROPERTY_FILE ]
+		then
+			echo "No such property: $ZPROPERTY_KEY ... creating"
+			ZPROPERTY_VALUE="$2"
+			if [ ! -z "$ZPROPERTY_VALUE" ]
+			then
+				touch $ZPROPERTY_FILE
+				echo "$ZPROPERTY_KEY = $ZPROPERTY_VALUE in file $ZPROPERTY_FILE"
+				propwrite #"$ZPROPERTY_FILE" "${ZPROPERTY_VALUE}"
+			else 
+				echo "No value for $1"
+			fi
+		else
+			echo found $ZPROPERTY_FILE
+			echo "$ZPROPERTY_KEY = $ZPROPERTY_VALUE in file $ZPROPERTY_FILE"
+			ZPROPERTY_VALUE="$2"
+			read -p "Overwrite $1 with ${ZPROPERTY_VALUE} ? " yn
+			case $yn in
+				[Yy]* ) propwrite;;# "$ZPROPERTY_" "${ZPROPERTY_VALUE}";;
+				[Nn]* ) exit 130;;
+				* ) echo "Answer please";;
+			esac
+			echo $IPFS_FILE
+			show $IPFS_FILE
+		fi
+	else
+		echo "conditions unmet"
+		exit 244
+#	tempassin $TEMP
+#	pwd
+#	export PROFILE_FILE="$(date -u +%s)"
+#	vi $PROFILE_FILE
+#	echo "Renaming..."
+#	TITLE="$(head -n 1 $PROFILE_FILE)"
+#	TO_FILE=$PROFILE_FILE-$(echo $TITLE | tr '[:upper:]' '[:lower:]' | sed -e 's/ /\_/g' )
+#	add $ZPROFILEDIR/$TO_FILE
+#	# rm -rf $TEMP 
+	fi
+}
+index(){
+	FILES="$(ls -1 $ZPROFILEDIR)"
+	i=0
+	for FILE in $FILES
+	do
+
+		PROP=$(echo $(cat $ZPROFILEDIR/$FILE | json2bash) | cut -d '=' -f 1 | awk '{print $0}')
+		VAL=$(echo $(cat $ZPROFILEDIR/$FILE | json2bash) | cut -d '=' -f 2 | awk '{print $1}')
+
+		echo $i \| $PROP \| $VAL
+		let i+=1
+	done	
+}
+title(){
+	echo "ak-profile-cli"
+	echo "--------------"
+}
+import(){
+	if [ ! -z $1 ]
+	then
+		if [ ! -d $1 ]
+		then
+			echo "Profile folder check: Folder $1 does not exist. Stopping..."
+			exit 4
+		else
+			echo "Profile folder check: Folder $1 exists."
+			fl="$(ls -1 $1)"
+			for f in $fl
+			do
+				add $1/$f
+			done
+		fi
+	else
+		echo "No value"
+		exit 6
+	fi
+	exit 224
+}
+add(){
+	tempassin
+	if [ -f $ZPROFILEDIR/$1 ]; then
+		FILE="$ZPROFILEDIR/$1"
+		echo "Adding from " $FILE
+		FILE_IPFS_HASH=$(ipfs add -q $FILE)
+		FILE_SIGN_FILE=$(pwd)/$1".asc"
+		gpg --detach-sign --sign-with $FINGERPRINT --armor --output $FILE_SIGN_FILE $FILE
+		FILE_SIGNATURE=$(ipfs add -q $FILE_SIGN_FILE)
+		cat > data <<EOF
+{
+   "datetime":"$(date -u +%s)",
+   "ipfs":"$FILE_IPFS_HASH",
+   "detach":"$FILE_SIGNATURE"
+}
+EOF
+	else
+		echo "File $FILE doesn't exist";
+		exit 2
+	fi
+	pack_z_block "profile/add" data
+	if [ $? == 0 ]
+	then
+		echo "Profile added successfully"
+	else
+		echo "error??"
+		exit 1
+	fi
+}
+usage(){
+	title
+	echo ""
+	echo "Usage:"
+	echo "		$0 command [options]"
+	echo ""
+	echo "All you need to know is that there are two options available:"
+	echo "help			Prints this help message"
+	echo "index			Show current status"
+	echo "show <zblock>		Show profile"
+	echo "import <folder>		Import a folder to zchain #TODO"
+	echo "add <file>		Creates a data file from the profile file you point to"
+	echo "set <property> <value>	Sets a profile value"
+	echo "get <property>		Gets a profile"
+	echo ""
+	exit 0
+}
+if [ ! -z $1 ]; then
+	case $1 in
+		help) usage; exit;;
+		index) index; exit;;
+		show) show $2; exit;;
+		import) import $2; exit;;
+		add) add $2; exit;;
+		set) propset $2 "$3"; exit;;
+		get) propget $2; exit;;
+		* ) usage;;
+	esac
+else usage
+fi
