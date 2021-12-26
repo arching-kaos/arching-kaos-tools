@@ -1,0 +1,25 @@
+#!/bin/bash
+FOLLOWING="$HOME/.arching-kaos/following"
+fentries="$(cat $FOLLOWING)"
+if [ ! -z $1 ]
+then
+	search="$1"
+	sed -i -e 's,'"$search"',,g' $FOLLOWING
+	if [ $? == 0 ]
+	then
+		IPFS="$(ipfs add -q $FOLLOWING)"
+		if [ $? == 0 ]
+		then
+			profile set repositories "$IPFS"
+		else
+			logthis "IPFS problem"
+		fi
+	else
+		logthis "sed didn't found $search"
+	fi
+else
+	echo "Who to unfollow?"
+	echo "Type following to see them"
+fi	
+	
+
