@@ -1,7 +1,9 @@
 #!/bin/bash
+source config.sh
 logthis(){
-	logger -t arching-kaos $1
+	echo "Install script: $1" >> $WORKDIR/logs
 }
+
 HAK=".arching-kaos"
 logthis "Searching for $HAK folder and files"
 if [ ! -d $HOME/$HAK ]; then
@@ -22,8 +24,8 @@ elif [ $SHELL == "/usr/bin/bash" ]; then
 	SHELLRC='.bashrc'
 	logthis "BASH found";
 else
-	logthis "Unknown shell... skipping installation"
-	exit;
+	logthis "Unknown shell... defaulting to bash"
+	SHELLRC='.bashrc'
 fi
 logthis "Searching if rc is already there"
 grep "source ~/$HAK/rc" $HOME/$SHELLRC > /dev/null 2>&1
