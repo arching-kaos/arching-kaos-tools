@@ -28,11 +28,12 @@ zblock="$entrance"
 TEMPASSIN="/tmp/aktmp_$(date -u +%s)"
 mkdir $TEMPASSIN
 cd $TEMPASSIN
-
+counter=0
 # The loop
 # We break the loop from inside the loop
 while true
 do
+	counter=$(expr $counter + 1)
 	# Check if $zblock exists as variable
 	if [ ! -v $zblock ]
 	then
@@ -95,6 +96,7 @@ do
 		elif [ "$zblock" == "$seed" ]
 		then
 			echo "$zblock is GENESIS block"
+			logthis "Counter $counter"
 			exit 0
 		fi
 	# And finally, if nothing is there exit with error
