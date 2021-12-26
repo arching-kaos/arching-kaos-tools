@@ -5,6 +5,7 @@ RUN gpg --import /repo/test.sk
 RUN bash -c 'cd /repo && /repo/install.sh'
 RUN git config --global user.email "test@test.test"
 RUN git config --global user.name "test"
+RUN git config --global init.defaultBranch master
 EXPOSE 4001/tcp
 EXPOSE 5001/tcp
 EXPOSE 8080/tcp
