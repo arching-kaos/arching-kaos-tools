@@ -1,0 +1,10 @@
+#!/bin/bash
+FOLLOWING="$HOME/.arching-kaos/following"
+if [ -f $FOLLOWING ]
+then
+	cat $FOLLOWING
+else
+	logthis "No following file, creating"
+	touch $FOLLOWING
+	echo "None found"
+fi
