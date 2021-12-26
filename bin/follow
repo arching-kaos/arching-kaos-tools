@@ -1,0 +1,14 @@
+#!/bin/bash
+FOLLOWING="$HOME/.arching-kaos/following"
+if [ ! -z $1 ]
+then
+	echo $1 >> $FOLLOWING
+	IPFS=$(ipfs add -q $FOLLOWING)
+	if [ $? == 0 ]
+	then
+		profile set following $IPFS
+	else
+		logthis "Addition aborted"
+		exit 1
+	fi
+fi
