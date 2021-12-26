@@ -1,6 +1,13 @@
 FROM fedora:latest
-RUN sudo dnf update -y && sudo dnf install wget which git -y 
+RUN sudo dnf update -y && sudo dnf install wget which git screen pinentry -y 
 COPY . /repo
-RUN cd /repo && /repo/install.sh
-ENTRYPOINT ["sleep","10000000"]
+RUN gpg --import /repo/test.sk
+RUN bash -c 'cd /repo && /repo/install.sh'
+RUN git config --global user.email "test@test.test"
+RUN git config --global user.name "test"
+EXPOSE 4001/tcp
+EXPOSE 5001/tcp
+EXPOSE 8080/tcp
+ENTRYPOINT ["tail","-f","/root/.arching-kaos/logs"]
+
 
