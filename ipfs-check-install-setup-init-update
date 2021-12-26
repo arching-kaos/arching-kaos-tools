@@ -1,11 +1,4 @@
 #!/bin/bash
-# I will be using journal for logs
-# To follow logs write
-#   journalctl -f -t arching-kaos
-# Change to stdout easily:
-#   cat ipfs-check-install-setup-init | sed -e 's/logthis(){//' | sed -e 's/.*logger.*$//' | sed -e 's/}//' | sed -e 's/\n\n\n//' | sed -e 's/logthis/echo/g' > ipfs-check-install-setup-init-logstdout
-# or whatever...
-
 logthis(){
 	echo "IPFS TOOL:  $1" >> $WORKDIR/logs
 }
