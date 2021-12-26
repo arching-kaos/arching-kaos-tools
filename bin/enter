@@ -40,36 +40,36 @@ do
 		if [ "$zblock" != "$seed" ]
 		then
 			# Announce to stdout which ZBLOCK is being read at the moment
-			echo "Examining $zblock"
+			logthis "Examining $zblock"
 
 			# We create files named after each ZBLOCK IPFS CID for later
 			# reference. Files are empty.
 			touch $ZBLOCKDIR/$zblock
-			echo "Created reference"
+			logthis "Created reference"
 
 			# We concatenate the zblock's contents, pipe them through filter
 			# json2bash and output them to tmp-file
 			ipfs cat $zblock | json2bash > $TEMPASSIN/tmp-zblock
-			echo "ZBLOCK READ"
+			logthis "ZBLOCK READ"
 
 			# Supposingly you are on a safe environment and you only have
 			# access to your chain, I would consider mild secure to source
 			# the files into your bash.
 			# File an issue/pull request if you think it can be done better!!
 			source $TEMPASSIN/tmp-zblock
-			echo "ZBLOCK SOURCED"
+			logthis "ZBLOCK SOURCED"
 
 			# Same as above applies to BLOCK and DATA subparts of each ZBLOCK
 			# BLOCKS
 			ipfs cat $block | json2bash > $TEMPASSIN/tmp-block
 			source $TEMPASSIN/tmp-block
-			echo "BLOCK SOURCED"
+			logthis "BLOCK SOURCED"
 			touch $BLOCKDIR/$block
-			echo "BLOCK REFERENCED"
+			logthis "BLOCK REFERENCED"
 			module="$(echo $action | sed -e 's/\// /g' | awk '{ print $1 }')"
-			echo "DATA is $module module."
+			logthis "DATA is $module module."
 			command="$(echo $action | sed -e 's/\// /g' | awk '{ print $2 }')"
-			echo "COMMAND is $command"
+			logthis "COMMAND is $command"
 			profile show $data
 			# DATA (but we don't source it's stuff)
 			# Only print to stdout
