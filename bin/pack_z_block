@@ -16,6 +16,7 @@
 
 # Below, the usage information
 usage(){
+	title
 	echo "$0 - action data_file"
 	echo "Creates and publishes a ZBLOCK based on ACTION and DATA file."
 	echo ""
@@ -26,7 +27,7 @@ usage(){
 
 main(){
  
-	echo "We are doing" $ACTION "with content" $MESSAGE
+	logthis "We are doing" $ACTION "with content" $MESSAGE
 	# We add it to IPFS
 	MESSAGE_HASH=$(ipfs add -q $MESSAGE)
 
@@ -84,7 +85,6 @@ title(){
 	echo "================="
 }
 
-title
 if [ ! -z $2 ];
 then
 	PWD="$(pwd)"
@@ -93,7 +93,7 @@ then
 	if [ -f "$MESSAGE" ]; then
 		main
 	else
-		echo "File does not exist. Aborting..."
+		logthis "File does not exist. Aborting..."
 		exit 1
 	fi
 
@@ -102,11 +102,11 @@ then
 	# python send_as_ak_tx $ZBLOCK
 	# or for "offline" use
 	echo $ZBLOCK > $ZLATEST
-	ipfs name publish --key=zchain $ZBLOCK
-	ipfs files mkdir /zarchive
-	ipfs files cp /zlatest /zarchive/$(date -u +%s)-$(ipfs files stat /zlatest | head -n 1)
-	ipfs files rm /zlatest
-	ipfs files cp /ipfs/$ZBLOCK /zlatest
+	ipfs name publish --key=zchain $ZBLOCK > /dev/null 2>&1
+	ipfs files mkdir /zarchive > /dev/null 2>&1
+	ipfs files cp /zlatest /zarchive/$(date -u +%s)-$(ipfs files stat /zlatest | head -n 1) > /dev/null 2>&1
+	ipfs files rm /zlatest > /dev/null 2>&1
+	ipfs files cp /ipfs/$ZBLOCK /zlatest > /dev/null 2>&1
 else
 	usage
 	exit 0
