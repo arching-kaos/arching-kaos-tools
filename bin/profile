@@ -32,8 +32,10 @@ tempassin(){
 show(){
 	if [ ! -z $1 ]
 	then
-		echo "Working with $1"
-		ipfs cat $1
+		logthis "Working with $1"
+		echo '"data":"'$1'",'
+		echo '"'$1'":'$(ipfs cat $1)','
+		#ipfs cat $1
 	else
 		echo "No DATA provided"
 		exit 1
@@ -125,15 +127,19 @@ propset(){
 index(){
 	FILES="$(ls -1 $ZPROFILEDIR)"
 	i=0
+	echo "{"
 	for FILE in $FILES
 	do
-
+		if [ $i != "0" ]; then
+			echo ",";
+		fi
 		PROP=$(echo $(cat $ZPROFILEDIR/$FILE | json2bash) | cut -d '=' -f 1 | awk '{print $0}')
 		VAL=$(echo $(cat $ZPROFILEDIR/$FILE | json2bash) | cut -d '=' -f 2 | awk '{print $1}')
 
-		echo $i \| $PROP \| $VAL
+		echo '"'$PROP'":"'$VAL'"'
 		let i+=1
-	done	
+	done
+	echo "}"
 }
 title(){
 	echo "ak-profile-cli"

@@ -33,6 +33,10 @@ counter=0
 # We break the loop from inside the loop
 while true
 do
+	if [ $counter == 0 ]
+	then
+		echo '['
+	fi
 	counter=$(expr $counter + 1)
 	# Check if $zblock exists as variable
 	if [ ! -v $zblock ]
@@ -42,6 +46,7 @@ do
 		then
 			# Announce to stdout which ZBLOCK is being read at the moment
 			logthis "Examining $zblock"
+			echo '{"zblock":"'$zblock'",'
 
 			# We create files named after each ZBLOCK IPFS CID for later
 			# reference. Files are empty.
@@ -51,7 +56,7 @@ do
 			# We concatenate the zblock's contents, pipe them through filter
 			# json2bash and output them to tmp-file
 			ipfs cat $zblock | json2bash > $TEMPASSIN/tmp-zblock
-			logthis "ZBLOCK READ"
+			logthis "ZBLOCK $zblock READ"
 
 			# Supposingly you are on a safe environment and you only have
 			# access to your chain, I would consider mild secure to source
@@ -62,15 +67,18 @@ do
 
 			# Same as above applies to BLOCK and DATA subparts of each ZBLOCK
 			# BLOCKS
+			echo '"block":"'$block'",'
 			ipfs cat $block | json2bash > $TEMPASSIN/tmp-block
 			source $TEMPASSIN/tmp-block
-			logthis "BLOCK SOURCED"
+			logthis "BLOCK $block SOURCED"
 			touch $BLOCKDIR/$block
 			logthis "BLOCK REFERENCED"
 			module="$(echo $action | sed -e 's/\// /g' | awk '{ print $1 }')"
 			logthis "DATA is $module module."
 			command="$(echo $action | sed -e 's/\// /g' | awk '{ print $2 }')"
 			logthis "COMMAND is $command"
+			echo '"module":"'$module'",'
+			echo '"action":"'$command'",'
 			profile show $data
 			# DATA (but we don't source it's stuff)
 			# Only print to stdout
@@ -87,7 +95,8 @@ do
 
 			# Otherwise, we inform of the sequence
 			else
-				echo "$zblock after $previous"
+				#echo "$zblock after $previous"
+				echo '"previous":"'$previous'"},' 
 				zblock=$previous
 			fi
 
@@ -95,7 +104,9 @@ do
 		# which apparently means we reached the seed.
 		elif [ "$zblock" == "$seed" ]
 		then
-			echo "$zblock is GENESIS block"
+			#echo "$zblock is GENESIS block"
+			#echo '"'$zblock'":{ "GENESIS":"GENESIS"}] '
+			echo '{"genesis":"genesis"}]'
 			logthis "Counter $counter"
 			exit 0
 		fi
