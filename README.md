@@ -42,17 +42,17 @@ Installs binaries and scripts on your $HOME folder.
 TODO
 ----
 
- - [ ] - Install on zsh (export ~/bin to $PATH in .zshrc file)
- - [ ] - Install on bash (the same but to .bashrc file
+ - [x] - Install on zsh (export ~/bin to $PATH in .zshrc file)
+ - [x] - Install on bash (the same but to .bashrc file
  - [ ] - Make a useful tool of this
 
 Tools
 
 - IPFS tool (installer, checker, updater, swarm settings)
- - [ ] - Installer
- - [ ] - Checker
- - [ ] - Updater
- - [ ] - Swarm setting
+ - [x] - Installer
+ - [x] - Checker
+ - [x] - Updater
+ - [x] - Swarm setting
 
 - Rename IPFS tool to storage or something
  - [ ] - Modular (call per command)
