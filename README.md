@@ -30,10 +30,10 @@ git clone ...
 
 Install
 -------
-
+```
 cd arching-kaos-tools
 sh install.sh
-
+```
 Defaults
 --------
 
