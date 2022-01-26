@@ -49,6 +49,7 @@ main(){
 	# We create a block of json like this:
 	cat > block <<EOF
 {
+    "timestamp":"$(date -u +%s)",
     "action":"$ACTION",
     "data":"$MESSAGE_HASH",
     "detach":"$MESSAGE_SIGNATURE",
