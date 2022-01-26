@@ -4,7 +4,7 @@ Arching Kaos Tools
 Description
 -----------
 
-This is an installable repo which provides various tools for running Arching Kaos and use it.
+This is an installable repo which provides various tools for running Arching Kaos and using it.
 
 Requirements
 ------------
