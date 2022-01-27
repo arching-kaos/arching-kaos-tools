@@ -63,3 +63,15 @@ Examples
 --------
 
 You could use ZCHAIN with NEWS model. Or MIXTAPE model, or make your own.
+
+Podman (or Docker)
+------------------
+
+There is a ContainerFile that you can use to build an image which you can then deploy in a container.
+
+Use:
+
+```
+podman build -f ContainerFile -t arching-kaos-tools .
+```
+
