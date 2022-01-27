@@ -8,25 +8,23 @@ This is an installable repo which provides various tools for running Arching Kao
 
 Requirements
 ------------
-Some Linx machine which has installed bash v5.1.8 or compatible or zsh v5.8 or compatible.
+Some Linx machine which has installed bash or zsh, gpg, wget, curl, git and which.
+Other shells maybe are working.
 
-If this gets any updates like newer version of bash/zsh or the repo it self, it would be
-nice to know which the new versions are.
-
-If bash or zsh get that much updated that they can't take it no more... If you can, fix it!
-
-Update: it seems to be a list lately...
-
-- bash/zsh
-- wget
-- curl
-- git
-- which
+- bash (v5.1.8) or zsh (v5.8)
+- gpg (v2.3.4)
+- wget (v1.21.2)
+- curl (v7.79.1)
+- git (v2.34.1)
+- which (v2.21)
 
 Clone
 -----
 
-git clone ...
+Write on your bash/zsh:
+```
+git clone https://github.com/arching-kaos/arching-kaos-tools
+```
 
 Install
 -------
