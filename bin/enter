@@ -44,6 +44,8 @@ do
 		# Check if it is not our seed cause if it is we skip this part
 		if [ "$zblock" != "$seed" ]
 		then
+			# Reset timestamp since it's introduced later
+			timestamp=''
 			# Announce to stdout which ZBLOCK is being read at the moment
 			logthis "Examining $zblock"
 			echo '{"zblock":"'$zblock'",'
@@ -77,8 +79,15 @@ do
 			logthis "DATA is $module module."
 			command="$(echo $action | sed -e 's/\// /g' | awk '{ print $2 }')"
 			logthis "COMMAND is $command"
+			if [ ! -v $timestamp ]
+			then
+				echo '"timestamp":"'$timestamp'",'
+			fi
+			echo '"block_signature":"'$block_signature'",'
+			echo '"detach":"'$detach'",'
 			echo '"module":"'$module'",'
 			echo '"action":"'$command'",'
+			echo '"gpg":"'$gpg'",'
 			profile show $data
 			# DATA (but we don't source it's stuff)
 			# Only print to stdout
