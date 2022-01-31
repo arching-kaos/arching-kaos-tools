@@ -1,0 +1,16 @@
+#!/bin/bash
+title(){
+	echo "Arching Kaos Configuration Tool"
+}
+usage(){
+	#title
+	echo '
+{ 
+    "profile":'$(profile index | json_pp)', 
+    "genesis":"'$(cat $HOME/.arching-kaos/config/zgenesis)'",
+    "zchain":"'$(cat $HOME/.arching-kaos/config/zchain)'" 
+}';
+	exit 0
+}
+
+usage
