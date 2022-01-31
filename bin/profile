@@ -68,7 +68,7 @@ EOF
 		IPFS_FILE=$(ipfs add -q $ZPROPERTY_FILE)
 		echo "Prop writting,,, $IPFS_FILE"
 	#	mv $PROFILE_FILE $ZPROFILEDIR/$TO_FILE
-		sed -e 's,Qm.*,'"$IPFS_FILE"',g' $ZPROFILEDIR/README
+	#	sed -e 's,Qm.*,'"$IPFS_FILE"',g' $ZPROFILEDIR/README
 		add $ZPROPERTY_KEY
 		echo "Adding to git repo..."
 		cd $ZPROFILEDIR
@@ -130,14 +130,15 @@ index(){
 	echo "{"
 	for FILE in $FILES
 	do
-		if [ $i != "0" ]; then
-			echo ",";
+		if [ $FILE != "README" ]; then
+			if [ $i != "0" ]; then
+				echo ",";
+			fi
+			PROP=$(echo $(cat $ZPROFILEDIR/$FILE | json2bash) | cut -d '=' -f 1 | awk '{print $0}')
+			VAL=$(echo $(cat $ZPROFILEDIR/$FILE | json2bash) | cut -d '=' -f 2 | awk '{print $1}')
+			echo '"'$PROP'":"'$VAL'"';
+			let i+=1
 		fi
-		PROP=$(echo $(cat $ZPROFILEDIR/$FILE | json2bash) | cut -d '=' -f 1 | awk '{print $0}')
-		VAL=$(echo $(cat $ZPROFILEDIR/$FILE | json2bash) | cut -d '=' -f 2 | awk '{print $1}')
-
-		echo '"'$PROP'":"'$VAL'"'
-		let i+=1
 	done
 	echo "}"
 }
