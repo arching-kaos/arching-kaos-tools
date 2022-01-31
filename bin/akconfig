@@ -3,14 +3,31 @@ title(){
 	echo "Arching Kaos Configuration Tool"
 }
 usage(){
-	#title
+	title
+	exit 0
+}
+
+show(){
 	echo '
 { 
     "profile":'$(profile index | json_pp)', 
     "genesis":"'$(cat $HOME/.arching-kaos/config/zgenesis)'",
     "zchain":"'$(cat $HOME/.arching-kaos/config/zchain)'" 
 }';
-	exit 0
 }
 
-usage
+publish(){
+	show | json_pp > tmpfile
+	ipfs name publish --key=ak-config /ipfs/$(ipfs add -q tmpfile)
+	rm tmpfile
+}
+
+if [ ! -z $1 ]; then
+	case $1 in
+		show) show;exit;;
+		publish) publish;exit;;
+		*) usage;exit;;
+	esac
+else
+	usage
+fi
