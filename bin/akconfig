@@ -12,6 +12,7 @@ show(){
 { 
     "profile":'$(profile index | json_pp)', 
     "genesis":"'$(cat $HOME/.arching-kaos/config/zgenesis)'",
+    "gpg":"'$GPG_PUB_KEY'",
     "zchain":"'$(cat $HOME/.arching-kaos/config/zchain)'" 
 }';
 }
@@ -21,6 +22,12 @@ publish(){
 	ipfs name publish --key=ak-config /ipfs/$(ipfs add -q tmpfile)
 	rm tmpfile
 }
+
+# We will be using our public key also to put it in the block later
+KEY="tmp-gpg.pub"
+gpg2 --armour --output $KEY --export $FINGERPRINT
+GPG_PUB_KEY=$(ipfs add -q $KEY)
+rm $KEY
 
 if [ ! -z $1 ]; then
 	case $1 in
