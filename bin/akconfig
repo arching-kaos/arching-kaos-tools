@@ -1,9 +1,16 @@
 #!/bin/bash
 title(){
 	echo "Arching Kaos Configuration Tool"
+	echo "==============================="
 }
 usage(){
 	title
+	echo ""
+	echo "Usage: 	$0 [ <show> | <publish> ]"
+	echo ""
+	echo "	show		Show current configuration (from FileSystem)"
+	echo "	publish		Publish current configuration"
+	echo ""
 	exit 0
 }
 
