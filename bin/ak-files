@@ -1,12 +1,43 @@
 #!/bin/bash
 # The following creates a mixtape data message
 # We can extend it by calling the pack_z_block.sh mixtape/add data
+ZFILESDIR="$WORKDIR/files"
+TEMP="/tmp/aktmp"
+if [ ! -d $ZFILESDIR ]; then
+	mkdir $ZFILESDIR
+	cd $ZFILESDIR
+	git init
+else
+	logthis "error $ZFILESDIR not found"
+fi
+tempassin(){
+	if [ ! -z $1 ];
+	then
+		TEMPASSIN="$1"
+	else
+		TIMESTAMP="$(date -u +%s)"
+		TEMPASSIN="/tmp/aktmp_$TIMESTAMP"
+	fi
+	if [ ! -d $TEMPASSIN ]; then
+		mkdir $TEMPASSIN
+	fi
+	cd $TEMPASSIN
+	echo "$TEMPASSIN"
+
+}
 
 usage(){
 	title
 	echo "$0 - file"
 }
 
+add(){
+    PWD="$(pwd)"
+    FILE="$PWD/$1"
+    main
+    cat $PWD/data | json_pp
+    pack_z_block file/add $PWD/data
+}
 main(){
     echo "Adding $FILE"
 
@@ -34,12 +65,11 @@ title(){
 }
 
 
-if [ ! -z $1 ];
-then
-    PWD="$(pwd)"
-    FILE="$PWD/$1"
-    main
-    cat $PWD/data | json_pp
-    pack_z_block file/add $PWD/data
+if [ ! -z $1 ]; then
+	case $1 in
+		help) usage; exit;;
+		add) add $2; exit;;
+		*) usage; exit;;
+	esac
 else usage
 fi
