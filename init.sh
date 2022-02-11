@@ -11,7 +11,7 @@ if [[ ! -d $DATADIR ]]; then mkdir $DATADIR ;fi
 if [[ ! -d $ARCHIVESDIR ]]; then mkdir $ARCHIVESDIR ;fi
 if [[ ! -f $LOGSFILE ]]; then touch $LOGSFILE ;fi
 if [[ ! -f $GENESIS ]] ; then touch $GENESIS;fi
-if [[ ! -f $ZGENESIS ]] ; then echo "$(ipfs add -q $GENESIS)" > $ZGENESIS;fi
+if [[ -f $ZGENESIS ]] ; then echo "$(ipfs add -q $GENESIS)" > $ZGENESIS;fi
 if [[ ! -f $ZCHAIN ]] ; then echo "$(ipfs key gen zchain)" > $ZCHAIN;fi
 if [[ ! -f $ZLATEST ]] ; then cp $ZGENESIS $ZLATEST;fi
 if [[ ! -f $ZCHAINASC ]] ; then gpg -bao $ZCHAINASC $ZCHAIN;fi
