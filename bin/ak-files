@@ -41,12 +41,33 @@ main(){
     FILENAME="$1"
     CRP="$2"
     echo "Adding $FILENAME"
+    logthis "Switching to tmp folder..."
     TEMPASSIN="$(tempassin)"
     cd $TEMPASSIN
+    if [ $? == 0 ]; then
+	    logthis "Success"
+    else
+	    logthis "Error with tmp folder"
+	    exit 5
+    fi
+    logthis "Copying $1 to $TEMPASSIN"
     cp $2/$1 $TEMPASSIN/$1
-    FILE="$TEMPASSIN/$1"
-    FILE_IPFS_HASH=$(ipfs add -q $FILE)
+    if [ $? == 0 ]; then
+	    logthis "Copied successfully"
+    else
+	    logthis "Error copying..."
+    fi
 
+    FILE="$TEMPASSIN/$1"
+
+    logthis "Adding $FILE to IPFS..."
+    FILE_IPFS_HASH=$(ipfs add -q $FILE)
+    if [ $? == 0 ]; then
+	    logthis "done"
+    else
+	    logthis "error"
+    fi
+    logthis "Signing..."
     SIGN_FILE=$FILE".asc"
     gpg2 --detach-sign --sign-with $FINGERPRINT --armor --output $SIGN_FILE $FILE
 
