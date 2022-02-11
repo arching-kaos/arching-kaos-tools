@@ -18,13 +18,29 @@ if [[ ! -f $ZCHAINASC ]] ; then gpg -bao $ZCHAINASC $ZCHAIN;fi
 if [[ ! -f $ZZCHAIN ]] ; then echo $(ipfs add -q $ZCHAINASC) > $ZZCHAIN;fi
 if [[ ! -f $GENESISASC ]] ; then gpg -bao $GENESISASC $GENESIS;fi
 if [[ ! -f $ZGENESISASC ]] ; then echo $(ipfs add -q $GENESISASC) > $ZGENESISASC;fi
+echo "Checking for /zarchive in IPFS FS..."
 ipfs files ls /zarchive > /dev/null 2>&1
 if [ $? != 0 ]; then
-	ipfs files mkdir /zarchive
+	ipfs files mkdir /zarchive > /dev/null 2>&1
+	if [ $? != 0 ]; then
+		echo "Error"
+	else
+		echo "Created"
+	fi
+else
+	echo "...Found"
 fi
+echo "Looking for /zlatest..."
 ipfs files stat /zlatest > /dev/null 2>&1
 if [ $? != 0 ]; then
 	ipfs files cp /ipfs/$(cat $ZGENESIS) /zlatest
+	if [ $? != 0 ]; then
+		echo "Problem copying $ZGENESIS to /zlatest"
+	else
+		echo "Success"
+	fi
+else
+	echo "...Found"
 fi
 
 # TODO GPG/PGP setup
