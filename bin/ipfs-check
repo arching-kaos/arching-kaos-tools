@@ -1,6 +1,6 @@
 #!/bin/bash
 logit(){
-	logthis "ipfs-check" "$1"
+	logthis "ipfs-check: $1"
 }
 
 
