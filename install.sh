@@ -37,6 +37,6 @@ else
 	source $HOME/$HAK/rc;
 fi
 sh ipfs-check-install-setup-init-update
-ipfs init
 source config.sh
+source $HOME/$SHELLRC
 sh init.sh
