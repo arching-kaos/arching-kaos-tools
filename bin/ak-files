@@ -32,15 +32,19 @@ usage(){
 }
 
 add(){
-    PWD="$(pwd)"
-    FILE="$PWD/$1"
-    main
+    CRP="$(pwd)"
+    FILENAME="$1"
+    main $FILENAME $CRP
     cat $PWD/data | json_pp
     pack_z_block file/add $PWD/data
 }
 main(){
-    echo "Adding $FILE"
-
+    FILENAME="$1"
+    CRP="$2"
+    echo "Adding $FILENAME"
+    tempassin
+    cp $2/$1 $TEMPASSIN/$1
+    FILE="$TEMPASSIN/$1"
     FILE_IPFS_HASH=$(ipfs add -q $FILE)
 
     SIGN_FILE=$FILE".asc"
