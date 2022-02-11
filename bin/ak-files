@@ -37,6 +37,12 @@ add(){
     main $FILENAME $CRP
     cat $PWD/data | json_pp
     pack_z_block file/add $PWD/data
+    if [ $? == 0 ]
+    then
+	    echo "cool"
+    else
+	    echo "not?"
+    fi
 }
 main(){
     FILENAME="$1"
