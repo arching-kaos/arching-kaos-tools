@@ -36,18 +36,13 @@ add(){
     FILENAME="$1"
     main $FILENAME $CRP
     cat $TEMPASSIN/data | json_pp
-    if [ $? == 0 ]
-    then
-	    echo "cool"
-    else
-	    echo "not?"
-    fi
 }
 main(){
     FILENAME="$1"
     CRP="$2"
     echo "Adding $FILENAME"
-    tempassin
+    TEMPASSIN=tempassin
+    cd $TEMPASSIN
     cp $2/$1 $TEMPASSIN/$1
     FILE="$TEMPASSIN/$1"
     FILE_IPFS_HASH=$(ipfs add -q $FILE)
@@ -66,7 +61,13 @@ main(){
 }
 EOF
 
-    pack_z_block file/add $TEMPASSIN/data
+    pack_z_block files/add $TEMPASSIN/data
+    if [ $? == 0 ]
+    then
+	    echo "cool"
+    else
+	    echo "not?"
+    fi
 }
 
 title(){
