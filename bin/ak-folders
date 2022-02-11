@@ -90,7 +90,7 @@ main(){
 {
     "timestamp":"$(date -u +%s)",
     "foldername":"$FOLDERNAME",
-    "ipfs":"$FOLDER_IPFS_HASH",
+    "ipfs":"$FOLDER_IPFS_HASH"
 }
 EOF
 
