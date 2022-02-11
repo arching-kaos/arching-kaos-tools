@@ -36,7 +36,6 @@ add(){
     FILENAME="$1"
     main $FILENAME $CRP
     cat $TEMPASSIN/data | json_pp
-    pack_z_block file/add $TEMPASSIN/data
     if [ $? == 0 ]
     then
 	    echo "cool"
@@ -58,7 +57,7 @@ main(){
 
     SIGNATURE=$(ipfs add -q $SIGN_FILE)
 
-    cat > data <<EOF
+    cat > $TEMPASSIN/data <<EOF
 {
     "timestamp":"$(date -u +%s)",
     "filename":"$FILE",
@@ -67,6 +66,7 @@ main(){
 }
 EOF
 
+    pack_z_block file/add $TEMPASSIN/data
 }
 
 title(){
