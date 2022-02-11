@@ -12,10 +12,6 @@ reset (){
 	cp $ZGENESIS $ZLATEST
 	if [ $? != 0 ]; then exit 1; fi
 
-	echo "Publishing new (reset) ZLATEST"
-	ipfs name publish --key=zchain /ipfs/$(cat $ZLATEST)
-	if [ $? != 0 ]; then exit 1; fi
-
 	echo "Make sure /zarchive folder exists within IPFS FS"
 	ipfs files mkdir /zarchive
 	if [ $? != 0 ]; then echo "Folder already there"; fi
@@ -33,6 +29,10 @@ reset (){
 	ipfs files cp /ipfs/$CZLATEST /zlatest
 	if [ $? != 0 ]; then exit 1; fi
 
+	echo "Publishing new (reset) ZLATEST"
+	ipfs name publish --key=zchain /ipfs/$(cat $ZLATEST)
+	if [ $? != 0 ]; then exit 1; fi
+	
 	echo "Reset was successful"
 	exit 0
 }
