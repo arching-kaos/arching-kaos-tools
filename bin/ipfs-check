@@ -1,0 +1,17 @@
+#!/bin/bash
+logit(){
+	logthis "ipfs-check" $1
+}
+
+
+ipfs files ls /zarchive
+if [ $? != 0 ]; then logit "/zarchive is missing" ; fi
+
+ipfs files ls /zlatest
+if [ $? != 0 ]; then logit "/zlatest is missing" ; fi
+
+ipfs key list | zchain
+if [ $? != 0 ]; then logit "zchain key is missing" ; fi
+
+ipfs key list | ak-config 
+if [ $? != 0 ]; then logit "ak-config key is missing" ; fi
