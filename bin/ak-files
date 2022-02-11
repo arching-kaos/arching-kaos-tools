@@ -41,7 +41,7 @@ main(){
     FILENAME="$1"
     CRP="$2"
     echo "Adding $FILENAME"
-    TEMPASSIN=tempassin
+    TEMPASSIN="$(tempassin)"
     cd $TEMPASSIN
     cp $2/$1 $TEMPASSIN/$1
     FILE="$TEMPASSIN/$1"
@@ -55,7 +55,7 @@ main(){
     cat > $TEMPASSIN/data <<EOF
 {
     "timestamp":"$(date -u +%s)",
-    "filename":"$FILE",
+    "filename":"$FILENAME",
     "ipfs":"$FILE_IPFS_HASH",
     "detach":"$SIGNATURE"
 }
