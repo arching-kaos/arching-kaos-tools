@@ -11,7 +11,23 @@ ipfs files ls /zlatest
 if [ $? != 0 ]; then logit "/zlatest is missing" ; fi
 
 ipfs key list | grep zchain
-if [ $? != 0 ]; then logit "zchain key is missing" ; fi
+if [ $? != 0 ]; then
+	logit "zchain key is missing" 
+	ipfs key gen zchain > $ZCHAIN
+	if [ $? != 0 ]; then
+		logit "zchain fails to create"
+	else
+		logit "zchain created"
+	fi
+fi
 
-ipfs key list | grep ak-config 
-if [ $? != 0 ]; then logit "ak-config key is missing" ; fi
+ipfs key list | grep ak-config
+if [ $? != 0 ]; then
+       	logit "ak-config key is missing" 
+	ipfs key gen ak-config
+	if [ $? != 0 ]; then
+		logit "ak-config fails to create"
+	else
+		logit "ak-config created"
+	fi
+fi
