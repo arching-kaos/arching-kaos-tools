@@ -35,8 +35,8 @@ add(){
     CRP="$(pwd)"
     FILENAME="$1"
     main $FILENAME $CRP
-    cat $PWD/data | json_pp
-    pack_z_block file/add $PWD/data
+    cat $TEMPASSIN/data | json_pp
+    pack_z_block file/add $TEMPASSIN/data
     if [ $? == 0 ]
     then
 	    echo "cool"
