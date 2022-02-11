@@ -69,7 +69,7 @@ main(){
     fi
     logthis "Signing..."
     SIGN_FILE=$FILENAME".asc"
-    gpg2 --detach-sign --sign-with $FINGERPRINT --armor --output $SIGN_FILE $TEMPASSIN/$FILE
+    gpg2 --detach-sign --sign-with $FINGERPRINT --armor --output $SIGN_FILE $FILE
     if [ $? == 0 ]; then
 	    logthis "Signed"
     else
