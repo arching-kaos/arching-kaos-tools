@@ -93,12 +93,17 @@ main(){
 }
 EOF
 
+echo "Printing data..."
+cat $TEMPASSIN/data
+echo "Publishing..."
+
     pack_z_block files/add $TEMPASSIN/data
     if [ $? == 0 ]
     then
 	    echo "cool"
     else
 	    echo "not?"
+	    exit 2
     fi
 }
 
