@@ -21,7 +21,7 @@ main(){
 {
     "timestamp":"$(date -u +%s)",
     "filename":"$FILE",
-    "ipfs":"$IPFS_HASH",
+    "ipfs":"$FILE_IPFS_HASH",
     "detach":"$SIGNATURE"
 }
 EOF
@@ -40,6 +40,6 @@ then
     FILE="$PWD/$1"
     main
     cat $PWD/data | json_pp
-    # sh pack_z_block.sh mixtape/add $PWD/data
+    pack_z_block file/add $PWD/data
 else usage
 fi
