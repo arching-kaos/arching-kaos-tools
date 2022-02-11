@@ -1,0 +1,45 @@
+#!/bin/bash
+# The following creates a mixtape data message
+# We can extend it by calling the pack_z_block.sh mixtape/add data
+
+usage(){
+	title
+	echo "$0 - file"
+}
+
+main(){
+    echo "Adding $FILE"
+
+    FILE_IPFS_HASH=$(ipfs add -q $FILE)
+
+    SIGN_FILE=$FILE".asc"
+    gpg2 --detach-sign --sign-with $FINGERPRINT --armor --output $SIGN_FILE $FILE
+
+    SIGNATURE=$(ipfs add -q $SIGN_FILE)
+
+    cat > data <<EOF
+{
+    "timestamp":"$(date -u +%s)",
+    "filename":"$FILE",
+    "ipfs":"$IPFS_HASH",
+    "detach":"$SIGNATURE"
+}
+EOF
+
+}
+
+title(){
+    echo "File block creator"
+    echo "=================="
+}
+
+
+if [ ! -z $1 ];
+then
+    PWD="$(pwd)"
+    FILE="$PWD/$1"
+    main
+    cat $PWD/data | json_pp
+    # sh pack_z_block.sh mixtape/add $PWD/data
+else usage
+fi
