@@ -1,0 +1,124 @@
+#!/bin/bash
+# The following creates a mixtape data message
+# We can extend it by calling the pack_z_block.sh mixtape/add data
+ZFOLDERSDIR="$WORKDIR/folders"
+TEMP="/tmp/aktmp"
+if [ ! -d $ZFOLDERSDIR ]; then
+	mkdir $ZFOLDERSDIR
+	cd $ZFOLDERSDIR
+	git init
+else
+	logthis "error $ZFOLDERSDIR not found"
+fi
+tempassin(){
+	if [ ! -z $1 ];
+	then
+		TEMPASSIN="$1"
+	else
+		TIMESTAMP="$(date -u +%s)"
+		TEMPASSIN="/tmp/aktmp_$TIMESTAMP"
+	fi
+	if [ ! -d $TEMPASSIN ]; then
+		mkdir $TEMPASSIN
+	fi
+	cd $TEMPASSIN
+	echo "$TEMPASSIN"
+
+}
+
+usage(){
+	title
+	echo "$0 - folder"
+}
+
+add(){
+    CRP="$(pwd)"
+    FOLDERNAME="$1"
+    main $FOLDERNAME $CRP
+    cat $TEMPASSIN/data | json_pp
+}
+main(){
+    FOLDERNAME="$1"
+    CRP="$2"
+    echo "Adding $FOLDERNAME"
+    logthis "Switching to tmp folder..."
+    TEMPASSIN="$(tempassin)"
+    cd $TEMPASSIN
+    if [ $? == 0 ]; then
+	    logthis "Success"
+    else
+	    logthis "Error with tmp folder"
+	    exit 5
+    fi
+    logthis "Copying $1 to $TEMPASSIN"
+    cp -r $2/$1 $TEMPASSIN/$1
+    if [ $? == 0 ]; then
+	    logthis "Copied successfully"
+    else
+	    logthis "Error copying..."
+    fi
+
+    FOLDER="$TEMPASSIN/$1"
+
+    logthis "Adding $FOLDER to IPFS..."
+    FOLDER_IPFS_HASH=$(ipfs add -rQ $FOLDER)
+    if [ $? == 0 ]; then
+	    logthis "done"
+    else
+	    logthis "error"
+    fi
+    logthis "Folders are not signing..."
+
+#    NOT NEEDED HERE
+#    SIGN_FOLDER=$FOLDERNAME".asc"
+#    gpg2 --detach-sign --sign-with $FINGERPRINT --armor --output $SIGN_FOLDER $FOLDER
+#    if [ $? == 0 ]; then
+#	    logthis "Signed"
+#    else
+#	    logthis "Error while signing"
+#    fi
+#
+#    logthis "Adding signature to IPFS"
+#    SIGNATURE=$(ipfs add -q $TEMPASSIN/$SIGN_FOLDER)
+#    if [ $? == 0 ]; then
+#	    logthis "Added"
+#    else
+#	    logthis "Error while adding"
+#    fi
+
+    cat > $TEMPASSIN/data <<EOF
+{
+    "timestamp":"$(date -u +%s)",
+    "foldername":"$FOLDERNAME",
+    "ipfs":"$FOLDER_IPFS_HASH",
+}
+EOF
+
+echo "Printing data..."
+cat $TEMPASSIN/data
+echo "Publishing..."
+
+    pack_z_block folders/add data
+    if [ $? == 0 ]
+    then
+	    echo "cool"
+    else
+	    echo "not?"
+	    exit 2
+    fi
+}
+
+title(){
+    echo "Folder block creator"
+    echo "===================="
+}
+
+
+if [ ! -z $1 ]; then
+	case $1 in
+		help) usage; exit;;
+		add) add $2; exit;;
+		*) usage; exit;;
+	esac
+else usage
+fi
