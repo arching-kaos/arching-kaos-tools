@@ -6,9 +6,11 @@
 #entrance="QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH"
 # End of tests
 
-if [ ! -z "$1" ]
+if [ ! -z "$1" ] && [ "$1" == "-n" ]
 then
-	echo """ #TODO Start from specific zblock """
+	entrance="$(ipns-resolve $2)"
+elif [ ! -z "$1" ]
+then
 	entrance="$1"
 else
 	# By default we enter from the latest block

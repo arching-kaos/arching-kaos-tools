@@ -1,0 +1,3 @@
+#!/bin/bash
+ipfs name resolve $1 | sed -e 's/\/ipfs\///'
+
