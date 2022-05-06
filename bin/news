@@ -29,7 +29,7 @@ tempassin(){
 }
 create(){
 	tempassin $TEMP
-	pwd
+	curpath="$(pwd)"
 	export NEWS_FILE="$(date +%Y%m%d_%H%M%S)"
 	vi $NEWS_FILE
 	echo "Renaming..."
@@ -38,7 +38,7 @@ create(){
 	IPFS_FILE=$(ipfs add -q $NEWS_FILE)
 	mv $NEWS_FILE $ZNEWSDIR/$TO_FILE
 	sed -e 's,Qm.*,'"$IPFS_FILE"',g' $ZNEWSDIR/README
-	add $ZNEWSDIR/$TO_FILE
+	add $TO_FILE
 	echo "Adding to git repo..."
 	cd $ZNEWSDIR
 	git add $TO_FILE README
@@ -85,14 +85,14 @@ import(){
 }
 add(){
 	tempassin
-	if [ -f $1 ]; then
+	if [ -f $ZNEWSDIR/$1 ]; then
 		FILE="$1"
 		echo "Adding news from " $FILE
 		DATETIME=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
-		TITLE=$(head -n 1 $FILE)
-		FILE_IPFS_HASH=$(ipfs add -q $FILE)
+		TITLE=$(head -n 1 $ZNEWSDIR/$FILE)
+		FILE_IPFS_HASH=$(ipfs add -q $ZNEWSDIR/$FILE)
 		FILE_SIGN_FILE=$FILE".asc"
-		gpg --detach-sign --sign-with $FINGERPRINT --armor --output $FILE_SIGN_FILE $FILE
+		gpg --detach-sign --sign-with $FINGERPRINT --armor --output $FILE_SIGN_FILE $ZNEWSDIR/$FILE
 		FILE_SIGNATURE=$(ipfs add -q $FILE_SIGN_FILE)
 		cat > data <<EOF
 {
