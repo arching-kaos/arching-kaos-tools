@@ -9,6 +9,62 @@
 if [ ! -z "$1" ] && [ "$1" == "-n" ]
 then
 	entrance="$(ipns-resolve $2)"
+elif [ ! -z "$1" ] && [ "$1" == "--show-zblocks-only" ]
+then
+	# Enter temp folder
+	TEMPASSIN="/tmp/aktmp_$(date -u +%s)"
+	mkdir $TEMPASSIN
+	cd $TEMPASSIN
+	ccounter=0
+	entrance="$(cat $ZLATEST)"
+	seed="$(cat $ZGENESIS)"
+	echo '['
+	zblock=$entrance
+	while true
+	do
+		if [ "$counter" == 0 ]
+		then
+			echo "["
+		fi
+		counter=$(expr $counter + 1)
+		if [ ! -v $zblock ]
+		then
+			if [ "$zblock" != "$seed" ]
+		then
+			timestamp=''
+			echo '{"zblock":"'$zblock'",'
+			ipfs cat $zblock | json2bash > $TEMPASSIN/tmp-zblock
+			source $TEMPASSIN/tmp-zblock
+			ipfs cat $block | json2bash > $TEMPASSIN/tmp-block
+			source $TEMPASSIN/tmp-block
+			logthis "BLOCK REFERENCED"
+			if [ ! -v $timestamp ]
+			then
+				echo '"timestamp":"'$timestamp'",'
+			fi
+			echo '"block_signature":"'$block_signature'",'
+			echo '"gpg":"'$gpg'",'
+
+			if [ -v $previous ]
+			then
+				echo "Block $block has no previous zblock"
+				exit 3
+			else
+				echo '"previous":"'$previous'"},'
+				zblock=$previous
+			fi
+		elif [ "$zblock" == "$seed" ]
+		then
+			echo '{"genesis":"genesis"}]'
+			logthis "Counter $counter"
+			exit 0
+		fi
+	else
+		echo "Check not passed... No previous IPFS CID"
+		exit 1
+	fi
+done
+
 elif [ ! -z "$1" ]
 then
 	entrance="$1"
