@@ -1,15 +1,28 @@
 #!/bin/bash
-
+usage(){
+	echo "enter - Crawl an arching kaos chain"
+	echo "-----------------------------------"
+	echo "Usage:"
+	echo "	--help, -h				Print this help and exit"
+	echo "	--chain <ipns-link>, -n <ipns-link>	Crawl specified chain"
+	echo "	--show-zblocks-only, -z			Show only zblocks"
+	echo ""
+	echo "Note that combined flags don't work for now"
+	echo "Running with no flags crawls your chain"
+}
 # Start of tests
 #entrance="QmW5WVXCJfhb4peHG6cbEdamC24vZzMX2Vz386vpENh38U"
 #entrance="QmNjQq7GkuXGF8kFT1z2Mv3i4JhY7sBXVUmHDiR1zkQjoE"
 #entrance="QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH"
 # End of tests
-
-if [ ! -z "$1" ] && [ "$1" == "-n" ]
+if [ ! -z "$1" ] && [ "$1" == "-h" ] || [ "$1" == "--help" ]
+then
+	usage
+	exit
+elif [ ! -z "$1" ] && [ "$1" == "-n" ]
 then
 	entrance="$(ipns-resolve $2)"
-elif [ ! -z "$1" ] && [ "$1" == "--show-zblocks-only" ]
+elif [ ! -z "$1" ] && [ "$1" == "--show-zblocks-only" ] || [ "$1" == "-z" ]
 then
 	# Enter temp folder
 	TEMPASSIN="/tmp/aktmp_$(date -u +%s)"
