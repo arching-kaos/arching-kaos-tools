@@ -60,8 +60,9 @@ then
 
 			if [ -v $previous ]
 			then
-				echo "Block $block has no previous zblock"
-				exit 3
+				logthis "Block $block has no previous zblock $previous"
+				echo '"previous":"genesis"},{"genesis":"genesis"}]'
+				exit 0
 			else
 				echo '"previous":"'$previous'"},'
 				zblock=$previous
@@ -170,8 +171,9 @@ do
 			# code 3
 			if [ -v $previous ]
 			then
-				echo "Block $block has no previous zblock"
-				exit 3
+				logthis "Block $block has no previous zblock"
+				echo '"previous":"genesis"},{"genesis":"genesis"}]'
+				exit 0
 
 			# Otherwise, we inform of the sequence
 			else
