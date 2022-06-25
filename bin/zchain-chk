@@ -1,0 +1,145 @@
+#!/bin/bash
+usage(){
+	echo "zchain-chk - Check and fix zchain"
+	echo "---------------------------------"
+	echo "Usage:"
+	echo "	--help, -h				Print this help and exit"
+	echo "	--chain <ipns-link>, -n <ipns-link>	Crawl specified chain"
+	echo "  --fix					#TODO Fix your chain"
+	echo ""
+	echo "Note that combined flags don't work for now"
+	echo "Running with no flags crawls your chain"
+}
+# Start of tests
+#entrance="QmW5WVXCJfhb4peHG6cbEdamC24vZzMX2Vz386vpENh38U"
+#entrance="QmNjQq7GkuXGF8kFT1z2Mv3i4JhY7sBXVUmHDiR1zkQjoE"
+#entrance="QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH"
+# End of tests
+if [ ! -z "$1" ] && [ "$1" == "-h" ] || [ "$1" == "--help" ]
+then
+	usage
+	exit
+elif [ ! -z "$1" ] && [ "$1" == "-n" ] || [ "$1" == "--chain" ]
+then
+	entrance="$(ipns-resolve $2)"
+elif [ ! -z "$1" ]
+then
+	entrance="$1"
+else
+	# By default we enter from the latest block
+	# We can alter this by changing this value
+	entrance="$(cat $ZLATEST)"
+fi
+# We assign the IPFS CIDv0 of an empty file as this is used
+# as our GENESIS block, hence the "seed" that the tree grows
+# from.
+seed="$(cat $ZGENESIS)"
+
+# We assume that we found the entrance inside a block, hence
+# ZBLOCK is labeled as previous
+zblock="$entrance"
+
+# Enter temp folder
+TEMPASSIN="/tmp/aktmp_$(date -u +%s)"
+mkdir $TEMPASSIN
+cd $TEMPASSIN
+counter=0
+# The loop
+# We break the loop from inside the loop
+while true
+do
+	if [ $counter == 0 ]
+	then
+		echo 'Start checking'
+	fi
+	counter=$(expr $counter + 1)
+	# Check if $zblock exists as variable
+	if [ ! -v $zblock ]
+	then
+		# Check if it is not our seed cause if it is we skip this part
+		if [ "$zblock" != "$seed" ]
+		then
+			# Reset timestamp since it's introduced later
+			timestamp=''
+			# Announce to stdout which ZBLOCK is being read at the moment
+			logthis "Examining $zblock"
+			#echo'{"zblock":"'$zblock'",'
+
+			# We create files named after each ZBLOCK IPFS CID for later
+			# reference. Files are empty.
+			touch $ZBLOCKDIR/$zblock
+			logthis "Created reference"
+
+			# We concatenate the zblock's contents, pipe them through filter
+			# json2bash and output them to tmp-file
+			ipfs cat $zblock | json2bash > $TEMPASSIN/tmp-zblock
+			logthis "ZBLOCK $zblock READ"
+
+			# Supposingly you are on a safe environment and you only have
+			# access to your chain, I would consider mild secure to source
+			# the files into your bash.
+			# File an issue/pull request if you think it can be done better!!
+			source $TEMPASSIN/tmp-zblock
+			logthis "ZBLOCK SOURCED"
+
+			# Same as above applies to BLOCK and DATA subparts of each ZBLOCK
+			# BLOCKS
+			#echo'"block":"'$block'",'
+			ipfs cat $block | json2bash > $TEMPASSIN/tmp-block
+			source $TEMPASSIN/tmp-block
+			logthis "BLOCK $block SOURCED"
+			touch $BLOCKDIR/$block
+			logthis "BLOCK REFERENCED"
+			module="$(echo $action | sed -e 's/\// /g' | awk '{ print $1 }')"
+			logthis "DATA is $module module."
+			command="$(echo $action | sed -e 's/\// /g' | awk '{ print $2 }')"
+			logthis "COMMAND is $command"
+			if [ ! -v $timestamp ]
+			then
+				echo "$timestamp : $zblock -> $block -> $previous"
+			fi
+			#echo'"block_signature":"'$block_signature'",'
+			#echo'"detach":"'$detach'",'
+			#echo'"module":"'$module'",'
+			#echo'"action":"'$command'",'
+			#echo'"gpg":"'$gpg'",'
+			#profile show $data
+			# DATA (but we don't source it's stuff)
+			# Only print to stdout
+			#ipfs cat $data
+			touch $DATADIR/$data
+
+			# Now, since we sourced the BLOCK to our terminal, we can search
+			# for $previous variable. In case we don't find one, we exit with
+			# code 0
+			if [ -v $previous ]
+			then
+				logthis "Block $block has no previous zblock"
+				echo "Chain with no genesis"
+				#echo'"previous":"genesis"},{"genesis":"genesis"}]'
+				exit 0
+
+			# Otherwise, we inform of the sequence
+			else
+				##echo"$zblock after $previous"
+				#echo'"previous":"'$previous'"},' 
+				zblock=$previous
+			fi
+
+		# Now check if it is equal to the seed
+		# which apparently means we reached the seed.
+		elif [ "$zblock" == "$seed" ]
+		then
+			##echo"$zblock is GENESIS block"
+			##echo'"'$zblock'":{ "GENESIS":"GENESIS"}] '
+			#echo'{"genesis":"genesis"}]'
+			echo "Chain is OK with GENESIS block = $seed"
+			logthis "Counter $counter"
+			exit 0
+		fi
+	# And finally, if nothing is there exit with error
+	else 
+		#echo"Check not passed... No previous IPFS CID"
+		exit 1
+	fi
+done
