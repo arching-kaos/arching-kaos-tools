@@ -4,13 +4,24 @@ logit(){
 }
 
 
-ipfs files ls /zarchive
-if [ $? != 0 ]; then logit "/zarchive is missing" ; fi
+ipfs files ls /zarchive > /dev/null
+if [ $? != 0 ]
+then
+	logit "/zarchive is missing" 
+else 
+	logit "/zarchive OK"
+fi
 
-ipfs files ls /zlatest
-if [ $? != 0 ]; then logit "/zlatest is missing" ; fi
 
-ipfs key list | grep zchain
+ipfs files ls /zlatest > /dev/null
+if [ $? != 0 ]
+then
+	logit "/zlatest is missing" 
+else
+	logit "/zlatest is OK"
+fi
+
+ipfs key list | grep zchain > /dev/null
 if [ $? != 0 ]; then
 	logit "zchain key is missing" 
 	ipfs key gen zchain > $ZCHAIN
@@ -19,9 +30,11 @@ if [ $? != 0 ]; then
 	else
 		logit "zchain created"
 	fi
+else
+	logit "zchain is there"
 fi
 
-ipfs key list | grep ak-config
+ipfs key list | grep ak-config > /dev/null
 if [ $? != 0 ]; then
        	logit "ak-config key is missing" 
 	ipfs key gen ak-config
@@ -30,4 +43,6 @@ if [ $? != 0 ]; then
 	else
 		logit "ak-config created"
 	fi
+else
+	logit "ak-config is there"
 fi
