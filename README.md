@@ -4,6 +4,8 @@ Arching Kaos Tools
 Description
 -----------
 
+Warning: this is a bunch of tools that may not make sense. :)
+
 This is an installable repo which provides various tools for running Arching Kaos and using it.
 
 Requirements
@@ -40,18 +42,37 @@ Examples
 
 You could use ZCHAIN with NEWS model. Or MIXTAPE model, or make your own.
 ``` bash
-news add
+$ news create
 ```
 
 This would pop up a vim editor for you to write a news article or whatever is text or markdown format with a title.
 
 Saving the file, will save it locally, add it to IPFS, sign it, pack detached signature with metadata on a JSON object. Then a block will be created packing your GPG public key, the news/add action with the JSON object and a detached signature of this, timestamp and finally an entry for the previous *zblock*. After that (!) we finally write this as a json object, add it to IPFS, sign it and pack a *zblock*. That, is published over our IPNS zchain key.
 
+Other options... let's try help! 
+
+``` console
+$ news help
+ak-news-cli
+--------------
+#TODO
+All you need to know is that there are two options available:
+help            Prints this help message
+index           Prints an indexed table of your news files
+import <file>   #TODO
+add <file>      Creates a data file from the news file you point to
+create          Vim is going to pop up, you will write and save your
+                  newsletter and it's going to be saved
+```
+
+Clearly there is a TODO item. Import is not working so avoid it, or fix it.
+Add is nice, you can add an already existing file directly. `news` is the second module after `mixtape`. Both modules need refactoring but they work at a level that someone can be productive with these tools.  
+
 ### Explore chains ( `enter` )
 
 You can view your zchain as a JSON object using `enter`. There are some flags in order to either view other zchains or change the depth of view ( includes or ignores data object and action ).
 
-``` bash
+``` console
 $ enter -h
 enter - Crawl an arching kaos chain
 -----------------------------------
