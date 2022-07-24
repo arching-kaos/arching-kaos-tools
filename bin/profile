@@ -9,9 +9,9 @@ if [ ! -d $ZPROFILEDIR ]; then
 	echo "Qmetc" >> README
 	git add README
 	git commit -m "Initiated profile repository"
-	logthis "zprofiledir created along with git repo"
+	logthis "[INFO]" "zprofiledir created along with git repo"
 else
-	logthis "zprofiledir found"
+	logthis "[INFO]" "zprofiledir found"
 fi
 tempassin(){
 	if [ ! -z $1 ]
@@ -32,7 +32,7 @@ tempassin(){
 show(){
 	if [ ! -z $1 ]
 	then
-		logthis "Working with $1"
+		logthis "[INFO]" "Working with $1"
 		echo '"data":"'$1'",'
 		echo '"'$1'":'$(ipfs cat $1)','
 		#ipfs cat $1
