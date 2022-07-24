@@ -32,37 +32,38 @@ Install
 cd arching-kaos-tools
 sh install.sh
 ```
-Defaults
---------
-
-Installs binaries and scripts on your $HOME folder.
-
-TODO
-----
-
- - [x] - Install on zsh (export ~/bin to $PATH in .zshrc file)
- - [x] - Install on bash (the same but to .bashrc file
- - [ ] - Make a useful tool of this
-
-Tools
-
-- IPFS tool (installer, checker, updater, swarm settings)
- - [x] - Installer
- - [x] - Checker
- - [x] - Updater
- - [x] - Swarm setting
-
-- Rename IPFS tool to storage or something
- - [ ] - Modular (call per command)
- - [ ] - installer
- - [ ] - checker
- - [ ] - updater
- - [ ] - swarm setting
 
 Examples
 --------
 
+### Add a news article ( `news add` )
+
 You could use ZCHAIN with NEWS model. Or MIXTAPE model, or make your own.
+``` bash
+news add
+```
+
+This would pop up a vim editor for you to write a news article or whatever is text or markdown format with a title.
+
+Saving the file, will save it locally, add it to IPFS, sign it, pack detached signature with metadata on a JSON object. Then a block will be created packing your GPG public key, the news/add action with the JSON object and a detached signature of this, timestamp and finally an entry for the previous *zblock*. After that (!) we finally write this as a json object, add it to IPFS, sign it and pack a *zblock*. That, is published over our IPNS zchain key.
+
+### Explore chains ( `enter` )
+
+You can view your zchain as a JSON object using `enter`. There are some flags in order to either view other zchains or change the depth of view ( includes or ignores data object and action ).
+
+``` bash
+$ enter -h
+enter - Crawl an arching kaos chain
+-----------------------------------
+Usage:
+        --help, -h                              Print this help and exit
+        --chain <ipns-link>, -n <ipns-link>     Crawl specified chain
+        --show-zblocks-only, -z                 Show only zblocks
+	--no-verify, -nV                        Don't verify signatures
+
+Note that combined flags don't work for now
+Running with no flags crawls your chain
+```
 
 Podman (or Docker)
 ------------------
