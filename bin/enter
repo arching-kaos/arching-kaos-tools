@@ -6,7 +6,7 @@ usage(){
 	echo "	--help, -h				Print this help and exit"
 	echo "	--chain <ipns-link>, -n <ipns-link>	Crawl specified chain"
 	echo "	--show-zblocks-only, -z			Show only zblocks"
-	echo "  --verify, -V				Verify a chain"
+	echo "  --no-verify, -nV			Don't verify signatures"
 	echo ""
 	echo "Note that combined flags don't work for now"
 	echo "Running with no flags crawls your chain"
@@ -16,14 +16,14 @@ usage(){
 #entrance="QmNjQq7GkuXGF8kFT1z2Mv3i4JhY7sBXVUmHDiR1zkQjoE"
 #entrance="QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH"
 # End of tests
-verify=0
+verify=1
 if [ ! -z "$1" ] && [ "$1" == "-h" ] || [ "$1" == "--help" ]
 then
 	usage
 	exit
-elif [ ! -z "$1" ] && [ "$1" == "-V" ] || [ "$1" == "--verify" ]
+elif [ ! -z "$1" ] && [ "$1" == "-nV" ] || [ "$1" == "--no-verify" ]
 then
-	verify=1
+	verify=0
 	entrance="$(cat $ZLATEST)"
 elif [ ! -z "$1" ] && [ "$1" == "-n" ]
 then
@@ -177,19 +177,36 @@ do
 						logthis "[INFO]" "$gpg imported."
 					else
 						logthis "[ERROR]" "Could not import GPG key: $gpg ."
+						exit 1
 					fi
 				else
 					logthis "[ERROR]" "Could not get GPG key: $gpg ."
+					exit 1
 				fi
 				ipfs get $block_signature > /dev/null 2>&1 
-				mv $block_signature $block.asc
+				if [ "$?" == 0 ]
+				then
+					mv $block_signature $block.asc
+					logthis "[GPG]" "Block signature downloaded"
+				else
+					logthis "[ERROR]" "Error while getting $block_signature for $block"
+					exit 1
+				fi
 				ipfs get $block > /dev/null 2>&1
+				if [ "$?" == 0 ]
+				then
+					logthis "[INFO]" "Downloaded block $block."
+				else
+					logthis "[ERROR]" "Could not get $block block"
+					exit 1
+				fi
 				gpg2 --verify $block.asc > /dev/null 2>&1
 				if [ "$?" == 0 ]
 				then
 					logthis "[INFO]" "$gpg signature of $block is verified."
 				else
 					logthis "[ERROR]" "Could not verify $block with GPG key $gpg."
+					exit 1
 				fi
 			fi
 			profile show $data
@@ -199,17 +216,18 @@ do
 			touch $DATADIR/$data
 
 			# Now, since we sourced the BLOCK to our terminal, we can search
-			# for $previous variable. In case we don't find one, we exit with
-			# code 3
+			# for $previous variable. In case we don't find one, we append one
+			# and we exit.
 			if [ -v $previous ]
 			then
-				logthis "[ERROR]" "Block $block has no previous zblock"
+				logthis "[ERROR]" "Block $block has no previous zblock, appending pseudo genesis to exit gracefully."
 				echo '"previous":"genesis"},{"genesis":"genesis"}]'
 				exit 0
 
 			# Otherwise, we inform of the sequence
 			else
 				#echo "$zblock after $previous"
+				logthis "[INFO]" "Found a previous block: $previous"
 				echo '"previous":"'$previous'"},' 
 				zblock=$previous
 			fi
@@ -221,7 +239,7 @@ do
 			#echo "$zblock is GENESIS block"
 			#echo '"'$zblock'":{ "GENESIS":"GENESIS"}] '
 			echo '{"genesis":"genesis"}]'
-			logthis "[INFO]" "Counter $counter"
+			logthis "[INFO]" "Reached $seed, counted $counter zblocks."
 			exit 0
 		fi
 	# And finally, if nothing is there exit with error
