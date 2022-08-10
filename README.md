@@ -20,6 +20,7 @@ Other shells maybe are working.
 - git (v2.34.1)
 - which (v2.21)
 
+`json_pp` is also used put you cat remove it and change it with `jq`
 Clone
 -----
 
@@ -96,4 +97,24 @@ Use:
 ```
 podman build -f ContainerFile -t arching-kaos-tools .
 ```
+
+TODO
+----
+
+Next things to come are:
+- zblock manipulator to fix wrong previous block references and repack zblocks.
+- zchain rebase-like procedure to move the zblocks to another seed or set another previous block (e.g. join chains)
+- Clean up installation and filesystem usage
+- Log rotate to gzip archives
+- Filters for log searching for IPFS hashes or names
+- Use of IPFS file system to store/pin sub chains, previous chains or other chains
+
+Concepts under thought
+----------------------
+
+- Base chain, derived from personal ones.
+- Daemon to monitor chains' states, update and sign new zblocks.
+- Find a minimum agreement of what is valid or not. (important)
+- Spam defence (e.g. how to protect the network from abuse cases) (important)
+- Reduce size of all parts of chain (stringify JSON) (improvement)
 
