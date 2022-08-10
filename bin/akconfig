@@ -10,6 +10,7 @@ usage(){
 	echo ""
 	echo "	show		Show current configuration (from FileSystem)"
 	echo "	publish		Publish current configuration"
+	echo "	get-published	Get published ak-config (from IPFS)"
 	echo ""
 	exit 0
 }
@@ -30,6 +31,10 @@ publish(){
 	rm tmpfile
 }
 
+published(){
+	ipfs cat $(get_akid)
+}
+
 # We will be using our public key also to put it in the block later
 KEY="tmp-gpg.pub"
 gpg2 --armour --output $KEY --export $FINGERPRINT
@@ -40,6 +45,7 @@ if [ ! -z $1 ]; then
 	case $1 in
 		show) show;exit;;
 		publish) publish;exit;;
+		get-published) published;exit;;
 		*) usage;exit;;
 	esac
 else
