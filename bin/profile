@@ -5,10 +5,10 @@ if [ ! -d $ZPROFILEDIR ]; then
 	mkdir $ZPROFILEDIR
 	cd $ZPROFILEDIR
 	git init
-	echo "Profile repository" > README
-	echo "Qmetc" >> README
-	git add README
-	git commit -m "Initiated profile repository"
+#	echo "Profile repository" > README
+#	echo "Qmetc" >> README
+#	git add README
+#	git commit -m "Initiated profile repository"
 	logthis "[INFO]" "zprofiledir created along with git repo"
 else
 	logthis "[INFO]" "zprofiledir found"
@@ -72,7 +72,7 @@ EOF
 		add $ZPROPERTY_KEY
 		echo "Adding to git repo..."
 		cd $ZPROFILEDIR
-		git add $ZPROPERTY_KEY README
+		git add $ZPROPERTY_KEY
 		git commit -m "Added ${ZPROPERTY_KEY} with ${ZPROPERTY_VALUE}"
 		git clean --force
 	else
