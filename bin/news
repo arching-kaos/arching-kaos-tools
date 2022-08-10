@@ -65,16 +65,18 @@ import(){
 	echo "#TODO"
 	if [ ! -z $1 ]
 	then
-		if [ ! -d $1 ]
+		if [ ! -d "$1" ]
 		then
-			echo "Folder does not exists"
+			echo $1
+			echo "Folder does not exist"
 			exit 4
 		else
 			echo "Folder $1 exists"
 			fl="$(ls -1 $1)"
 			for f in $fl
 			do
-				add $1/$f
+				echo $1 $f
+				add2 "$1/$f"
 			done
 		fi
 	else
@@ -82,6 +84,40 @@ import(){
 		exit 6
 	fi
 	exit 224
+}
+add2(){
+	tempassin
+	if [ -f $1 ]; then
+		FILE="$1"
+		cp $FILE $ZNEWSDIR
+		echo "Adding news from " $FILE
+		DATETIME=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
+		TITLE=$(head -n 1 $FILE)
+		FILE_IPFS_HASH=$(ipfs add -q $FILE)
+		FILE_SIGN_FILE=$FILE".asc"
+		gpg --detach-sign --sign-with $FINGERPRINT --armor --output $FILE_SIGN_FILE $FILE
+		FILE_SIGNATURE=$(ipfs add -q $FILE_SIGN_FILE)
+		cat > data <<EOF
+{
+   "datetime":"$DATETIME",
+   "title":"$TITLE",
+   "filename":"$FILE",
+   "ipfs":"$FILE_IPFS_HASH",
+   "detach":"$FILE_SIGNATURE"
+}
+EOF
+	else
+		echo "File $FILE doesn't exist";
+		exit 2
+	fi
+	pack_z_block "news/add" data
+	if [ $? == 0 ]
+	then
+		echo "News added successfully"
+	else
+		echo "error??"
+		exit 1
+	fi
 }
 add(){
 	tempassin
@@ -133,7 +169,7 @@ if [ ! -z $1 ]; then
 		help) usage; exit;;
 		index) index; exit;;
 		import) import $2; exit;;
-		add) add $2; exit;;
+		add) add2 $2; exit;;
 		create) create; exit;;
 		* ) usage;;
 	esac
