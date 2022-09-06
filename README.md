@@ -8,6 +8,8 @@ Warning: this is a bunch of tools that may not make sense. :)
 
 This is an installable repo which provides various tools for running Arching Kaos and using it.
 
+Changes are mentioned in `git log` of the repo, as well as in ./CHANGELOG file.
+
 Requirements
 ------------
 Some Linx machine which has installed bash or zsh, gpg, wget, curl, git and which.
@@ -19,6 +21,7 @@ Other shells maybe are working.
 - curl (v7.79.1)
 - git (v2.34.1)
 - which (v2.21)
+- jq (v1.6)
 
 `json_pp` is also used put you cat remove it and change it with `jq`
 Clone
@@ -34,6 +37,12 @@ Install
 ```
 cd arching-kaos-tools
 sh install.sh
+```
+Update
+------
+```
+git pull
+./update.sh
 ```
 
 Examples
