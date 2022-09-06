@@ -14,20 +14,27 @@
 # The following example finds kaos@kaos.kaos' GPG fingerprint like this
 # FINGERPRINT="$(gpg2 --list-keys | grep kaos@kaos.kaos -1 | head -n1 | awk '{print $1}')"
 
+PROGRAM="pack_z_block"
+
 # Below, the usage information
 usage(){
-	title
-	echo "$0 - action data_file"
-	echo "Creates and publishes a ZBLOCK based on ACTION and DATA file."
 	echo ""
-	echo "action		 An action for the render to grasp"
-	echo "data_file	  A data file that according to the action is valid"
+	echo "Usage:"
+	echo "$PROGRAM <action> <data_file>"
 	echo ""
+	echo "	Creates and publishes a ZBLOCK based on ACTION and DATA file."
+	echo ""
+	echo "		action		An action for the render to grasp"
+	echo "		data_file	A data file that according to the action is valid"
+	echo ""
+	echo "#TODO:"
+	echo "implement flags to change the inputs so we can manufacture"
+	echo "zblocks directly from IPFS hashes refering to blocks."
 }
 
 main(){
  
-	logthis "We are doing" $ACTION "with content" $MESSAGE
+	logthis "[INFO]" "We are doing" $ACTION "with content" $MESSAGE
 	# We add it to IPFS
 	MESSAGE_HASH=$(ipfs add -q $MESSAGE)
 
@@ -81,11 +88,6 @@ EOF
 	echo $ZBLOCK
 }
 
-title(){
-	echo "AK zblock creator"
-	echo "================="
-}
-
 if [ ! -z $2 ];
 then
 	PWD="$(pwd)"
@@ -94,7 +96,7 @@ then
 	if [ -f "$MESSAGE" ]; then
 		main
 	else
-		logthis "File does not exist. Aborting..."
+		logthis "[ERROR]" "File does not exist. Aborting..."
 		exit 1
 	fi
 
