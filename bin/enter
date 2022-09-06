@@ -7,6 +7,7 @@ usage(){
 	echo "	--chain <ipns-link>, -n <ipns-link>	Crawl specified chain"
 	echo "	--show-zblocks-only, -z			Show only zblocks"
 	echo "  --no-verify, -nV			Don't verify signatures"
+	echo "  <ipfs-link>				Specify IPFS CID for entrance"
 	echo ""
 	echo "Note that combined flags don't work for now"
 	echo "Running with no flags crawls your chain"
@@ -203,7 +204,7 @@ do
 				gpg2 --verify $block.asc > /dev/null 2>&1
 				if [ "$?" == 0 ]
 				then
-					logthis "[INFO]" "$gpg signature of $block is verified."
+					logthis "[GPG]" "$gpg signature of $block is verified."
 				else
 					logthis "[ERROR]" "Could not verify $block with GPG key $gpg."
 					exit 1
