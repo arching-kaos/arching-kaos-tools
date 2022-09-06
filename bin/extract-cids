@@ -1,0 +1,2 @@
+#!/bin/bash
+enter | jq | grep Qm | sed -e 's/^.*Qm/Qm/g' | cut -d '"' -f 1
