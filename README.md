@@ -24,6 +24,7 @@ Other shells maybe are working.
 - jq (v1.6)
 
 `json_pp` is also used put you cat remove it and change it with `jq`
+
 Clone
 -----
 
@@ -90,7 +91,9 @@ Usage:
         --help, -h                              Print this help and exit
         --chain <ipns-link>, -n <ipns-link>     Crawl specified chain
         --show-zblocks-only, -z                 Show only zblocks
-	--no-verify, -nV                        Don't verify signatures
+        --no-verify, -nV                        Don't verify signatures
+        <ipfs-link>                             Specify IPFS CID for entrance
+
 
 Note that combined flags don't work for now
 Running with no flags crawls your chain
