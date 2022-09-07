@@ -8,7 +8,7 @@ Warning: this is a bunch of tools that may not make sense. :)
 
 This is an installable repo which provides various tools for running Arching Kaos and using it.
 
-Changes are mentioned in `git log` of the repo, as well as in ./CHANGELOG file.
+Changes are mentioned in `git log` of the repo, as well as in [CHANGELOG](https://github.com/arching-kaos/arching-kaos-tools/blob/master/CHANGELOG) file.
 
 Requirements
 ------------
