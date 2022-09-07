@@ -1,439 +1,266 @@
-commit 199e8b673fdde520f0501cde0943388d99a83069
-Author: kaotisk <kaotisk@arching-kaos.org>
-Date:   Wed Sep 7 01:00:42 2022 +0300
-
+---
+bd179055cd591fa47f4be21cc08f71195656f789
+Wed Sep 7 13:29:51 2022 +0300
+    Added some checks to make sure zblocks are zblocks and blocks are blocks
+---
+d8ea00662a931b438fa984b12d50387cd9f3c397
+Wed Sep 7 03:10:32 2022 +0300
+    Fixed breaking heading typo, updated enter -h text.
+---
+1a2717207fd47f6c0a3dc4948fb87106504789dd
+Wed Sep 7 01:07:01 2022 +0300
+    Enriched with information, added a dependency, a how-to-update and mentioned a CHANGELOG file.
+---
+e825d716f66013de7837bd82dfdea80a80b15e13
+Wed Sep 7 01:04:52 2022 +0300
+    Added change log in case you don't want to git log yourself
+---
+199e8b673fdde520f0501cde0943388d99a83069
+Wed Sep 7 01:00:42 2022 +0300
     Tool to run after git pull so you can skip relaunching init.sh or install.sh
-
- create mode 100755 update.sh
-
-commit d54132bfd7cc569cfef7beda0860a375625383ea
-Author: kaotisk <kaotisk@arching-kaos.org>
-Date:   Wed Sep 7 00:58:01 2022 +0300
-
+---
+d54132bfd7cc569cfef7beda0860a375625383ea
+Wed Sep 7 00:58:01 2022 +0300
     Tool to calculate the size of a zchain
-
- create mode 100755 bin/calculate-size
-
-commit ae6064bc89a0cbb73d7416bb5103aba42d331f97
-Author: kaotisk <kaotisk@arching-kaos.org>
-Date:   Wed Sep 7 00:53:09 2022 +0300
-
+---
+ae6064bc89a0cbb73d7416bb5103aba42d331f97
+Wed Sep 7 00:53:09 2022 +0300
     Tool to extract all the IPFS CIDs from a zchain
-
- create mode 100755 bin/extract-cids
-
-commit 581d4a14cda6b84a1d0b5bd8a5d40d58f93b554a
-Author: kaotisk <kaotisk@arching-kaos.org>
-Date:   Wed Sep 7 00:52:16 2022 +0300
-
+---
+581d4a14cda6b84a1d0b5bd8a5d40d58f93b554a
+Wed Sep 7 00:52:16 2022 +0300
     Reworked logging and Usage
-
-
-commit 7bb430f171a456a0eb7332886b6cfae0f0737ac9
-Author: kaotisk <kaotisk@arching-kaos.org>
-Date:   Wed Sep 7 00:50:41 2022 +0300
-
+---
+7bb430f171a456a0eb7332886b6cfae0f0737ac9
+Wed Sep 7 00:50:41 2022 +0300
     Removed trailing newline from output
-
-
-commit 325542061f289d1329a0c38db3a34d591aa9e931
-Author: kaotisk <kaotisk@arching-kaos.org>
-Date:   Wed Sep 7 00:49:29 2022 +0300
-
+---
+325542061f289d1329a0c38db3a34d591aa9e931
+Wed Sep 7 00:49:29 2022 +0300
     Added a functionality I forgot to mention in the Usage section, changed a tag of a log message
-
-
-commit c9f0da132ef5af2078fe2245bbf16d1350ae2dfc
-Author: kaotisk <kaotisk@arching-kaos.org>
-Date:   Wed Aug 10 05:25:46 2022 +0300
-
+---
+c9f0da132ef5af2078fe2245bbf16d1350ae2dfc
+Wed Aug 10 05:25:46 2022 +0300
     README update with todo and thoughts
-
-
-commit a3a12739f07be87d2df96671ed437bbb10064ae2
-Author: kaotisk <kaotisk@arching-kaos.org>
-Date:   Wed Aug 10 04:58:17 2022 +0300
-
+---
+a3a12739f07be87d2df96671ed437bbb10064ae2
+Wed Aug 10 04:58:17 2022 +0300
     Some edits to distinguish use cases
-
-
-commit f61aea58a45dec7ac9ed0216895eb032cec42424
-Author: kaotisk <kaotisk@arching-kaos.org>
-Date:   Wed Aug 10 04:40:19 2022 +0300
-
+---
+f61aea58a45dec7ac9ed0216895eb032cec42424
+Wed Aug 10 04:40:19 2022 +0300
     No longer initiating with README file
-
-
-commit d1be63af8bf6683fb0f53ec26991277bf0f4423e
-Author: kaotisk <kaotisk@arching-kaos.org>
-Date:   Wed Aug 10 04:39:14 2022 +0300
-
+---
+d1be63af8bf6683fb0f53ec26991277bf0f4423e
+Wed Aug 10 04:39:14 2022 +0300
     Simple duplication of code
-
-
-commit d6595e3a11736008ce10389ae81e3ea43e53b615
-Author: kaotisk <kaotisk@arching-kaos.org>
-Date:   Wed Aug 10 04:38:09 2022 +0300
-
+---
+d6595e3a11736008ce10389ae81e3ea43e53b615
+Wed Aug 10 04:38:09 2022 +0300
     Added a function to return from IPFS as well
-
-
-commit e894f848a4cee589b3e5fe915ad23e09aedcfd6f
-Author: kaotisk <kaotisk@arching-kaos.org>
-Date:   Mon Jul 25 19:36:19 2022 +0300
-
+---
+e894f848a4cee589b3e5fe915ad23e09aedcfd6f
+Mon Jul 25 19:36:19 2022 +0300
     Comments and reference scripts are a feature and a mechanism. Comments will use reference to create the reference to the zblock we want to comment at, while comments will produce the zblock with our comment only.
-
- create mode 100755 bin/comments
- create mode 100755 bin/reference
-
-commit 57281aea1ddf11ad4fb0543c4c4ba205ee33eee3
-Author: kaotisk <kaotisk@arching-kaos.org>
-Date:   Sun Jul 24 09:45:34 2022 +0300
-
+---
+57281aea1ddf11ad4fb0543c4c4ba205ee33eee3
+Sun Jul 24 09:45:34 2022 +0300
     Updated logging style
-
-
-commit fb478a0780564cf3c80cfc1e8e4c1ea573e8f02e
-Author: kaotisk <kaotisk@arching-kaos.org>
-Date:   Sun Jul 24 08:02:57 2022 +0300
-
+---
+fb478a0780564cf3c80cfc1e8e4c1ea573e8f02e
+Sun Jul 24 08:02:57 2022 +0300
     Added more
-
-
-commit 77ee96aff5b215bab4a8fd567b7aa6b6e6b30961
-Author: kaotisk <kaotisk@arching-kaos.org>
-Date:   Sun Jul 24 07:48:27 2022 +0300
-
+---
+77ee96aff5b215bab4a8fd567b7aa6b6e6b30961
+Sun Jul 24 07:48:27 2022 +0300
     Updated readme
-
-
-commit 7b8baf0e6301b7dbd57e0c0f3433e36d57b3be82
-Author: kaotisk <kaotisk@arching-kaos.org>
-Date:   Sun Jul 24 07:31:52 2022 +0300
-
+---
+7b8baf0e6301b7dbd57e0c0f3433e36d57b3be82
+Sun Jul 24 07:31:52 2022 +0300
     Since we reached gpg verification of block signatures, let's do this the new default for when recursing a zchain. Thoughts?
-
-
-commit de432985d4e2e0bb3b1159173599dd5716bbdee3
-Author: kaotisk <kaotisk@arching-kaos.org>
-Date:   Sat Jul 23 18:03:03 2022 +0300
-
+---
+de432985d4e2e0bb3b1159173599dd5716bbdee3
+Sat Jul 23 18:03:03 2022 +0300
     Takes two arguments, one for type of log entry, error, info for now
-
-
-commit 29cbba119d6c7328a95703a9c365db369f6097d5
-Author: kaotisk <kaotisk@arching-kaos.org>
-Date:   Sat Jul 23 17:59:54 2022 +0300
-
+---
+29cbba119d6c7328a95703a9c365db369f6097d5
+Sat Jul 23 17:59:54 2022 +0300
     GPG verification and an aesthetic patch for logs
     
     - Added gpg verification option (currently works for hosted chain)
     - Refactored the log output
-
-
-commit a22be9abdd594cdb7b3205b99dbebd8c3ebbef2e
-Author: kaotisk <kaotisk@arching-kaos.org>
-Date:   Sat Jun 25 18:29:02 2022 +0300
-
+---
+a22be9abdd594cdb7b3205b99dbebd8c3ebbef2e
+Sat Jun 25 18:29:02 2022 +0300
     Simple check tool for zchain. It makes sure that your blocks are going down to a seed block (default seed: IPFS hash link of an empty file)
-
- create mode 100755 bin/zchain-chk
-
-commit 32bf52722a1c7a4f5d831aca38f5e05510d8aca8
-Author: kaotisk <kaotisk@arching-kaos.org>
-Date:   Sat Jun 25 18:26:13 2022 +0300
-
+---
+32bf52722a1c7a4f5d831aca38f5e05510d8aca8
+Sat Jun 25 18:26:13 2022 +0300
     Simple AK check for IPFS integrations
-
-
-commit 87f2ab23e54896d648ab14c958a631ad8d2f138d
-Author: kaotisk <kaotisk@arching-kaos.org>
-Date:   Sun Jun 19 22:02:35 2022 +0300
-
+---
+87f2ab23e54896d648ab14c958a631ad8d2f138d
+Sun Jun 19 22:02:35 2022 +0300
     Fixed bug that outputs invalid json when first block does not refer to GENESIS. We force an entry on the fly for it.
-
-
-commit 1e016904fa37c4bc3673dbafa4b9f89fd3db3d1d
-Author: kaotisk <kaotisk@arching-kaos.org>
-Date:   Sun Jun 5 01:30:32 2022 +0300
-
+---
+1e016904fa37c4bc3673dbafa4b9f89fd3db3d1d
+Sun Jun 5 01:30:32 2022 +0300
     New flags and help
-
-
-commit 1e965d6723ce0a9371d1166d29b246caf5ba8adf
-Author: kaotisk <kaotisk@arching-kaos.org>
-Date:   Wed May 18 17:50:51 2022 +0300
-
+---
+1e965d6723ce0a9371d1166d29b246caf5ba8adf
+Wed May 18 17:50:51 2022 +0300
     Added --show-zblocks-only
     
     Feature:
             Outputs your local's chain zblocks, with their signatures,
     timestamp, gpg public key and previous zblock. Iterates the whole chain
     and returns a JSON array of these entries sorted from latest to oldest.
-
-
-commit 87f0e0a083bb7e1978cc03a92b304ff545701ebb
-Merge: 3c551c3 01df693
-Author: kaotisk <kaotisk@arching-kaos.org>
-Date:   Fri May 6 07:55:00 2022 +0300
-
+---
+87f0e0a083bb7e1978cc03a92b304ff545701ebb
+Fri May 6 07:55:00 2022 +0300
     fixed news module, added ipns flag on enter module
-
-commit 01df6934a465ed046ce0af746c2d996ea383c876
-Author: kaotisk <kaotisk@arching-kaos.org>
-Date:   Fri May 6 07:46:23 2022 +0300
-
+---
+01df6934a465ed046ce0af746c2d996ea383c876
+Fri May 6 07:46:23 2022 +0300
     Fixed some wrong directory and miscuttings of fields
-
-
-commit 3c551c3f567a3342f3168d08eae52a97bc8b2ed6
-Author: kaotisk <kaotisk@arching-kaos.org>
-Date:   Wed Apr 20 08:33:25 2022 +0300
-
+---
+3c551c3f567a3342f3168d08eae52a97bc8b2ed6
+Wed Apr 20 08:33:25 2022 +0300
     a bit of work on name resolving
-
- create mode 100755 bin/ipns-resolve
-
-commit 2d5df53b1aacc4e5528541cb98bfcf00dffa6c38
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Fri Feb 11 10:45:09 2022 +0200
-
+---
+2d5df53b1aacc4e5528541cb98bfcf00dffa6c38
+Fri Feb 11 10:45:09 2022 +0200
     removed trailing comma
-
-
-commit 700d27bc66169cf0ef38ce8399166e62e0c835df
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Fri Feb 11 10:42:27 2022 +0200
-
+---
+700d27bc66169cf0ef38ce8399166e62e0c835df
+Fri Feb 11 10:42:27 2022 +0200
     [module] Added ak-folders module like ak-files but for folders
-
- create mode 100755 bin/ak-folders
-
-commit 60633e776cf4c1ce298a6fd83a59045dd756e056
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Fri Feb 11 10:36:31 2022 +0200
-
+---
+60633e776cf4c1ce298a6fd83a59045dd756e056
+Fri Feb 11 10:36:31 2022 +0200
     Change order of procedure, leaving name publishing for the end
-
-
-commit b884eac5c8b3742924ca29658ec2c9e1f2e1c972
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Fri Feb 11 10:33:18 2022 +0200
-
+---
+b884eac5c8b3742924ca29658ec2c9e1f2e1c972
+Fri Feb 11 10:33:18 2022 +0200
     Fixing possible problems related to IPFS keys
-
-
-commit ea876839b8026694cbc09b2903d5dd9d690c0b0a
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Fri Feb 11 10:18:03 2022 +0200
-
+---
+ea876839b8026694cbc09b2903d5dd9d690c0b0a
+Fri Feb 11 10:18:03 2022 +0200
     Fixed logging
-
-
-commit 0ae7d319f8138e6544fab3f0ccf2c156ba044234
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Fri Feb 11 10:17:15 2022 +0200
-
+---
+0ae7d319f8138e6544fab3f0ccf2c156ba044234
+Fri Feb 11 10:17:15 2022 +0200
     Fixed escaping and the forgotten grep in pipes
-
-
-commit 5b6c322d0bb8a131aa947b135a731a3f88e50c2d
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Fri Feb 11 10:15:14 2022 +0200
-
+---
+5b6c322d0bb8a131aa947b135a731a3f88e50c2d
+Fri Feb 11 10:15:14 2022 +0200
     IPFS check tool for debugging IPFS
-
- create mode 100755 bin/ipfs-check
-
-commit c353ce52726914602b27a80950138ce56c28047d
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Fri Feb 11 09:47:04 2022 +0200
-
+---
+c353ce52726914602b27a80950138ce56c28047d
+Fri Feb 11 09:47:04 2022 +0200
     Finally?
-
-
-commit 1feca3a43dfa1f2e24c2150088d7f2125dfbf6ea
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Fri Feb 11 09:41:17 2022 +0200
-
+---
+1feca3a43dfa1f2e24c2150088d7f2125dfbf6ea
+Fri Feb 11 09:41:17 2022 +0200
     Exit script if pack_z_block fails
-
-
-commit 6185e933cf51bb9cc6d43d03b0bcbbb424f084a8
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Fri Feb 11 09:37:47 2022 +0200
-
+---
+6185e933cf51bb9cc6d43d03b0bcbbb424f084a8
+Fri Feb 11 09:37:47 2022 +0200
     Removed TEMPASSIN from FILE path on gpg command as well
-
-
-commit b5a3b718159d1ec0aa8edc585c196fc1357f85e8
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Fri Feb 11 09:36:31 2022 +0200
-
+---
+b5a3b718159d1ec0aa8edc585c196fc1357f85e8
+Fri Feb 11 09:36:31 2022 +0200
     Removed TEMPASSIN from SIGN_FILE path on gpg command
-
-
-commit 221672ff13aeb390bccbf14a443733667ac9a77b
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Fri Feb 11 09:33:54 2022 +0200
-
+---
+221672ff13aeb390bccbf14a443733667ac9a77b
+Fri Feb 11 09:33:54 2022 +0200
     Added some more debug messages
-
-
-commit d643dfcd3548fc9c0fbb01bee3a88984000ecea6
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Fri Feb 11 09:29:51 2022 +0200
-
+---
+d643dfcd3548fc9c0fbb01bee3a88984000ecea6
+Fri Feb 11 09:29:51 2022 +0200
     Added some debug messages
-
-
-commit f3cbbde027900643d5ec56af6746be0dab9dfb9e
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Fri Feb 11 09:23:39 2022 +0200
-
+---
+f3cbbde027900643d5ec56af6746be0dab9dfb9e
+Fri Feb 11 09:23:39 2022 +0200
     more fixes++
-
-
-commit 143b88e33d8c09e6baf947f9d4f2550458b069d8
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Fri Feb 11 09:22:27 2022 +0200
-
+---
+143b88e33d8c09e6baf947f9d4f2550458b069d8
+Fri Feb 11 09:22:27 2022 +0200
     more fixes
-
-
-commit 06ab9d299786e3d25b7f3726a6877c4072aa6abe
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Fri Feb 11 09:19:09 2022 +0200
-
+---
+06ab9d299786e3d25b7f3726a6877c4072aa6abe
+Fri Feb 11 09:19:09 2022 +0200
     files completed?
-
-
-commit c7d1a43d41f848663c0de87b5c8d38d02ca7d708
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Fri Feb 11 09:08:03 2022 +0200
-
+---
+c7d1a43d41f848663c0de87b5c8d38d02ca7d708
+Fri Feb 11 09:08:03 2022 +0200
     possible fix
-
-
-commit e604f9b5fbf97d40da6ffaa69cc4755dce667a12
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Fri Feb 11 09:05:55 2022 +0200
-
+---
+e604f9b5fbf97d40da6ffaa69cc4755dce667a12
+Fri Feb 11 09:05:55 2022 +0200
     possible fix
-
-
-commit 3376c472fada0453eaed54b66fb62316deab22ef
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Fri Feb 11 08:00:54 2022 +0200
-
+---
+3376c472fada0453eaed54b66fb62316deab22ef
+Fri Feb 11 08:00:54 2022 +0200
     Further solving
-
-
-commit cf5e5e6833383fde13bf91c82daa76e3114ecfda
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Fri Feb 11 07:53:33 2022 +0200
-
+---
+cf5e5e6833383fde13bf91c82daa76e3114ecfda
+Fri Feb 11 07:53:33 2022 +0200
     Fixed TEMPASSASIN -> TEMPASSIN (WTF)
-
-
-commit 57f0f016a6c9947c19cc4ebab0c50193f17935b5
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Fri Feb 11 07:52:48 2022 +0200
-
+---
+57f0f016a6c9947c19cc4ebab0c50193f17935b5
+Fri Feb 11 07:52:48 2022 +0200
     Better written I suppose
-
-
-commit 3008ae73a432f19ee369fe05ee72a0199d663b30
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Fri Feb 11 07:43:04 2022 +0200
-
+---
+3008ae73a432f19ee369fe05ee72a0199d663b30
+Fri Feb 11 07:43:04 2022 +0200
     [module] fix
-
-
-commit c96e3709d1b019dd1217c921b2070f6221db2943
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Fri Feb 11 07:39:21 2022 +0200
-
+---
+c96e3709d1b019dd1217c921b2070f6221db2943
+Fri Feb 11 07:39:21 2022 +0200
     [module] ak-files
-
- create mode 100755 bin/ak-files
-
-commit d5f9085737874dcef201a8ddbdc0b8cb32d969b1
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Fri Feb 11 07:24:40 2022 +0200
-
+---
+d5f9085737874dcef201a8ddbdc0b8cb32d969b1
+Fri Feb 11 07:24:40 2022 +0200
     possible fix for not installing genesis
-
-
-commit bf634db74ecdd43263042c2a9f9a25bcb4a5d6ba
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Fri Feb 11 07:18:19 2022 +0200
-
+---
+bf634db74ecdd43263042c2a9f9a25bcb4a5d6ba
+Fri Feb 11 07:18:19 2022 +0200
     Added debug messages for each step
-
-
-commit 3a6c8b17c28c165a41dbd8b1d6741030a97f814b
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Fri Feb 11 07:02:19 2022 +0200
-
+---
+3a6c8b17c28c165a41dbd8b1d6741030a97f814b
+Fri Feb 11 07:02:19 2022 +0200
     removed duplication adding another one
-
-
-commit 3e72a68646644769b2a0c5b8c36429df7d93a641
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Fri Feb 11 06:58:57 2022 +0200
-
+---
+3e72a68646644769b2a0c5b8c36429df7d93a641
+Fri Feb 11 06:58:57 2022 +0200
     possible fix
-
-
-commit d87a8bfc818371a31e3b0ad22f505049b0060b32
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Sat Feb 5 17:49:29 2022 +0200
-
+---
+d87a8bfc818371a31e3b0ad22f505049b0060b32
+Sat Feb 5 17:49:29 2022 +0200
     Added some text explaining and a usage message when no arguments
-
-
-commit fc8efd3bd49b8b4fc3a1c5d77020be75824d26c3
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Tue Feb 1 20:45:01 2022 +0200
-
+---
+fc8efd3bd49b8b4fc3a1c5d77020be75824d26c3
+Tue Feb 1 20:45:01 2022 +0200
     Check step by step the procedure in order to be sure the right thing is happening. Fixed an error where wrong path was trying to be copied
-
-
-commit 9bba811e7c6c1081cd73a935ee9eb043b6574e0a
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Tue Feb 1 20:43:36 2022 +0200
-
+---
+9bba811e7c6c1081cd73a935ee9eb043b6574e0a
+Tue Feb 1 20:43:36 2022 +0200
     Added GPG key on the configuration output
-
-
-commit 347e75c7b74ed95f967f0f51a08b49c98eeaa9d6
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Mon Jan 31 16:32:37 2022 +0200
-
+---
+347e75c7b74ed95f967f0f51a08b49c98eeaa9d6
+Mon Jan 31 16:32:37 2022 +0200
     show and publish implementation
-
-
-commit f768939b36dd377bde182805bda24e9646620625
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Mon Jan 31 15:54:48 2022 +0200
-
+---
+f768939b36dd377bde182805bda24e9646620625
+Mon Jan 31 15:54:48 2022 +0200
     Draft tool for configuration build/read/publish
-
- create mode 100755 bin/akconfig
-
-commit 861f2b08841e5b8e96ad9f8dc0f85ab73c35b742
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Mon Jan 31 15:31:35 2022 +0200
-
+---
+861f2b08841e5b8e96ad9f8dc0f85ab73c35b742
+Mon Jan 31 15:31:35 2022 +0200
     Excluded README file from index
-
-
-commit 95ffb10421341080bec6529c06b5e7fa2c23979d
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Fri Jan 28 11:19:13 2022 +0200
-
+---
+95ffb10421341080bec6529c06b5e7fa2c23979d
+Fri Jan 28 11:19:13 2022 +0200
     [Change and fix]
     
     Change:
@@ -442,175 +269,102 @@ Date:   Fri Jan 28 11:19:13 2022 +0200
     Fix:
     - Reset timestamp to avoid printing the latest to blocks that are not
       have any.
-
-
-commit e52404199eb6a4ef79eb5395c8cd92f37430c13c
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Thu Jan 27 12:15:59 2022 +0200
-
+---
+e52404199eb6a4ef79eb5395c8cd92f37430c13c
+Thu Jan 27 12:15:59 2022 +0200
     Added info about ContainerFile
-
-
-commit 13524d39ee177d8324c1119f4dd1bc23e2d72ed1
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Thu Jan 27 06:28:02 2022 +0200
-
+---
+13524d39ee177d8324c1119f4dd1bc23e2d72ed1
+Thu Jan 27 06:28:02 2022 +0200
     Additions and changes
     
     - Added more explanotary depedencies, with versions
     - Minor formatting on #install section
-
-
-commit ddc7694beeb920f2fd740f263126c0a02d889ddd
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Wed Jan 26 22:13:14 2022 +0200
-
+---
+ddc7694beeb920f2fd740f263126c0a02d889ddd
+Wed Jan 26 22:13:14 2022 +0200
     Grammar fix
-
-
-commit da87a28ac0d4f6779ce17be75e9e4183a762c489
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Wed Jan 26 22:06:46 2022 +0200
-
+---
+da87a28ac0d4f6779ce17be75e9e4183a762c489
+Wed Jan 26 22:06:46 2022 +0200
     Added timestamp inside BLOCK.
     
     Since most of the transactions will be done offline and then published,
     is better to have a timestamp for each addtion.
-
-
-commit fdb9b2f60e04520c92bc47077bd3815ac5904000
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Tue Jan 18 04:44:06 2022 +0200
-
+---
+fdb9b2f60e04520c92bc47077bd3815ac5904000
+Tue Jan 18 04:44:06 2022 +0200
     Fixed formatting
-
-
-commit 68dc2b09cc813ff6f889a688f7e99095b2e6c6a3
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Tue Jan 18 04:42:22 2022 +0200
-
+---
+68dc2b09cc813ff6f889a688f7e99095b2e6c6a3
+Tue Jan 18 04:42:22 2022 +0200
     Update TODO list
-
-
-commit ad961c137782a96d4f9b2c27b0422ce5155f4f38
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Tue Jan 18 04:37:50 2022 +0200
-
+---
+ad961c137782a96d4f9b2c27b0422ce5155f4f38
+Tue Jan 18 04:37:50 2022 +0200
     Fixed formatting
-
-
-commit 8adacb20369410f1fa70e14d640d6d681b10851e
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Mon Jan 17 20:53:06 2022 +0200
-
+---
+8adacb20369410f1fa70e14d640d6d681b10851e
+Mon Jan 17 20:53:06 2022 +0200
     Making the output to be JSON, log messages to log file
-
-
-commit 117d9cd6208ca13f6dfdbd90ace987d076189cde
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Wed Jan 5 04:35:27 2022 +0200
-
+---
+117d9cd6208ca13f6dfdbd90ace987d076189cde
+Wed Jan 5 04:35:27 2022 +0200
     Changes
     
     Minimized the output
     Redirected output to null for programs used
-
-
-commit 94fa2007d44c76b4856ed85a52075b40842697ee
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Tue Jan 4 05:46:59 2022 +0200
-
+---
+94fa2007d44c76b4856ed85a52075b40842697ee
+Tue Jan 4 05:46:59 2022 +0200
     Difference from arching-kaos-infochain script is the addition of timestamp
-
- create mode 100755 bin/mixtapes
-
-commit f51747953f55827b8b2cca8f7aaaebe3f3015d22
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Sun Dec 26 08:56:24 2021 +0200
-
+---
+f51747953f55827b8b2cca8f7aaaebe3f3015d22
+Sun Dec 26 08:56:24 2021 +0200
     Added logfollow to follow logs
-
- create mode 100755 bin/logfollow
-
-commit e28ed03fb50f212b72b8ccf3ff8fd8e44aece278
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Sun Dec 26 08:55:13 2021 +0200
-
+---
+e28ed03fb50f212b72b8ccf3ff8fd8e44aece278
+Sun Dec 26 08:55:13 2021 +0200
     Changed email example search to test@test.test
-
-
-commit d686a5cd76a23bb7bbed8f3b976a3c410580ca7b
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Sun Dec 26 08:54:24 2021 +0200
-
+---
+d686a5cd76a23bb7bbed8f3b976a3c410580ca7b
+Sun Dec 26 08:54:24 2021 +0200
     Fixed warning for default branch when using git, set master
-
-
-commit 29d256a370622139ed5b9916726b0730121d12e4
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Sun Dec 26 08:25:40 2021 +0200
-
+---
+29d256a370622139ed5b9916726b0730121d12e4
+Sun Dec 26 08:25:40 2021 +0200
     Added counter
-
-
-commit 8569905d2f740e94053def935a08c20e589d8d68
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Sun Dec 26 08:10:42 2021 +0200
-
+---
+8569905d2f740e94053def935a08c20e589d8d68
+Sun Dec 26 08:10:42 2021 +0200
     Lose the comment
-
-
-commit 6979e55191143e455f678873c3ec7c1b0e7ac953
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Sun Dec 26 07:44:20 2021 +0200
-
+---
+6979e55191143e455f678873c3ec7c1b0e7ac953
+Sun Dec 26 07:44:20 2021 +0200
     Removed useless -zsh from log
-
-
-commit 6ad3011ba81cdca601f3598d2b10139c7b395b5a
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Sun Dec 26 07:15:45 2021 +0200
-
+---
+6ad3011ba81cdca601f3598d2b10139c7b395b5a
+Sun Dec 26 07:15:45 2021 +0200
     Added tool for list following artifacts, started on Sun 26 Dec 07:12:53 EET 2021
-
- create mode 100755 bin/following
-
-commit 811bf46ff36ff7ad939318b26bccc1b9715dc427
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Sun Dec 26 07:11:11 2021 +0200
-
+---
+811bf46ff36ff7ad939318b26bccc1b9715dc427
+Sun Dec 26 07:11:11 2021 +0200
     Added tool for unfollowing, started on Sun 26 Dec 06:58:08 EET 2021
-
- create mode 100755 bin/unfollow
-
-commit 92ae94d36bfb8730b8c07f14feca990e0701bb43
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Sun Dec 26 06:55:54 2021 +0200
-
+---
+92ae94d36bfb8730b8c07f14feca990e0701bb43
+Sun Dec 26 06:55:54 2021 +0200
     Added follow tool
-
- create mode 100755 bin/follow
-
-commit 98b8d407cb4650234d15cfe4d9322ad3bfe6c341
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Sun Dec 26 06:34:03 2021 +0200
-
+---
+98b8d407cb4650234d15cfe4d9322ad3bfe6c341
+Sun Dec 26 06:34:03 2021 +0200
     Added generic tempassin (temp folder creator)
-
- create mode 100755 bin/tempassin
-
-commit e96c39de735baa31012f09589fb493f5960ef595
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Sun Dec 26 06:33:06 2021 +0200
-
+---
+e96c39de735baa31012f09589fb493f5960ef595
+Sun Dec 26 06:33:06 2021 +0200
     Added profile tool
-
- create mode 100755 bin/profile
-
-commit b050dabab59a10f0898ea6e2fa0a83b82ff01647
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Sun Dec 26 06:26:13 2021 +0200
-
+---
+b050dabab59a10f0898ea6e2fa0a83b82ff01647
+Sun Dec 26 06:26:13 2021 +0200
     Added various stuff
     
     - gpg imports now from repo the test key
@@ -626,137 +380,77 @@ Date:   Sun Dec 26 06:26:13 2021 +0200
     
     Minor:
     - gpg generate thing is not working
-
-
-commit ebad312dc41719d902e41c29c74c13723f1deab5
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Sun Dec 26 06:23:55 2021 +0200
-
+---
+ebad312dc41719d902e41c29c74c13723f1deab5
+Sun Dec 26 06:23:55 2021 +0200
     Fixed logging and assube bash is the default shell
-
-
-commit b44bbcf99996e8f0c6a774cc7044ced11949ffb2
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Sun Dec 26 06:23:23 2021 +0200
-
+---
+b44bbcf99996e8f0c6a774cc7044ced11949ffb2
+Sun Dec 26 06:23:23 2021 +0200
     Turned echos to log messages
-
-
-commit 52bf926baf3957c799da01d7329db5c8ea07bb22
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Sun Dec 26 06:22:10 2021 +0200
-
+---
+52bf926baf3957c799da01d7329db5c8ea07bb22
+Sun Dec 26 06:22:10 2021 +0200
     Added repositories tool
-
- create mode 100755 bin/repositories
-
-commit 0e544652466d338b23ae4356983242d3619445c1
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Sat Dec 25 23:52:53 2021 +0200
-
+---
+0e544652466d338b23ae4356983242d3619445c1
+Sat Dec 25 23:52:53 2021 +0200
     Added logs file creation
-
-
-commit 572590b670582f5d9fca8db61f9aaf417a60c9a9
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Sat Dec 25 23:50:18 2021 +0200
-
+---
+572590b670582f5d9fca8db61f9aaf417a60c9a9
+Sat Dec 25 23:50:18 2021 +0200
     gpg2 to gpg
-
-
-commit 57fc68cdd42a22c381928c9ece96bd06ae870ef3
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Sat Dec 25 23:49:29 2021 +0200
-
+---
+57fc68cdd42a22c381928c9ece96bd06ae870ef3
+Sat Dec 25 23:49:29 2021 +0200
     Added a line after usage for the essance
-
-
-commit c3b69b3c2dbf62fa789cda588f0077b8c5bc9732
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Sat Dec 25 18:03:53 2021 +0200
-
+---
+c3b69b3c2dbf62fa789cda588f0077b8c5bc9732
+Sat Dec 25 18:03:53 2021 +0200
     Added temp folder
-
-
-commit 3006c1936ed54510dba9b36fe4a18c8981ba361d
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Sat Dec 25 17:40:38 2021 +0200
-
+---
+3006c1936ed54510dba9b36fe4a18c8981ba361d
+Sat Dec 25 17:40:38 2021 +0200
     Added cleaner of temporary folders
-
- create mode 100755 bin/clean
-
-commit 136f49738454f5441b7b44a76a837aea16c79b71
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Sat Dec 25 17:40:02 2021 +0200
-
+---
+136f49738454f5441b7b44a76a837aea16c79b71
+Sat Dec 25 17:40:02 2021 +0200
     Added temporary folder
-
-
-commit 16ef6e4c03e1c69afd9419888f475fe5fb16e9b7
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Fri Dec 24 23:17:15 2021 +0200
-
+---
+16ef6e4c03e1c69afd9419888f475fe5fb16e9b7
+Fri Dec 24 23:17:15 2021 +0200
     Changes and fixes
     
     - fix binpath and make directories
     - changed logging
     - fix copy to binpath
-
-
-commit 88adb6f4bd9b3a1ce01ce05317b8aee1a8301ff3
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Fri Dec 24 20:35:16 2021 +0200
-
+---
+88adb6f4bd9b3a1ce01ce05317b8aee1a8301ff3
+Fri Dec 24 20:35:16 2021 +0200
     Log writer to file
-
- create mode 100755 bin/logthis
-
-commit fc73bd4a564dc4f89129dc00344acdd95e68142b
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Mon Dec 20 20:36:17 2021 +0200
-
+---
+fc73bd4a564dc4f89129dc00344acdd95e68142b
+Mon Dec 20 20:36:17 2021 +0200
     Updated requirements and TODO
-
- create mode 100644 ContainerFile
-
-commit 339a5d4d9cf54519cad92d5c74da9eb3e0ea864a
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Sat Dec 18 08:52:10 2021 +0200
-
+---
+339a5d4d9cf54519cad92d5c74da9eb3e0ea864a
+Sat Dec 18 08:52:10 2021 +0200
     Changes
     
     - exit codes
     - gpg2 to gpg
     - break to exit
-
-
-commit 606e3bd269fdc2cf687db82c43a5346f8081864f
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Sat Dec 18 08:33:02 2021 +0200
-
+---
+606e3bd269fdc2cf687db82c43a5346f8081864f
+Sat Dec 18 08:33:02 2021 +0200
     Different approach on installing, now symlinks
-
- rename enter => bin/enter (100%)
- create mode 100755 bin/get-latest
- rename ipfs-starter => bin/ipfs-starter (100%)
- rename json2bash => bin/json2bash (100%)
- rename news => bin/news (100%)
- rename pack_z_block => bin/pack_z_block (100%)
- create mode 100755 bin/zchain-reset
- delete mode 100755 getlatest.sh
-
-commit 6cbf9b47f966556f92565392e83b410729c8be35
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Sat Dec 18 08:10:56 2021 +0200
-
+---
+6cbf9b47f966556f92565392e83b410729c8be35
+Sat Dec 18 08:10:56 2021 +0200
     Complete crawler based on the ZLATEST file
-
-
-commit 7b4deed0b8fe309631f35dfc9ed9b6c09d09f325
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Sat Dec 18 08:01:13 2021 +0200
-
+---
+7b4deed0b8fe309631f35dfc9ed9b6c09d09f325
+Sat Dec 18 08:01:13 2021 +0200
     Changes
     
      - FINGERPRINT assign is removed since is now part of config and
@@ -765,117 +459,69 @@ Date:   Sat Dec 18 08:01:13 2021 +0200
      - Shorten title of script
      - Mess with exit codes
      - Pushes ZBLOCK's CID into ZLATEST file
-
-
-commit af5e46aa4c258a115ac2e5894a69aa8a019c3009
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Sat Dec 18 07:59:48 2021 +0200
-
+---
+af5e46aa4c258a115ac2e5894a69aa8a019c3009
+Sat Dec 18 07:59:48 2021 +0200
     Changed order of commands
-
-
-commit 73125773584e562b07e2246aa2e11838b0ce7052
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Sat Dec 18 07:56:07 2021 +0200
-
+---
+73125773584e562b07e2246aa2e11838b0ce7052
+Sat Dec 18 07:56:07 2021 +0200
     Simple pipeline using sed
     
     Inputs a json object with keys and values
     Outputs a bash like assigning to variables
-
- create mode 100755 json2bash
-
-commit 00d341f72b8a1ef978810b57fc2305aaf7008872
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Sat Dec 18 07:54:34 2021 +0200
-
+---
+00d341f72b8a1ef978810b57fc2305aaf7008872
+Sat Dec 18 07:54:34 2021 +0200
     Added 3 folders to store ZBLOCKS, BLOCKS and DATA
-
-
-commit 0a101637c6e0c2528b9ea9eb02892da3d862c56c
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Sat Dec 18 07:50:49 2021 +0200
-
+---
+0a101637c6e0c2528b9ea9eb02892da3d862c56c
+Sat Dec 18 07:50:49 2021 +0200
     Changes
     
     - lower case names in ipfs fs
     - gpg2 to gpg since gpg is the binary on most distributions
     - add 3 new folders to store references to ZBLOCKs, BLOCKS and DATA
-
-
-commit 288e24bcd9c1905bc46a5bc97247bc6c9f642634
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Sat Dec 18 04:43:41 2021 +0200
-
+---
+288e24bcd9c1905bc46a5bc97247bc6c9f642634
+Sat Dec 18 04:43:41 2021 +0200
     Enter script
     
     - Gets the ZLATEST and scrolls back up to the first ever block
     - Dry run script, just scrolls the chain based on latest
-
- create mode 100755 enter
-
-commit a6a3d2d893e852b860af6baff507b602d64f704b
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Thu Dec 16 11:58:16 2021 +0200
-
+---
+a6a3d2d893e852b860af6baff507b602d64f704b
+Thu Dec 16 11:58:16 2021 +0200
     Fix, missing double-quotes in filename attribute
-
-
-commit 64d66eac9c37d2d42e6f9cdc9f7dc35e57aa88c3
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Thu Dec 16 11:18:28 2021 +0200
-
+---
+64d66eac9c37d2d42e6f9cdc9f7dc35e57aa88c3
+Thu Dec 16 11:18:28 2021 +0200
     New command create() for news script
     
     - ZNEWSDIR check/create
     - Create now adds to ZCHAIN
     - git repo integration and updating for new articles
     - fixes
-
-
-commit d38aa53173dc000e2200d3fbc562677c0162df98
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Thu Dec 16 11:14:40 2021 +0200
-
+---
+d38aa53173dc000e2200d3fbc562677c0162df98
+Thu Dec 16 11:14:40 2021 +0200
     Initiate ipfs after installation
-
-
-commit 0ae00eb5468fd8cc681705e0b127d02dfc0eab50
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Thu Dec 16 11:12:30 2021 +0200
-
+---
+0ae00eb5468fd8cc681705e0b127d02dfc0eab50
+Thu Dec 16 11:12:30 2021 +0200
     Fixes (2):
     
     - Changed name to variable for rc file
     - Changed order of running scripts
-
-
-commit 7f619627dfba6f130b73584241b86e6245a9cd8b
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Tue Dec 14 03:59:46 2021 +0200
-
+---
+7f619627dfba6f130b73584241b86e6245a9cd8b
+Tue Dec 14 03:59:46 2021 +0200
     News writer, indexer, create from scratch new, add from file
-
- create mode 100755 news
-
-commit 03a0fd66bd696a5cbf9cd91dde242df60e4a6f96
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Tue Dec 14 03:50:02 2021 +0200
-
+---
+03a0fd66bd696a5cbf9cd91dde242df60e4a6f96
+Tue Dec 14 03:50:02 2021 +0200
     As far as I 've been
-
- create mode 100755 config.sh
- create mode 100755 getlatest.sh
- create mode 100755 init.sh
- create mode 100755 install.sh
- create mode 100755 ipfs-check-install-setup-init-update
- create mode 100755 ipfs-starter
- create mode 100755 pack_z_block
-
-commit e93bc58da017610d6f92d68b40f908d09d529d53
-Author: kaotisk <kaotisk@arching-kaos.com>
-Date:   Tue Dec 14 03:42:41 2021 +0200
-
+---
+e93bc58da017610d6f92d68b40f908d09d529d53
+Tue Dec 14 03:42:41 2021 +0200
     Readme addition
-
- create mode 100644 README.md
