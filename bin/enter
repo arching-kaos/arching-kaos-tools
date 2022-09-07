@@ -1,4 +1,18 @@
 #!/bin/bash
+# enter
+#
+# Using this tool, we can seek a whole chain if available from an
+# IPFS CID or an IPNS link. Default (no arguments) will retrieve
+# the local ZCHAIN starting from the IPFS CID stored in the file
+# that is tracked by the $ZLATEST environment variable.
+#
+# enter [-n IPNS_LINK]
+# enter [IPFS CID]
+# enter
+#
+# Returns a JSON array representing the chain retrieved and logs
+# messages to LOGSFILE
+
 usage(){
 	echo "enter - Crawl an arching kaos chain"
 	echo "-----------------------------------"
@@ -272,7 +286,7 @@ do
 			else
 				#echo "$zblock after $previous"
 				logthis "[INFO]" "Found a previous block: $previous"
-				echo '"previous":"'$previous'"},' 
+				echo '"previous":"'$previous'"},'
 				zblock=$previous
 			fi
 
@@ -287,7 +301,7 @@ do
 			exit 0
 		fi
 	# And finally, if nothing is there exit with error
-	else 
+	else
 		echo "Check not passed... No previous IPFS CID"
 		exit 1
 	fi
