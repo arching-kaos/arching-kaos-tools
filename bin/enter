@@ -278,7 +278,7 @@ do
 			# and we exit.
 			if [ -v $previous ]
 			then
-				logthis "[ERROR]" "Block $block has no previous zblock, appending pseudo genesis to exit gracefully."
+				logthis "[WARNING]" "Block $block has no previous zblock, appending pseudo genesis to exit gracefully."
 				echo '"previous":"genesis"},{"genesis":"genesis"}]'
 				exit 0
 
