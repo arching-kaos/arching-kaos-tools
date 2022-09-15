@@ -4,9 +4,9 @@ logthis(){
 }
 install(){
 	logthis "ipfs-check-install-setup-init"
-	IPFS_VERSION="$(curl https://github.com/ipfs/go-ipfs/releases/latest | sed -e 's/.*releases//g' | sed -e 's/".*//' | sed -e 's/\/tag\///')"
+	IPFS_VERSION="$(curl https://github.com/ipfs/kubo/releases/latest | sed -e 's/.*releases//g' | sed -e 's/".*//' | sed -e 's/\/tag\///')"
 	SWARMSHA512SUM="7001e37412758c43d372a969e977ca11511e034c8c1e233a58dc3ce1c6f3c1aa7d2da8cba9944a5eabaa8885742bfe6cc6794224c146b7129da8f633b53b9cfc"
-	IPFS_TARGET_FILE="go-ipfs_"$IPFS_VERSION"_linux-amd64.tar.gz"
+	IPFS_TARGET_FILE="kubo_"$IPFS_VERSION"_linux-amd64.tar.gz"
 	AKBIN="$WORKDIR/bin"
 	mkdir $AKBIN
 	AKAR="$ARCHIVESDIR"
@@ -20,7 +20,7 @@ install(){
 	fi
 	logthis "Downloading ipfs $IPFS_VERSION"
 	if [ ! -f $AKAR/$IPFS_TARGET_FILE ]; then
-		wget -O $AKAR/$IPFS_TARGET_FILE https://dist.ipfs.io/go-ipfs/$IPFS_VERSION/$IPFS_TARGET_FILE ;
+		wget -O $AKAR/$IPFS_TARGET_FILE https://dist.ipfs.tech/kubo/$IPFS_VERSION/$IPFS_TARGET_FILE ;
 	fi
 	logthis "Making temp files"
 	TIMESTAMP="$(date -u +%s)"
@@ -29,7 +29,7 @@ install(){
 		mkdir $TEMPASSIN
 		cd $TEMPASSIN
 		tar xf $AKAR/$IPFS_TARGET_FILE
-		cp go-ipfs/ipfs $AKBIN/ipfs
+		cp kubo/ipfs $AKBIN/ipfs
 	fi
 	logthis "ipfs installed on $AKBIN"
 	if [ ! -d $HOME/.ipfs ]; then
