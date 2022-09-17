@@ -28,7 +28,7 @@ else
 	SHELLRC='.bashrc'
 fi
 logthis "Searching if rc is already there"
-grep "source ~/$HAK/rc" $HOME/$SHELLRC > /dev/null 2>&1
+grep "source $HOME/$HAK/rc" $HOME/$SHELLRC > /dev/null 2>&1
 if [ $? == 0 ]; then
 	logthis "Already installed";
 else
