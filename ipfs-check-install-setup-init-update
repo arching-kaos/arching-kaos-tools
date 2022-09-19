@@ -1,9 +1,9 @@
 #!/bin/bash
 logthis(){
-	echo "IPFS TOOL:  $1" >> $WORKDIR/logs
+	echo "$(date -u +%s) $1 $2" >> $WORKDIR/logs
 }
 install(){
-	logthis "ipfs-check-install-setup-init"
+	logthis "[INFO]" "Attempting to install IPFS..."
 	IPFS_VERSION="$(curl -s https://dist.ipfs.tech/kubo/versions | tail -1)"
 	SWARMSHA512SUM="7001e37412758c43d372a969e977ca11511e034c8c1e233a58dc3ce1c6f3c1aa7d2da8cba9944a5eabaa8885742bfe6cc6794224c146b7129da8f633b53b9cfc"
 	IPFS_TARGET_FILE="kubo_"$IPFS_VERSION"_linux-amd64.tar.gz"
@@ -14,15 +14,15 @@ install(){
 	if [ ! -d $AKAR ]; then
 		mkdir $AKAR
 		if [ $? != 0 ]; then
-			logthis "Problem creating directory"
+			logthis "[ERROR]" "Problem creating directory"
 			exit 1;
 		fi
 	fi
-	logthis "Downloading ipfs $IPFS_VERSION"
+	logthis "[INFO]" "Downloading ipfs $IPFS_VERSION"
 	if [ ! -f $AKAR/$IPFS_TARGET_FILE ]; then
 		wget -O $AKAR/$IPFS_TARGET_FILE https://dist.ipfs.tech/kubo/$IPFS_VERSION/$IPFS_TARGET_FILE ;
 	fi
-	logthis "Making temp files"
+	logthis "[INFO]" "Making temp files"
 	TIMESTAMP="$(date -u +%s)"
 	TEMPASSIN="/tmp/aktmp_$TIMESTAMP"
 	if [ ! -d $TEMPASSIN ]; then
@@ -31,7 +31,7 @@ install(){
 		tar xf $AKAR/$IPFS_TARGET_FILE
 		cp kubo/ipfs $AKBIN/ipfs
 	fi
-	logthis "ipfs installed on $AKBIN"
+	logthis "[INFO]" "ipfs installed on $AKBIN"
 	if [ ! -d $HOME/.ipfs ]; then
 		mkdir $HOME/.ipfs
 		$AKBIN/ipfs init ;
@@ -39,15 +39,15 @@ install(){
 	if [ ! -f $HOME/.ipfs/swarm.key ]; then
 		wget -O $HOME/.ipfs/swarm.key https://arching-kaos.net/files/swarm.key ;
 	elif [ "$(sha512sum $HOME/.ipfs/swarm.key | awk '{ print $1 }')" == "$SWARMSHA512SUM" ]; then
-		logthis "Congrats! You are already in our swarm" ;
+		logthis "[INFO]" "Congrats! You are already in our swarm" ;
 	else
-		logthis "Error: Found swarm.key but not ours"
-		logthis "Visit https\:\/\/arching-kaos.net\/files\/swarm.key and copy it to your ipfs folder" ;
+		logthis "[ERROR]" "Found swarm.key but not ours"
+		logthis "[ERROR]" "Visit https\:\/\/arching-kaos.net\/files\/swarm.key and copy it to your ipfs folder" ;
 	fi
 }
 which ipfs > /dev/null 2>&1
 if [ $? != 0 ]; then
 	install
 	ipfs init
-else logthis "Found IPFS"
+else logthis "[INFO]" "Found IPFS! Skipping downloading..."
 fi
