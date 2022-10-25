@@ -1,14 +1,13 @@
 #!/bin/bash
 ZCOMMENTSDIR="$WORKDIR/comments"
 TEMP="/tmp/aktmp"
-echo $ZCOMMENTSDIR
 if [ ! -d $ZCOMMENTSDIR ]; then
 	mkdir $ZCOMMENTSDIR
 	cd $ZCOMMENTSDIR
 	git init
-	echo "zcommentsdir created along with git repo"
+	logthis "[INFO]" "zcommentsdir created along with git repo"
 else
-	echo "zcommentsdir found"
+	logthis "[INFO]" "zcommentsdir found"
 fi
 tempassin(){
 	if [ ! -z $1 ]
@@ -27,6 +26,10 @@ create(){
 	if [ ! -z $1 ]
 	then
 		REFER_TO="$1"
+	else
+		logthis "[ERROR]" "No reference given"
+		echo "[ERROR]" "No reference given"
+		exit 1
 	fi
 	tempassin $TEMP
 	export COMMENTS_FILE="$(date -u +%s)"
@@ -36,7 +39,7 @@ create(){
 	IPFS_FILE=$(ipfs add -q $COMMENTS_FILE)
 	mv $COMMENTS_FILE $ZCOMMENTSDIR/$TO_FILE
 	add $TO_FILE
-	echo "Adding to git repo..."
+	logthis "[INFO]" "Adding to git repo..."
 	cd $ZCOMMENTSDIR
 	git add $TO_FILE 
 	git commit -m "Added $TO_FILE with $(head -n 1 $ZCOMMENTSDIR/$TO_FILE)"
@@ -59,30 +62,7 @@ index(){
 	done	
 }
 title(){
-	echo	ak-comments-cli
-	echo "--------------"
-}
-import(){
-	echo "#TODO"
-	if [ ! -z $1 ]
-	then
-		if [ ! -d $1 ]
-		then
-			echo "Folder does not exists"
-			exit 4
-		else
-			echo "Folder $1 exists"
-			fl="$(ls -1 $1)"
-			for f in $fl
-			do
-				add $1/$f
-			done
-		fi
-	else
-		echo "No value"
-		exit 6
-	fi
-	exit 224
+	echo comments
 }
 add(){
 	tempassin
@@ -108,7 +88,7 @@ EOF
 	REFERENCE="$(pack_z_block "comments/add" data)"
 	if [ $? == 0 ]
 	then
-		echo "Comments added successfully"
+		echo "Comment added successfully"
 	else
 		echo "error??"
 		exit 1
@@ -116,14 +96,13 @@ EOF
 }
 usage(){
 	title
-	echo "#TODO"
 	echo "All you need to know is that there are two options available:"
-	echo "help			Prints this help message"
-	echo "index			Prints an indexed table of your comments files"
-	echo "import <file>		#TODO"
-	echo "add <file> <refer_to>	Creates a data file from the comments file you point to"
+	echo ""
+	echo "help				Prints this help message"
+	echo "index				Prints an indexed table of your comments files"
+	echo "add <file> <refer_to>		Creates a data file from the comments file you point to"
 	echo "create <refer_to>		Vim is going to pop up, you will write and save your"
-	echo "                  	commentsletter and it's going to be saved"
+	echo "				commentsletter and it's going to be saved"
 	exit 0
 }
 
@@ -131,7 +110,6 @@ if [ ! -z $1 ]; then
 	case $1 in
 		help) usage; exit;;
 		index) index; exit;;
-		import) import $2; exit;;
 		add) add $2 $3; exit;;
 		create) create $2; exit;;
 		* ) usage;;

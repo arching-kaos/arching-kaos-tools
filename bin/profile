@@ -1,6 +1,12 @@
 #!/bin/bash
+PROGRAM="$(basename $0)"
 ZPROFILEDIR="$WORKDIR/profile"
 TEMP="/tmp/aktmp"
+
+logit(){
+	logthis "<$PROGRAM>" "$1" "$2"
+}
+
 if [ ! -d $ZPROFILEDIR ]; then
 	mkdir $ZPROFILEDIR
 	cd $ZPROFILEDIR
@@ -9,9 +15,9 @@ if [ ! -d $ZPROFILEDIR ]; then
 #	echo "Qmetc" >> README
 #	git add README
 #	git commit -m "Initiated profile repository"
-	logthis "[INFO]" "zprofiledir created along with git repo"
+	logit "[INFO]" "zprofiledir created along with git repo"
 else
-	logthis "[INFO]" "zprofiledir found"
+	logit "[INFO]" "zprofiledir found"
 fi
 tempassin(){
 	if [ ! -z $1 ]
@@ -32,7 +38,7 @@ tempassin(){
 show(){
 	if [ ! -z $1 ]
 	then
-		logthis "[INFO]" "Working with $1"
+		logit "[INFO]" "Working with $1"
 		echo '"data":"'$1'",'
 		echo '"'$1'":'$(ipfs cat $1)','
 		#ipfs cat $1
