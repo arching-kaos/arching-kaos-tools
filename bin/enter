@@ -13,8 +13,14 @@
 # Returns a JSON array representing the chain retrieved and logs
 # messages to LOGSFILE
 
+PROGRAM="$(basename $0)"
+
+logit(){
+	logthis "<$PROGRAM>" "$1" "$2"
+}
+
 usage(){
-	echo "enter - Crawl an arching kaos chain"
+	echo "$PROGRAM - Crawl an arching kaos chain"
 	echo "-----------------------------------"
 	echo "Usage:"
 	echo "	--help, -h				Print this help and exit"
@@ -71,7 +77,7 @@ then
 			source $TEMPASSIN/tmp-zblock
 			ipfs cat $block | json2bash > $TEMPASSIN/tmp-block
 			source $TEMPASSIN/tmp-block
-			logthis "[INFO]" "BLOCK REFERENCED"
+			logit "[INFO]" "BLOCK REFERENCED"
 			if [ ! -v $timestamp ]
 			then
 				echo '"timestamp":"'$timestamp'",'
@@ -81,7 +87,7 @@ then
 
 			if [ -v $previous ]
 			then
-				logthis "[ERROR]" "Block $block has no previous zblock $previous. Appending default genesis to close cleanly."
+				logit "[ERROR]" "Block $block has no previous zblock $previous. Appending default genesis to close cleanly."
 				echo '"previous":"genesis"},{"genesis":"genesis"}]'
 				exit 0
 			else
@@ -91,7 +97,7 @@ then
 		elif [ "$zblock" == "$seed" ]
 		then
 			echo '{"genesis":"genesis"}]'
-			logthis "[INFO]" "Counter $counter"
+			logit "[INFO]" "Counter $counter"
 			exit 0
 		fi
 	else
@@ -139,23 +145,23 @@ do
 		then
 			# Reset timestamp since it's introduced later
 			timestamp=''
-			# Announce to stdout which ZBLOCK is being read at the moment
-			logthis "[INFO]" "Examining $zblock"
+			# Announce to logs which ZBLOCK is being read at the moment
+			logit "[INFO]" "Examining $zblock"
 			echo '{"zblock":"'$zblock'",'
 
 			# We create files named after each ZBLOCK IPFS CID for later
 			# reference. Files are empty.
 			touch $ZBLOCKDIR/$zblock
-			logthis "[INFO]" "Created reference"
+			logit "[INFO]" "Created reference"
 
 			# We concatenate the zblock's contents, pipe them through filter
 			# json2bash and output them to tmp-file
 			ipfs cat $zblock | json2bash > $TEMPASSIN/tmp-zblock
 			if [ "$?" == 0 ]
 			then
-				logthis "[INFO]" "ZBLOCK $zblock READ"
+				logit "[INFO]" "ZBLOCK $zblock READ"
 			else
-				logthis "[ERROR]" "ZBLOCK $zblock READ failed"
+				logit "[ERROR]" "ZBLOCK $zblock READ failed"
 				exit 1
 			fi
 
@@ -165,17 +171,17 @@ do
 			grep -e 'block_signature' $TEMPASSIN/tmp-zblock > /dev/null 2>&1
 			if [ "$?" == 0 ]
 			then
-				logthis "[INFO]" "ZBLOCK $zblock has block_signature"
+				logit "[INFO]" "ZBLOCK $zblock has block_signature"
 			else
-				logthis "[ERROR]" "ZBLOCK $zblock has no block_signature"
+				logit "[ERROR]" "ZBLOCK $zblock has no block_signature"
 				exit 1
 			fi
 			grep -e 'block=' $TEMPASSIN/tmp-zblock > /dev/null 2>&1
 			if [ "$?" == 0 ]
 			then
-				logthis "[INFO]" "ZBLOCK $zblock has block"
+				logit "[INFO]" "ZBLOCK $zblock has block"
 			else
-				logthis "[ERROR]" "ZBLOCK $zblock has no block"
+				logit "[ERROR]" "ZBLOCK $zblock has no block"
 				exit 1
 			fi
 
@@ -184,7 +190,7 @@ do
 			# the files into your bash.
 			# File an issue/pull request if you think it can be done better!!
 			source $TEMPASSIN/tmp-zblock
-			logthis "[INFO]" "ZBLOCK SOURCED"
+			logit "[INFO]" "ZBLOCK SOURCED"
 
 			# Same as above applies to BLOCK and DATA subparts of each ZBLOCK
 			# BLOCKS
@@ -192,29 +198,29 @@ do
 			ipfs cat $block | json2bash > $TEMPASSIN/tmp-block
 			if [ "$?" == 0 ]
 			then
-				logthis "[INFO]" "BLOCK $block READ"
+				logit "[INFO]" "BLOCK $block READ"
 			else
-				logthis "[ERROR]" "BLOCK $block READ failed"
+				logit "[ERROR]" "BLOCK $block READ failed"
 				exit 1
 			fi
 
 			grep -e 'timestamp' -e 'gpg' -e 'data' -e 'action' -e 'detach' -e 'previous' $TEMPASSIN/tmp-block > /dev/null 2>&1
 			if [ "$?" == 0 ]
 			then
-				logthis "[INFO]" "BLOCK $block is a block"
+				logit "[INFO]" "BLOCK $block is a block"
 			else
-				logthis "[ERROR]" "BLOCK $block is NOT a valid block"
+				logit "[ERROR]" "BLOCK $block is NOT a valid block"
 				exit 1
 			fi
 
 			source $TEMPASSIN/tmp-block
-			logthis "[INFO]" "BLOCK $block SOURCED"
+			logit "[INFO]" "BLOCK $block SOURCED"
 			touch $BLOCKDIR/$block
-			logthis "[INFO]" "BLOCK REFERENCED"
+			logit "[INFO]" "BLOCK REFERENCED"
 			module="$(echo $action | sed -e 's/\// /g' | awk '{ print $1 }')"
-			logthis "[INFO]" "DATA is $module module."
+			logit "[INFO]" "DATA is $module module."
 			command="$(echo $action | sed -e 's/\// /g' | awk '{ print $2 }')"
-			logthis "[INFO]" "COMMAND is $command"
+			logit "[INFO]" "COMMAND is $command"
 			if [ ! -v $timestamp ]
 			then
 				echo '"timestamp":"'$timestamp'",'
@@ -232,38 +238,38 @@ do
 					gpg2 --import $gpg > /dev/null 2>&1
 					if [ "$?" == 0 ]
 					then
-						logthis "[INFO]" "$gpg imported."
+						logit "[INFO]" "$gpg imported."
 					else
-						logthis "[ERROR]" "Could not import GPG key: $gpg ."
+						logit "[ERROR]" "Could not import GPG key: $gpg ."
 						exit 1
 					fi
 				else
-					logthis "[ERROR]" "Could not get GPG key: $gpg ."
+					logit "[ERROR]" "Could not get GPG key: $gpg ."
 					exit 1
 				fi
 				ipfs get $block_signature > /dev/null 2>&1
 				if [ "$?" == 0 ]
 				then
 					mv $block_signature $block.asc
-					logthis "[GPG]" "Block signature downloaded"
+					logit "[GPG]" "Block signature downloaded"
 				else
-					logthis "[ERROR]" "Error while getting $block_signature for $block"
+					logit "[ERROR]" "Error while getting $block_signature for $block"
 					exit 1
 				fi
 				ipfs get $block > /dev/null 2>&1
 				if [ "$?" == 0 ]
 				then
-					logthis "[INFO]" "Downloaded block $block."
+					logit "[INFO]" "Downloaded block $block."
 				else
-					logthis "[ERROR]" "Could not get $block block"
+					logit "[ERROR]" "Could not get $block block"
 					exit 1
 				fi
 				gpg2 --verify $block.asc > /dev/null 2>&1
 				if [ "$?" == 0 ]
 				then
-					logthis "[GPG]" "$gpg signature of $block is verified."
+					logit "[GPG]" "$gpg signature of $block is verified."
 				else
-					logthis "[ERROR]" "Could not verify $block with GPG key $gpg."
+					logit "[ERROR]" "Could not verify $block with GPG key $gpg."
 					exit 1
 				fi
 			fi
@@ -278,15 +284,15 @@ do
 			# and we exit.
 			if [ -v $previous ]
 			then
-				logthis "[WARNING]" "Block $block has no previous zblock, appending pseudo genesis to exit gracefully."
+				logit "[WARNING]" "Block $block has no previous zblock, appending pseudo genesis to exit gracefully."
 				echo '"previous":"genesis"},{"genesis":"genesis"}]'
-				logthis "[INFO]" "Reached pseudo-genesis, counted $counter zblocks."
+				logit "[INFO]" "Reached pseudo-genesis, counted $counter zblocks."
 				exit 0
 
 			# Otherwise, we inform of the sequence
 			else
 				#echo "$zblock after $previous"
-				logthis "[INFO]" "Found a previous block: $previous"
+				logit "[INFO]" "Found a previous block: $previous"
 				echo '"previous":"'$previous'"},'
 				zblock=$previous
 			fi
@@ -298,7 +304,7 @@ do
 			#echo "$zblock is GENESIS block"
 			#echo '"'$zblock'":{ "GENESIS":"GENESIS"}] '
 			echo '{"genesis":"genesis"}]'
-			logthis "[INFO]" "Reached $seed, counted $counter zblocks."
+			logit "[INFO]" "Reached $seed, counted $counter zblocks."
 			exit 0
 		fi
 	# And finally, if nothing is there exit with error
