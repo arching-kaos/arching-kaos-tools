@@ -1,10 +1,16 @@
 #!/bin/bash
-title(){
-	echo "Zchain reset"
-	echo "------------"
-}
+PROGRAM=$(basename $0) 
 usage(){
-	echo "Usage: $0 reset"
+	echo "$PROGRAM - Zchain reset"
+	echo ""
+	echo "Description:"
+	echo "Backs up your latest block into IPFS filesystem, replaces it with an empty file (GENESIS hardcode) and pushes its IPFS link as your chain's latest block."
+	echo ""
+	echo "Disclaimer:"
+	echo "This program, does NOT delete anything from your IPFS repository, neither denies access to previously created blocks."
+	echo ""
+	echo "Usage:"
+	echo "	$PROGRAM reset"
 	exit 0
 }
 reset (){
