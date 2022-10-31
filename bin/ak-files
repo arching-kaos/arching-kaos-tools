@@ -3,12 +3,23 @@
 # We can extend it by calling the pack_z_block.sh mixtape/add data
 ZFILESDIR="$WORKDIR/files"
 TEMP="/tmp/aktmp"
+PROGRAM="$(basename $0)"
+logit(){
+	logthis "<$PROGRAM>" "$1" "$2"
+}
 if [ ! -d $ZFILESDIR ]; then
 	mkdir $ZFILESDIR
+	if [ $? == 0 ]
+	then
+		logit "[INFO]" "Folder $ZFILESDIR created!"
+	else
+		logit "[ERROR]" "Failed to create $ZFILESDIR folder"
+		exit 1
+	fi
 	cd $ZFILESDIR
 	git init
 else
-	logthis "error $ZFILESDIR not found"
+	logit "[INFO]" "$ZFILESDIR found!"
 fi
 tempassin(){
 	if [ ! -z $1 ];
@@ -27,8 +38,7 @@ tempassin(){
 }
 
 usage(){
-	title
-	echo "$0 - file"
+	echo "$PROGRAM - file"
 }
 
 add(){
@@ -41,47 +51,47 @@ main(){
     FILENAME="$1"
     CRP="$2"
     echo "Adding $FILENAME"
-    logthis "Switching to tmp folder..."
+    logit "[INFO]" "Switching to tmp folder..."
     TEMPASSIN="$(tempassin)"
     cd $TEMPASSIN
     if [ $? == 0 ]; then
-	    logthis "Success"
+	    logit "[INFO]" "Success"
     else
-	    logthis "Error with tmp folder"
+	    logit "[ERROR]" "Error with tmp folder"
 	    exit 5
     fi
-    logthis "Copying $1 to $TEMPASSIN"
+    logit "[INFO]" "Copying $1 to $TEMPASSIN"
     cp $2/$1 $TEMPASSIN/$1
     if [ $? == 0 ]; then
-	    logthis "Copied successfully"
+	    logit "[INFO]" "Copied successfully"
     else
-	    logthis "Error copying..."
+	    logit "[ERROR]" "Error copying..."
     fi
 
     FILE="$TEMPASSIN/$1"
 
-    logthis "Adding $FILE to IPFS..."
+    logit "[INFO]" "Adding $FILE to IPFS..."
     FILE_IPFS_HASH=$(ipfs add -q $FILE)
     if [ $? == 0 ]; then
-	    logthis "done"
+	    logit "[INFO]" "Added $FILE to IPFS"
     else
-	    logthis "error"
+	    logit "[ERROR]" "Error in adding the $FILE to IPFS"
     fi
-    logthis "Signing..."
+    logit "[INFO]" "Signing..."
     SIGN_FILE=$FILENAME".asc"
     gpg2 --detach-sign --sign-with $FINGERPRINT --armor --output $SIGN_FILE $FILE
     if [ $? == 0 ]; then
-	    logthis "Signed"
+	    logit "[INFO]" "Signed"
     else
-	    logthis "Error while signing"
+	    logit "[ERROR]" "Error while signing"
     fi
 
-    logthis "Adding signature to IPFS"
+    logit "[INFO]" "Adding signature to IPFS"
     SIGNATURE=$(ipfs add -q $TEMPASSIN/$SIGN_FILE)
     if [ $? == 0 ]; then
-	    logthis "Added"
+	    logit "[INFO]" "Added"
     else
-	    logthis "Error while adding"
+	    logit "[ERROR]" "Error while adding"
     fi
 
     cat > $TEMPASSIN/data <<EOF
@@ -106,12 +116,6 @@ echo "Publishing..."
 	    exit 2
     fi
 }
-
-title(){
-    echo "File block creator"
-    echo "=================="
-}
-
 
 if [ ! -z $1 ]; then
 	case $1 in
