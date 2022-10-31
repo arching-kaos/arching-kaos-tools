@@ -1,17 +1,20 @@
 #!/bin/bash
 # enter
 #
-# Using this tool, we can seek a whole chain if available from an
-# IPFS CID or an IPNS link. Default (no arguments) will retrieve
-# the local ZCHAIN starting from the IPFS CID stored in the file
-# that is tracked by the $ZLATEST environment variable.
+# Using this tool, we can seek a whole zchain, if available from
+# an IPFS CID or an IPNS link.
+#
+# Default (no arguments) will retrieve the local ZCHAIN starting
+# from the IPFS CID stored in the file that is tracked by the
+# $ZLATEST environment variable.
 #
 # enter [-n IPNS_LINK]
 # enter [IPFS CID]
+# enter -nV
 # enter
 #
-# Returns a JSON array representing the chain retrieved and logs
-# messages to LOGSFILE
+# Returns a JSON array representing the chain retrieved.
+# Logs messages to $LOGSFILE.
 
 PROGRAM="$(basename $0)"
 
@@ -30,7 +33,7 @@ usage(){
 	echo "	<ipfs-link>				Specify IPFS CID for entrance"
 	echo ""
 	echo "Note that combined flags don't work for now"
-	echo "Running with no flags crawls your chain"
+	echo "Running with no flags crawls your chain based on ZLATEST environment variable"
 }
 # Start of tests
 #entrance="QmW5WVXCJfhb4peHG6cbEdamC24vZzMX2Vz386vpENh38U"
@@ -73,9 +76,9 @@ then
 		then
 			timestamp=''
 			echo '{"zblock":"'$zblock'",'
-			ipfs cat $zblock | json2bash > $TEMPASSIN/tmp-zblock
+			ipfs --timeout=10s cat $zblock | json2bash > $TEMPASSIN/tmp-zblock
 			source $TEMPASSIN/tmp-zblock
-			ipfs cat $block | json2bash > $TEMPASSIN/tmp-block
+			ipfs --timeout=10s cat $block | json2bash > $TEMPASSIN/tmp-block
 			source $TEMPASSIN/tmp-block
 			logit "[INFO]" "BLOCK REFERENCED"
 			if [ ! -v $timestamp ]
@@ -149,14 +152,12 @@ do
 			logit "[INFO]" "Examining $zblock"
 			echo '{"zblock":"'$zblock'",'
 
-			# We create files named after each ZBLOCK IPFS CID for later
-			# reference. Files are empty.
-			touch $ZBLOCKDIR/$zblock
-			logit "[INFO]" "Created reference"
-
-			# We concatenate the zblock's contents, pipe them through filter
-			# json2bash and output them to tmp-file
-			ipfs cat $zblock | json2bash > $TEMPASSIN/tmp-zblock
+			# We concatenate the zblock's contents, pipe
+			# them through filter json2bash and output
+			# them to tmp-file
+			# 
+			# We check if any $zblock at all
+			ipfs --timeout=10s cat $zblock > /dev/null 2>&1
 			if [ "$?" == 0 ]
 			then
 				logit "[INFO]" "ZBLOCK $zblock READ"
@@ -164,6 +165,17 @@ do
 				logit "[ERROR]" "ZBLOCK $zblock READ failed"
 				exit 1
 			fi
+			# If it's JSON formated
+			ipfs --timeout=10s cat $zblock | json_pp > /dev/null 2>&1
+			if [ "$?" == 0 ]
+			then
+				logit "[INFO]" "ZBLOCK $zblock is JSON"
+			else
+				logit "[ERROR]" "ZBLOCK $zblock is not JSON"
+				exit 1
+			fi
+			# Then we pass it through the filter and save it
+			ipfs --timeout=10s cat $zblock | json2bash > $TEMPASSIN/tmp-zblock
 
 			# Be sure that there are the expected values
 			# We need 'block' and 'block_signature' inside a 'zblock'
@@ -171,9 +183,9 @@ do
 			grep -e 'block_signature' $TEMPASSIN/tmp-zblock > /dev/null 2>&1
 			if [ "$?" == 0 ]
 			then
-				logit "[INFO]" "ZBLOCK $zblock has block_signature"
+				logit "[INFO]" "ZBLOCK $zblock contains a block_signature"
 			else
-				logit "[ERROR]" "ZBLOCK $zblock has no block_signature"
+				logit "[ERROR]" "ZBLOCK $zblock doesn't contain a block_signature"
 				exit 1
 			fi
 			grep -e 'block=' $TEMPASSIN/tmp-zblock > /dev/null 2>&1
@@ -185,6 +197,11 @@ do
 				exit 1
 			fi
 
+			# We create files named after each ZBLOCK IPFS CID for later
+			# reference. Files are empty.
+			touch $ZBLOCKDIR/$zblock
+			logit "[INFO]" "Created reference"
+
 			# Supposingly you are on a safe environment and you only have
 			# access to your chain, I would consider mild secure to source
 			# the files into your bash.
@@ -195,7 +212,7 @@ do
 			# Same as above applies to BLOCK and DATA subparts of each ZBLOCK
 			# BLOCKS
 			echo '"block":"'$block'",'
-			ipfs cat $block | json2bash > $TEMPASSIN/tmp-block
+			ipfs --timeout=10s cat $block | json2bash > $TEMPASSIN/tmp-block
 			if [ "$?" == 0 ]
 			then
 				logit "[INFO]" "BLOCK $block READ"
@@ -251,7 +268,7 @@ do
 				if [ "$?" == 0 ]
 				then
 					mv $block_signature $block.asc
-					logit "[GPG]" "Block signature downloaded"
+					logit "[INFO]" "Block signature downloaded"
 				else
 					logit "[ERROR]" "Error while getting $block_signature for $block"
 					exit 1
@@ -273,10 +290,11 @@ do
 					exit 1
 				fi
 			fi
-			profile show $data
+			ak-data-expand $data $gpg
+
 			# DATA (but we don't source it's stuff)
 			# Only print to stdout
-			#ipfs cat $data
+			#ipfs --timeout=10s cat $data
 			touch $DATADIR/$data
 
 			# Now, since we sourced the BLOCK to our terminal, we can search
@@ -292,7 +310,7 @@ do
 			# Otherwise, we inform of the sequence
 			else
 				#echo "$zblock after $previous"
-				logit "[INFO]" "Found a previous block: $previous"
+				logit "[INFO]" "Found a previous block for $zblock: $previous"
 				echo '"previous":"'$previous'"},'
 				zblock=$previous
 			fi
