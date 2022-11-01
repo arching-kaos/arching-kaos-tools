@@ -61,13 +61,13 @@ then
 	ccounter=0
 	entrance="$(cat $ZLATEST)"
 	seed="$(cat $ZGENESIS)"
-	echo '['
+	echo -n '['
 	zblock=$entrance
 	while true
 	do
 		if [ "$counter" == 0 ]
 		then
-			echo "["
+			echo -n "["
 		fi
 		counter=$(expr $counter + 1)
 		if [ ! -v $zblock ]
@@ -75,7 +75,7 @@ then
 			if [ "$zblock" != "$seed" ]
 		then
 			timestamp=''
-			echo '{"zblock":"'$zblock'",'
+			echo -n '{"zblock":"'$zblock'",'
 			ipfs --timeout=10s cat $zblock | json2bash > $TEMPASSIN/tmp-zblock
 			source $TEMPASSIN/tmp-zblock
 			ipfs --timeout=10s cat $block | json2bash > $TEMPASSIN/tmp-block
@@ -83,23 +83,23 @@ then
 			logit "[INFO]" "BLOCK REFERENCED"
 			if [ ! -v $timestamp ]
 			then
-				echo '"timestamp":"'$timestamp'",'
+				echo -n '"timestamp":"'$timestamp'",'
 			fi
-			echo '"block_signature":"'$block_signature'",'
-			echo '"gpg":"'$gpg'",'
+			echo -n '"block_signature":"'$block_signature'",'
+			echo -n '"gpg":"'$gpg'",'
 
 			if [ -v $previous ]
 			then
 				logit "[ERROR]" "Block $block has no previous zblock $previous. Appending default genesis to close cleanly."
-				echo '"previous":"genesis"},{"genesis":"genesis"}]'
+				echo -n '"previous":"genesis"},{"genesis":"genesis"}]'
 				exit 0
 			else
-				echo '"previous":"'$previous'"},'
+				echo -n '"previous":"'$previous'"},'
 				zblock=$previous
 			fi
 		elif [ "$zblock" == "$seed" ]
 		then
-			echo '{"genesis":"genesis"}]'
+			echo -n '{"genesis":"genesis"}]'
 			logit "[INFO]" "Counter $counter"
 			exit 0
 		fi
@@ -137,7 +137,7 @@ while true
 do
 	if [ $counter == 0 ]
 	then
-		echo '['
+		echo -n '['
 	fi
 	counter=$(expr $counter + 1)
 	# Check if $zblock exists as variable
@@ -150,7 +150,7 @@ do
 			timestamp=''
 			# Announce to logs which ZBLOCK is being read at the moment
 			logit "[INFO]" "Examining $zblock"
-			echo '{"zblock":"'$zblock'",'
+			echo -n '{"zblock":"'$zblock'",'
 
 			# We concatenate the zblock's contents, pipe
 			# them through filter json2bash and output
@@ -211,7 +211,7 @@ do
 
 			# Same as above applies to BLOCK and DATA subparts of each ZBLOCK
 			# BLOCKS
-			echo '"block":"'$block'",'
+			echo -n '"block":"'$block'",'
 			ipfs --timeout=10s cat $block | json2bash > $TEMPASSIN/tmp-block
 			if [ "$?" == 0 ]
 			then
@@ -240,13 +240,13 @@ do
 			logit "[INFO]" "COMMAND is $command"
 			if [ ! -v $timestamp ]
 			then
-				echo '"timestamp":"'$timestamp'",'
+				echo -n '"timestamp":"'$timestamp'",'
 			fi
-			echo '"block_signature":"'$block_signature'",'
-			echo '"detach":"'$detach'",'
-			echo '"module":"'$module'",'
-			echo '"action":"'$command'",'
-			echo '"gpg":"'$gpg'",'
+			echo -n '"block_signature":"'$block_signature'",'
+			echo -n '"detach":"'$detach'",'
+			echo -n '"module":"'$module'",'
+			echo -n '"action":"'$command'",'
+			echo -n '"gpg":"'$gpg'",'
 			if [ $verify == 1 ]
 			then
 				ipfs get $gpg > /dev/null 2>&1
@@ -303,7 +303,7 @@ do
 			if [ -v $previous ]
 			then
 				logit "[WARNING]" "Block $block has no previous zblock, appending pseudo genesis to exit gracefully."
-				echo '"previous":"genesis"},{"genesis":"genesis"}]'
+				echo -n '"previous":"genesis"},{"genesis":"genesis"}]'
 				logit "[INFO]" "Reached pseudo-genesis, counted $counter zblocks."
 				exit 0
 
@@ -311,7 +311,7 @@ do
 			else
 				#echo "$zblock after $previous"
 				logit "[INFO]" "Found a previous block for $zblock: $previous"
-				echo '"previous":"'$previous'"},'
+				echo -n '"previous":"'$previous'"},'
 				zblock=$previous
 			fi
 
@@ -321,7 +321,7 @@ do
 		then
 			#echo "$zblock is GENESIS block"
 			#echo '"'$zblock'":{ "GENESIS":"GENESIS"}] '
-			echo '{"genesis":"genesis"}]'
+			echo -n '{"genesis":"genesis"}]'
 			logit "[INFO]" "Reached $seed, counted $counter zblocks."
 			exit 0
 		fi
