@@ -1,48 +1,49 @@
 #!/bin/bash
+PROGRAM="$(basename $0)"
 logit(){
-	logthis "ipfs-check: $1"
+	logthis "<$PROGRAM>" "$1" "$2"
 }
 
 
 ipfs files ls /zarchive > /dev/null
 if [ $? != 0 ]
 then
-	logit "/zarchive is missing" 
+	logit "[ERROR]" "/zarchive is missing" 
 else 
-	logit "/zarchive OK"
+	logit "[INFO]" "/zarchive OK"
 fi
 
 
 ipfs files ls /zlatest > /dev/null
 if [ $? != 0 ]
 then
-	logit "/zlatest is missing" 
+	logit "[ERROR]" "/zlatest is missing" 
 else
-	logit "/zlatest is OK"
+	logit "[INFO]" "/zlatest is OK"
 fi
 
 ipfs key list | grep zchain > /dev/null
 if [ $? != 0 ]; then
-	logit "zchain key is missing" 
+	logit "[WARNING]" "zchain key is missing" 
 	ipfs key gen zchain > $ZCHAIN
 	if [ $? != 0 ]; then
-		logit "zchain fails to create"
+		logit "[ERROR]" "zchain fails to create"
 	else
-		logit "zchain created"
+		logit "[INFO]" "zchain created"
 	fi
 else
-	logit "zchain is there"
+	logit "[INFO]" "zchain is there"
 fi
 
 ipfs key list | grep ak-config > /dev/null
 if [ $? != 0 ]; then
-       	logit "ak-config key is missing" 
+       	logit "[WARNING]" "ak-config key is missing" 
 	ipfs key gen ak-config
 	if [ $? != 0 ]; then
-		logit "ak-config fails to create"
+		logit "[ERROR]" "ak-config fails to create"
 	else
-		logit "ak-config created"
+		logit "[INFO]" "ak-config created"
 	fi
 else
-	logit "ak-config is there"
+	logit "[INFO]" "ak-config is there"
 fi
