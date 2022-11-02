@@ -70,7 +70,7 @@ then
 									logit "[ERROR]" "Could not verify $DATA with GPG key $gpg."
 									exit 1
 								    fi
-								    echo '"'$1'":{"ipfs":"'$DATA'","detach":"'$DETACH'"},'
+								    echo -n '"'$1'":{"ipfs":"'$DATA'","detach":"'$DETACH'"},'
 								else
 								    echo "Crap! Thanks though"
 								fi
