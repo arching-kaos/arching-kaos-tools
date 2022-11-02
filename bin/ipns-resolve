@@ -1,3 +1,27 @@
 #!/bin/bash
-ipfs name resolve $1 | sed -e 's/\/ipfs\///'
+PROGRAM="$(basename $0)"
+usage(){
+	echo "$PROGRAM - Resolves IPNS to IPFS"
+	echo "------------------------------------"
+	echo "Usage:"
+	echo "	$PROGRAM <IPNS>"
+	echo ""
+	echo "Returns the resolved IPFS CIDv0"
+}
+logit(){
+	logthis "<$PROGRAM>" "$1" "$2"
+}
+if [ ! -z $1 ]
+then
+	rsld=$(ipfs name resolve $1)
+	if [ "$?" != 0 ]
+	then
+		logit "[ERROR]" "Failed to resolve $1"
+		exit 1
+	fi
+       	echo -n $rsld | sed -e 's/\/ipfs\///'
+	logit "[INFO]" "Resolved $1 to $rsld"
+else
+	usage
+fi
 
