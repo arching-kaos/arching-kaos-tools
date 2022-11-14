@@ -1,0 +1,107 @@
+#!/bin/bash
+#
+# The concept is simple
+# 
+# 1. For a given file we split in 1MB files inside a temporary directory
+#
+# 2. We then create a map file, containing the resulted files and their sha512sum
+#
+# 3. We move the files to our $CHKDIR named after their checksums
+#
+# We ultimately want to be seeding the file so
+#
+# 4. We append the checksum of the original file with its name into the map file
+#
+# 5. We rename the map file after its checksum and move it to maps directory
+#
+# 6. We are done!
+#
+
+set -xe
+PROGRAM="$(basename $0)"
+
+if [ ! -f "$1" ]
+then
+	echo "[ERROR] File not found"
+	exit 1
+else
+	FILE="$1"
+fi
+
+CHKDIR="$WORKDIR/ftr/"
+FILEMAPSDIR="$WORKDIR/fmp/"
+TEMPORARYDIR="/tmp/tltmp"
+TECHDIR="/tmp/tltmp/chks/"
+CURRENTDIR="$(pwd)/"
+# BSFILE="$(basename $1)"
+# echo $CURRENTDIR $BSFILE
+
+logit(){
+	logthis "<$PROGRAM>" "$1" "$2"
+}
+
+if [ ! -d "$TECHDIR" ]
+then
+	mkdir -p "$TECHDIR"
+	if [ "$?" == 0 ]
+	then
+		logit "[INFO]" "Folder $TECHDIR created!"
+	else
+		logit "[ERROR]" "Problem occured while creating $TECHDIR"
+		echo "[ERROR] Can't create $TECHDIR"
+		exit 1
+	fi
+else
+	logit "[INFO]" "Temp dir found"
+fi
+if [ ! -d "$FILEMAPSDIR" ]
+then
+	mkdir -p "$FILEMAPSDIR"
+	if [ "$?" == 0 ]
+	then
+		logit "[INFO]" "Folder $FILEMAPSDIR created!"
+	else
+		logit "[ERROR]" "Problem occured while creating $FILEMAPSDIR"
+		echo "[ERROR] Can't create $FILEMAPSDIR"
+		exit 1
+	fi
+else
+	logit "[INFO]" "Mapsdir found"
+fi
+if [ ! -d "$CHKDIR" ]
+then
+	mkdir -p "$CHKDIR"
+	if [ "$?" == 0 ]
+	then
+		logit "[INFO]" "Folder $CHKDIR created!"
+	else
+		logit "[ERROR]" "Problem occured while creating $CHKDIR"
+		echo "[ERROR] Can't create $CHKDIR"
+		exit 1
+	fi
+else
+	logit "[INFO]" "Workdir found"
+fi
+
+echo 'set -xe' > $TEMPORARYDIR/cmd_queue.sh
+
+CHECKSUM=$(sha512sum "$FILE"|awk '{print $1}')
+split -b 1048576 --additional-suffix ".chk" -d "$FILE" "$TECHDIR$(basename "$FILE")-"
+
+cd $TECHDIR
+
+sha512sum  * > $TEMPORARYDIR/map; while IFS="" read -r p || [ -n "$p" ]
+do
+	echo $p | awk '{print "mv " $2 " '$CHKDIR'" $1}' >> $TEMPORARYDIR/cmd_queue.sh
+done < $TEMPORARYDIR/map
+
+sh $TEMPORARYDIR/cmd_queue.sh
+rm $TEMPORARYDIR/cmd_queue.sh
+
+echo "$CHECKSUM  $(basename "$FILE")" >> $TEMPORARYDIR/map
+
+cat $TEMPORARYDIR/map
+
+`sha512sum $TEMPORARYDIR/map | awk '{print "mv " $2 " '$FILEMAPSDIR'" $1}'`
+
+rm -rf $TEMPORARYDIR

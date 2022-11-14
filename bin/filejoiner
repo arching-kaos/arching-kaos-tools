@@ -1,0 +1,78 @@
+#!/bin/bash
+#
+set -xe
+
+PROGRAM="$(basename $0)"
+
+usage(){
+	echo "$PROGRAM <hash>"
+}
+
+cdaw(){
+	pwd > tmp_holder
+}
+
+cdaw
+
+CURDIR="$(cat tmp_holder)"
+
+TMPWD="/tmp/rjs"
+
+if [ ! -d "$TMPWD" ]
+then
+	mkdir -p "$TMPWD"
+	if [ "$?" != 0 ]
+	then
+		echo "Can't create $TMPWD dir"
+		exit 1
+	fi
+fi
+
+MAPSDIR="$WORKDIR/fmp"
+
+CHKDIR="$WORKDIR/ftr"
+
+cd $CHKDIR
+if [ "$?" != 0 ]
+then
+	echo "Can't get dir"
+	exit 1
+fi
+
+
+
+if [ ! -z $1 ]
+then
+	MAPSFILE="$1"
+
+	echo '#!/bin/bash' > script
+	
+	awk '{print "cp '$CHKDIR'/"$1" '$TMPWD'/"$2" "}' $MAPSDIR/$MAPSFILE| grep chk > script
+
+	sh script
+	if [ "$?" != 0 ]
+	then
+		echo "Error executing copy script"
+		exit 1
+	fi
+	rm script
+
+	cd $TMPWD
+
+	echo "$PWD"
+	OUTPUT="$(tail -n1 $MAPSDIR/$MAPSFILE | awk '{print $2}')"
+
+	echo $OUTPUT
+
+	cat $(echo $(cat $MAPSDIR/$MAPSFILE|grep chk|awk '{print $2" "}'|tr -d '\n')) > $OUTPUT
+
+	sha512sum -c $MAPSDIR/$MAPSFILE
+	
+	mv $OUTPUT $CURDIR
+
+	rm -rf "$TMPWD"
+
+	rm $CURDIR/tmp_holder
+else
+	usage
+fi
