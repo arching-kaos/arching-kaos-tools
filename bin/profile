@@ -10,7 +10,7 @@ logit(){
 if [ ! -d $ZPROFILEDIR ]; then
 	mkdir $ZPROFILEDIR
 	cd $ZPROFILEDIR
-	git init
+#	git init
 #	echo "Profile repository" > README
 #	echo "Qmetc" >> README
 #	git add README
@@ -78,12 +78,12 @@ EOF
 		add $ZPROPERTY_KEY
 		echo "Adding to git repo..."
 		cd $ZPROFILEDIR
-		git add $ZPROPERTY_KEY
-		git commit -m "Added ${ZPROPERTY_KEY} with ${ZPROPERTY_VALUE}"
-		git clean --force
+#		git add $ZPROPERTY_KEY
+#		git commit -m "Added ${ZPROPERTY_KEY} with ${ZPROPERTY_VALUE}"
+#		git clean --force
 	else
-		echo "error"
-		exit 244
+		echo "Couldn't write to file $ZPROFILEDIR/$TO_FILE"
+		exit 1
 	fi
 }
 propset(){
@@ -148,10 +148,6 @@ index(){
 	done
 	echo "}"
 }
-title(){
-	echo "ak-profile-cli"
-	echo "--------------"
-}
 import(){
 	if [ ! -z $1 ]
 	then
@@ -203,10 +199,8 @@ EOF
 	fi
 }
 usage(){
-	title
-	echo ""
 	echo "Usage:"
-	echo "		$0 command [options]"
+	echo "		$PROGRAM command [options]"
 	echo ""
 	echo "All you need to know is that there are two options available:"
 	echo "help			Prints this help message"
