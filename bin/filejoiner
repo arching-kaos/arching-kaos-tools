@@ -63,8 +63,38 @@ then
 	OUTPUT="$(tail -n1 $MAPSDIR/$MAPSFILE | awk '{print $2}')"
 
 	echo $OUTPUT
+	# 
+	# Not sure about the line below. There is a bug persisting here from `cat` that separates with \n
+	# each file
+	#
+	# It's said that the best way to do that is using `printf` 
+	#
+	# https://stackoverflow.com/questions/51332070/bash-redirect-cat-to-file-without-newline
+	#
+	# We will need an amount of files so we can know beforehand how many %s will be outputed (same as the number of files)
+	#
+	# If we'd `grep chk $MAPSDIR/$MAPSFILE | wc -l` we would get the amount, right?
+	# YES!!!
+	#
+	# So we would put out a new script
+	# TODO
+    #touch newscript.sh
+    #echo 'set -xe' > newscript.sh
+    #echo -n "printf \"" >> newscript.sh
+	#NUMBER_OF_FILES="$(grep chk $MAPSDIR/$MAPSFILE | wc -l)"
+    #i=0
+    #while [ "$i" -lt "$NUMBER_OF_FILES" ]
+    #do
+    #    i="$(expr $i + 1)"
+    #    echo -n "%s" >> newscript.sh
+    #done
+    #echo -n "%s" >> newscript.sh
+    #echo -n "\" " >> newscript.sh
+    #echo -n "$(cat $MAPSDIR/$MAPSFILE | grep chk | awk '{ print "\"$(cat " $2 ")\" " }'| tr -d '\n')" >> newscript.sh
+    #echo -n ' > '$OUTPUT >> newscript.sh
+    #sh newscript.sh
 
-	cat $(echo $(cat $MAPSDIR/$MAPSFILE|grep chk|awk '{print $2" "}'|tr -d '\n')) > $OUTPUT
+	cat $(echo -n $(cat $MAPSDIR/$MAPSFILE|grep chk|awk '{print $2" "}'|tr -d '\n')) > $OUTPUT
 
 	sha512sum -c $MAPSDIR/$MAPSFILE
 	
