@@ -17,7 +17,8 @@
 # 6. We are done!
 #
 
-set -xe
+# Uncomment next line if you want to debug 
+# set -xe
 PROGRAM="$(basename $0)"
 
 if [ ! -f "$1" ]
@@ -83,7 +84,8 @@ else
 	logit "[INFO]" "Workdir found"
 fi
 
-echo 'set -xe' > $TEMPORARYDIR/cmd_queue.sh
+# Uncomment next line in case you want to debug the resulting script as well
+# echo 'set -xe' > $TEMPORARYDIR/cmd_queue.sh
 
 CHECKSUM=$(sha512sum "$FILE"|awk '{print $1}')
 split -b 1048576 --additional-suffix ".chk" -d "$FILE" "$TECHDIR$(basename "$FILE")-"
@@ -100,8 +102,10 @@ rm $TEMPORARYDIR/cmd_queue.sh
 
 echo "$CHECKSUM  $(basename "$FILE")" >> $TEMPORARYDIR/map
 
-cat $TEMPORARYDIR/map
+MAPFILEHASH="$(sha512sum $TEMPORARYDIR/map | awk '{ print $1 }')"
 
 `sha512sum $TEMPORARYDIR/map | awk '{print "mv " $2 " '$FILEMAPSDIR'" $1}'`
 
 rm -rf $TEMPORARYDIR
+
+echo "Hash of the map is $MAPFILEHASH and it's located at $FILEMAPSDIR"
