@@ -88,6 +88,7 @@ then
 		exit 1
 	fi
 	logit "[INFO]" "Block signature verified"
+    echo -n '"'$1'":{"ipfs":"'$DATA'","detach":"'$DETACH'"},'
 	exit 0
 else
 	echo "Usage: $PROGRAM HASH GPG"
