@@ -6,96 +6,91 @@ logit(){
 if [ ! -z "$1" ] && [ ! -z "$2" ]
 then
 	echo -n "$1" | grep -e 'Qm.\{44\}' >/dev/null
-	if [ "$?" == 0 ]
+	if [ "$?" -ne 0 ]
 	then
-		ipfs --timeout=10s cat $1 > /dev/null
-		if [ "$?" == 0 ]
-		then
-			ipfs --timeout=10s cat $1 | json_pp > /dev/null
-			if [ "$?" == 0 ]
-			then
-				ipfs --timeout=10s cat $1 | jq | grep ipfs > /dev/null
-				if [ "$?" == 0 ]
-				then
-					DATA="$(ipfs --timeout=10s cat $1 | jq | grep ipfs | sed -e 's/"ipfs": "//g; s/[",]//g; s/ //g')"
-					if [ "$?" == 0 ]
-					then
-						ipfs --timeout=10s cat $1 | jq | grep detach > /dev/null
-						if [ "$?" == 0 ]
-						then
-							DETACH="$(ipfs --timeout=10s cat $1 | jq | grep detach | sed -e 's/"detach": "//g; s/[",]//g; s/ //g')"
-							if [ "$?" == 0 ]
-							then
-								echo -n "$2" | grep -e 'Qm.\{44\}' >/dev/null
-								if [ "$?" == 0 ]
-								then
-								    gpg="$2"
-								    ipfs --timeout=10s get $gpg > /dev/null 2>&1
-								    if [ "$?" == 0 ]
-								    then
-									gpg2 --import $gpg > /dev/null 2>&1
-									if [ "$?" == 0 ]
-									then
-									    logit "[GPG]" "$gpg imported."
-									else
-									    logit "[ERROR]" "Could not import GPG key: $gpg ."
-									    exit 1
-									fi
-								    else
-									logit "[ERROR]" "Could not get GPG key: $gpg ."
-									exit 1
-								    fi
-								    ipfs --timeout=10s get $DETACH > /dev/null 2>&1
-								    if [ "$?" == 0 ]
-								    then
-									mv $DETACH $DATA.asc
-									logit "[INFO]" "Block signature downloaded"
-								    else
-									logit "[ERROR]" "Error while getting $DETACH for $DATA"
-									exit 1
-								    fi
-								    ipfs --timeout=10s get $DATA > /dev/null 2>&1
-								    if [ "$?" == 0 ]
-								    then
-									logit "[INFO]" "Downloaded $DATA."
-								    else
-									logit "[ERROR]" "Could not get $DATA"
-									exit 1
-								    fi
-								    gpg2 --verify $DATA.asc > /dev/null 2>&1
-								    if [ "$?" == 0 ]
-								    then
-									logit "[GPG]" "$gpg signature of $DATA is verified."
-								    else
-									logit "[ERROR]" "Could not verify $DATA with GPG key $gpg."
-									exit 1
-								    fi
-								    echo -n '"'$1'":{"ipfs":"'$DATA'","detach":"'$DETACH'"},'
-								else
-								    echo "Crap! Thanks though"
-								fi
-							else
-								echo "Crap! Thanks though"
-							fi
-						else
-							echo "Crap! Thanks though"
-						fi
-					else
-						echo "Crap! Thanks though"
-					fi
-				else
-					echo "Crap! Thanks though"
-				fi
-			else
-				echo "Crap! Thanks though"
-			fi
-		else
-			echo "Crap! Thanks though"
-		fi
-	else
-		echo "Crap! Thanks though"
+		logit "[ERROR]" "Invalid hash format for $1"
+		exit 1
 	fi
+	ipfs --timeout=10s cat $1 > /dev/null
+	if [ "$?" -ne 0 ]
+	then
+		logit "[ERROR]" "Error while reading $1"
+		exit 1
+	fi
+	ipfs --timeout=10s cat $1 | json_pp > /dev/null
+	if [ "$?" -ne 0 ]
+	then
+		logit "[ERROR]" "Error while parsing JSON for $1"
+		exit 1
+	fi
+	ipfs --timeout=10s cat $1 | jq | grep ipfs > /dev/null
+	if [ "$?" -ne 0 ]
+	then
+		logit "[ERROR]" "Error while extracting data from JSON for $1"
+		exit 1
+	fi
+	DATA="$(ipfs --timeout=10s cat $1 | jq | grep ipfs | sed -e 's/"ipfs": "//g; s/[",]//g; s/ //g')"
+	if [ "$?" -ne 0 ]
+	then
+		logit "[ERROR]" "Error while extracting data from JSON for $1"
+		exit 1
+	fi
+	ipfs --timeout=10s cat $1 | jq | grep detach > /dev/null
+	if [ "$?" -ne 0 ]
+	then
+		logit "[ERROR]" "Error while extracting data from JSON for $1"
+		exit 1
+	fi
+	DETACH="$(ipfs --timeout=10s cat $1 | jq | grep detach | sed -e 's/"detach": "//g; s/[",]//g; s/ //g')"
+	if [ "$?" -ne 0 ]
+	then
+		logit "[ERROR]" "Error while extracting data from JSON for $1"
+		exit 1
+	fi
+	echo -n "$2" | grep -e 'Qm.\{44\}' >/dev/null
+	if [ "$?" -ne 0 ]
+	then
+	    logit "[ERROR]" "Invalid hash format for $2"
+	    exit 1
+	fi
+    gpg="$2"
+    ipfs --timeout=10s get $gpg > /dev/null 2>&1
+    if [ "$?" -ne 0 ]
+    then
+	logit "[ERROR]" "Could not get GPG key: $gpg"
+	exit 1
+    fi
+    gpg2 --import $gpg > /dev/null 2>&1
+    if [ "$?" -ne 0 ]
+    then
+		logit "[ERROR]" "Could not import GPG key: $gpg"
+		exit 1
+	fi
+	ipfs --timeout=10s get $DETACH > /dev/null 2>&1
+	if [ "$?" -ne 0 ]
+	then
+		logit "[ERROR]" "Error while getting $DETACH for $DATA"
+		exit 1
+	fi
+	mv $DETACH $DATA.asc
+	logit "[INFO]" "Block signature downloaded"
+	ipfs --timeout=10s get $DATA > /dev/null 2>&1
+	if [ "$?" -ne 0 ]
+	then
+		logit "[ERROR]" "Error while getting $DATA"
+		exit 1
+	fi
+	logit "[INFO]" "Block downloaded"
+	gpg2 --verify $DATA.asc $DATA > /dev/null 2>&1
+	if [ "$?" -ne 0 ]
+	then
+		logit "[ERROR]" "Error while verifying signature for $DATA"
+		exit 1
+	fi
+	logit "[INFO]" "Block signature verified"
+	exit 0
 else
-	echo "Useless without a thing to do."
-
+	echo "Usage: $PROGRAM HASH GPG"
+	exit 1
 fi
+
