@@ -19,21 +19,21 @@
 PROGRAM="$(basename $0)"
 
 logit(){
-	logthis "<$PROGRAM>" "$1" "$2"
+    logthis "<$PROGRAM>" "$1" "$2"
 }
 
 usage(){
-	echo "$PROGRAM - Crawl an arching kaos chain"
-	echo "-----------------------------------"
-	echo "Usage:"
-	echo "	--help, -h				Print this help and exit"
-	echo "	--chain <ipns-link>, -n <ipns-link>	Crawl specified chain"
-	echo "	--show-zblocks-only, -z			Show only zblocks"
-	echo "	--no-verify, -nV			Don't verify signatures"
-	echo "	<ipfs-link>				Specify IPFS CID for entrance"
-	echo ""
-	echo "Note that combined flags don't work for now"
-	echo "Running with no flags crawls your chain based on ZLATEST environment variable"
+    echo "$PROGRAM - Crawl an arching kaos chain"
+    echo "-----------------------------------"
+    echo "Usage:"
+    echo "    --help, -h                Print this help and exit"
+    echo "    --chain <ipns-link>, -n <ipns-link>    Crawl specified chain"
+    echo "    --show-zblocks-only, -z            Show only zblocks"
+    echo "    --no-verify, -nV            Don't verify signatures"
+    echo "    <ipfs-link>                Specify IPFS CID for entrance"
+    echo ""
+    echo "Note that combined flags don't work for now"
+    echo "Running with no flags crawls your chain based on ZLATEST environment variable"
 }
 # Start of tests
 #entrance="QmW5WVXCJfhb4peHG6cbEdamC24vZzMX2Vz386vpENh38U"
@@ -43,79 +43,79 @@ usage(){
 verify=1
 if [ ! -z "$1" ] && [ "$1" == "-h" ] || [ "$1" == "--help" ]
 then
-	usage
-	exit
+    usage
+    exit
 elif [ ! -z "$1" ] && [ "$1" == "-nV" ] || [ "$1" == "--no-verify" ]
 then
-	verify=0
-	entrance="$(cat $ZLATEST)"
+    verify=0
+    entrance="$(cat $ZLATEST)"
 elif [ ! -z "$1" ] && [ "$1" == "-n" ]
 then
-	entrance="$(ipns-resolve $2)"
+    entrance="$(ipns-resolve $2)"
 elif [ ! -z "$1" ] && [ "$1" == "--show-zblocks-only" ] || [ "$1" == "-z" ]
 then
-	# Enter temp folder
-	TEMPASSIN="/tmp/aktmp_$(date -u +%s)"
-	mkdir $TEMPASSIN
-	cd $TEMPASSIN
-	ccounter=0
-	entrance="$(cat $ZLATEST)"
-	seed="$(cat $ZGENESIS)"
-	echo -n '['
-	zblock=$entrance
-	while true
-	do
-		if [ "$counter" == 0 ]
-		then
-			echo -n "["
-		fi
-		counter=$(expr $counter + 1)
-		if [ ! -v $zblock ]
-		then
-			if [ "$zblock" != "$seed" ]
-		then
-			timestamp=''
-			echo -n '{"zblock":"'$zblock'",'
-			ipfs --timeout=10s cat $zblock | json2bash > $TEMPASSIN/tmp-zblock
-			source $TEMPASSIN/tmp-zblock
-			ipfs --timeout=10s cat $block | json2bash > $TEMPASSIN/tmp-block
-			source $TEMPASSIN/tmp-block
-			logit "[INFO]" "BLOCK REFERENCED"
-			if [ ! -v $timestamp ]
-			then
-				echo -n '"timestamp":"'$timestamp'",'
-			fi
-			echo -n '"block_signature":"'$block_signature'",'
-			echo -n '"gpg":"'$gpg'",'
+    # Enter temp folder
+    TEMPASSIN="/tmp/aktmp_$(date -u +%s)"
+    mkdir $TEMPASSIN
+    cd $TEMPASSIN
+    ccounter=0
+    entrance="$(cat $ZLATEST)"
+    seed="$(cat $ZGENESIS)"
+    echo -n '['
+    zblock=$entrance
+    while true
+    do
+        if [ "$counter" == 0 ]
+        then
+            echo -n "["
+        fi
+        counter=$(expr $counter + 1)
+        if [ ! -v $zblock ]
+        then
+            if [ "$zblock" != "$seed" ]
+        then
+            timestamp=''
+            echo -n '{"zblock":"'$zblock'",'
+            ipfs --timeout=10s cat $zblock | json2bash > $TEMPASSIN/tmp-zblock
+            source $TEMPASSIN/tmp-zblock
+            ipfs --timeout=10s cat $block | json2bash > $TEMPASSIN/tmp-block
+            source $TEMPASSIN/tmp-block
+            logit "[INFO]" "BLOCK REFERENCED"
+            if [ ! -v $timestamp ]
+            then
+                echo -n '"timestamp":"'$timestamp'",'
+            fi
+            echo -n '"block_signature":"'$block_signature'",'
+            echo -n '"gpg":"'$gpg'",'
 
-			if [ -v $previous ]
-			then
-				logit "[ERROR]" "Block $block has no previous zblock $previous. Appending default genesis to close cleanly."
-				echo -n '"previous":"genesis"},{"genesis":"genesis"}]'
-				exit 0
-			else
-				echo -n '"previous":"'$previous'"},'
-				zblock=$previous
-			fi
-		elif [ "$zblock" == "$seed" ]
-		then
-			echo -n '{"genesis":"genesis"}]'
-			logit "[INFO]" "Counter $counter"
-			exit 0
-		fi
-	else
-		echo "Check not passed... No previous IPFS CID"
-		exit 1
-	fi
+            if [ -v $previous ]
+            then
+                logit "[ERROR]" "Block $block has no previous zblock $previous. Appending default genesis to close cleanly."
+                echo -n '"previous":"genesis"},{"genesis":"genesis"}]'
+                exit 0
+            else
+                echo -n '"previous":"'$previous'"},'
+                zblock=$previous
+            fi
+        elif [ "$zblock" == "$seed" ]
+        then
+            echo -n '{"genesis":"genesis"}]'
+            logit "[INFO]" "Counter $counter"
+            exit 0
+        fi
+    else
+        echo "Check not passed... No previous IPFS CID"
+        exit 1
+    fi
 done
 
 elif [ ! -z "$1" ]
 then
-	entrance="$1"
+    entrance="$1"
 else
-	# By default we enter from the latest block
-	# We can alter this by changing this value
-	entrance="$(cat $ZLATEST)"
+    # By default we enter from the latest block
+    # We can alter this by changing this value
+    entrance="$(cat $ZLATEST)"
 fi
 # We assign the IPFS CIDv0 of an empty file as this is used
 # as our GENESIS block, hence the "seed" that the tree grows
@@ -135,199 +135,195 @@ counter=0
 # We break the loop from inside the loop
 while true
 do
-	if [ $counter == 0 ]
-	then
-		echo -n '['
-	fi
-	counter=$(expr $counter + 1)
-	# Check if $zblock exists as variable
-	if [ ! -v $zblock ]
-	then
-		# Check if it is not our seed cause if it is we skip this part
-		if [ "$zblock" != "$seed" ]
-		then
-			# Reset timestamp since it's introduced later
-			timestamp=''
-			# Announce to logs which ZBLOCK is being read at the moment
-			logit "[INFO]" "Examining $zblock"
-			echo -n '{"zblock":"'$zblock'",'
+    if [ $counter == 0 ]
+    then
+        echo -n '['
+    fi
+    counter=$(expr $counter + 1)
+    # Check if $zblock exists as variable
+    if [ ! -v $zblock ]
+    then
+        # Check if it is not our seed cause if it is we skip this part
+        if [ "$zblock" != "$seed" ]
+        then
+            # Reset timestamp since it's introduced later
+            timestamp=''
+            # Announce to logs which ZBLOCK is being read at the moment
+            logit "[INFO]" "Examining $zblock"
+            echo -n '{"zblock":"'$zblock'",'
 
-			# We concatenate the zblock's contents, pipe
-			# them through filter json2bash and output
-			# them to tmp-file
-			# 
-			# We check if any $zblock at all
-			ipfs --timeout=10s cat $zblock > /dev/null 2>&1
-			if [ "$?" == 0 ]
-			then
-				logit "[INFO]" "ZBLOCK $zblock READ"
-			else
-				logit "[ERROR]" "ZBLOCK $zblock READ failed"
-				exit 1
-			fi
-			# If it's JSON formated
-			ipfs --timeout=10s cat $zblock | json_pp > /dev/null 2>&1
-			if [ "$?" == 0 ]
-			then
-				logit "[INFO]" "ZBLOCK $zblock is JSON"
-			else
-				logit "[ERROR]" "ZBLOCK $zblock is not JSON"
-				exit 1
-			fi
-			# Then we pass it through the filter and save it
-			ipfs --timeout=10s cat $zblock | json2bash > $TEMPASSIN/tmp-zblock
+            # We concatenate the zblock's contents, pipe
+            # them through filter json2bash and output
+            # them to tmp-file
+            # 
+            # We check if any $zblock at all
+            ipfs --timeout=10s cat $zblock > /dev/null 2>&1
+            if [ "$?" -ne 0 ]
+            then
+                logit "[ERROR]" "ZBLOCK $zblock READ failed"
+                exit 1
+            fi
+            logit "[INFO]" "ZBLOCK $zblock READ"
+  
+            # If it's JSON formated
+            ipfs --timeout=10s cat $zblock | json_pp > /dev/null 2>&1
+            if [ "$?" -ne 0 ]
+            then
+                logit "[ERROR]" "ZBLOCK $zblock is not JSON"
+                exit 1
+            fi
+            logit "[INFO]" "ZBLOCK $zblock is JSON"
 
-			# Be sure that there are the expected values
-			# We need 'block' and 'block_signature' inside a 'zblock'
-			# Exit if any is missing
-			grep -e 'block_signature' $TEMPASSIN/tmp-zblock > /dev/null 2>&1
-			if [ "$?" == 0 ]
-			then
-				logit "[INFO]" "ZBLOCK $zblock contains a block_signature"
-			else
-				logit "[ERROR]" "ZBLOCK $zblock doesn't contain a block_signature"
-				exit 1
-			fi
-			grep -e 'block=' $TEMPASSIN/tmp-zblock > /dev/null 2>&1
-			if [ "$?" == 0 ]
-			then
-				logit "[INFO]" "ZBLOCK $zblock has block"
-			else
-				logit "[ERROR]" "ZBLOCK $zblock has no block"
-				exit 1
-			fi
+            # Then we pass it through the filter and save it
+            ipfs --timeout=10s cat $zblock | json2bash > $TEMPASSIN/tmp-zblock
 
-			# We create files named after each ZBLOCK IPFS CID for later
-			# reference. Files are empty.
-			touch $ZBLOCKDIR/$zblock
-			logit "[INFO]" "Created reference"
+            # Be sure that there are the expected values
+            # We need 'block' and 'block_signature' inside a 'zblock'
+            # Exit if any is missing
+            grep -e 'block_signature' $TEMPASSIN/tmp-zblock > /dev/null 2>&1
+            if [ "$?" -ne 0 ]
+            then
+                logit "[ERROR]" "ZBLOCK $zblock doesn't contain a block_signature"
+                exit 1
+            fi
+            logit "[INFO]" "ZBLOCK $zblock contains a block_signature"
 
-			# Supposingly you are on a safe environment and you only have
-			# access to your chain, I would consider mild secure to source
-			# the files into your bash.
-			# File an issue/pull request if you think it can be done better!!
-			source $TEMPASSIN/tmp-zblock
-			logit "[INFO]" "ZBLOCK SOURCED"
+            grep -e 'block=' $TEMPASSIN/tmp-zblock > /dev/null 2>&1
+            if [ "$?" -ne 0 ]
+            then
+                logit "[ERROR]" "ZBLOCK $zblock has no block"
+                exit 1
+            fi
+            logit "[INFO]" "ZBLOCK $zblock has block"
 
-			# Same as above applies to BLOCK and DATA subparts of each ZBLOCK
-			# BLOCKS
-			echo -n '"block":"'$block'",'
-			ipfs --timeout=10s cat $block | json2bash > $TEMPASSIN/tmp-block
-			if [ "$?" == 0 ]
-			then
-				logit "[INFO]" "BLOCK $block READ"
-			else
-				logit "[ERROR]" "BLOCK $block READ failed"
-				exit 1
-			fi
+            # We create files named after each ZBLOCK IPFS CID for later
+            # reference. Files are empty.
+            touch $ZBLOCKDIR/$zblock
+            logit "[INFO]" "Created reference"
 
-			grep -e 'timestamp' -e 'gpg' -e 'data' -e 'action' -e 'detach' -e 'previous' $TEMPASSIN/tmp-block > /dev/null 2>&1
-			if [ "$?" == 0 ]
-			then
-				logit "[INFO]" "BLOCK $block is a block"
-			else
-				logit "[ERROR]" "BLOCK $block is NOT a valid block"
-				exit 1
-			fi
+            # Supposingly you are on a safe environment and you only have
+            # access to your chain, I would consider mild secure to source
+            # the files into your bash.
+            # File an issue/pull request if you think it can be done better!!
+            source $TEMPASSIN/tmp-zblock
+            logit "[INFO]" "ZBLOCK SOURCED"
 
-			source $TEMPASSIN/tmp-block
-			logit "[INFO]" "BLOCK $block SOURCED"
-			touch $BLOCKDIR/$block
-			logit "[INFO]" "BLOCK REFERENCED"
-			module="$(echo $action | sed -e 's/\// /g' | awk '{ print $1 }')"
-			logit "[INFO]" "DATA is $module module."
-			command="$(echo $action | sed -e 's/\// /g' | awk '{ print $2 }')"
-			logit "[INFO]" "COMMAND is $command"
-			if [ ! -v $timestamp ]
-			then
-				echo -n '"timestamp":"'$timestamp'",'
-			fi
-			echo -n '"block_signature":"'$block_signature'",'
-			echo -n '"detach":"'$detach'",'
-			echo -n '"module":"'$module'",'
-			echo -n '"action":"'$command'",'
-			echo -n '"gpg":"'$gpg'",'
-			if [ $verify == 1 ]
-			then
-				ipfs get $gpg > /dev/null 2>&1
-				if [ "$?" == 0 ]
-				then
-					gpg2 --import $gpg > /dev/null 2>&1
-					if [ "$?" == 0 ]
-					then
-						logit "[INFO]" "$gpg imported."
-					else
-						logit "[ERROR]" "Could not import GPG key: $gpg ."
-						exit 1
-					fi
-				else
-					logit "[ERROR]" "Could not get GPG key: $gpg ."
-					exit 1
-				fi
-				ipfs get $block_signature > /dev/null 2>&1
-				if [ "$?" == 0 ]
-				then
-					mv $block_signature $block.asc
-					logit "[INFO]" "Block signature downloaded"
-				else
-					logit "[ERROR]" "Error while getting $block_signature for $block"
-					exit 1
-				fi
-				ipfs get $block > /dev/null 2>&1
-				if [ "$?" == 0 ]
-				then
-					logit "[INFO]" "Downloaded block $block."
-				else
-					logit "[ERROR]" "Could not get $block block"
-					exit 1
-				fi
-				gpg2 --verify $block.asc > /dev/null 2>&1
-				if [ "$?" == 0 ]
-				then
-					logit "[GPG]" "$gpg signature of $block is verified."
-				else
-					logit "[ERROR]" "Could not verify $block with GPG key $gpg."
-					exit 1
-				fi
-			fi
-			ak-data-expand $data $gpg
+            # Same as above applies to BLOCK and DATA subparts of each ZBLOCK
+            # BLOCKS
+            echo -n '"block":"'$block'",'
+            ipfs --timeout=10s cat $block | json2bash > $TEMPASSIN/tmp-block
+            if [ "$?" -ne 0 ]
+            then
+                logit "[ERROR]" "BLOCK $block READ failed"
+                exit 1
+            fi
 
-			# DATA (but we don't source it's stuff)
-			# Only print to stdout
-			#ipfs --timeout=10s cat $data
-			touch $DATADIR/$data
+            grep -e 'timestamp' -e 'gpg' -e 'data' -e 'action' -e 'detach' -e 'previous' $TEMPASSIN/tmp-block > /dev/null 2>&1
+            if [ "$?" -ne 0 ]
+            then
+                logit "[ERROR]" "BLOCK $block is NOT a valid block"
+                exit 1
+            fi
+            logit "[INFO]" "BLOCK $block is a block"
 
-			# Now, since we sourced the BLOCK to our terminal, we can search
-			# for $previous variable. In case we don't find one, we append one
-			# and we exit.
-			if [ -v $previous ]
-			then
-				logit "[WARNING]" "Block $block has no previous zblock, appending pseudo genesis to exit gracefully."
-				echo -n '"previous":"genesis"},{"genesis":"genesis"}]'
-				logit "[INFO]" "Reached pseudo-genesis, counted $counter zblocks."
-				exit 0
+            source $TEMPASSIN/tmp-block
+            logit "[INFO]" "BLOCK $block SOURCED"
+            touch $BLOCKDIR/$block
+            logit "[INFO]" "BLOCK REFERENCED"
+            module="$(echo $action | sed -e 's/\// /g' | awk '{ print $1 }')"
+            logit "[INFO]" "DATA is $module module."
+            command="$(echo $action | sed -e 's/\// /g' | awk '{ print $2 }')"
+            logit "[INFO]" "COMMAND is $command"
+            if [ ! -v $timestamp ]
+            then
+                echo -n '"timestamp":"'$timestamp'",'
+            fi
+            echo -n '"block_signature":"'$block_signature'",'
+            echo -n '"detach":"'$detach'",'
+            echo -n '"module":"'$module'",'
+            echo -n '"action":"'$command'",'
+            echo -n '"gpg":"'$gpg'",'
+            if [ $verify == 1 ]
+            then
+                ipfs get $gpg > /dev/null 2>&1
+                if [ "$?" -ne 0 ]
+                then
+                    logit "[ERROR]" "Could not get GPG key: $gpg ."
+                    exit 1
+                fi
+                gpg2 --import $gpg > /dev/null 2>&1
+                if [ "$?" -ne 0 ]
+                then
+                    logit "[ERROR]" "Could not import GPG key: $gpg ."
+                    exit 1
+                fi
+                ipfs get $block_signature > /dev/null 2>&1
+                if [ "$?" -ne 0 ]
+                then
+                    logit "[ERROR]" "Error while getting $block_signature for $block"
+                    exit 1
+                fi
+                mv $block_signature $block.asc
+                logit "[INFO]" "Block signature downloaded"
+                ipfs get $block > /dev/null 2>&1
+                if [ "$?" -ne 0 ]
+                then
+                    logit "[ERROR]" "Could not get $block block"
+                    exit 1
+                fi
+                logit "[INFO]" "Downloaded block $block."
+                gpg2 --verify $block.asc > /dev/null 2>&1
+                if [ "$?" -ne 0 ]
+                then
+                    logit "[ERROR]" "Could not verify $block with GPG key $gpg."
+                    exit 1
+                fi
+                logit "[GPG]" "$gpg signature of $block is verified."
+            fi
+            ak-data-expand $data $gpg
 
-			# Otherwise, we inform of the sequence
-			else
-				#echo "$zblock after $previous"
-				logit "[INFO]" "Found a previous block for $zblock: $previous"
-				echo -n '"previous":"'$previous'"},'
-				zblock=$previous
-			fi
+            if [ "$?" -ne 0 ]
+            then
+                logit "[ERROR]" "Failed on data signature verification [data: $data, gpg: $gpg, zblock: $zblock]"
+                exit 1
+            fi
 
-		# Now check if it is equal to the seed
-		# which apparently means we reached the seed.
-		elif [ "$zblock" == "$seed" ]
-		then
-			#echo "$zblock is GENESIS block"
-			#echo '"'$zblock'":{ "GENESIS":"GENESIS"}] '
-			echo -n '{"genesis":"genesis"}]'
-			logit "[INFO]" "Reached $seed, counted $counter zblocks."
-			exit 0
-		fi
-	# And finally, if nothing is there exit with error
-	else
-		echo "Check not passed... No previous IPFS CID"
-		exit 1
-	fi
+            # DATA (but we don't source it's stuff)
+            # Only print to stdout
+            #ipfs --timeout=10s cat $data
+            touch $DATADIR/$data
+
+            # Now, since we sourced the BLOCK to our terminal, we can search
+            # for $previous variable. In case we don't find one, we append one
+            # and we exit.
+            if [ -v $previous ]
+            then
+                logit "[WARNING]" "Block $block has no previous zblock, appending pseudo genesis to exit gracefully."
+                echo -n '"previous":"genesis"},{"genesis":"genesis"}]'
+                logit "[INFO]" "Reached pseudo-genesis, counted $counter zblocks."
+                exit 0
+
+            # Otherwise, we inform of the sequence
+            else
+                #echo "$zblock after $previous"
+                logit "[INFO]" "Found a previous block for $zblock: $previous"
+                echo -n '"previous":"'$previous'"},'
+                zblock=$previous
+            fi
+
+        # Now check if it is equal to the seed
+        # which apparently means we reached the seed.
+        elif [ "$zblock" == "$seed" ]
+        then
+            #echo "$zblock is GENESIS block"
+            #echo '"'$zblock'":{ "GENESIS":"GENESIS"}] '
+            echo -n '{"genesis":"genesis"}]'
+            logit "[INFO]" "Reached $seed, counted $counter zblocks."
+            exit 0
+        fi
+    # And finally, if nothing is there exit with error
+    else
+        echo "Check not passed... No previous IPFS CID"
+        exit 1
+    fi
 done
