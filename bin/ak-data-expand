@@ -69,7 +69,7 @@ then
 	ipfs --timeout=10s get $DETACH > /dev/null 2>&1
 	if [ "$?" -ne 0 ]
 	then
-		logit "[ERROR]" "Error while getting $DETACH for $DATA"
+		logit "[ERROR]" "Error while getting signature: $DETACH for data: $DATA"
 		exit 1
 	fi
 	mv $DETACH $DATA.asc
@@ -77,10 +77,10 @@ then
 	ipfs --timeout=10s get $DATA > /dev/null 2>&1
 	if [ "$?" -ne 0 ]
 	then
-		logit "[ERROR]" "Error while getting $DATA"
+		logit "[ERROR]" "Error while getting data: $DATA"
 		exit 1
 	fi
-	logit "[INFO]" "Block downloaded"
+	logit "[INFO]" "Data downloaded: $DATA"
 	gpg2 --verify $DATA.asc $DATA > /dev/null 2>&1
 	if [ "$?" -ne 0 ]
 	then
