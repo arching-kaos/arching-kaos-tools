@@ -149,6 +149,7 @@ publish(){
 
 usage(){
 	echo "TODO"
+    echo "index | add | publish | update"
 	exit
 }
 
