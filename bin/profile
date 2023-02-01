@@ -190,6 +190,8 @@ EOF
 		exit 1
 	fi
     echo "Profile added successfully"
+    cd $ZPROFILEDIR
+    rm -rf "$TEMPASSIN"
 }
 usage(){
 	echo "Usage:"
