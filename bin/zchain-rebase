@@ -1,0 +1,53 @@
+#!/bin/bash
+PROGRAM=$(basename $0) 
+usage(){
+	echo "$PROGRAM - Zchain rebase"
+	echo ""
+	echo "Description:"
+	echo "Backs up your latest block into IPFS filesystem, replaces it with an empty file (GENESIS hardcode) and pushes its IPFS link as your chain's latest block."
+	echo ""
+	echo "Disclaimer:"
+	echo "This program, does NOT delete anything from your IPFS repository, neither denies access to previously created blocks."
+	echo ""
+	echo "Usage:"
+	echo "	$PROGRAM rebase <zblock>"
+	exit 0
+}
+rebase (){
+    ZTARGET="$1"
+	echo "Reseting ZLATEST to ZTARGET"
+	echo $ZTARGET > $ZLATEST
+	if [ $? != 0 ]; then exit 1; fi
+
+	echo "Make sure /zarchive folder exists within IPFS FS"
+	ipfs files mkdir /zarchive
+	if [ $? != 0 ]; then echo "Folder already there"; fi
+
+	echo "Archive the previous ZLATEST"
+	ipfs files cp /zlatest /zarchive/$(date -u +%s)-$(ipfs files stat /zlatest | head -n 1)
+	if [ $? != 0 ]; then exit 1; fi
+
+	echo "Removing previous /zlatest entry"
+	ipfs files rm /zlatest
+	if [ $? != 0 ]; then exit 1; fi
+
+	echo "Copying rebased ZLATEST"
+	CZLATEST="$(cat $ZLATEST)"
+	ipfs files cp /ipfs/$CZLATEST /zlatest
+	if [ $? != 0 ]; then exit 1; fi
+
+	echo "Publishing new (rebased) ZLATEST"
+	ipfs name publish --key=zchain /ipfs/$(cat $ZLATEST)
+	if [ $? != 0 ]; then exit 1; fi
+	
+	echo "Rebase was successful"
+	exit 0
+}
+if [ ! -z $1 ] && [ ! -z $2 ]; then
+	case $1 in
+		rebase) rebase $2; exit;;
+		* ) usage;;
+	esac
+else usage
+fi
+
