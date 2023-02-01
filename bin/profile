@@ -180,13 +180,12 @@ EOF
 		exit 2
 	fi
 	pack_z_block "profile/add" data
-	if [ $? == 0 ]
+	if [ "$?" -ne 0 ]
 	then
-		echo "Profile added successfully"
-	else
 		echo "error??"
 		exit 1
 	fi
+    echo "Profile added successfully"
 }
 usage(){
 	echo "Usage:"
