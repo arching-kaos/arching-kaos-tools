@@ -28,7 +28,6 @@ usage(){
     echo "Usage:"
     echo "    --help, -h                             Print this help and exit"
     echo "    --chain <ipns-link>, -n <ipns-link>    Crawl specified chain"
-    echo "    --show-zblocks-only, -z                Show only zblocks"
     echo "    --no-verify, -nV                       Don't verify signatures"
     echo "    <ipfs-link>                            Specify IPFS CID for entrance"
     echo ""
@@ -52,65 +51,14 @@ then
 elif [ ! -z "$1" ] && [ "$1" == "-n" ]
 then
     entrance="$(ipns-resolve $2)"
-elif [ ! -z "$1" ] && [ "$1" == "--show-zblocks-only" ] || [ "$1" == "-z" ]
-then
-    # Enter temp folder
-    TEMPASSIN="/tmp/aktmp_$(date -u +%s)"
-    mkdir $TEMPASSIN
-    cd $TEMPASSIN
-    ccounter=0
-    entrance="$(cat $ZLATEST)"
-    seed="$(cat $ZGENESIS)"
-    echo -n '['
-    zblock=$entrance
-    while true
-    do
-        if [ "$counter" == 0 ]
-        then
-            echo -n "["
-        fi
-        counter=$(expr $counter + 1)
-        if [ ! -v $zblock ]
-        then
-            if [ "$zblock" != "$seed" ]
-        then
-            timestamp=''
-            echo -n '{"zblock":"'$zblock'",'
-            ipfs --timeout=10s cat $zblock | json2bash > $TEMPASSIN/tmp-zblock
-            source $TEMPASSIN/tmp-zblock
-            ipfs --timeout=10s cat $block | json2bash > $TEMPASSIN/tmp-block
-            source $TEMPASSIN/tmp-block
-            logit "[INFO]" "BLOCK REFERENCED"
-            if [ ! -v $timestamp ]
-            then
-                echo -n '"timestamp":"'$timestamp'",'
-            fi
-            echo -n '"block_signature":"'$block_signature'",'
-            echo -n '"gpg":"'$gpg'",'
-
-            if [ -v $previous ]
-            then
-                logit "[ERROR]" "Block $block has no previous zblock $previous. Appending default genesis to close cleanly."
-                echo -n '"previous":"genesis"},{"genesis":"genesis"}]'
-                exit 0
-            else
-                echo -n '"previous":"'$previous'"},'
-                zblock=$previous
-            fi
-        elif [ "$zblock" == "$seed" ]
-        then
-            echo -n '{"genesis":"genesis"}]'
-            logit "[INFO]" "Counter $counter"
-            exit 0
-        fi
-    else
-        echo "Check not passed... No previous IPFS CID"
-        exit 1
-    fi
-done
-
 elif [ ! -z "$1" ]
 then
+    echo $1 | grep -e 'Qm.\{44\}' >/dev/null
+    if [ "$?" -ne 0 ]
+    then
+        logit "[ERROR]" "Argument provided was not an IPFS CIDv0 string"
+        exit 1
+    fi
     entrance="$1"
 else
     # By default we enter from the latest block
