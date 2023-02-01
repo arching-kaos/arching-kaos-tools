@@ -41,9 +41,7 @@ show(){
 	if [ ! -z $1 ]
 	then
 		logit "[INFO]" "Working with $1"
-		echo '"data":"'$1'",'
-		echo '"'$1'":'$(ipfs cat $1)','
-		#ipfs cat $1
+        ipfs cat $(echo $(ipfs cat $1) | jq '.ipfs' -r)
 	else
 		echo "No DATA provided"
 		exit 1
