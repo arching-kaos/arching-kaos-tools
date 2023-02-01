@@ -30,7 +30,7 @@ tempassin(){
 		mkdir $TEMPASSIN
 	fi
 	cd $TEMPASSIN
-	echo "$TEMPASSIN"
+	# echo "$TEMPASSIN"
 }
 # This is working with DATA blocks. DATA that matched profile/add ACTION
 #
