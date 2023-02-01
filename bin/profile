@@ -10,15 +10,11 @@ logit(){
 if [ ! -d $ZPROFILEDIR ]; then
 	mkdir $ZPROFILEDIR
 	cd $ZPROFILEDIR
-#	git init
-#	echo "Profile repository" > README
-#	echo "Qmetc" >> README
-#	git add README
-#	git commit -m "Initiated profile repository"
-	logit "[INFO]" "zprofiledir created along with git repo"
+	logit "[INFO]" "zprofiledir created"
 else
 	logit "[INFO]" "zprofiledir found"
 fi
+
 tempassin(){
 	if [ ! -z $1 ]
 	then
@@ -119,15 +115,6 @@ propset(){
 	else
 		echo "conditions unmet"
 		exit 244
-#	tempassin $TEMP
-#	pwd
-#	export PROFILE_FILE="$(date -u +%s)"
-#	vi $PROFILE_FILE
-#	echo "Renaming..."
-#	TITLE="$(head -n 1 $PROFILE_FILE)"
-#	TO_FILE=$PROFILE_FILE-$(echo $TITLE | tr '[:upper:]' '[:lower:]' | sed -e 's/ /\_/g' )
-#	add $ZPROFILEDIR/$TO_FILE
-#	# rm -rf $TEMP 
 	fi
 }
 index(){
@@ -202,14 +189,18 @@ usage(){
 	echo "Usage:"
 	echo "		$PROGRAM command [options]"
 	echo ""
-	echo "All you need to know is that there are two options available:"
-	echo "help			Prints this help message"
-	echo "index			Show current status"
-	echo "show <zblock>		Show profile"
-	echo "import <folder>		Import a folder to zchain #TODO"
-	echo "add <file>		Creates a data file from the profile file you point to"
-	echo "set <property> <value>	Sets a profile value"
-	echo "get <property>		Gets a profile"
+	echo "Indexes, shows, imports, adds, sets and gets values from and to the"
+    echo "zchain and files."
+	echo ""
+	echo -e "\thelp\t\t\t\tPrints this help message"
+	echo -e "\tindex\t\t\t\tShow current status"
+	echo -e "\tshow <data>\t\t\tShow profile entry from specified DATA IPFS CIDv0"
+	echo -e "\tset <property> <value>\t\tSets a profile value"
+	echo -e "\tget <property>\t\t\tGets a profile value from the on-disk file."
+	echo ""
+    echo "Advanced (use with caution may produce duplicate entries):"
+	echo -e "\tadd <file>\t\t\tCreates a data file from the profile file you point to (file should already be in ZPROFILEDIR."
+	echo -e "\timport <folder>\t\t\tImport a folder to zchain #TODO"
 	echo ""
 	exit 0
 }
