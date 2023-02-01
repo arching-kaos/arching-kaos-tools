@@ -1,19 +1,44 @@
 Arching Kaos Tools
 ==================
 
+Introduction
+------------
+Tools that help you to create a blockchain called `zchain` by preparing small
+JSON objects that are pointing one to another in the following way:
+```
+ZBLOCK = BLOCK + SIGNATURE
+BLOCK = ACTION + DATA + DATA_SIGNATURE + TIMESTAMP + GPG + PREVIOUS_ZBLOCK
+DATA = IPFS_CID + SIGNATURE ( + key-pair values that are based on ACTION )
+```
+Most of the times, IPFS_CID in DATA is expected to be a file. And the module
+is responsible for handling it properly.
+
+For the zchain to be valid, all the signatures must be verifiable against the
+provided GPG key.
+
 Description
 -----------
+This is an installable repository which provides various tools for running
+Arching Kaos and using it.
 
-Warning: this is a bunch of tools that may not make sense. :)
+Generic tools:
+`enter` - Can be used to crawl zchains.
+`zchain-rebase` - Can be used to rebase your zchain to a previous zblock.
+`zchain-reset` - Can be used to reset your zchain to zgenesis.
 
-This is an installable repo which provides various tools for running Arching Kaos and using it.
+ACTION tools (modules):
+`mixtapes` and `news` - Can be used to add content to your zchain.
+`profile` - Can be used to build up a profile of the contributor.
+
+There are more tools available under the `bin` folder. Make sure you deeply
+understand what they are doing before using them. 
 
 Changes are mentioned in `git log` of the repo, as well as in [CHANGELOG](https://github.com/arching-kaos/arching-kaos-tools/blob/master/CHANGELOG) file.
 
 Requirements
 ------------
-Some Linx machine which has installed bash or zsh, gpg, wget, curl, git and which.
-Other shells maybe are working.
+Some Linux machine will propably work. It's tested under Fedora Linux. External
+programs used are:
 
 - bash (v5.1.8) or zsh (v5.8)
 - gpg (v2.3.4)
@@ -25,22 +50,23 @@ Other shells maybe are working.
 
 `json_pp` is also used put you cat remove it and change it with `jq`
 
-Clone
------
+How to install the repository
+-----------------------------
 
-Write on your bash/zsh:
+Write on your terminal:
 ```
 git clone https://github.com/arching-kaos/arching-kaos-tools
-```
-
-Install
--------
-```
 cd arching-kaos-tools
 sh install.sh
 ```
+
+If you encounter any errors, please open an issue.
+
 Update
 ------
+
+Navigate to your cloned repository and execute the following commands:
+
 ```
 git pull
 ./update.sh
@@ -114,12 +140,12 @@ TODO
 ----
 
 Next things to come are:
-- zblock manipulator to fix wrong previous block references and repack zblocks.
-- zchain rebase-like procedure to move the zblocks to another seed or set another previous block (e.g. join chains)
-- Clean up installation and filesystem usage
-- Log rotate to gzip archives
-- Filters for log searching for IPFS hashes or names
-- Use of IPFS file system to store/pin sub chains, previous chains or other chains
+- [ ] - zblock manipulator to fix wrong previous block references and repack zblocks.
+- [X] - zchain rebase-like procedure to move the zblocks to another seed or set another previous block (e.g. join chains)
+- [ ] - Clean up installation and filesystem usage
+- [ ] - Log rotate to gzip archives
+- [ ] - Filters for log searching for IPFS hashes or names
+- [ ] - Use of IPFS file system to store/pin sub chains, previous chains or other chains
 
 Concepts under thought
 ----------------------
