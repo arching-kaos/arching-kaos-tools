@@ -30,6 +30,10 @@ ACTION tools (modules):
 `mixtapes` and `news` - Can be used to add content to your zchain.
 `profile` - Can be used to build up a profile of the contributor.
 
+Based on your GPG, zchain and other values provided by `profile`, you can create
+with `akconfig` a pointer to some basic information that you can share with others
+in order for them to crawl your zchain or view your "profile".
+
 There are more tools available under the `bin` folder. Make sure you deeply
 understand what they are doing before using them. 
 
