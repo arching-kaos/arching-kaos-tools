@@ -32,6 +32,7 @@ tempassin(){
 	cd $TEMPASSIN
 	# echo "$TEMPASSIN"
 }
+
 # This is working with DATA blocks. DATA that matched profile/add ACTION
 #
 # The profile settings/configuration is part of the blockchain produced.
@@ -64,6 +65,7 @@ propget(){
 		index
 	fi
 }
+
 propwrite(){
 	cat > $ZPROPERTY_FILE << EOF
 {
@@ -83,6 +85,7 @@ EOF
 		exit 1
 	fi
 }
+
 propset(){
 	if [ ! -z $1 ]
 	then
@@ -179,6 +182,7 @@ EOF
 		echo "File $FILE doesn't exist";
 		exit 2
 	fi
+
 	pack_z_block "profile/add" data
 	if [ "$?" -ne 0 ]
 	then
