@@ -3,10 +3,13 @@ PROGRAM="$(basename $0)"
 ZPROFILEDIR="$WORKDIR/profile"
 TEMP="/tmp/aktmp"
 
+# Outputs to log file in the classic format :)
 logit(){
 	logthis "<$PROGRAM>" "$1" "$2"
 }
 
+# Whatever the command is, we check if $ZPROFILEDIR is there.
+# If NOT we create it and we change dir there.
 if [ ! -d $ZPROFILEDIR ]; then
 	mkdir $ZPROFILEDIR
 	cd $ZPROFILEDIR
@@ -31,6 +34,9 @@ tempassin(){
 }
 # This is working with DATA blocks. DATA that matched profile/add ACTION
 #
+# The profile settings/configuration is part of the blockchain produced.
+# Hence, we need a specific DATA block that actually has the announcement of a
+# {"key":"value"} pair.
 show(){
 	if [ ! -z $1 ]
 	then
@@ -43,6 +49,9 @@ show(){
 		exit 1
 	fi
 }
+
+# This should retrieve a specific value from our profile otherwise it dumps the
+# whole profile values.
 propget(){
 	if [ ! -z $1 ]
 	then
@@ -66,17 +75,11 @@ EOF
 	if [ $? == 0 ]
 	then
 		echo "Added successfully... proceeding"
-#		add $ZPROPERTY_FILE
 		IPFS_FILE=$(ipfs add -q $ZPROPERTY_FILE)
 		echo "Prop writting,,, $IPFS_FILE"
-	#	mv $PROFILE_FILE $ZPROFILEDIR/$TO_FILE
-	#	sed -e 's,Qm.*,'"$IPFS_FILE"',g' $ZPROFILEDIR/README
 		add $ZPROPERTY_KEY
 		echo "Adding to git repo..."
 		cd $ZPROFILEDIR
-#		git add $ZPROPERTY_KEY
-#		git commit -m "Added ${ZPROPERTY_KEY} with ${ZPROPERTY_VALUE}"
-#		git clean --force
 	else
 		echo "Couldn't write to file $ZPROFILEDIR/$TO_FILE"
 		exit 1
@@ -156,6 +159,8 @@ import(){
 	fi
 	exit 224
 }
+
+# Adds a file as a profile/add ACTION on the zchain.
 add(){
 	tempassin
 	if [ -f $ZPROFILEDIR/$1 ]; then
