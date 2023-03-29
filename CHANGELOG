@@ -1,4 +1,20 @@
 ---
+7e45b9def509ff28f70c28f50f5aa931f512d81b
+Wed Mar 29 23:46:45 2023 +0300
+    Further renaming
+---
+286b71a6ead8c7234cfbc0b8ece05c8239a4f32c
+Wed Mar 29 23:45:49 2023 +0300
+    Renamed everything
+---
+b5394a6bd9f0b9fbd9bafc3e963dafbbc87f2ed2
+Wed Mar 29 03:48:56 2023 +0300
+    Miner prototype
+---
+9fd4e766723948da785461fbd40ce18fa9b85b98
+Wed Mar 29 03:28:45 2023 +0300
+    Updated Changelog
+---
 36339e1f2839305e22748b9d3cf347847592565a
 Wed Feb 1 06:51:02 2023 +0200
     Removed -z flag and functionality, add regex check for IPFS CIDv0
