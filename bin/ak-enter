@@ -6,7 +6,7 @@
 #
 # Default (no arguments) will retrieve the local ZCHAIN starting
 # from the IPFS CID stored in the file that is tracked by the
-# $ZLATEST environment variable.
+# $AK_ZLATEST environment variable.
 #
 # enter [-n IPNS_LINK]
 # enter [IPFS CID]
@@ -32,7 +32,7 @@ usage(){
     echo "    <ipfs-link>                            Specify IPFS CID for entrance"
     echo ""
     echo "Note that combined flags don't work for now"
-    echo "Running with no flags crawls your chain based on ZLATEST environment variable"
+    echo "Running with no flags crawls your chain based on AK_ZLATEST environment variable"
 }
 # Start of tests
 #entrance="QmW5WVXCJfhb4peHG6cbEdamC24vZzMX2Vz386vpENh38U"
@@ -47,7 +47,7 @@ then
 elif [ ! -z "$1" ] && [ "$1" == "-nV" ] || [ "$1" == "--no-verify" ]
 then
     verify=0
-    entrance="$(cat $ZLATEST)"
+    entrance="$(cat $AK_ZLATEST)"
 elif [ ! -z "$1" ] && [ "$1" == "-n" ]
 then
     entrance="$(ipns-resolve $2)"
@@ -63,12 +63,12 @@ then
 else
     # By default we enter from the latest block
     # We can alter this by changing this value
-    entrance="$(cat $ZLATEST)"
+    entrance="$(cat $AK_ZLATEST)"
 fi
 # We assign the IPFS CIDv0 of an empty file as this is used
 # as our GENESIS block, hence the "seed" that the tree grows
 # from.
-seed="$(cat $ZGENESIS)"
+seed="$(cat $AK_ZGENESIS)"
 
 # We assume that we found the entrance inside a block, hence
 # ZBLOCK is labeled as previous
