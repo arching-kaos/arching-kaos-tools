@@ -1,4 +1,210 @@
 ---
+36339e1f2839305e22748b9d3cf347847592565a
+Wed Feb 1 06:51:02 2023 +0200
+    Removed -z flag and functionality, add regex check for IPFS CIDv0
+---
+45f47e430c1fe28fefd14ecb1c24af508dea2399
+Wed Feb 1 06:17:56 2023 +0200
+    Updated README file
+---
+62c9055ef12b179fa3a9d28d3986b2e52520ce6a
+Wed Feb 1 04:57:08 2023 +0200
+    Updated README file
+---
+0968bee52889d9c5a54959264a6cf97ee4c4749e
+Wed Feb 1 04:00:45 2023 +0200
+    Added rebase tool
+---
+324b9145f630463c45dc851971c2e476ea1a0613
+Wed Feb 1 03:41:26 2023 +0200
+    Change directory to ZPROFILEDIR and remove temporary folder
+---
+3aaae3f2ace309f1a7e7d27b97e3a5d2c22c6304
+Wed Feb 1 03:40:25 2023 +0200
+    Spacing
+---
+eda4db2f53bdecfb443558459d09bcc0690aa319
+Wed Feb 1 03:39:54 2023 +0200
+    No reason to return the folder of the name since we don't use it
+---
+558af1306734d68885426e89a5de343b72302e11
+Wed Feb 1 03:37:57 2023 +0200
+    Reverse if statement to avoid else
+---
+49306c23a40eb579ab872b4e7c8237aa03d53294
+Wed Feb 1 03:34:56 2023 +0200
+    Print the key-value pair of the DATA block provided in simple valid JSON format
+---
+2614de5d972f2db5568cf18e08798d472d6910e0
+Wed Feb 1 03:31:15 2023 +0200
+    Use gpg2 instead of gpg
+---
+d5f2aa03b95e4900ec569acefa71702ae0e4dacf
+Wed Feb 1 03:30:41 2023 +0200
+    Don't print new lines
+---
+c7876f0de5e40e137c77d265df96a3bb7df85c88
+Wed Feb 1 03:26:27 2023 +0200
+    Removed unused code
+---
+aeda467f9c619deb30306023aab8a0e26c42589e
+Wed Feb 1 03:24:43 2023 +0200
+    Removed unused code
+    
+    Signed-off-by: kaotisk <kaotisk@arching-kaos.org>
+---
+d39b26b36a7079e288dc57611364ef146ce7f0fa
+Wed Feb 1 03:19:20 2023 +0200
+    Exits on failures, added check so we don't produce duplicate references to the same ipfs key
+---
+4b5a8f019e6cb58be0d4fb28d02f7ff5ce6e0197
+Sat Jan 21 09:18:32 2023 +0200
+    Fixed spacing in usage screen
+---
+2e1735069f128ec1b40d0f9890d4791849094d42
+Sat Jan 21 08:50:18 2023 +0200
+    Replaced tabs with spaces, changed exit code checkers to only check for non-zero values, added exit when ak-data-expand fails.
+---
+07db19f526755d3d8acc3f0b6b7f678b00650400
+Sat Jan 21 08:13:00 2023 +0200
+    Added minimal usage message when no arguments
+---
+b60e089c93cd8b93bd87e5a3a42bae071d6d4ad0
+Sat Jan 21 08:11:53 2023 +0200
+    Expands the whole data file instead of outputing only ipfs and detach values
+---
+4d3f83f631e5513fbdec16f056dc8a7d48871479
+Sat Jan 21 08:10:16 2023 +0200
+    More verbose log output
+---
+308354f0ff654f9a1b4ecf99630f575f8149ca41
+Sun Jan 8 22:27:05 2023 +0200
+    Forgot a line that outputs a brief JSON object for the data given
+---
+f7cd24457c84358ca131c6ca5a77243ca7d95669
+Sun Jan 8 21:46:54 2023 +0200
+    Made script more readable
+---
+f975639c8013e7450878ae9cffdf8c0e34a01d95
+Thu Dec 15 09:26:22 2022 +0200
+    Outputs only the sha512sum of the map file created
+---
+b0bd9068957bd96beaa3eb4f15acd6a9804bba70
+Thu Dec 15 07:16:20 2022 +0200
+    Commented out -xe flags from script and generated script, outputs map's hash.
+---
+ab13523b261dc973410b06d6ebf6ad6f395329bb
+Thu Dec 15 06:39:34 2022 +0200
+    Adapting to 96ae225b2a179ec36fdb01eaf906fec096002a08 change. Commented out git usage.
+---
+ddfd339bb23e8cec8c697ffbf02553629be166b4
+Thu Dec 15 06:37:41 2022 +0200
+    The test failed as sha512sum didn't successfully verified the resulted file
+---
+c8138911d13855fa17e501cb148b99b5a4e4c85a
+Thu Dec 15 06:36:33 2022 +0200
+    Adapting to solution with printf
+---
+2e17fa8cfe2dfbd4634eacc2f2735d9bff032d2a
+Mon Dec 12 04:14:25 2022 +0200
+    renamed readme
+---
+25a6710b5d206a6edb51d5efeeafc6b0d7e2d9a2
+Sat Dec 3 01:38:38 2022 +0200
+    Adapting to 96ae225b2a179ec36fdb01eaf906fec096002a08 change, also provide a useful message in case of failing pubishing
+---
+7e08d401a7d9acba7b9e319ca981b78dd8b00556
+Tue Nov 15 00:31:26 2022 +0200
+    File splitter and joiner scripts
+---
+1db7cda752ed90919917b6979975eae0c7ed4af3
+Wed Nov 2 03:16:42 2022 +0200
+    Adapting to 96ae225b2a179ec36fdb01eaf906fec096002a08 change, also provide usage text
+---
+082177d774668ee925e43da0d741d8642d87f9ea
+Wed Nov 2 02:51:19 2022 +0200
+    Adapting to 96ae225b2a179ec36fdb01eaf906fec096002a08 change
+---
+db3c53b069617c57f49985b7ad8e5a2f97d1f54d
+Wed Nov 2 02:37:40 2022 +0200
+    Removed trailing new lines from echo output (-n flag added)
+---
+83398721f7b4d6d4b7ef9e4c5607620d6353045b
+Wed Nov 2 00:13:08 2022 +0200
+    Removed trailing new lines from echo output (-n flag added)
+---
+b0379d703f09dc6db6d7a21a60fc628012a88965
+Mon Oct 31 05:14:26 2022 +0200
+    Adapting to 96ae225b2a179ec36fdb01eaf906fec096002a08 change
+---
+099326c77bf347a056f3168b800592675087643a
+Mon Oct 31 04:57:28 2022 +0200
+    Updated the way to expand the data part of each block
+---
+06c1e6bf576bd36f8fde0b5be6200c79a387cfa8
+Thu Oct 27 14:14:40 2022 +0300
+    Better implementation that doesn't produce splitted CIDs
+---
+ec812d4606fcda595448967b04ec6ee59ecba979
+Tue Oct 25 13:32:57 2022 +0300
+    Adapting to 96ae225b2a179ec36fdb01eaf906fec096002a08 change
+---
+c230f21f1a7d52418cdc025b15e5cbd669204d9f
+Tue Oct 25 13:32:19 2022 +0300
+    Adapting to 96ae225b2a179ec36fdb01eaf906fec096002a08 change
+---
+96ae225b2a179ec36fdb01eaf906fec096002a08
+Tue Oct 25 13:29:34 2022 +0300
+    New log format: script, level, message
+---
+4c76faf4c1a3d41fbd4c208d4ed43063077a2558
+Tue Oct 25 13:25:43 2022 +0300
+    Added usage information
+---
+43fd4cd936eed3cbb9651942d7f21115dca1ea1d
+Mon Sep 19 17:46:09 2022 +0300
+    Reformed log messages to much the generic style approach
+---
+2b802d54e660b6bb8961564870c19fe9c0665a68
+Mon Sep 19 17:32:26 2022 +0300
+    Changed way of getting latest version
+---
+04f746ddb8a6403ac2f1e369b7b860a2fa6b8a6d
+Sat Sep 17 12:05:46 2022 +0300
+    It was not grepping the correct value, resulting to duplication in rc files
+---
+dfbcb50aaf34520512f7b94d76b3c355e498574a
+Sat Sep 17 11:07:07 2022 +0300
+    Return counted blocks to the log even if we end up on pseudo-genesis
+---
+e002960333010d784ed37a0b8cca90efb492dc9c
+Thu Sep 15 07:17:40 2022 +0300
+    Changed error message to warning message since it currently doesn't crash anything.
+---
+a89cbaaea98bca707a9438613d3e25888c4c6387
+Thu Sep 15 07:16:28 2022 +0300
+    mirroring change of go-ipfs to kubo
+---
+dbcf60db8d077772b024428867ae1f8997013aeb
+Wed Sep 7 14:28:43 2022 +0300
+    Removed trailing spaces
+---
+1d5fa45dbc08be1842d7df86aafa056745f772e4
+Wed Sep 7 13:45:33 2022 +0300
+    Fixed usage screen options spacing
+---
+452061f3271e4d6643a1cde4b69beb703a958561
+Wed Sep 7 13:42:02 2022 +0300
+    Modified the reference to changelog with a link to the actual file
+---
+7c6953f2e5197275efdd5553b59a5d8df40cff38
+Wed Sep 7 13:40:12 2022 +0300
+    The bash script I am using to create the CHANGELOG file
+---
+fd75073ead22af51224691c3bd58097aa5030ab4
+Wed Sep 7 13:37:02 2022 +0300
+    Updates!
+---
 bd179055cd591fa47f4be21cc08f71195656f789
 Wed Sep 7 13:29:51 2022 +0300
     Added some checks to make sure zblocks are zblocks and blocks are blocks
