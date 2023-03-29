@@ -1,6 +1,9 @@
 Arching Kaos Tools
 ==================
 
+> Warning: The tools and the whole project is in an experimental state.
+> Everything is subjectt to change.
+
 Introduction
 ------------
 Tools that help you to create a blockchain called `zchain` by preparing small
@@ -22,13 +25,13 @@ This is an installable repository which provides various tools for running
 Arching Kaos and using it.
 
 Generic tools:
-`enter` - Can be used to crawl zchains.
-`zchain-rebase` - Can be used to rebase your zchain to a previous zblock.
-`zchain-reset` - Can be used to reset your zchain to zgenesis.
+`ak-enter` - Can be used to crawl zchains.
+`ak-zchain-rebase` - Can be used to rebase your zchain to a previous zblock.
+`ak-zchain-reset` - Can be used to reset your zchain to zgenesis.
 
 ACTION tools (modules):
-`mixtapes` and `news` - Can be used to add content to your zchain.
-`profile` - Can be used to build up a profile of the contributor.
+`ak-mixtapes` and `news` - Can be used to add content to your zchain.
+`ak-profile` - Can be used to build up a profile of the contributor.
 
 Based on your GPG, zchain and other values provided by `profile`, you can create
 with `akconfig` a pointer to some basic information that you can share with others
@@ -79,11 +82,11 @@ git pull
 Examples
 --------
 
-### Add a news article ( `news add` )
+### Add a news article ( `ak-news add` )
 
 You could use ZCHAIN with NEWS model. Or MIXTAPE model, or make your own.
 ``` bash
-$ news create
+$ ak-news create
 ```
 
 This would pop up a vim editor for you to write a news article or whatever is text or markdown format with a title.
@@ -93,9 +96,9 @@ Saving the file, will save it locally, add it to IPFS, sign it, pack detached si
 Other options... let's try help! 
 
 ``` console
-$ news help
-ak-news-cli
---------------
+$ ak-news help
+ak-news
+-------
 #TODO
 All you need to know is that there are two options available:
 help            Prints this help message
@@ -109,13 +112,13 @@ create          Vim is going to pop up, you will write and save your
 Clearly there is a TODO item. Import is not working so avoid it, or fix it.
 Add is nice, you can add an already existing file directly. `news` is the second module after `mixtape`. Both modules need refactoring but they work at a level that someone can be productive with these tools.  
 
-### Explore chains ( `enter` )
+### Explore chains ( `ak-enter` )
 
 You can view your zchain as a JSON object using `enter`. There are some flags in order to either view other zchains or change the depth of view ( includes or ignores data object and action ).
 
 ``` console
-$ enter -h
-enter - Crawl an arching kaos chain
+$ ak-enter -h
+ak-enter - Crawl an arching kaos chain
 -----------------------------------
 Usage:
         --help, -h                              Print this help and exit
