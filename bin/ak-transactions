@@ -5,7 +5,7 @@ usage(){
 }
 
 logit(){
-	logthis "<$PROGRAM>" "$1" "$2"
+	ak-logthis "<$PROGRAM>" "$1" "$2"
 }
 
 main(){

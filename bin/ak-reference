@@ -1,5 +1,5 @@
 #!/bin/bash
-ZREFERENCESDIR="$WORKDIR/references"
+ZREFERENCESDIR="$AK_WORKDIR/references"
 TEMP="/tmp/aktmp"
 echo $ZREFERENCESDIR
 if [ ! -d $ZREFERENCESDIR ]; then
@@ -12,7 +12,7 @@ if [ ! -d $ZREFERENCESDIR ]; then
 	git commit -m "Initiated references repository"
 	echo "zreferencesdir created along with git repo"
 else
-	logthis "zreferencesdir found"
+	ak-logthis "zreferencesdir found"
 fi
 tempassin(){
 	if [ ! -z $1 ]

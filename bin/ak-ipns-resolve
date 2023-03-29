@@ -9,7 +9,7 @@ usage(){
 	echo "Returns the resolved IPFS CIDv0"
 }
 logit(){
-	logthis "<$PROGRAM>" "$1" "$2"
+	ak-logthis "<$PROGRAM>" "$1" "$2"
 }
 if [ ! -z $1 ]
 then

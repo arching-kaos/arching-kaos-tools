@@ -1,14 +1,14 @@
 #!/bin/bash
 # The following creates a mixtape data message
 # We can extend it by calling the pack_z_block.sh mixtape/add data
-ZFOLDERSDIR="$WORKDIR/folders"
+ZFOLDERSDIR="$AK_WORKDIR/folders"
 TEMP="/tmp/aktmp"
 if [ ! -d $ZFOLDERSDIR ]; then
 	mkdir $ZFOLDERSDIR
 	cd $ZFOLDERSDIR
 	git init
 else
-	logthis "error $ZFOLDERSDIR not found"
+	ak-logthis "error $ZFOLDERSDIR not found"
 fi
 tempassin(){
 	if [ ! -z $1 ];
@@ -41,49 +41,49 @@ main(){
     FOLDERNAME="$1"
     CRP="$2"
     echo "Adding $FOLDERNAME"
-    logthis "Switching to tmp folder..."
+    ak-logthis "Switching to tmp folder..."
     TEMPASSIN="$(tempassin)"
     cd $TEMPASSIN
     if [ $? == 0 ]; then
-	    logthis "Success"
+	    ak-logthis "Success"
     else
-	    logthis "Error with tmp folder"
+	    ak-logthis "Error with tmp folder"
 	    exit 5
     fi
-    logthis "Copying $1 to $TEMPASSIN"
+    ak-logthis "Copying $1 to $TEMPASSIN"
     cp -r $2/$1 $TEMPASSIN/$1
     if [ $? == 0 ]; then
-	    logthis "Copied successfully"
+	    ak-logthis "Copied successfully"
     else
-	    logthis "Error copying..."
+	    ak-logthis "Error copying..."
     fi
 
     FOLDER="$TEMPASSIN/$1"
 
-    logthis "Adding $FOLDER to IPFS..."
+    ak-logthis "Adding $FOLDER to IPFS..."
     FOLDER_IPFS_HASH=$(ipfs add -rQ $FOLDER)
     if [ $? == 0 ]; then
-	    logthis "done"
+	    ak-logthis "done"
     else
-	    logthis "error"
+	    ak-logthis "error"
     fi
-    logthis "Folders are not signing..."
+    ak-logthis "Folders are not signing..."
 
 #    NOT NEEDED HERE
 #    SIGN_FOLDER=$FOLDERNAME".asc"
 #    gpg2 --detach-sign --sign-with $FINGERPRINT --armor --output $SIGN_FOLDER $FOLDER
 #    if [ $? == 0 ]; then
-#	    logthis "Signed"
+#	    ak-logthis "Signed"
 #    else
-#	    logthis "Error while signing"
+#	    ak-logthis "Error while signing"
 #    fi
 #
-#    logthis "Adding signature to IPFS"
+#    ak-logthis "Adding signature to IPFS"
 #    SIGNATURE=$(ipfs add -q $TEMPASSIN/$SIGN_FOLDER)
 #    if [ $? == 0 ]; then
-#	    logthis "Added"
+#	    ak-logthis "Added"
 #    else
-#	    logthis "Error while adding"
+#	    ak-logthis "Error while adding"
 #    fi
 
     cat > $TEMPASSIN/data <<EOF

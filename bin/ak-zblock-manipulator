@@ -43,7 +43,7 @@ usage(){
 
 main(){
  
-	logthis "We are doing" $BLOCK_TO_ADD "with content" $PREVIOUS
+	ak-logthis "We are doing" $BLOCK_TO_ADD "with content" $PREVIOUS
 	# We add it to IPFS
 	MESSAGE_HASH=$(ipfs add -q $MESSAGE)
 

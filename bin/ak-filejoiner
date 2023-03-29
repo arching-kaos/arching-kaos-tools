@@ -28,9 +28,9 @@ then
 	fi
 fi
 
-MAPSDIR="$WORKDIR/fmp"
+MAPSDIR="$AK_WORKDIR/fmp"
 
-CHKDIR="$WORKDIR/ftr"
+CHKDIR="$AK_WORKDIR/ftr"
 
 cd $CHKDIR
 if [ "$?" != 0 ]

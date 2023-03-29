@@ -12,10 +12,10 @@ then
 		then
 			profile set repositories "$IPFS"
 		else
-			logthis "IPFS problem"
+			ak-logthis "IPFS problem"
 		fi
 	else
-		logthis "sed didn't found $search"
+		ak-logthis "sed didn't found $search"
 	fi
 else
 	echo "Who to unfollow?"

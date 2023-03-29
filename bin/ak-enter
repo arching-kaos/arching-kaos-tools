@@ -19,7 +19,7 @@
 PROGRAM="$(basename $0)"
 
 logit(){
-    logthis "<$PROGRAM>" "$1" "$2"
+    ak-logthis "<$PROGRAM>" "$1" "$2"
 }
 
 usage(){

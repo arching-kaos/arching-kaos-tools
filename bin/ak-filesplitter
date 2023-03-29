@@ -29,8 +29,8 @@ else
 	FILE="$1"
 fi
 
-CHKDIR="$WORKDIR/ftr/"
-FILEMAPSDIR="$WORKDIR/fmp/"
+CHKDIR="$AK_WORKDIR/ftr/"
+FILEMAPSDIR="$AK_WORKDIR/fmp/"
 TEMPORARYDIR="/tmp/tltmp"
 TECHDIR="/tmp/tltmp/chks/"
 CURRENTDIR="$(pwd)/"
@@ -38,7 +38,7 @@ CURRENTDIR="$(pwd)/"
 # echo $CURRENTDIR $BSFILE
 
 logit(){
-	logthis "<$PROGRAM>" "$1" "$2"
+	ak-logthis "<$PROGRAM>" "$1" "$2"
 }
 
 if [ ! -d "$TECHDIR" ]

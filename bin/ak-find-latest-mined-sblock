@@ -4,7 +4,7 @@ cd $MINED_BLOCKS_DIR
 PROGRAM="$(basename $0)"
 declare -A counters
 logitnowint(){
-	logthis "<$PROGRAM>" "$1" "$2"
+	ak-logthis "<$PROGRAM>" "$1" "$2"
 }
 further(){
 	# logitnowint "[INFO]" "Diving into $1"

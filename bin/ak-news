@@ -1,5 +1,5 @@
 #!/bin/bash
-ZNEWSDIR="$WORKDIR/news"
+ZNEWSDIR="$AK_WORKDIR/news"
 TEMP="/tmp/aktmp"
 echo $ZNEWSDIR
 if [ ! -d $ZNEWSDIR ]; then

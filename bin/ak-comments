@@ -1,13 +1,13 @@
 #!/bin/bash
-ZCOMMENTSDIR="$WORKDIR/comments"
+ZCOMMENTSDIR="$AK_WORKDIR/comments"
 TEMP="/tmp/aktmp"
 if [ ! -d $ZCOMMENTSDIR ]; then
 	mkdir $ZCOMMENTSDIR
 	cd $ZCOMMENTSDIR
 	git init
-	logthis "[INFO]" "zcommentsdir created along with git repo"
+	ak-logthis "[INFO]" "zcommentsdir created along with git repo"
 else
-	logthis "[INFO]" "zcommentsdir found"
+	ak-logthis "[INFO]" "zcommentsdir found"
 fi
 tempassin(){
 	if [ ! -z $1 ]
@@ -27,7 +27,7 @@ create(){
 	then
 		REFER_TO="$1"
 	else
-		logthis "[ERROR]" "No reference given"
+		ak-logthis "[ERROR]" "No reference given"
 		echo "[ERROR]" "No reference given"
 		exit 1
 	fi
@@ -39,7 +39,7 @@ create(){
 	IPFS_FILE=$(ipfs add -q $COMMENTS_FILE)
 	mv $COMMENTS_FILE $ZCOMMENTSDIR/$TO_FILE
 	add $TO_FILE
-	logthis "[INFO]" "Adding to git repo..."
+	ak-logthis "[INFO]" "Adding to git repo..."
 	cd $ZCOMMENTSDIR
 	git add $TO_FILE 
 	git commit -m "Added $TO_FILE with $(head -n 1 $ZCOMMENTSDIR/$TO_FILE)"

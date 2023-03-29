@@ -67,36 +67,36 @@ do
 			# Reset timestamp since it's introduced later
 			timestamp=''
 			# Announce to stdout which ZBLOCK is being read at the moment
-			logthis "[INFO]" "Examining $zblock"
+			ak-logthis "[INFO]" "Examining $zblock"
 
 			# We create files named after each ZBLOCK IPFS CID for later
 			# reference. Files are empty.
 			touch $ZBLOCKDIR/$zblock
-			logthis "[INFO]" "Created reference"
+			ak-logthis "[INFO]" "Created reference"
 
 			# We concatenate the zblock's contents, pipe them through filter
 			# json2bash and output them to tmp-file
 			ipfs cat $zblock | json2bash > $TEMPASSIN/tmp-zblock
-			logthis "[INFO]" "ZBLOCK $zblock READ"
+			ak-logthis "[INFO]" "ZBLOCK $zblock READ"
 
 			# Supposingly you are on a safe environment and you only have
 			# access to your chain, I would consider mild secure to source
 			# the files into your bash.
 			# File an issue/pull request if you think it can be done better!!
 			source $TEMPASSIN/tmp-zblock
-			logthis "[INFO]" "ZBLOCK SOURCED"
+			ak-logthis "[INFO]" "ZBLOCK SOURCED"
 
 			# Same as above applies to BLOCK and DATA subparts of each ZBLOCK
 			# BLOCKS
 			ipfs cat $block | json2bash > $TEMPASSIN/tmp-block
 			source $TEMPASSIN/tmp-block
-			logthis "[INFO]" "BLOCK $block SOURCED"
+			ak-logthis "[INFO]" "BLOCK $block SOURCED"
 			touch $BLOCKDIR/$block
-			logthis "[INFO]" "BLOCK REFERENCED"
+			ak-logthis "[INFO]" "BLOCK REFERENCED"
 			module="$(echo $action | sed -e 's/\// /g' | awk '{ print $1 }')"
-			logthis "[INFO]" "DATA is $module module."
+			ak-logthis "[INFO]" "DATA is $module module."
 			command="$(echo $action | sed -e 's/\// /g' | awk '{ print $2 }')"
-			logthis "[INFO]" "COMMAND is $command"
+			ak-logthis "[INFO]" "COMMAND is $command"
 			if [ ! -v $timestamp ]
 			then
 				echo "$timestamp : $zblock -> $block -> $previous"
@@ -109,7 +109,7 @@ do
 			# code 0
 			if [ -v $previous ]
 			then
-				logthis "[ERROR]" "Block $block has no previous zblock"
+				ak-logthis "[ERROR]" "Block $block has no previous zblock"
 				echo "Chain with no genesis"
 				if [ "$fix" == "1" ]
 				then
@@ -132,12 +132,12 @@ do
 		elif [ "$zblock" == "$seed" ]
 		then
 			echo "Chain is OK with GENESIS block = $seed"
-			logthis "[INFO]" "Counter $counter"
+			ak-logthis "[INFO]" "Counter $counter"
 			exit 0
 		fi
 	# And finally, if nothing is there exit with error
 	else 
-		logthis "[ERROR]" "Check not passed... No previous IPFS CID"
+		ak-logthis "[ERROR]" "Check not passed... No previous IPFS CID"
 		exit 1
 	fi
 done
