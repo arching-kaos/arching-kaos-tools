@@ -1,0 +1,76 @@
+#!/bin/bash
+MINED_BLOCKS_DIR="/home/$USER/.arching-kaos/mined_blocks"
+cd $MINED_BLOCKS_DIR
+PROGRAM="$(basename $0)"
+declare -A counters
+logitnowint(){
+	logthis "<$PROGRAM>" "$1" "$2"
+}
+further(){
+	# logitnowint "[INFO]" "Diving into $1"
+	lookfor $1
+}
+
+lookfor(){
+	echo -n $1 | grep -e '[0-9a-f]\{128\}' > /dev/null 
+	if [ ! $? = 0 ]
+	then
+		logitnowint "[ERROR]" "Oops!!! The argument passed, does not match the regular expression!"
+	else
+		counters[$CHAIN_PARENT]="$(expr ${counters[$CHAIN_PARENT]} + 1)"
+		if [ ! $? = 0 ]
+		then
+			echo "$1, $counters[$1]"
+			exit 1
+		fi
+		logitnowint "[INFO]" "Accessing file: $1"
+	#	echo "$1 file:"
+	#	cat "$1" | jq
+		NEXT_TARGET="$(cat "$1" | jq | grep previous | tr -d ' ' | sed -e 's/previous//g; s/[",:]//g;')"
+		if [ ! "$NEXT_TARGET" = "" ]
+		then
+			logitnowint "[INFO]" "Found previous: $NEXT_TARGET"
+			if [ ! -f "$NEXT_TARGET" ]
+			then
+				logitnowint "[WARNING]" "Could not find $NEXT_TARGET"
+			else
+				further "$NEXT_TARGET"
+			fi
+		else
+
+			logitnowint "[WARNING]" "No next target found. So long for $1"
+		fi
+	fi
+}
+
+
+ls -1 > tmplistblock
+while IFS="" read -r p || [ -n "$p" ]
+do
+#	if [ ! "$p" = "" ] && [ ! "$p" = "tmplistblock" ]
+	if [ "$(echo $p | tr -d '\n' | wc -c)" = 128 ]
+	then
+		logitnowint "[INFO]" "Investigating $p..."
+		export CHAIN_PARENT="$p"
+		counters[$CHAIN_PARENT]=1
+		lookfor "$p"
+	else
+		logitnowint "[WARNING]" "Nothing to do with $p"
+	fi
+done < tmplistblock
+rm tmplistblock
+max=0
+max_holder=0
+for value in "${!counters[@]}"
+do
+#	echo "${value} : ${counters[${value}]}"
+	if [ ${counters[${value}]} -gt $max  ]
+	then
+		max="${counters[${value}]}"
+		max_holder="${value}"
+		logitnowint "[INFO]" "New MAX $max on $max_holder"
+
+
+	fi	
+done
+echo '{"latest_block":"'$max_holder'"}'

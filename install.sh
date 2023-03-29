@@ -1,7 +1,7 @@
 #!/bin/bash
 source config.sh
 logthis(){
-	echo "Install script: $1" >> $WORKDIR/logs
+	echo "Install script: $1" >> $AK_WORKDIR/logs
 }
 
 HAK=".arching-kaos"

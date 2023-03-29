@@ -1,0 +1,141 @@
+#!/bin/bash
+ZARTICLESDIR="$WORKDIR/articles"
+TEMP="/tmp/aktmp"
+echo $ZARTICLESDIR
+if [ ! -d $ZARTICLESDIR ]; then
+	mkdir $ZARTICLESDIR
+	cd $ZARTICLESDIR
+	git init
+	echo "Articles repository" > README
+	echo "Qmetc" >> README
+	git add README
+	git commit -m "Initiated articles repository"
+	echo "zarticlesdir created along with git repo"
+else
+	echo "zarticlesdir found"
+fi
+tempassin(){
+	if [ ! -z $1 ]
+	then
+		TEMPASSIN="$1"
+	else
+		TIMESTAMP="$(date -u +%s)"
+		TEMPASSIN="/tmp/aktmp_$TIMESTAMP"
+	fi
+	if [ ! -d $TEMPASSIN ]; then
+		mkdir $TEMPASSIN
+	fi
+	cd $TEMPASSIN
+}
+create(){
+	tempassin $TEMP
+	pwd
+	export ARTICLES_FILE="$(date +%Y%m%d_%H%M%S)"
+	vi $ARTICLES_FILE
+	echo "Renaming..."
+	TITLE="$(head -n 1 $ARTICLES_FILE)"
+	TO_FILE=$ARTICLES_FILE-$(echo $TITLE | tr '[:upper:]' '[:lower:]' | sed -e 's/ /\_/g' )
+	IPFS_FILE=$(ipfs add -q $ARTICLES_FILE)
+	mv $ARTICLES_FILE $ZARTICLESDIR/$TO_FILE
+	sed -e 's,Qm.*,'"$IPFS_FILE"',g' $ZARTICLESDIR/README
+	add $ZARTICLESDIR/$TO_FILE
+	echo "Adding to git repo..."
+	cd $ZARTICLESDIR
+	git add $TO_FILE README
+	git commit -m "Added $TO_FILE with $(head -n 1 $ZARTICLESDIR/$TO_FILE)"
+	git clean --force
+	# rm -rf $TEMP 
+}
+index(){
+	FILES="$(ls -1 $ZARTICLESDIR)"
+	i=0
+	for FILE in $FILES
+	do
+		DATE=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
+		TITLE=$(head -n 1 $ZARTICLESDIR/$FILE)
+		echo $i \| $DATE \| $TITLE
+		let i+=1
+	done	
+}
+title(){
+	echo	ak-articles-cli
+	echo "--------------"
+}
+import(){
+	echo "#TODO"
+	if [ ! -z $1 ]
+	then
+		if [ ! -d $1 ]
+		then
+			echo "Folder does not exists"
+			exit 4
+		else
+			echo "Folder $1 exists"
+			fl="$(ls -1 $1)"
+			for f in $fl
+			do
+				add $1/$f
+			done
+		fi
+	else
+		echo "No value"
+		exit 6
+	fi
+	exit 224
+}
+add(){
+	tempassin
+	if [ -f $1 ]; then
+		FILE="$1"
+		echo "Adding articles from " $FILE
+		DATETIME=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
+		TITLE=$(head -n 1 $FILE)
+		FILE_IPFS_HASH=$(ipfs add -q $FILE)
+		FILE_SIGN_FILE=$FILE".asc"
+		gpg --detach-sign --sign-with $FINGERPRINT --armor --output $FILE_SIGN_FILE $FILE
+		FILE_SIGNATURE=$(ipfs add -q $FILE_SIGN_FILE)
+		cat > data <<EOF
+{
+   "datetime":"$DATETIME",
+   "title":"$TITLE",
+   "filename":"$FILE",
+   "ipfs":"$FILE_IPFS_HASH",
+   "detach":"$FILE_SIGNATURE"
+}
+EOF
+	else
+		echo "File $FILE doesn't exist";
+		exit 2
+	fi
+	pack_z_block "articles/add" data
+	if [ $? == 0 ]
+	then
+		echo "Articles added successfully"
+	else
+		echo "error??"
+		exit 1
+	fi
+}
+usage(){
+	echo "#TODO"
+	echo "All you need to know is that there are two options available:"
+	echo "help		Prints this help message"
+	echo "index		Prints an indexed table of your articles files"
+	echo "import <file>	#TODO"
+	echo "add <file>	Creates a data file from the articles file you point to"
+	echo "create		Vim is going to pop up, you will write and save your"
+	echo "                  articlesletter and it's going to be saved"
+	exit 0
+}
+title
+if [ ! -z $1 ]; then
+	case $1 in
+		help) usage; exit;;
+		index) index; exit;;
+		import) import $2; exit;;
+		add) add $2; exit;;
+		create) create; exit;;
+		* ) usage;;
+	esac
+else usage
+fi

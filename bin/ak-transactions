@@ -1,0 +1,50 @@
+#!/bin/bash
+PROGRAM="$(basename $0)"
+usage(){
+	echo "$PROGRAM from to amount"
+}
+
+logit(){
+	logthis "<$PROGRAM>" "$1" "$2"
+}
+
+main(){
+    logit "[INFO]" "$FROM_ADDRESS to $TO_ADDRESS value sent: $AMOUNT"
+    cat > transaction_file <<EOF
+$FROM_ADDRESS
+$TO_ADDRESS
+$AMOUNT
+$FEE
+EOF
+    TRANSACTION_FILE="transaction_file"
+    FILE_IPFS_HASH=$(ipfs add -q $TRANSACTION_FILE)
+
+    SIGN_FILE=$TRANSACTION_FILE".asc"
+    gpg2 --detach-sign --sign-with $FINGERPRINT --armor --output $SIGN_FILE $TRANSACTION_FILE
+
+    FILE_SIGNATURE=$(ipfs add -q $SIGN_FILE)
+
+    cat > data <<EOF
+{
+    "timestamp":"$(date -u +%s)",
+    "input":"$FROM_ADDRESS",
+    "output":"$TO_ADDRESS",
+    "amount":"$AMOUNT",
+    "ipfs":"$FILE_IPFS_HASH",
+    "detach":"$FILE_SIGNATURE"
+}
+EOF
+
+}
+
+if [ ! -z $3 ];
+then
+    PWD="$(pwd)"
+    FROM_ADDRESS="$1"
+    TO_ADDRESS="$2"
+    AMOUNT="$3"
+    main
+    cat $PWD/data | json_pp
+    # sh pack_z_block.sh mixtape/add $PWD/data
+else usage
+fi

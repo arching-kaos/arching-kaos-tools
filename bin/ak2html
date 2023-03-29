@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# Check if there are enough arguments
+if [ $# -lt 1 ]
+then
+    echo "Error: Not enough arguments provided"
+    exit 1
+fi
+
+# Create HTML document
+echo "<html>"
+echo "<head>"
+echo "  <title>Arching Kaos Chain Data</title>"
+echo "</head>"
+echo "<body>"
+
+# Iterate through each argument and parse data
+for arg in "$@"
+do
+    # Extract data from argument
+    zblock=$(echo $arg | jq -r '.zblock')
+    block=$(echo $arg | jq -r '.block')
+    timestamp=$(echo $arg | jq -r '.timestamp')
+    block_signature=$(echo $arg | jq -r '.block_signature')
+    detach=$(echo $arg | jq -r '.detach')
+    module=$(echo $arg | jq -r '.module')
+    action=$(echo $arg | jq -r '.action')
+    gpg=$(echo $arg | jq -r '.gpg')
+    previous=$(echo $arg | jq -r '.previous')
+
+    # Output data in HTML format
+    echo "  <h2>ZBLOCK: $zblock</h2>"
+    echo "  <p>BLOCK: $block</p>"
+    echo "  <p>TIMESTAMP: $timestamp</p>"
+    echo "  <p>BLOCK SIGNATURE: $block_signature</p>"
+    echo "  <p>DETACH: $detach</p>"
+    echo "  <p>MODULE: $module</p>"
+    echo "  <p>ACTION: $action</p>"
+    echo "  <p>GPG: $gpg</p>"
+    echo "  <p>PREVIOUS: $previous</p>"
+done
+
+echo "</body>"
+echo "</html>"
+

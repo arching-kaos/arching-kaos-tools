@@ -2,22 +2,22 @@
 #source ./config.sh
 echo "INIT started"
 #echo This is our work dir: $WORKDIR
-if [[ ! -d $WORKDIR ]] ; then mkdir $WORKDIR ;fi
-if [[ ! -d $CONFIGDIR ]] ; then mkdir $CONFIGDIR ;fi
-if [[ ! -d $BINDIR ]]; then mkdir $BINDIR ;fi
-if [[ ! -d $ZBLOCKDIR ]]; then mkdir $ZBLOCKDIR ;fi
-if [[ ! -d $BLOCKDIR ]]; then mkdir $BLOCKDIR ;fi
-if [[ ! -d $DATADIR ]]; then mkdir $DATADIR ;fi
-if [[ ! -d $ARCHIVESDIR ]]; then mkdir $ARCHIVESDIR ;fi
-if [[ ! -f $LOGSFILE ]]; then touch $LOGSFILE ;fi
-if [[ ! -f $GENESIS ]] ; then touch $GENESIS;fi
-if [[ -f $ZGENESIS ]] ; then echo "$(ipfs add -q $GENESIS)" > $ZGENESIS;fi
-if [[ ! -f $ZCHAIN ]] ; then echo "$(ipfs key gen zchain)" > $ZCHAIN;fi
-if [[ ! -f $ZLATEST ]] ; then cp $ZGENESIS $ZLATEST;fi
-if [[ ! -f $ZCHAINASC ]] ; then gpg -bao $ZCHAINASC $ZCHAIN;fi
-if [[ ! -f $ZZCHAIN ]] ; then echo $(ipfs add -q $ZCHAINASC) > $ZZCHAIN;fi
-if [[ ! -f $GENESISASC ]] ; then gpg -bao $GENESISASC $GENESIS;fi
-if [[ ! -f $ZGENESISASC ]] ; then echo $(ipfs add -q $GENESISASC) > $ZGENESISASC;fi
+if [[ ! -d $AK_WORKDIR ]] ; then mkdir $AK_WORKDIR ;fi
+if [[ ! -d $AK_CONFIGDIR ]] ; then mkdir $AK_CONFIGDIR ;fi
+if [[ ! -d $AK_BINDIR ]]; then mkdir $AK_BINDIR ;fi
+if [[ ! -d $AK_ZBLOCKDIR ]]; then mkdir $AK_ZBLOCKDIR ;fi
+if [[ ! -d $AK_BLOCKDIR ]]; then mkdir $AK_BLOCKDIR ;fi
+if [[ ! -d $AK_DATADIR ]]; then mkdir $AK_DATADIR ;fi
+if [[ ! -d $AK_ARCHIVESDIR ]]; then mkdir $AK_ARCHIVESDIR ;fi
+if [[ ! -f $AK_LOGSFILE ]]; then touch $AK_LOGSFILE ;fi
+if [[ ! -f $AK_GENESIS ]] ; then touch $AK_GENESIS;fi
+if [[ -f $AK_ZGENESIS ]] ; then echo "$(ipfs add -q $AK_GENESIS)" > $AK_ZGENESIS;fi
+if [[ ! -f $AK_ZCHAIN ]] ; then echo "$(ipfs key gen zchain)" > $AK_ZCHAIN;fi
+if [[ ! -f $AK_ZLATEST ]] ; then cp $AK_ZGENESIS $AK_ZLATEST;fi
+if [[ ! -f $AK_ZCHAINASC ]] ; then gpg -bao $AK_ZCHAINASC $AK_ZCHAIN;fi
+if [[ ! -f $AK_ZZCHAIN ]] ; then echo $(ipfs add -q $AK_ZCHAINASC) > $AK_ZZCHAIN;fi
+if [[ ! -f $AK_GENESISASC ]] ; then gpg -bao $AK_GENESISASC $AK_GENESIS;fi
+if [[ ! -f $AK_ZGENESISASC ]] ; then echo $(ipfs add -q $AK_GENESISASC) > $AK_ZGENESISASC;fi
 echo "Checking for /zarchive in IPFS FS..."
 ipfs files ls /zarchive > /dev/null 2>&1
 if [ $? != 0 ]; then
@@ -33,9 +33,9 @@ fi
 echo "Looking for /zlatest..."
 ipfs files stat /zlatest > /dev/null 2>&1
 if [ $? != 0 ]; then
-	ipfs files cp /ipfs/$(cat $ZGENESIS) /zlatest
+	ipfs files cp /ipfs/$(cat $AK_ZGENESIS) /zlatest
 	if [ $? != 0 ]; then
-		echo "Problem copying $ZGENESIS to /zlatest"
+		echo "Problem copying $AK_ZGENESIS to /zlatest"
 	else
 		echo "Success"
 	fi
@@ -58,5 +58,5 @@ fi
 binfiles=$(ls -1 $(pwd)/bin)
 for b in $binfiles
 do
-	if [[ ! -L $BINDIR/$b ]] ; then ln -s $(pwd)/bin/$b $BINDIR/$b ;fi
+	if [[ ! -L $AK_BINDIR/$b ]] ; then ln -s $(pwd)/bin/$b $AK_BINDIR/$b ;fi
 done

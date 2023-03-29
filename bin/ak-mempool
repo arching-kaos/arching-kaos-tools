@@ -1,0 +1,19 @@
+#!/bin/bash
+# Assumptions:
+# I suppose each ak node is connected to some IP.
+# They also run IPFS.
+# They also are a part of our swarm.
+# So should we ask for our peers?
+
+ipfs swarm peers > tmp_peers
+
+
+while IFS="" read -r p || [ -n "$p" ]
+do
+	peer="$(echo "$p" | sed -e 's/^.*\///')"
+	echo "Peer $peer found! Examining..."
+	ipfs cat /ipns/$peer/zlatest
+done < tmp_peers
+
+rm tmp_peers
+

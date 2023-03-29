@@ -1,0 +1,140 @@
+#!/bin/bash
+# This file describe the structure of the ArchingKaos messages in their basis.
+#
+# As previously thought, we exchange one IPFS hash through whatever means we can.
+# 
+# GPG is mentioned as a signing algorithm for encryption, decryption and signing.
+# Let's say we have a file named as `example`
+#
+# We can extend this with calling the encoder and further send the transaction
+#
+
+#FINGERPRINT="CHANGE THIS TO YOUR DEFAULT FINGERPRINT"
+# We acquire the GPG fingerprint by email address
+# The following example finds kaos@kaos.kaos' GPG fingerprint like this
+# FINGERPRINT="$(gpg2 --list-keys | grep kaos@kaos.kaos -1 | head -n1 | awk '{print $1}')"
+
+# Below, the usage information
+PROGRAM="zblock_manipulator"
+
+usage(){
+	echo "Usage:"	
+	echo "$PROGRAM -b block_file | -h block_hash | dunno"
+	echo "Creates and publishes a ZBLOCK based on a block and a previous"
+	echo "zblock."
+	echo ""
+	echo "Either -b or -h is needed. If both, -h is used."
+	echo ""
+	echo "-b block_file		Points to a block file that we want to fix."
+	echo "-h block_hash		If we don't have the block as a file, we can"
+	echo "				use it's hash to retrieve it and edit it."
+	echo "-p previous_hash		We refering to a previous hash for a ZBLOCK."
+	echo ""
+	echo "#TODO:"
+	echo "-t timestamp		Unix UTC timestamp in seconds."
+	echo "-a \"module/action\"	Change the action tag. Format: object/verb."
+	echo "				In sense, \"Add news -> news/add\"."
+	echo "-d data			In case you want to change the data, you 'll"
+	echo "				be changing potentially the key of the block"
+	echo "				and the data signature, otherwise your block"
+	echo "				will be unverified."
+	echo ""
+}
+
+main(){
+ 
+	logthis "We are doing" $BLOCK_TO_ADD "with content" $PREVIOUS
+	# We add it to IPFS
+	MESSAGE_HASH=$(ipfs add -q $MESSAGE)
+
+	# We create a detached and armor signature of it
+	MESSAGE_SIGN_FILE=$MESSAGE".asc"
+	gpg2 --detach-sign --sign-with $FINGERPRINT --armor --output $MESSAGE_SIGN_FILE $MESSAGE
+
+	# We add the signature to IPFS
+	MESSAGE_SIGNATURE=$(ipfs add -q $MESSAGE_SIGN_FILE)
+
+	# We will be using our public key also to put it in the block later
+	KEY="gpg.pub"
+	gpg2 --armour --output $KEY --export $FINGERPRINT
+	GPG_PUB_KEY=$(ipfs add -q $KEY)
+
+	# Acquire last block of information, to chain this one with previous posted
+	PREVIOUS=$(ipfs files stat /zlatest | head -n 1)
+
+	# We create a block of json like this:
+	cat > block <<EOF
+{
+    "timestamp":"$(date -u +%s)",
+    "action":"$ACTION",
+    "data":"$MESSAGE_HASH",
+    "detach":"$MESSAGE_SIGNATURE",
+    "gpg":"$GPG_PUB_KEY",
+    "previous":"$PREVIOUS"
+}
+EOF
+}
+makeZBlock(){
+	BLOCK="block"
+	BLOCK_SIG=$BLOCK".asc"
+	# We have a block now, so we sign it
+	gpg2 --detach-sign --sign-with $FINGERPRINT --armor --output $BLOCK_SIG $BLOCK
+
+	# We now add the signature to IPFS
+	BLOCK_SIGNATURE=$(ipfs add -q $BLOCK_SIG)
+
+	# We also add the block!
+	BLOCK=$(ipfs add -q $BLOCK)
+
+	# So we now do the think almost again
+	cat > zblock << EOF
+{
+    "block":"$BLOCK",
+    "block_signature":"$BLOCK_SIGNATURE"
+}
+EOF
+	ZBL="zblock"
+	# and we add it on IPFS
+	ZBLOCK=$(ipfs add -q $ZBL)
+	echo $ZBLOCK
+}
+
+if [ ! -z $2 ];
+then
+	PWD="$(pwd)"
+
+	# We ask which BLOCK is goind to be edited
+	BLOCK_TO_ADD="$1"
+	# We ask for a ZBLOCK or GENESIS to put in the BLOCK
+	PREVIOUS="$2"
+
+	ipfs cat "$BLOCK_TO_ADD"
+	if [ "$?" == 0 ];
+	then
+		echo "Nice! We found the block"
+		ipfs get "$BLOCK_TO_ADD"
+
+		sed -i.bak -e 's/^.*previous.*$/\"previous\":\"'$PREVIOUS'\"/' $BLOCK_TO_ADD
+		cat $BLOCK_TO_ADD | json_pp
+
+		exit 2
+	else
+		echo "Too bad, it seems the block is not there"
+		exit 1
+	fi
+
+	# cat $PWD/zblock | json_pp
+	# Optional or extending with
+	# python send_as_ak_tx $ZBLOCK
+	# or for "offline" use
+	echo $ZBLOCK > $ZLATEST
+	ipfs name publish --key=zchain $ZBLOCK > /dev/null 2>&1
+	ipfs files mkdir /zarchive > /dev/null 2>&1
+	ipfs files cp /zlatest /zarchive/$(date -u +%s)-$(ipfs files stat /zlatest | head -n 1) > /dev/null 2>&1
+	ipfs files rm /zlatest > /dev/null 2>&1
+	ipfs files cp /ipfs/$ZBLOCK /zlatest > /dev/null 2>&1
+else
+	usage
+	exit 0
+fi
+

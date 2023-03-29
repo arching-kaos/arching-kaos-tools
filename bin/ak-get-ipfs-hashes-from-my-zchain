@@ -1,0 +1,2 @@
+#!/bin/bash
+enter | json_pp | grep Qm | sed -e 's/{"zblock":"//g; s/",//; s/".*".*: "//g; s/"//g; s/{//g; s/://g; s/ //g'
