@@ -101,7 +101,7 @@ do
             echo -n '{"zblock":"'$zblock'",'
 
             # We concatenate the zblock's contents, pipe
-            # them through filter json2bash and output
+            # them through filter ak-json2bash and output
             # them to tmp-file
             # 
             # We check if any $zblock at all
@@ -123,7 +123,7 @@ do
             logit "[INFO]" "ZBLOCK $zblock is JSON"
 
             # Then we pass it through the filter and save it
-            ipfs --timeout=10s cat $zblock | json2bash > $TEMPASSIN/tmp-zblock
+            ipfs --timeout=10s cat $zblock | ak-json2bash > $TEMPASSIN/tmp-zblock
 
             # Be sure that there are the expected values
             # We need 'block' and 'block_signature' inside a 'zblock'
@@ -159,7 +159,7 @@ do
             # Same as above applies to BLOCK and DATA subparts of each ZBLOCK
             # BLOCKS
             echo -n '"block":"'$block'",'
-            ipfs --timeout=10s cat $block | json2bash > $TEMPASSIN/tmp-block
+            ipfs --timeout=10s cat $block | ak-json2bash > $TEMPASSIN/tmp-block
             if [ "$?" -ne 0 ]
             then
                 logit "[ERROR]" "BLOCK $block READ failed"

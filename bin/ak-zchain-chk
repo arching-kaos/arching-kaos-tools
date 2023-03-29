@@ -75,8 +75,8 @@ do
 			ak-logthis "[INFO]" "Created reference"
 
 			# We concatenate the zblock's contents, pipe them through filter
-			# json2bash and output them to tmp-file
-			ipfs cat $zblock | json2bash > $TEMPASSIN/tmp-zblock
+			# ak-json2bash and output them to tmp-file
+			ipfs cat $zblock | ak-json2bash > $TEMPASSIN/tmp-zblock
 			ak-logthis "[INFO]" "ZBLOCK $zblock READ"
 
 			# Supposingly you are on a safe environment and you only have
@@ -88,7 +88,7 @@ do
 
 			# Same as above applies to BLOCK and DATA subparts of each ZBLOCK
 			# BLOCKS
-			ipfs cat $block | json2bash > $TEMPASSIN/tmp-block
+			ipfs cat $block | ak-json2bash > $TEMPASSIN/tmp-block
 			source $TEMPASSIN/tmp-block
 			ak-logthis "[INFO]" "BLOCK $block SOURCED"
 			touch $BLOCKDIR/$block

@@ -131,8 +131,8 @@ index(){
 			if [ $i != "0" ]; then
 				echo -n ",";
 			fi
-			PROP=$(echo $(cat $ZPROFILEDIR/$FILE | json2bash) | cut -d '=' -f 1 | awk '{print $0}')
-			VAL=$(echo $(cat $ZPROFILEDIR/$FILE | json2bash) | cut -d '=' -f 2 | awk '{print $1}')
+			PROP=$(echo $(cat $ZPROFILEDIR/$FILE | ak-json2bash) | cut -d '=' -f 1 | awk '{print $0}')
+			VAL=$(echo $(cat $ZPROFILEDIR/$FILE | ak-json2bash) | cut -d '=' -f 2 | awk '{print $1}')
 			echo -n '"'$PROP'":"'$VAL'"';
 			let i+=1
 		fi
