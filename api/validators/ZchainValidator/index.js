@@ -20,7 +20,7 @@ console.log(config);
  *
  */
 function addEntriesToFile(entry,res){
-    var data = JSON.parse(fs.readFileSync(config.blocksFile));
+    var data = JSON.parse(fs.readFileSync(config.pairsFile));
 
     var duplicate_entry = 0;
     data.forEach(a=>{
@@ -65,7 +65,7 @@ function continuethings(exitcode,sh,res){
  *
  */
 module.exports = (ch, res) => {
-    const command = spawn("ak-enter",[ch]);
+    const command = spawn("ak-enter",["-n",ch]);
     response_string = "";
     command.stdout.on("data", data => {
         response_string = response_string + data;
