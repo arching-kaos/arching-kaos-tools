@@ -128,8 +128,8 @@ function continuethingsNS(validitycode,sh,res,gotit){
  *     - on success we process with addEntriesToFile()
  *
  */
-function continuethings(validitycode,sh,res){
-    if (validitycode === 0){
+function continuethings(exitcode,sh,res){
+    if (exitcode === 0){
         var entry = {zblock:sh};
         addEntriesToFile(entry,res);
     } else {
