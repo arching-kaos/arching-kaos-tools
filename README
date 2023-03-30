@@ -19,6 +19,14 @@ is responsible for handling it properly.
 For the zchain to be valid, all the signatures must be verifiable against the
 provided GPG key.
 
+Latest developments
+-------------------
+1. A proof of work blockchain is introduced to synchronize the zchains among them.
+2. A miner prototype is introduced as well.
+3. From a directory full of blocks, find the latest block of the longest chain
+4. API for calling some of the bash scripts
+
+
 Description
 -----------
 This is an installable repository which provides various tools for running
@@ -54,6 +62,8 @@ programs used are:
 - git (v2.34.1)
 - which (v2.21)
 - jq (v1.6)
+- nodejs (v18.14)
+- npm (v9.5.0)
 
 `json_pp` is also used put you cat remove it and change it with `jq`
 
