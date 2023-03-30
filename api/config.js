@@ -16,8 +16,8 @@ module.exports = {
     zzchain:env.AK_ZZCHAIN,
     binDir:env.AK_BINDIR,
     workDir:env.AK_WORKDIR,
-    blocksFile : this.workDir+"/zBlocksFile",
-    pairsFile : this.workDir+"/pairsFile",
+    blocksFile : env.AK_WORKDIR+"/zBlocksFile",
+    pairsFile : env.AK_WORKDIR+"/pairsFile",
     minedBlocksDir: env.AK_MINEDBLOCKSDIR
 
 }
