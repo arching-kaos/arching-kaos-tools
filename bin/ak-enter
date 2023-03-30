@@ -50,7 +50,7 @@ then
     entrance="$(cat $AK_ZLATEST)"
 elif [ ! -z "$1" ] && [ "$1" == "-n" ]
 then
-    entrance="$(ipns-resolve $2)"
+    entrance="$(ak-ipns-resolve $2)"
 elif [ ! -z "$1" ]
 then
     echo $1 | grep -e 'Qm.\{44\}' >/dev/null
