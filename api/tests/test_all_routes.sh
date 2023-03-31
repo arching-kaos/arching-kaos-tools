@@ -1,4 +1,6 @@
 #!/bin/bash
+PROGRAM="$(basename $0)"
+printf '[%s] Starting tests...\n' "$PROGRAM"
 bash node_local_chain.sh
 bash node_local_zlatest.sh
 bash gathered_zblocks.sh
