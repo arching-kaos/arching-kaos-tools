@@ -8,7 +8,7 @@ const HomeDir = os.userInfo().homedir;
  * sorry I was laughing at the term.. superchain
  */
 module.exports = (req, res) => {
-    const command = spawn("ak-find-latest-mined-block.sh");
+    const command = spawn("ak-find-latest-mined-sblock");
     response_string = "";
     command.stdout.on("data", data => {
         response_string = response_string + data;
