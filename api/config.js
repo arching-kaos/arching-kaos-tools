@@ -1,7 +1,7 @@
 const process = require("process");
 const env = process.env;
 
-module.exports = {
+const config = {
     port : 8610,
     session : {
         secret:'setabigsecrethere'
@@ -16,9 +16,9 @@ module.exports = {
     zzchain:env.AK_ZZCHAIN,
     binDir:env.AK_BINDIR,
     workDir:env.AK_WORKDIR,
-    blocksFile : env.AK_WORKDIR+"/zBlocksFile",
-    pairsFile : env.AK_WORKDIR+"/pairsFile",
+    blocksFile : env.AK_ZBLOCKSFILE,
+    pairsFile : env.AK_ZPAIRSFILE,
     minedBlocksDir: env.AK_MINEDBLOCKSDIR
 
 }
-
+module.exports = config; 

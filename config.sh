@@ -18,4 +18,7 @@ export AK_ZLIST="$AK_WORKDIR/zlist"
 export AK_ZLATEST="$AK_WORKDIR/zlatest"
 export AK_LOGSFILE="$AK_WORKDIR/logs"
 export AK_FINGERPRINT="$(gpg --list-keys | grep test@test.test -1 | head -n1 | awk '{print $1}')"
+export AK_MINEDBLOCKS="$AK_WORKDIR/mined_blocks/"
+export AK_ZBLOCKSFILE="$AK_WORKDIR/zBlocksFile"
+export AK_ZPAIRSFILE="$AK_WORKDIR/pairsFile"
 
