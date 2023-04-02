@@ -119,7 +119,7 @@ do
 					for value in ${blocks_found[@]}
 					do
 						echo $value
-						ipfs cat $value | json_pp
+						ipfs cat $value | jq -M
 					done
 				fi
 				exit 0

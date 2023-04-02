@@ -119,7 +119,7 @@ then
 		exit 1
 	fi
 
-	# cat $PWD/zblock | json_pp
+	# cat $PWD/zblock | jq -M
 	# Optional or extending with
 	# python send_as_ak_tx $ZBLOCK
 	# or for "offline" use

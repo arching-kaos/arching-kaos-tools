@@ -114,7 +114,7 @@ do
             logit "[INFO]" "ZBLOCK $zblock READ"
   
             # If it's JSON formated
-            ipfs --timeout=10s cat $zblock | json_pp > /dev/null 2>&1
+            ipfs --timeout=10s cat $zblock | jq -M > /dev/null 2>&1
             if [ "$?" -ne 0 ]
             then
                 logit "[ERROR]" "ZBLOCK $zblock is not JSON"

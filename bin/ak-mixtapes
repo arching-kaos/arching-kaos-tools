@@ -42,7 +42,7 @@ then
     MIXTAPE_TITLE="$2"
     MIXTAPE_FILE="$PWD/$3"
     main
-    cat $PWD/data | json_pp
+    cat $PWD/data | jq -M
     # sh pack_z_block.sh mixtape/add $PWD/data
 else usage
 fi

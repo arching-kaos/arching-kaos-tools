@@ -17,7 +17,7 @@ then
 		logit "[ERROR]" "Error while reading $1"
 		exit 1
 	fi
-	ipfs --timeout=10s cat $1 | json_pp > /dev/null
+	ipfs --timeout=10s cat $1 | jq -M > /dev/null
 	if [ "$?" -ne 0 ]
 	then
 		logit "[ERROR]" "Error while parsing JSON for $1"

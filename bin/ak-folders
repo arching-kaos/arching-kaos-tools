@@ -35,7 +35,7 @@ add(){
     CRP="$(pwd)"
     FOLDERNAME="$1"
     main $FOLDERNAME $CRP
-    cat $TEMPASSIN/data | json_pp
+    cat $TEMPASSIN/data | jq -M
 }
 main(){
     FOLDERNAME="$1"

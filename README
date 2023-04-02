@@ -65,8 +65,6 @@ programs used are:
 - nodejs (v18.14)
 - npm (v9.5.0)
 
-`json_pp` is also used put you cat remove it and change it with `jq`
-
 How to install the repository
 -----------------------------
 

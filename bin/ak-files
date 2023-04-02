@@ -45,7 +45,7 @@ add(){
     CRP="$(pwd)"
     FILENAME="$1"
     main $FILENAME $CRP
-    cat $TEMPASSIN/data | json_pp
+    cat $TEMPASSIN/data | jq -M
 }
 main(){
     FILENAME="$1"
