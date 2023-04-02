@@ -1,0 +1,3 @@
+#!/bin/bash
+ipfs files mv "$1" "$2"
+
