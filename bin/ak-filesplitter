@@ -29,18 +29,25 @@ else
 	FILE="$1"
 fi
 
+# The directory where the chunked data will be living at
 CHKDIR="$AK_WORKDIR/ftr/"
+# The directory for the map files so we can reconstruct the file
 FILEMAPSDIR="$AK_WORKDIR/fmp/"
+# A temporary root dir to work on
 TEMPORARYDIR="/tmp/tltmp"
+# A subdir to split the files there
 TECHDIR="/tmp/tltmp/chks/"
+# A pin point to return from where we came from 
 CURRENTDIR="$(pwd)/"
-# BSFILE="$(basename $1)"
-# echo $CURRENTDIR $BSFILE
 
+# Our snippet for logging debug info
 logit(){
 	ak-logthis "<$PROGRAM>" "$1" "$2"
 }
 
+# Checking directories and create them if necessary
+ 
+# TECHDIR
 if [ ! -d "$TECHDIR" ]
 then
 	mkdir -p "$TECHDIR"
@@ -55,6 +62,8 @@ then
 else
 	logit "[INFO]" "Temp dir found"
 fi
+
+# FILEMAPSDIR
 if [ ! -d "$FILEMAPSDIR" ]
 then
 	mkdir -p "$FILEMAPSDIR"
@@ -69,6 +78,8 @@ then
 else
 	logit "[INFO]" "Mapsdir found"
 fi
+
+# CHKDIR
 if [ ! -d "$CHKDIR" ]
 then
 	mkdir -p "$CHKDIR"
@@ -87,25 +98,39 @@ fi
 # Uncomment next line in case you want to debug the resulting script as well
 # echo 'set -xe' > $TEMPORARYDIR/cmd_queue.sh
 
+# We get the SHA512 hash for the $FILE given
 CHECKSUM=$(sha512sum "$FILE"|awk '{print $1}')
+
+# We split the file into 1048576 bytes and output the chunks into TECHDIR
 split -b 1048576 --additional-suffix ".chk" -d "$FILE" "$TECHDIR$(basename "$FILE")-"
 
+# We go over there...
 cd $TECHDIR
 
+# We get every chunks' SHA512 and we craft a script to rename the chunks and 
+# move them to CHKDIR
 sha512sum  * > $TEMPORARYDIR/map; while IFS="" read -r p || [ -n "$p" ]
 do
 	echo $p | awk '{print "mv " $2 " '$CHKDIR'" $1}' >> $TEMPORARYDIR/cmd_queue.sh
 done < $TEMPORARYDIR/map
 
+# We run the crafted script
 sh $TEMPORARYDIR/cmd_queue.sh
+
+# and we delete it
 rm $TEMPORARYDIR/cmd_queue.sh
 
+# We inform the map about the original $FILE name and SHA512
 echo "$CHECKSUM  $(basename "$FILE")" >> $TEMPORARYDIR/map
 
+# We get the SHA512 hash of the resulted map file
 MAPFILEHASH="$(sha512sum $TEMPORARYDIR/map | awk '{ print $1 }')"
 
+# and we rename it with it and move it to FILEMAPSDIR
 `sha512sum $TEMPORARYDIR/map | awk '{print "mv " $2 " '$FILEMAPSDIR'" $1}'`
 
+# We remove the TEMPORARYDIR
 rm -rf $TEMPORARYDIR
 
+# and print the MAPFILEHASH
 echo "$MAPFILEHASH"
