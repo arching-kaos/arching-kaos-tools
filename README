@@ -64,6 +64,7 @@ programs used are:
 - jq (v1.6)
 - nodejs (v18.14)
 - npm (v9.5.0)
+- npx (v9.5.0)
 
 How to install the repository
 -----------------------------
