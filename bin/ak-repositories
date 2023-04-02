@@ -18,9 +18,9 @@ import(){
 		then
 			cd $PROJECT.git
 			git repack -a
-			IPFS="$(ipfs add -Qr .)"
-			ipfs key gen "$PROJECT.git"
-			ipfs name publish --key="$PROJECT.git" /ipfs/$IPFS
+			IPFS="$(ak-ipfs-add .)"
+			ak-ipfs-key-gen "$PROJECT.git"
+			ak-ipfs-name-publish --key="$PROJECT.git" /ipfs/$IPFS
 			cd $HOME/bare
 		else
 			echo "$PROJECT not a git repo"
@@ -40,8 +40,8 @@ update(){
 			cd $BARE
 			git pull
 			git repack -a
-			IPFS="$(ipfs add -Qr .)"
-			ipfs name publish --key="$BARENAME" /ipfs/$IPFS
+			IPFS="$(ak-ipfs-add .)"
+			ak-ipfs-name-publish --key="$BARENAME" /ipfs/$IPFS
 			echo "DONE"
 		else
 			echo "NO BARE TO UPDATE"
@@ -55,8 +55,8 @@ update(){
 			cd "$PROJECT"
 			git pull
 			git repack -a
-			IPFS="$(ipfs add -Qr .)"
-			ipfs name publish --key="$PROJECT" /ipfs/$IPFS
+			IPFS="$(ak-ipfs-add .)"
+			ak-ipfs-name-publish --key="$PROJECT" /ipfs/$IPFS
 			cd $BAREDIR
 		done
 	fi
@@ -101,18 +101,18 @@ add(){
 		then
 			cd $BAREGITDIR
 			git repack -a
-			IPFS="$(ipfs add -Qr .)"
-			try=ipfs key gen "$PROJECT.git"
+			IPFS="$(ak-ipfs-add .)"
+			try=ak-ipfs-key-gen "$PROJECT.git"
 			if [ $? == 0 ]
 			then
-				ipfs name publish --key="$PROJECT.git" /ipfs/$IPFS
+				ak-ipfs-name-publish --key="$PROJECT.git" /ipfs/$IPFS
 				cat > data <<EOF
 {
     "project":"$PROJECT.git",
     "ipns":"$try"
 }
 EOF
-				pack_z_block "repos/add" data			
+				ak-pack_z_block "repos/add" data			
 				echo "Done"
 			fi
 		fi
@@ -122,10 +122,10 @@ EOF
 }
 
 index(){
-	ipfs key list -l | grep -e '\.git'
+	ak-ipfs-key-list-full | grep -e '\.git'
 }
 set-as-profile(){
-	IPFS=$(ipfs add -q $REPOSTORE)
+	IPFS=$(ak-ipfs-add $REPOSTORE)
 	if [ $? == 0 ]
 	then
 		profile set repositories $IPFS

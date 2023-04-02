@@ -7,7 +7,7 @@ then
 	sed -i -e 's,'"$search"',,g' $FOLLOWING
 	if [ $? == 0 ]
 	then
-		IPFS="$(ipfs add -q $FOLLOWING)"
+		IPFS="$(ak-ipfs-add $FOLLOWING)"
 		if [ $? == 0 ]
 		then
 			profile set repositories "$IPFS"

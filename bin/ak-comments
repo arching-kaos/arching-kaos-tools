@@ -36,7 +36,7 @@ create(){
 	vi $COMMENTS_FILE
 	echo "Renaming..."
 	TO_FILE=$COMMENTS_FILE
-	IPFS_FILE=$(ipfs add -q $COMMENTS_FILE)
+	IPFS_FILE=$(ak-ipfs-add $COMMENTS_FILE)
 	mv $COMMENTS_FILE $ZCOMMENTSDIR/$TO_FILE
 	add $TO_FILE
 	ak-logthis "[INFO]" "Adding to git repo..."
@@ -70,10 +70,10 @@ add(){
 		FILE=$ZCOMMENTSDIR/$1
 		echo "Adding comments from " $FILE
 		DATETIME="$1"
-		FILE_IPFS_HASH=$(ipfs add -q $FILE)
+		FILE_IPFS_HASH=$(ak-ipfs-add $FILE)
 		FILE_SIGN_FILE=$FILE".asc"
 		gpg --detach-sign --sign-with $FINGERPRINT --armor --output $FILE_SIGN_FILE $FILE
-		FILE_SIGNATURE=$(ipfs add -q $FILE_SIGN_FILE)
+		FILE_SIGNATURE=$(ak-ipfs-add $FILE_SIGN_FILE)
 		cat > data <<EOF
 {
    "datetime":"$DATETIME",
@@ -85,7 +85,7 @@ EOF
 		echo "File $FILE doesn't exist";
 		exit 2
 	fi
-	REFERENCE="$(pack_z_block "comments/add" data)"
+	REFERENCE="$(ak-pack_z_block "comments/add" data)"
 	if [ $? == 0 ]
 	then
 		echo "Comment added successfully"

@@ -47,7 +47,7 @@ EOF
 	TO_FILE="$REFERENCEFILE-$REFERENCE-$REFER_TO"
 	mv $REFERENCEFILE $ZREFERENCESDIR/$TO_FILE
 	echo $TO_FILE
-	IPFS_FILE=$(ipfs add -q $ZREFERENCESDIR/$TO_FILE)
+	IPFS_FILE=$(ak-ipfs-add $ZREFERENCESDIR/$TO_FILE)
 	sed -e 's,Qm.*,'"$IPFS_FILE"',g' $ZREFERENCESDIR/README
 	add $ZREFERENCESDIR/$TO_FILE
 	echo "Adding to git repo..."
@@ -101,10 +101,10 @@ add(){
 		echo "Adding references from " $FILE
 		DATETIME=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
 		#FILE=$(head -n 1 $FILE)
-		FILE_IPFS_HASH=$(ipfs add -q $FILE)
+		FILE_IPFS_HASH=$(ak-ipfs-add $FILE)
 		FILE_SIGN_FILE=$FILE".asc"
 		gpg --detach-sign --sign-with $FINGERPRINT --armor --output $FILE_SIGN_FILE $FILE
-		FILE_SIGNATURE=$(ipfs add -q $FILE_SIGN_FILE)
+		FILE_SIGNATURE=$(ak-ipfs-add $FILE_SIGN_FILE)
 		cat > data <<EOF
 {
    "datetime":"$(date -u +%s)",
@@ -118,7 +118,7 @@ EOF
 		echo "File $FILE doesn't exist";
 		exit 2
 	fi
-	pack_z_block "references/add" data
+	ak-pack_z_block "references/add" data
 	if [ $? == 0 ]
 	then
 		echo "References added successfully"

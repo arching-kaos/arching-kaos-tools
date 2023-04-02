@@ -31,7 +31,7 @@ proofofwork(){
 
 usage(){
 	echo "$PROGRAM <somethings> <previous> <miner_address>"
-	echo " hit enter after that !!! "
+	echo " hit ak-enter after that !!! "
 }
 
 if [ -z "$1" ] ;

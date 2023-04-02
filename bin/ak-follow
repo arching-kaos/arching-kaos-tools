@@ -3,7 +3,7 @@ FOLLOWING="$HOME/.arching-kaos/following"
 if [ ! -z $1 ]
 then
 	echo $1 >> $FOLLOWING
-	IPFS=$(ipfs add -q $FOLLOWING)
+	IPFS=$(ak-ipfs-add $FOLLOWING)
 	if [ $? == 0 ]
 	then
 		profile set following $IPFS

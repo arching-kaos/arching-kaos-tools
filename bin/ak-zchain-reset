@@ -19,24 +19,24 @@ reset (){
 	if [ $? != 0 ]; then exit 1; fi
 
 	echo "Make sure /zarchive folder exists within IPFS FS"
-	ipfs files mkdir /zarchive
+	ak-ipfs-files-mkdir /zarchive
 	if [ $? != 0 ]; then echo "Folder already there"; fi
 
 	echo "Archive the previous ZLATEST"
-	ipfs files cp /zlatest /zarchive/$(date -u +%s)-$(ipfs files stat /zlatest | head -n 1)
+	ak-ipfs-files-cp /zlatest /zarchive/$(date -u +%s)-$(ak-ipfs-files-stat /zlatest | head -n 1)
 	if [ $? != 0 ]; then exit 1; fi
 
 	echo "Removing previous /zlatest entry"
-	ipfs files rm /zlatest
+	ak-ipfs-files-rm /zlatest
 	if [ $? != 0 ]; then exit 1; fi
 
 	echo "Copying reset ZLATEST"
 	CZLATEST="$(cat $ZLATEST)"
-	ipfs files cp /ipfs/$CZLATEST /zlatest
+	ak-ipfs-files-cp /ipfs/$CZLATEST /zlatest
 	if [ $? != 0 ]; then exit 1; fi
 
 	echo "Publishing new (reset) ZLATEST"
-	ipfs name publish --key=zchain /ipfs/$(cat $ZLATEST)
+	ak-ipfs-name-publish --key=zchain /ipfs/$(cat $ZLATEST)
 	if [ $? != 0 ]; then exit 1; fi
 	
 	echo "Reset was successful"

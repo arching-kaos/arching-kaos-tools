@@ -1,0 +1,3 @@
+#!/bin/bash
+
+ipfs files mkdir "$1"

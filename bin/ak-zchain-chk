@@ -27,7 +27,7 @@ elif [ ! -z "$1" ]
 then
 	entrance="$1"
 else
-	# By default we enter from the latest block
+	# By default we ak-enter from the latest block
 	# We can alter this by changing this value
 	entrance="$(cat $ZLATEST)"
 fi
@@ -76,7 +76,7 @@ do
 
 			# We concatenate the zblock's contents, pipe them through filter
 			# ak-json2bash and output them to tmp-file
-			ipfs cat $zblock | ak-json2bash > $TEMPASSIN/tmp-zblock
+			ak-ipfs-cat $zblock | ak-json2bash > $TEMPASSIN/tmp-zblock
 			ak-logthis "[INFO]" "ZBLOCK $zblock READ"
 
 			# Supposingly you are on a safe environment and you only have
@@ -88,7 +88,7 @@ do
 
 			# Same as above applies to BLOCK and DATA subparts of each ZBLOCK
 			# BLOCKS
-			ipfs cat $block | ak-json2bash > $TEMPASSIN/tmp-block
+			ak-ipfs-cat $block | ak-json2bash > $TEMPASSIN/tmp-block
 			source $TEMPASSIN/tmp-block
 			ak-logthis "[INFO]" "BLOCK $block SOURCED"
 			touch $BLOCKDIR/$block
@@ -119,7 +119,7 @@ do
 					for value in ${blocks_found[@]}
 					do
 						echo $value
-						ipfs cat $value | jq -M
+						ak-ipfs-cat $value | jq -M
 					done
 				fi
 				exit 0

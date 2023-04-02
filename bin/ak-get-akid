@@ -1,5 +1,5 @@
 #!/bin/bash
 # Resolves the IPNS key "ak-config" to its current IPFS value
 # Return IPFS CIDv0 without /ipfs/ prefix
-ipfs name resolve /ipns/$(ipfs key list -l | grep ak-config | awk '{print $1}') | sed -e 's/\/ipfs\///'
+ak-ipfs-name-resolve /ipns/$(ak-ipfs-key-list-full | grep ak-config | awk '{print $1}') | sed -e 's/\/ipfs\///'
 

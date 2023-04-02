@@ -45,22 +45,22 @@ main(){
  
 	ak-logthis "We are doing" $BLOCK_TO_ADD "with content" $PREVIOUS
 	# We add it to IPFS
-	MESSAGE_HASH=$(ipfs add -q $MESSAGE)
+	MESSAGE_HASH=$(ak-ipfs-add $MESSAGE)
 
 	# We create a detached and armor signature of it
 	MESSAGE_SIGN_FILE=$MESSAGE".asc"
 	gpg2 --detach-sign --sign-with $FINGERPRINT --armor --output $MESSAGE_SIGN_FILE $MESSAGE
 
 	# We add the signature to IPFS
-	MESSAGE_SIGNATURE=$(ipfs add -q $MESSAGE_SIGN_FILE)
+	MESSAGE_SIGNATURE=$(ak-ipfs-add $MESSAGE_SIGN_FILE)
 
 	# We will be using our public key also to put it in the block later
 	KEY="gpg.pub"
 	gpg2 --armour --output $KEY --export $FINGERPRINT
-	GPG_PUB_KEY=$(ipfs add -q $KEY)
+	GPG_PUB_KEY=$(ak-ipfs-add $KEY)
 
 	# Acquire last block of information, to chain this one with previous posted
-	PREVIOUS=$(ipfs files stat /zlatest | head -n 1)
+	PREVIOUS=$(ak-ipfs-files-stat /zlatest | head -n 1)
 
 	# We create a block of json like this:
 	cat > block <<EOF
@@ -81,10 +81,10 @@ makeZBlock(){
 	gpg2 --detach-sign --sign-with $FINGERPRINT --armor --output $BLOCK_SIG $BLOCK
 
 	# We now add the signature to IPFS
-	BLOCK_SIGNATURE=$(ipfs add -q $BLOCK_SIG)
+	BLOCK_SIGNATURE=$(ak-ipfs-add $BLOCK_SIG)
 
 	# We also add the block!
-	BLOCK=$(ipfs add -q $BLOCK)
+	BLOCK=$(ak-ipfs-add $BLOCK)
 
 	# So we now do the think almost again
 	cat > zblock << EOF
@@ -95,7 +95,7 @@ makeZBlock(){
 EOF
 	ZBL="zblock"
 	# and we add it on IPFS
-	ZBLOCK=$(ipfs add -q $ZBL)
+	ZBLOCK=$(ak-ipfs-add $ZBL)
 	echo $ZBLOCK
 }
 
@@ -108,11 +108,11 @@ then
 	# We ask for a ZBLOCK or GENESIS to put in the BLOCK
 	PREVIOUS="$2"
 
-	ipfs cat "$BLOCK_TO_ADD"
+	ak-ipfs-cat "$BLOCK_TO_ADD"
 	if [ "$?" == 0 ];
 	then
 		echo "Nice! We found the block"
-		ipfs get "$BLOCK_TO_ADD"
+		ak-ipfs-get "$BLOCK_TO_ADD"
 
 		sed -i.bak -e 's/^.*previous.*$/\"previous\":\"'$PREVIOUS'\"/' $BLOCK_TO_ADD
 		cat $BLOCK_TO_ADD | jq -M
@@ -128,11 +128,11 @@ then
 	# python send_as_ak_tx $ZBLOCK
 	# or for "offline" use
 	echo $ZBLOCK > $ZLATEST
-	ipfs name publish --key=zchain $ZBLOCK > /dev/null 2>&1
-	ipfs files mkdir /zarchive > /dev/null 2>&1
-	ipfs files cp /zlatest /zarchive/$(date -u +%s)-$(ipfs files stat /zlatest | head -n 1) > /dev/null 2>&1
-	ipfs files rm /zlatest > /dev/null 2>&1
-	ipfs files cp /ipfs/$ZBLOCK /zlatest > /dev/null 2>&1
+	ak-ipfs-name-publish --key=zchain $ZBLOCK > /dev/null 2>&1
+	ak-ipfs-files-mkdir /zarchive > /dev/null 2>&1
+	ak-ipfs-files-cp /zlatest /zarchive/$(date -u +%s)-$(ak-ipfs-files-stat /zlatest | head -n 1) > /dev/null 2>&1
+	ak-ipfs-files-rm /zlatest > /dev/null 2>&1
+	ak-ipfs-files-cp /ipfs/$ZBLOCK /zlatest > /dev/null 2>&1
 else
 	usage
 	exit 0

@@ -13,7 +13,7 @@ logit(){
 }
 if [ ! -z $1 ]
 then
-	rsld=$(ipfs name resolve $1)
+	rsld=$(ak-ipfs-name-resolve $1)
 	if [ "$?" != 0 ]
 	then
 		logit "[ERROR]" "Failed to resolve $1"

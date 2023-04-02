@@ -4,6 +4,7 @@
 ZFILESDIR="$AK_WORKDIR/files"
 TEMP="/tmp/aktmp"
 PROGRAM="$(basename $0)"
+#set -xe
 logit(){
 	ak-logthis "<$PROGRAM>" "$1" "$2"
 }
@@ -17,7 +18,6 @@ if [ ! -d $ZFILESDIR ]; then
 		exit 1
 	fi
 	cd $ZFILESDIR
-	git init
 else
 	logit "[INFO]" "$ZFILESDIR found!"
 fi
@@ -39,6 +39,8 @@ tempassin(){
 
 usage(){
 	echo "$PROGRAM - file"
+    echo "  add <file>"
+    echo "  index"
 }
 
 add(){
@@ -53,6 +55,7 @@ main(){
     echo "Adding $FILENAME"
     logit "[INFO]" "Switching to tmp folder..."
     TEMPASSIN="$(tempassin)"
+
     cd $TEMPASSIN
     if [ $? == 0 ]; then
 	    logit "[INFO]" "Success"
@@ -61,6 +64,7 @@ main(){
 	    exit 5
     fi
     logit "[INFO]" "Copying $1 to $TEMPASSIN"
+
     cp $2/$1 $TEMPASSIN/$1
     if [ $? == 0 ]; then
 	    logit "[INFO]" "Copied successfully"
@@ -77,6 +81,15 @@ main(){
     else
 	    logit "[ERROR]" "Error in adding the $FILE to IPFS"
     fi
+
+    logit "[INFO]" "Adding $FILE to SHAMAPSYS..."
+    FILEMAP_SHA512_HASH=$(ak-sm-filesplitter $FILE)
+    if [ $? == 0 ]; then
+	    logit "[INFO]" "Added $FILE to SHAMAPSYS"
+    else
+	    logit "[ERROR]" "Error in adding the $FILE to SHAMAPSYS"
+    fi
+
     logit "[INFO]" "Signing..."
     SIGN_FILE=$FILENAME".asc"
     gpg2 --detach-sign --sign-with $FINGERPRINT --armor --output $SIGN_FILE $FILE
@@ -94,10 +107,20 @@ main(){
 	    logit "[ERROR]" "Error while adding"
     fi
 
+    logit "[INFO]" "Adding signature to SHAMAPSYS"
+    SHAMAPSIGMAP=$(ak-sm-filesplitter $TEMPASSIN/$SIGN_FILE)
+    if [ $? == 0 ]; then
+	    logit "[INFO]" "Added"
+    else
+	    logit "[ERROR]" "Error while adding"
+    fi
+
     cat > $TEMPASSIN/data <<EOF
 {
     "timestamp":"$(date -u +%s)",
     "filename":"$FILENAME",
+    "shamap":"$FILEMAP_SHA512_HASH",
+    "shamapsigmap":"$SHAMAPSIGMAP",
     "ipfs":"$FILE_IPFS_HASH",
     "detach":"$SIGNATURE"
 }
@@ -107,7 +130,7 @@ echo "Printing data..."
 cat $TEMPASSIN/data
 echo "Publishing..."
 
-    ak-pack_z_block files/add data
+    ak-pack_z_block sha-files/announce data
     if [ $? == 0 ]
     then
 	    echo "cool"
@@ -117,10 +140,16 @@ echo "Publishing..."
     fi
 }
 
+
+index(){
+    tail -n1 $AK_WORKDIR/fmp/* | grep '^[abcdef1234567890]' | awk '{ print $2 }'
+}
+
 if [ ! -z $1 ]; then
 	case $1 in
 		help) usage; exit;;
 		add) add $2; exit;;
+        index) index; exit;;
 		*) usage; exit;;
 	esac
 else usage

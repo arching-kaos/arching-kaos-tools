@@ -1,0 +1,3 @@
+#!/bin/bash
+
+ipfs add -Qr $1

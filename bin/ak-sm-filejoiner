@@ -47,9 +47,12 @@ then
 
 	echo '#!/bin/bash' > script
 	
-	awk '{print "cp '$CHKDIR'/"$1" '$TMPWD'/"$2" "}' $MAPSDIR/$MAPSFILE| grep chk > script
+    # We create a script to copy all the chunks and rename them to their serialized
+    # name produced by split when we splitted the file
+	awk '{print "cp '$CHKDIR'/"$1" '$TMPWD'/"$2" "}' $MAPSDIR/$MAPSFILE| grep chk >> script
 
-	sh script
+	bash script
+
 	if [ "$?" != 0 ]
 	then
 		echo "Error executing copy script"
@@ -60,13 +63,22 @@ then
 	cd $TMPWD
 
 	echo "$PWD"
+    
+    # Final name we are going to rename to
 	OUTPUT="$(tail -n1 $MAPSDIR/$MAPSFILE | awk '{print $2}')"
 
 	echo $OUTPUT
 
+    # We grep the MAPSFILE for chk filenames in lines and we print them all in
+    # one line so the first `cat` will concatenate all chunks to OUTPUT
 	cat $(echo -n $(cat $MAPSDIR/$MAPSFILE|grep chk|awk '{print $2" "}'|tr -d '\n')) > $OUTPUT
 
+    # We check if everything is okay
 	sha512sum -c $MAPSDIR/$MAPSFILE
+    if [ "$?" != "0" ]; then
+        logit "[ERROR]" "Error while checking sums"
+        exit 1
+    fi
 	
 	mv $OUTPUT $CURDIR
 

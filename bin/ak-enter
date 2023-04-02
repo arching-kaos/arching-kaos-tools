@@ -1,5 +1,5 @@
 #!/bin/bash
-# enter
+# ak-enter
 #
 # Using this tool, we can seek a whole zchain, if available from
 # an IPFS CID or an IPNS link.
@@ -8,10 +8,10 @@
 # from the IPFS CID stored in the file that is tracked by the
 # $AK_ZLATEST environment variable.
 #
-# enter [-n IPNS_LINK]
-# enter [IPFS CID]
-# enter -nV
-# enter
+# ak-enter [-n IPNS_LINK]
+# ak-enter [IPFS CID]
+# ak-enter -nV
+# ak-enter
 #
 # Returns a JSON array representing the chain retrieved.
 # Logs messages to $LOGSFILE.
@@ -61,7 +61,7 @@ then
     fi
     entrance="$1"
 else
-    # By default we enter from the latest block
+    # By default we ak-enter from the latest block
     # We can alter this by changing this value
     entrance="$(cat $AK_ZLATEST)"
 fi
@@ -105,7 +105,7 @@ do
             # them to tmp-file
             # 
             # We check if any $zblock at all
-            ipfs --timeout=10s cat $zblock > /dev/null 2>&1
+            ak-ipfs-cat $zblock > /dev/null 2>&1
             if [ "$?" -ne 0 ]
             then
                 logit "[ERROR]" "ZBLOCK $zblock READ failed"
@@ -114,7 +114,7 @@ do
             logit "[INFO]" "ZBLOCK $zblock READ"
   
             # If it's JSON formated
-            ipfs --timeout=10s cat $zblock | jq -M > /dev/null 2>&1
+            ak-ipfs-cat $zblock | jq -M > /dev/null 2>&1
             if [ "$?" -ne 0 ]
             then
                 logit "[ERROR]" "ZBLOCK $zblock is not JSON"
@@ -123,7 +123,7 @@ do
             logit "[INFO]" "ZBLOCK $zblock is JSON"
 
             # Then we pass it through the filter and save it
-            ipfs --timeout=10s cat $zblock | ak-json2bash > $TEMPASSIN/tmp-zblock
+            ak-ipfs-cat $zblock | ak-json2bash > $TEMPASSIN/tmp-zblock
 
             # Be sure that there are the expected values
             # We need 'block' and 'block_signature' inside a 'zblock'
@@ -159,7 +159,7 @@ do
             # Same as above applies to BLOCK and DATA subparts of each ZBLOCK
             # BLOCKS
             echo -n '"block":"'$block'",'
-            ipfs --timeout=10s cat $block | ak-json2bash > $TEMPASSIN/tmp-block
+            ak-ipfs-cat $block | ak-json2bash > $TEMPASSIN/tmp-block
             if [ "$?" -ne 0 ]
             then
                 logit "[ERROR]" "BLOCK $block READ failed"
@@ -193,7 +193,7 @@ do
             echo -n '"gpg":"'$gpg'",'
             if [ $verify == 1 ]
             then
-                ipfs get $gpg > /dev/null 2>&1
+                ak-ipfs-get $gpg > /dev/null 2>&1
                 if [ "$?" -ne 0 ]
                 then
                     logit "[ERROR]" "Could not get GPG key: $gpg ."
@@ -205,7 +205,7 @@ do
                     logit "[ERROR]" "Could not import GPG key: $gpg ."
                     exit 1
                 fi
-                ipfs get $block_signature > /dev/null 2>&1
+                ak-ipfs-get $block_signature > /dev/null 2>&1
                 if [ "$?" -ne 0 ]
                 then
                     logit "[ERROR]" "Error while getting $block_signature for $block"
@@ -213,7 +213,7 @@ do
                 fi
                 mv $block_signature $block.asc
                 logit "[INFO]" "Block signature downloaded"
-                ipfs get $block > /dev/null 2>&1
+                ak-ipfs-get $block > /dev/null 2>&1
                 if [ "$?" -ne 0 ]
                 then
                     logit "[ERROR]" "Could not get $block block"
@@ -238,7 +238,7 @@ do
 
             # DATA (but we don't source it's stuff)
             # Only print to stdout
-            #ipfs --timeout=10s cat $data
+            #ak-ipfs-cat $data
             touch $DATADIR/$data
 
             # Now, since we sourced the BLOCK to our terminal, we can search

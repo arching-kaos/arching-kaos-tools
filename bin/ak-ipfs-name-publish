@@ -1,0 +1,3 @@
+#!/bin/bash
+
+ipfs name publish $1 $2

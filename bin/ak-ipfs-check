@@ -5,7 +5,7 @@ logit(){
 }
 
 
-ipfs files ls /zarchive > /dev/null
+ak-ipfs-files-ls /zarchive > /dev/null
 if [ $? != 0 ]
 then
 	logit "[ERROR]" "/zarchive is missing" 
@@ -14,7 +14,7 @@ else
 fi
 
 
-ipfs files ls /zlatest > /dev/null
+ak-ipfs-files-ls /zlatest > /dev/null
 if [ $? != 0 ]
 then
 	logit "[ERROR]" "/zlatest is missing" 
@@ -22,10 +22,10 @@ else
 	logit "[INFO]" "/zlatest is OK"
 fi
 
-ipfs key list | grep zchain > /dev/null
+ak-ipfs-key-list | grep zchain > /dev/null
 if [ $? != 0 ]; then
 	logit "[WARNING]" "zchain key is missing" 
-	ipfs key gen zchain > $ZCHAIN
+	ak-ipfs-key-gen zchain > $ZCHAIN
 	if [ $? != 0 ]; then
 		logit "[ERROR]" "zchain fails to create"
 	else
@@ -35,10 +35,10 @@ else
 	logit "[INFO]" "zchain is there"
 fi
 
-ipfs key list | grep ak-config > /dev/null
+ak-ipfs-key-list | grep ak-config > /dev/null
 if [ $? != 0 ]; then
        	logit "[WARNING]" "ak-config key is missing" 
-	ipfs key gen ak-config
+	ak-ipfs-key-gen ak-config
 	if [ $? != 0 ]; then
 		logit "[ERROR]" "ak-config fails to create"
 	else

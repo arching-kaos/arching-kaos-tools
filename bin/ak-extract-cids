@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-# Extracts unique IPFS CIDs from an entered zchain
+# Extracts unique IPFS CIDs from an ak-entered zchain
 #
 # Previously:
-# enter | jq | grep Qm | sed -e 's/^.*Qm/Qm/g' | cut -d '"' -f 1
+# ak-enter | jq | grep Qm | sed -e 's/^.*Qm/Qm/g' | cut -d '"' -f 1
 #
-enter | jq | grep Qm | sed -e 's/".*"://g; s/ //g; s/[{,"]//g' | sort | uniq
+ak-enter | jq | grep Qm | sed -e 's/".*"://g; s/ //g; s/[{,"]//g' | sort | uniq

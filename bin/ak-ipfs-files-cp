@@ -1,0 +1,3 @@
+#!/bin/bash
+
+ipfs files cp "$1" "$2"

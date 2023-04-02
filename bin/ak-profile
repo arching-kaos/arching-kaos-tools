@@ -42,7 +42,7 @@ show(){
 	if [ ! -z $1 ]
 	then
 		logit "[INFO]" "Working with $1"
-        ipfs cat $(echo $(ipfs cat $1) | jq '.ipfs' -r)
+        ak-ipfs-cat $(echo $(ak-ipfs-cat $1) | jq '.ipfs' -r)
 	else
 		echo "No DATA provided"
 		exit 1
@@ -75,7 +75,7 @@ EOF
 	if [ $? == 0 ]
 	then
 		echo "Added successfully... proceeding"
-		IPFS_FILE=$(ipfs add -q $ZPROPERTY_FILE)
+		IPFS_FILE=$(ak-ipfs-add $ZPROPERTY_FILE)
 		echo "Prop writting,,, $IPFS_FILE"
 		add $ZPROPERTY_KEY
 		echo "Adding to git repo..."
@@ -167,10 +167,10 @@ add(){
 	if [ -f $ZPROFILEDIR/$1 ]; then
 		FILE="$ZPROFILEDIR/$1"
 		echo "Adding from " $FILE
-		FILE_IPFS_HASH=$(ipfs add -q $FILE)
+		FILE_IPFS_HASH=$(ak-ipfs-add $FILE)
 		FILE_SIGN_FILE=$(pwd)/$1".asc"
 		gpg2 --detach-sign --sign-with $FINGERPRINT --armor --output $FILE_SIGN_FILE $FILE
-		FILE_SIGNATURE=$(ipfs add -q $FILE_SIGN_FILE)
+		FILE_SIGNATURE=$(ak-ipfs-add $FILE_SIGN_FILE)
 		cat > data <<EOF
 {
    "datetime":"$(date -u +%s)",
@@ -183,7 +183,7 @@ EOF
 		exit 2
 	fi
 
-	pack_z_block "profile/add" data
+	ak-pack_z_block "profile/add" data
 	if [ "$?" -ne 0 ]
 	then
 		echo "error??"

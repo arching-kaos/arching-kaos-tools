@@ -2,7 +2,7 @@
 # Outputs all the "ipfs" values from the DATA blocks of our ZCHAIN
 if [ ! -z $1 ]
 then
-    enter $1 | jq | grep ipfs | awk '{print $2}' | sed -e 's/"//g;s/,//g'
+    ak-enter $1 | jq | grep ipfs | awk '{print $2}' | sed -e 's/"//g;s/,//g'
 else
-    enter | jq | grep ipfs | awk '{print $2}' | sed -e 's/"//g;s/,//g'
+    ak-enter | jq | grep ipfs | awk '{print $2}' | sed -e 's/"//g;s/,//g'
 fi

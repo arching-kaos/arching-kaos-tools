@@ -28,7 +28,7 @@ show(){
 
 publish(){
 	show | jq -M > tmpfile
-	ipfs name publish --key=ak-config /ipfs/$(ipfs add -q tmpfile)
+	ak-ipfs-name-publish --key=ak-config /ipfs/$(ak-ipfs-add tmpfile)
 	if [ "$?" != 0 ]
 	then
 		echo -e "\033[0;34mError on publishing\033[0;0m\nYour information:\n"
@@ -39,13 +39,13 @@ publish(){
 }
 
 published(){
-	ipfs cat $(get_akid)
+	ak-ipfs-cat $(get_akid)
 }
 
 # We will be using our public key also to put it in the block later
 KEY="tmp-gpg.pub"
 gpg2 --armour --output $KEY --export $FINGERPRINT
-GPG_PUB_KEY=$(ipfs add -q $KEY)
+GPG_PUB_KEY=$(ak-ipfs-add $KEY)
 rm $KEY
 
 if [ ! -z $1 ]; then

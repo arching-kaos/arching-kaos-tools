@@ -15,6 +15,7 @@
 # FINGERPRINT="$(gpg2 --list-keys | grep kaos@kaos.kaos -1 | head -n1 | awk '{print $1}')"
 
 PROGRAM="$(basename $0)"
+set -xe
 
 # Logging patch
 logit(){
@@ -42,7 +43,7 @@ main(){
     # We check firstly if the encapsulated value of the "ipfs" key has already
     # appeared in the zchain.
     TO_CHECK="$(cat $MESSAGE | jq | grep ipfs | awk '{print $2}' | sed -e 's/"//g;s/,//g')"
-    enter | jq | grep ipfs | awk '{print $2}' | sed -e 's/"//g;s/,//g' | sort | uniq > tempisalreadythere
+    ak-enter | jq | grep ipfs | awk '{print $2}' | sed -e 's/"//g;s/,//g' | sort | uniq > tempisalreadythere
     while IFS="" read -r p || [ -n "$p" ]
     do
         if [ "$p" == "$TO_CHECK" ]
@@ -55,22 +56,22 @@ main(){
  
 	logit "[INFO]" "We are doing" $ACTION "with content" $MESSAGE
 	# We add it to IPFS
-	MESSAGE_HASH=$(ipfs add -q $MESSAGE)
+	MESSAGE_HASH=$(ak-ipfs-add $MESSAGE)
 
 	# We create a detached and armor signature of it
 	MESSAGE_SIGN_FILE=$MESSAGE".asc"
 	gpg2 --detach-sign --sign-with $FINGERPRINT --armor --output $MESSAGE_SIGN_FILE $MESSAGE
 
 	# We add the signature to IPFS
-	MESSAGE_SIGNATURE=$(ipfs add -q $MESSAGE_SIGN_FILE)
+	MESSAGE_SIGNATURE=$(ak-ipfs-add $MESSAGE_SIGN_FILE)
 
 	# We will be using our public key also to put it in the block later
 	KEY="gpg.pub"
 	gpg2 --armour --output $KEY --export $FINGERPRINT
-	GPG_PUB_KEY=$(ipfs add -q $KEY)
+	GPG_PUB_KEY=$(ak-ipfs-add $KEY)
 
 	# Acquire last block of information, to chain this one with previous posted
-	PREVIOUS=$(ipfs files stat /zlatest | head -n 1)
+	PREVIOUS=$(ak-ipfs-files-stat /zlatest | head -n 1)
 
 	# We create a block of json like this:
 	cat > block <<EOF
@@ -89,10 +90,10 @@ EOF
 	gpg2 --detach-sign --sign-with $FINGERPRINT --armor --output $BLOCK_SIG $BLOCK
 
 	# We now add the signature to IPFS
-	BLOCK_SIGNATURE=$(ipfs add -q $BLOCK_SIG)
+	BLOCK_SIGNATURE=$(ak-ipfs-add $BLOCK_SIG)
 
 	# We also add the block!
-	BLOCK=$(ipfs add -q $BLOCK)
+	BLOCK=$(ak-ipfs-add $BLOCK)
 
 	# So we now do the think almost again
 	cat > zblock << EOF
@@ -103,7 +104,7 @@ EOF
 EOF
 	ZBL="zblock"
 	# and we add it on IPFS
-	ZBLOCK=$(ipfs add -q $ZBL)
+	ZBLOCK=$(ak-ipfs-add $ZBL)
 	echo $ZBLOCK
 }
 
@@ -124,36 +125,36 @@ then
 	# python send_as_ak_tx $ZBLOCK
 	# or for "offline" use
 	echo $ZBLOCK > $ZLATEST
-	ipfs name publish --key=zchain $ZBLOCK > /dev/null 2>&1
+	ak-ipfs-name-publish --key=zchain $ZBLOCK > /dev/null 2>&1
     if [ "$?" -ne 0 ]
     then
         logit "[ERROR]" "Failed publishing ZBLOCK: $ZBLOCK"
         exit 1
     fi
-	ipfs files ls /zarchive > /dev/null 2>&1
+	ak-ipfs-files-ls /zarchive > /dev/null 2>&1
     if [ "$?" -ne 0 ]
     then
         logit "[WARNING]" "/zarchive does not exist"
-        ipfs files mkdir /zarchive > /dev/null 2>&1
+        ak-ipfs-files-mkdir /zarchive > /dev/null 2>&1
         if [ "$?" -ne 0 ]
         then
             logit "[ERROR]" "Could not create /zarchive directory. Aborting."
             exit 1
         fi
     fi
-	ipfs files cp /zlatest /zarchive/$(date -u +%s)-$(ipfs files stat /zlatest | head -n 1) > /dev/null 2>&1
+	ak-ipfs-files-cp /zlatest /zarchive/$(date -u +%s)-$(ak-ipfs-files-stat /zlatest | head -n 1) > /dev/null 2>&1
     if [ "$?" -ne 0 ]
     then
         logit "[ERROR]" "Could not back up previous /zlatest"
         exit 1
     fi
-	ipfs files rm /zlatest > /dev/null 2>&1
+	ak-ipfs-files-rm /zlatest > /dev/null 2>&1
     if [ "$?" -ne 0 ]
     then
         logit "[ERROR]" "Could not remove previous /zlatest"
         exit 1
     fi
-	ipfs files cp /ipfs/$ZBLOCK /zlatest > /dev/null 2>&1
+	ak-ipfs-files-cp /ipfs/$ZBLOCK /zlatest > /dev/null 2>&1
     if [ "$?" -ne 0 ]
     then
         logit "[ERROR]" "Could not copy $ZBLOCK to /zlatest"

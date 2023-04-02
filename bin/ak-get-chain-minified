@@ -1,1 +1,1 @@
-enter | jq --compact-output
+ak-enter | jq --compact-output

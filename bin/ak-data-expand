@@ -11,37 +11,37 @@ then
 		logit "[ERROR]" "Invalid hash format for $1"
 		exit 1
 	fi
-	ipfs --timeout=10s cat $1 > /dev/null
+	ak-ipfs-cat $1 > /dev/null
 	if [ "$?" -ne 0 ]
 	then
 		logit "[ERROR]" "Error while reading $1"
 		exit 1
 	fi
-	ipfs --timeout=10s cat $1 | jq -M > /dev/null
+	ak-ipfs-cat $1 | jq -M > /dev/null
 	if [ "$?" -ne 0 ]
 	then
 		logit "[ERROR]" "Error while parsing JSON for $1"
 		exit 1
 	fi
-	ipfs --timeout=10s cat $1 | jq | grep ipfs > /dev/null
+	ak-ipfs-cat $1 | jq | grep ipfs > /dev/null
 	if [ "$?" -ne 0 ]
 	then
 		logit "[ERROR]" "Error while extracting data from JSON for $1"
 		exit 1
 	fi
-	DATA="$(ipfs --timeout=10s cat $1 | jq | grep ipfs | sed -e 's/"ipfs": "//g; s/[",]//g; s/ //g')"
+	DATA="$(ak-ipfs-cat $1 | jq | grep ipfs | sed -e 's/"ipfs": "//g; s/[",]//g; s/ //g')"
 	if [ "$?" -ne 0 ]
 	then
 		logit "[ERROR]" "Error while extracting data from JSON for $1"
 		exit 1
 	fi
-	ipfs --timeout=10s cat $1 | jq | grep detach > /dev/null
+	ak-ipfs-cat $1 | jq | grep detach > /dev/null
 	if [ "$?" -ne 0 ]
 	then
 		logit "[ERROR]" "Error while extracting data from JSON for $1"
 		exit 1
 	fi
-	DETACH="$(ipfs --timeout=10s cat $1 | jq | grep detach | sed -e 's/"detach": "//g; s/[",]//g; s/ //g')"
+	DETACH="$(ak-ipfs-cat $1 | jq | grep detach | sed -e 's/"detach": "//g; s/[",]//g; s/ //g')"
 	if [ "$?" -ne 0 ]
 	then
 		logit "[ERROR]" "Error while extracting data from JSON for $1"
@@ -54,7 +54,7 @@ then
 	    exit 1
 	fi
     gpg="$2"
-    ipfs --timeout=10s get $gpg > /dev/null 2>&1
+    ak-ipfs-get $gpg > /dev/null 2>&1
     if [ "$?" -ne 0 ]
     then
 	logit "[ERROR]" "Could not get GPG key: $gpg"
@@ -66,7 +66,7 @@ then
 		logit "[ERROR]" "Could not import GPG key: $gpg"
 		exit 1
 	fi
-	ipfs --timeout=10s get $DETACH > /dev/null 2>&1
+	ak-ipfs-get $DETACH > /dev/null 2>&1
 	if [ "$?" -ne 0 ]
 	then
 		logit "[ERROR]" "Error while getting signature: $DETACH for data: $DATA"
@@ -74,7 +74,7 @@ then
 	fi
 	mv $DETACH $DATA.asc
 	logit "[INFO]" "Block signature downloaded"
-	ipfs --timeout=10s get $DATA > /dev/null 2>&1
+	ak-ipfs-get $DATA > /dev/null 2>&1
 	if [ "$?" -ne 0 ]
 	then
 		logit "[ERROR]" "Error while getting data: $DATA"
@@ -88,7 +88,7 @@ then
 		exit 1
 	fi
 	logit "[INFO]" "Block signature verified"
-    echo -n '"data":{"'$1'":'$(ipfs --timeout=10s cat $1)'},'
+    echo -n '"data":{"'$1'":'$(ak-ipfs-cat $1)'},'
 	exit 0
 else
 	echo "Usage: $PROGRAM HASH GPG"

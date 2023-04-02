@@ -1,0 +1,2 @@
+#!/bin/bash
+ipfs --timeout=10s cat $1

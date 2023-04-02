@@ -35,7 +35,7 @@ create(){
 	echo "Renaming..."
 	TITLE="$(head -n 1 $ARTICLES_FILE)"
 	TO_FILE=$ARTICLES_FILE-$(echo $TITLE | tr '[:upper:]' '[:lower:]' | sed -e 's/ /\_/g' )
-	IPFS_FILE=$(ipfs add -q $ARTICLES_FILE)
+	IPFS_FILE=$(ak-ipfs-add $ARTICLES_FILE)
 	mv $ARTICLES_FILE $ZARTICLESDIR/$TO_FILE
 	sed -e 's,Qm.*,'"$IPFS_FILE"',g' $ZARTICLESDIR/README
 	add $ZARTICLESDIR/$TO_FILE
@@ -90,10 +90,10 @@ add(){
 		echo "Adding articles from " $FILE
 		DATETIME=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
 		TITLE=$(head -n 1 $FILE)
-		FILE_IPFS_HASH=$(ipfs add -q $FILE)
+		FILE_IPFS_HASH=$(ak-ipfs-add $FILE)
 		FILE_SIGN_FILE=$FILE".asc"
 		gpg --detach-sign --sign-with $AK_FINGERPRINT --armor --output $FILE_SIGN_FILE $FILE
-		FILE_SIGNATURE=$(ipfs add -q $FILE_SIGN_FILE)
+		FILE_SIGNATURE=$(ak-ipfs-add $FILE_SIGN_FILE)
 		cat > data <<EOF
 {
    "datetime":"$DATETIME",
@@ -107,7 +107,7 @@ EOF
 		echo "File $FILE doesn't exist";
 		exit 2
 	fi
-	pack_z_block "articles/add" data
+	ak-pack_z_block "articles/add" data
 	if [ $? == 0 ]
 	then
 		echo "Articles added successfully"

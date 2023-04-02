@@ -7,5 +7,5 @@
 # Strips " , { } from input and replaces ":" with =
 #
 # Usage:
-# ipfs cat <hash> | ak-json2bash
+# ak-ipfs-cat <hash> | ak-json2bash
 sed -e 's/{//g' | sed -e 's/}//g' | sed -e 's/":"/=/g' | sed -e 's/"//g' | sed -e 's/,//g' | sed -e 's/ //g'
