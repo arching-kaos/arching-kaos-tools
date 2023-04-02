@@ -14,21 +14,10 @@ if [ ! -d $ZREFERENCESDIR ]; then
 else
 	ak-logthis "zreferencesdir found"
 fi
-tempassin(){
-	if [ ! -z $1 ]
-	then
-		TEMPASSIN="$1"
-	else
-		TIMESTAMP="$(date -u +%s)"
-		TEMPASSIN="/tmp/aktmp_$TIMESTAMP"
-	fi
-	if [ ! -d $TEMPASSIN ]; then
-		mkdir $TEMPASSIN
-	fi
-	cd $TEMPASSIN
-}
+
 create(){
-	tempassin $TEMP
+    TEMP="$(ak-tempassin)"
+    cd $TEMP
 	#pwd
 	export REFERENCEFILE="$(date -u +%s)"
 	if [ ! -z $1 ] && [ ! -z $2 ]
@@ -95,7 +84,8 @@ import(){
 	exit 224
 }
 add(){
-	tempassin
+    TEMP="$(ak-tempassin)"
+    cd $TEMP
 	if [ -f $1 ]; then
 		FILE="$1"
 		echo "Adding references from " $FILE

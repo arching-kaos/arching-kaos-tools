@@ -14,21 +14,10 @@ if [ ! -d $ZARTICLESDIR ]; then
 else
 	echo "zarticlesdir found"
 fi
-tempassin(){
-	if [ ! -z $1 ]
-	then
-		TEMPASSIN="$1"
-	else
-		TIMESTAMP="$(date -u +%s)"
-		TEMPASSIN="/tmp/aktmp_$TIMESTAMP"
-	fi
-	if [ ! -d $TEMPASSIN ]; then
-		mkdir $TEMPASSIN
-	fi
-	cd $TEMPASSIN
-}
+
 create(){
-	tempassin $TEMP
+    TEMP="$(ak-tempassin)"
+    cd $TEMP
 	pwd
 	export ARTICLES_FILE="$(date +%Y%m%d_%H%M%S)"
 	vi $ARTICLES_FILE
@@ -83,8 +72,9 @@ import(){
 	fi
 	exit 224
 }
-add(){
-	tempassin
+add()
+    TEMP="$(ak-tempassin)"
+    cd $TEMP
 	if [ -f $1 ]; then
 		FILE="$1"
 		echo "Adding articles from " $FILE

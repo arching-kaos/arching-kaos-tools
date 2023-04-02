@@ -10,21 +10,6 @@ if [ ! -d $ZFOLDERSDIR ]; then
 else
 	ak-logthis "error $ZFOLDERSDIR not found"
 fi
-tempassin(){
-	if [ ! -z $1 ];
-	then
-		TEMPASSIN="$1"
-	else
-		TIMESTAMP="$(date -u +%s)"
-		TEMPASSIN="/tmp/aktmp_$TIMESTAMP"
-	fi
-	if [ ! -d $TEMPASSIN ]; then
-		mkdir $TEMPASSIN
-	fi
-	cd $TEMPASSIN
-	echo "$TEMPASSIN"
-
-}
 
 usage(){
 	title
@@ -42,7 +27,7 @@ main(){
     CRP="$2"
     echo "Adding $FOLDERNAME"
     ak-logthis "Switching to tmp folder..."
-    TEMPASSIN="$(tempassin)"
+    TEMPASSIN="$(ak-tempassin)"
     cd $TEMPASSIN
     if [ $? == 0 ]; then
 	    ak-logthis "Success"

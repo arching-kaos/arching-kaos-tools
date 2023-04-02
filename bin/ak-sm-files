@@ -21,21 +21,6 @@ if [ ! -d $ZFILESDIR ]; then
 else
 	logit "[INFO]" "$ZFILESDIR found!"
 fi
-tempassin(){
-	if [ ! -z $1 ];
-	then
-		TEMPASSIN="$1"
-	else
-		TIMESTAMP="$(date -u +%s)"
-		TEMPASSIN="/tmp/aktmp_$TIMESTAMP"
-	fi
-	if [ ! -d $TEMPASSIN ]; then
-		mkdir $TEMPASSIN
-	fi
-	cd $TEMPASSIN
-	echo "$TEMPASSIN"
-
-}
 
 usage(){
 	echo "$PROGRAM - file"
@@ -54,7 +39,7 @@ main(){
     CRP="$2"
     echo "Adding $FILENAME"
     logit "[INFO]" "Switching to tmp folder..."
-    TEMPASSIN="$(tempassin)"
+    TEMPASSIN="$(ak-tempassin)"
 
     cd $TEMPASSIN
     if [ $? == 0 ]; then

@@ -9,19 +9,7 @@ if [ ! -d $ZCOMMENTSDIR ]; then
 else
 	ak-logthis "[INFO]" "zcommentsdir found"
 fi
-tempassin(){
-	if [ ! -z $1 ]
-	then
-		TEMPASSIN="$1"
-	else
-		TIMESTAMP="$(date -u +%s)"
-		TEMPASSIN="/tmp/aktmp_$TIMESTAMP"
-	fi
-	if [ ! -d $TEMPASSIN ]; then
-		mkdir $TEMPASSIN
-	fi
-	cd $TEMPASSIN
-}
+
 create(){
 	if [ ! -z $1 ]
 	then
@@ -31,7 +19,8 @@ create(){
 		echo "[ERROR]" "No reference given"
 		exit 1
 	fi
-	tempassin $TEMP
+    TEMP="$(ak-tempassin)"
+    cd $TEMP
 	export COMMENTS_FILE="$(date -u +%s)"
 	vi $COMMENTS_FILE
 	echo "Renaming..."
@@ -65,7 +54,8 @@ title(){
 	echo comments
 }
 add(){
-	tempassin
+    TEMP="$(ak-tempassin)"
+    cd $TEMP
 	if [ -f "$ZCOMMENTSDIR/$1" ]; then
 		FILE=$ZCOMMENTSDIR/$1
 		echo "Adding comments from " $FILE

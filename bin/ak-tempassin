@@ -1,9 +1,3 @@
 #!/bin/bash
-TEMP="/tmp/aktmp"
-TIMESTAMP="$(date -u +%s)"
-export TEMPASSIN="${TEMP}_${TIMESTAMP}"
-if [ ! -d $TEMPASSIN ]; then
-	mkdir $TEMPASSIN
-fi
-cd $TEMPASSIN
-echo "Created temporariry folder $TEMPASSASIN"
+AK_TEMP="mktemp -d aktmp-XXXXXXX"
+echo "$AK_TEMP"

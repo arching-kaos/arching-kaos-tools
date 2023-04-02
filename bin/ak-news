@@ -22,22 +22,10 @@ fi
 
 cd $ZNEWSDIR
 
-tempassin(){
-	if [ ! -z $1 ]
-	then
-		TEMPASSIN="$1"
-	else
-		TIMESTAMP="$(date -u +%s)"
-		TEMPASSIN="/tmp/aktmp_$TIMESTAMP"
-	fi
-	if [ ! -d $TEMPASSIN ]; then
-		mkdir $TEMPASSIN
-	fi
-	cd $TEMPASSIN
-}
-
 create(){
-	tempassin $TEMP
+	TEMP="$(ak-tempassin)"
+    cd $TEMP
+    cd 
 	curpath="$(pwd)"
 	export NEWS_FILE="$(date +%Y%m%d_%H%M%S)"
 	vi $NEWS_FILE
@@ -92,7 +80,8 @@ import(){
 	exit 224
 }
 add2(){
-	tempassin
+    TEMP="$(ak-tempassin)"
+    cd $TEMP
 	if [ -f $1 ]; then
 		FILE="$1"
 		cp $FILE $ZNEWSDIR
@@ -126,7 +115,8 @@ EOF
 	fi
 }
 add(){
-	tempassin
+    TEMP="$(ak-tempassin)"
+    cd $TEMP
 	if [ -f $ZNEWSDIR/$1 ]; then
 		FILE="$1"
 		echo "Adding news from " $FILE

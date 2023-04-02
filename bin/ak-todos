@@ -13,22 +13,10 @@ if [ ! -d $ZTODOSDIR ]; then
 else
 	ak-logthis "ztodosdir found"
 fi
-tempassin(){
-	if [ ! -z $1 ]
-	then
-		TEMPASSIN="$1"
-	else
-		TIMESTAMP="$(date -u +%s)"
-		TEMPASSIN="/tmp/aktmp_$TIMESTAMP"
-	fi
-	if [ ! -d $TEMPASSIN ]; then
-		mkdir $TEMPASSIN
-	fi
-	cd $TEMPASSIN
-}
+
 create(){
-	tempassin $TEMP
-	pwd
+    TEMP="$(ak-tempassin)"
+    cd $TEMP
 	export TODOS_FILE="$(date -u +%s)"
 	vi $TODOS_FILE
 	ak-logthis "Renaming..."
@@ -83,7 +71,8 @@ import(){
 	exit 224
 }
 add(){
-	tempassin
+    TEMP="$(ak-tempassin)"
+    cd $TEMP
 	if [ -f $1 ]; then
 		FILE="$1"
 		ak-logthis "Adding todos from $FILE"

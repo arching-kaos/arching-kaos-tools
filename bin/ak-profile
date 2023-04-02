@@ -18,20 +18,6 @@ else
 	logit "[INFO]" "zprofiledir found"
 fi
 
-tempassin(){
-	if [ ! -z $1 ]
-	then
-		TEMPASSIN="$1"
-	else
-		TIMESTAMP="$(date -u +%s)"
-		TEMPASSIN="/tmp/aktmp_$TIMESTAMP"
-	fi
-	if [ ! -d $TEMPASSIN ]; then
-		mkdir $TEMPASSIN
-	fi
-	cd $TEMPASSIN
-	# echo "$TEMPASSIN"
-}
 
 # This is working with DATA blocks. DATA that matched profile/add ACTION
 #
@@ -163,7 +149,8 @@ import(){
 
 # Adds a file as a profile/add ACTION on the zchain.
 add(){
-	tempassin
+    TEMP="$(ak-tempassin)"
+    cd $TEMP
 	if [ -f $ZPROFILEDIR/$1 ]; then
 		FILE="$ZPROFILEDIR/$1"
 		echo "Adding from " $FILE
