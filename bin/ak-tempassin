@@ -1,3 +1,14 @@
 #!/bin/bash
 AK_TEMP="mktemp -d aktmp-XXXXXXX"
+logit(){
+    ak-logthis <"$PROGRAM"> "$1" "$2"
+}
+if [ ! -d "$AK_TEMP" ]
+then
+    logit "[ERROR]" "Could not make $AK_TEMP directory to work in"
+    echo "Could not make $AK_TEMP directory to work in"
+    exit 1
+fi
+     
+logit "[INFO]" "$AK_TEMP created successfully"
 echo "$AK_TEMP"
