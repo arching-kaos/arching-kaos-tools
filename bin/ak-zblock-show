@@ -23,16 +23,12 @@ logit(){
 }
 
 usage(){
-    echo "$PROGRAM - Crawl an arching kaos chain"
+    echo "$PROGRAM - Show a zblock"
     echo "-----------------------------------"
-    echo "Usage:"
-    echo "    --help, -h                             Print this help and exit"
-    echo "    --chain <ipns-link>, -n <ipns-link>    Crawl specified chain"
-    echo "    --no-verify, -nV                       Don't verify signatures"
-    echo "    <ipfs-link>                            Specify IPFS CID for entrance"
     echo ""
-    echo "Note that combined flags don't work for now"
-    echo "Running with no flags crawls your chain based on AK_ZLATEST environment variable"
+    echo "$PROGRAM <zblock_hash>"
+    echo "Usage:"
+    echo "    --help, -h        Print this help and exit"
 }
 # Start of tests
 #entrance="QmW5WVXCJfhb4peHG6cbEdamC24vZzMX2Vz386vpENh38U"
@@ -44,13 +40,6 @@ if [ ! -z "$1" ] && [ "$1" == "-h" ] || [ "$1" == "--help" ]
 then
     usage
     exit
-elif [ ! -z "$1" ] && [ "$1" == "-nV" ] || [ "$1" == "--no-verify" ]
-then
-    verify=0
-    entrance="$(cat $AK_ZLATEST)"
-elif [ ! -z "$1" ] && [ "$1" == "-n" ]
-then
-    entrance="$(ak-ipns-resolve $2)"
 elif [ ! -z "$1" ]
 then
     echo $1 | grep -e 'Qm.\{44\}' >/dev/null
@@ -76,16 +65,17 @@ zblock="$entrance"
 
 # Enter temp folder
 TEMPASSIN="$(ak-tempassin)"
-cd $TEMPASSIN
+cd "$TEMPASSIN"
+
 counter=0
 # The loop
 # We break the loop from inside the loop
-while true
-do
-    if [ $counter == 0 ]
-    then
-        echo -n '['
-    fi
+#while true
+#do
+#    if [ $counter == 0 ]
+#    then
+#        echo -n '['
+#    fi
     counter=$(expr $counter + 1)
     # Check if $zblock exists as variable
     if [ ! -v $zblock ]
@@ -252,20 +242,10 @@ do
 
             # Otherwise, we inform of the sequence
             else
-                #echo "$zblock after $previous"
                 logit "[INFO]" "Found a previous block for $zblock: $previous"
-                echo -n '"previous":"'$previous'"},'
-                zblock=$previous
+                echo -n '"previous":"'$previous'"}'
             fi
 
-        # Now check if it is equal to the seed
-        # which apparently means we reached the seed.
-        elif [ "$zblock" == "$seed" ]
-        then
-            #echo "$zblock is GENESIS block"
-            #echo '"'$zblock'":{ "GENESIS":"GENESIS"}] '
-            echo -n '{"genesis":"genesis"}]'
-            logit "[INFO]" "Reached $seed, counted $counter zblocks."
             exit 0
         fi
     # And finally, if nothing is there exit with error
@@ -273,4 +253,4 @@ do
         echo "Check not passed... No previous IPFS CID"
         exit 1
     fi
-done
+#done

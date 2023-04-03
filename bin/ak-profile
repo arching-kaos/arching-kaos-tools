@@ -170,7 +170,7 @@ EOF
 		exit 2
 	fi
 
-	ak-pack_z_block "profile/add" data
+    ak-pack_z_block "profile/add" $(pwd)/data
 	if [ "$?" -ne 0 ]
 	then
 		echo "error??"

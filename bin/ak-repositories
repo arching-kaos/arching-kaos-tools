@@ -106,13 +106,8 @@ add(){
 			if [ $? == 0 ]
 			then
 				ak-ipfs-name-publish --key="$PROJECT.git" /ipfs/$IPFS
-				cat > data <<EOF
-{
-    "project":"$PROJECT.git",
-    "ipns":"$try"
-}
-EOF
-				ak-pack_z_block "repos/add" data			
+				printf '{"project":"%s.git","ipns":"%s"}' $PROJECT $try > data
+				ak-pack_z_block "repos/add" $PWD/data			
 				echo "Done"
 			fi
 		fi

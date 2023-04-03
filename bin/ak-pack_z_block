@@ -74,16 +74,7 @@ main(){
 	PREVIOUS=$(ak-ipfs-files-stat /zlatest | head -n 1)
 
 	# We create a block of json like this:
-	cat > block <<EOF
-{
-    "timestamp":"$(date -u +%s)",
-    "action":"$ACTION",
-    "data":"$MESSAGE_HASH",
-    "detach":"$MESSAGE_SIGNATURE",
-    "gpg":"$GPG_PUB_KEY",
-    "previous":"$PREVIOUS"
-}
-EOF
+    printf '{"timestamp":"%s","action":"%s","data":"%s","detach":"%s","gpg":"%s","previous":"%s"}' $(date -u +%s) $ACTION $MESSAGE_HASH $MESSAGE_SIGNATURE $GPG_PUB_KEY $PREVIOUS > block
 	BLOCK="block"
 	BLOCK_SIG=$BLOCK".asc"
 	# We have a block now, so we sign it
@@ -96,12 +87,7 @@ EOF
 	BLOCK=$(ak-ipfs-add $BLOCK)
 
 	# So we now do the think almost again
-	cat > zblock << EOF
-{
-    "block":"$BLOCK",
-    "block_signature":"$BLOCK_SIGNATURE"
-}
-EOF
+	printf '{"block":"%s","block_signature":"%s"}' $BLOCK $BLOCK_SIGNATURE > zblock
 	ZBL="zblock"
 	# and we add it on IPFS
 	ZBLOCK=$(ak-ipfs-add $ZBL)
@@ -110,8 +96,7 @@ EOF
 
 if [ ! -z $2 ];
 then
-	PWD="$(pwd)"
-	MESSAGE="$PWD/$2"
+	MESSAGE="$2"
 	ACTION="$1"
 	if [ -f "$MESSAGE" ]; then
 		main

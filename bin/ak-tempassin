@@ -1,7 +1,7 @@
 #!/bin/bash
-AK_TEMP="mktemp -d aktmp-XXXXXXX"
+AK_TEMP="$(mktemp -d aktmp-XXXXXXX)"
 logit(){
-    ak-logthis <"$PROGRAM"> "$1" "$2"
+    ak-logthis "<$PROGRAM>" "$1" "$2"
 }
 if [ ! -d "$AK_TEMP" ]
 then

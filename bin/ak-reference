@@ -108,7 +108,7 @@ EOF
 		echo "File $FILE doesn't exist";
 		exit 2
 	fi
-	ak-pack_z_block "references/add" data
+    ak-pack_z_block "references/add" $(pwd)/data
 	if [ $? == 0 ]
 	then
 		echo "References added successfully"

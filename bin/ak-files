@@ -1,6 +1,5 @@
 #!/bin/bash
 # The following creates a mixtape data message
-# We can extend it by calling the ak-pack_z_block.sh mixtape/add data
 ZFILESDIR="$AK_WORKDIR/files"
 TEMP="/tmp/aktmp"
 PROGRAM="$(basename $0)"
@@ -92,7 +91,7 @@ echo "Printing data..."
 cat $TEMPASSIN/data
 echo "Publishing..."
 
-    ak-pack_z_block files/add data
+    ak-pack_z_block files/add $PWD/data
     if [ $? == 0 ]
     then
 	    echo "cool"

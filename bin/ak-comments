@@ -4,8 +4,7 @@ TEMP="/tmp/aktmp"
 if [ ! -d $ZCOMMENTSDIR ]; then
 	mkdir $ZCOMMENTSDIR
 	cd $ZCOMMENTSDIR
-	git init
-	ak-logthis "[INFO]" "zcommentsdir created along with git repo"
+	ak-logthis "[INFO]" "zcommentsdir created"
 else
 	ak-logthis "[INFO]" "zcommentsdir found"
 fi
@@ -30,15 +29,12 @@ create(){
 	add $TO_FILE
 	ak-logthis "[INFO]" "Adding to git repo..."
 	cd $ZCOMMENTSDIR
-	git add $TO_FILE 
-	git commit -m "Added $TO_FILE with $(head -n 1 $ZCOMMENTSDIR/$TO_FILE)"
-	git clean --force
-	# rm -rf $TEMP 
 	if [ ! -z $REFER_TO ]
 	then
 		reference create $REFERENCE $REFER_TO
 	fi
 }
+
 index(){
 	FILES="$(ls -1 $ZCOMMENTSDIR)"
 	i=0
@@ -64,18 +60,12 @@ add(){
 		FILE_SIGN_FILE=$FILE".asc"
 		gpg --detach-sign --sign-with $FINGERPRINT --armor --output $FILE_SIGN_FILE $FILE
 		FILE_SIGNATURE=$(ak-ipfs-add $FILE_SIGN_FILE)
-		cat > data <<EOF
-{
-   "datetime":"$DATETIME",
-   "ipfs":"$FILE_IPFS_HASH",
-   "detach":"$FILE_SIGNATURE"
-}
-EOF
+		printf '{"datetime":"%s","ipfs":"%s","detach":"%s"}' $DATETIME $FILE_IPFS_HASH $FILE_SIGNATURE > data
 	else
 		echo "File $FILE doesn't exist";
 		exit 2
 	fi
-	REFERENCE="$(ak-pack_z_block "comments/add" data)"
+    REFERENCE="$(ak-pack_z_block "comments/add" $(pwd)/data)"
 	if [ $? == 0 ]
 	then
 		echo "Comment added successfully"

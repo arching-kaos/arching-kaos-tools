@@ -1,15 +1,15 @@
 #!/bin/bash
 # The following creates a mixtape data message
-# We can extend it by calling the ak-pack_z_block.sh mixtape/add data
 ZFOLDERSDIR="$AK_WORKDIR/folders"
 TEMP="/tmp/aktmp"
 if [ ! -d $ZFOLDERSDIR ]; then
 	mkdir $ZFOLDERSDIR
 	cd $ZFOLDERSDIR
-	git init
 else
 	ak-logthis "error $ZFOLDERSDIR not found"
 fi
+TEMPASSIN="$(ak-tempassin)"
+cd $TEMPASSIN
 
 usage(){
 	title
@@ -20,30 +20,22 @@ add(){
     CRP="$(pwd)"
     FOLDERNAME="$1"
     main $FOLDERNAME $CRP
-    cat $TEMPASSIN/data | jq -M
+    cat data | jq -M
 }
+
 main(){
     FOLDERNAME="$1"
     CRP="$2"
     echo "Adding $FOLDERNAME"
-    ak-logthis "Switching to tmp folder..."
-    TEMPASSIN="$(ak-tempassin)"
-    cd $TEMPASSIN
-    if [ $? == 0 ]; then
-	    ak-logthis "Success"
-    else
-	    ak-logthis "Error with tmp folder"
-	    exit 5
-    fi
-    ak-logthis "Copying $1 to $TEMPASSIN"
-    cp -r $2/$1 $TEMPASSIN/$1
+    ak-logthis "Copying $1 to temporary folder"
+    cp -r $2/$1 $1
     if [ $? == 0 ]; then
 	    ak-logthis "Copied successfully"
     else
 	    ak-logthis "Error copying..."
     fi
 
-    FOLDER="$TEMPASSIN/$1"
+    FOLDER="$1"
 
     ak-logthis "Adding $FOLDER to IPFS..."
     FOLDER_IPFS_HASH=$(ak-ipfs-add $FOLDER)
@@ -64,26 +56,27 @@ main(){
 #    fi
 #
 #    ak-logthis "Adding signature to IPFS"
-#    SIGNATURE=$(ak-ipfs-add $TEMPASSIN/$SIGN_FOLDER)
+#    SIGNATURE=$(ak-ipfs-add $SIGN_FOLDER)
 #    if [ $? == 0 ]; then
 #	    ak-logthis "Added"
 #    else
 #	    ak-logthis "Error while adding"
 #    fi
 
-    cat > $TEMPASSIN/data <<EOF
-{
-    "timestamp":"$(date -u +%s)",
-    "foldername":"$FOLDERNAME",
-    "ipfs":"$FOLDER_IPFS_HASH"
-}
-EOF
+#     cat > data <<EOF
+# {
+#     "timestamp":"$(date -u +%s)",
+#     "foldername":"$FOLDERNAME",
+#     "ipfs":"$FOLDER_IPFS_HASH"
+# }
+# EOF
+    printf '{"timestamp":"%s","foldername":"%s","ipfs":"%s"}' $(date -u +%s) $FOLDERNAME $FOLDER_IPFS_HASH
 
-echo "Printing data..."
-cat $TEMPASSIN/data
-echo "Publishing..."
+    echo "Printing data..."
+    cat data
+    echo "Publishing..."
 
-    ak-pack_z_block folders/add data
+    ak-pack_z_block folders/add $(pwd)/data
     if [ $? == 0 ]
     then
 	    echo "cool"
@@ -95,7 +88,6 @@ echo "Publishing..."
 
 title(){
     echo "Folder block creator"
-    echo "===================="
 }
 
 

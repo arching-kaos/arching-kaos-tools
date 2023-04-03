@@ -72,7 +72,7 @@ import(){
 	fi
 	exit 224
 }
-add()
+add(){
     TEMP="$(ak-tempassin)"
     cd $TEMP
 	if [ -f $1 ]; then
@@ -97,7 +97,7 @@ EOF
 		echo "File $FILE doesn't exist";
 		exit 2
 	fi
-	ak-pack_z_block "articles/add" data
+    ak-pack_z_block "articles/add" $(pwd)/data
 	if [ $? == 0 ]
 	then
 		echo "Articles added successfully"

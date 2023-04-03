@@ -45,6 +45,6 @@ then
     AMOUNT="$3"
     main
     cat $PWD/data | jq -M
-    # sh ak-pack_z_block.sh mixtape/add $PWD/data
+    ak-pack_z_block transaction/add $PWD/data
 else usage
 fi

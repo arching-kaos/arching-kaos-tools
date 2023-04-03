@@ -1,7 +1,7 @@
 #!/bin/bash
-# The following creates a mixtape data message
-# We can extend it by calling the ak-pack_z_block.sh mixtape/add data
 ZFILESDIR="$AK_WORKDIR/files"
+pwd > .pwd
+CRD=$(cat .pwd)
 
 PROGRAM="$(basename $0)"
 #set -xe
@@ -26,22 +26,24 @@ usage(){
 	echo "$PROGRAM - file"
     echo "  add <file>"
     echo "  index"
+    echo "  full-index"
+    echo "  ls-map-files"
 }
 
 add(){
-    CRP="$(pwd)"
     FILENAME="$1"
-    main $FILENAME $CRP
-    cat $TEMPASSIN/data | jq -M
+    main $FILENAME $CRD
+    cat data | jq -M
 }
 main(){
     FILENAME="$1"
     CRP="$2"
+
+    TEMPASSIN="$(ak-tempassin)"
+    cd $TEMPASSIN
+
     echo "Adding $FILENAME"
     logit "[INFO]" "Switching to tmp folder..."
-    TEMPASSIN="$(ak-tempassin)"
-
-    cd $TEMPASSIN
     if [ $? == 0 ]; then
 	    logit "[INFO]" "Success"
     else
@@ -50,34 +52,32 @@ main(){
     fi
     logit "[INFO]" "Copying $1 to $TEMPASSIN"
 
-    cp $2/$1 $TEMPASSIN/$1
+    cp $CRP/$FILENAME $FILENAME
     if [ $? == 0 ]; then
 	    logit "[INFO]" "Copied successfully"
     else
 	    logit "[ERROR]" "Error copying..."
     fi
 
-    FILE="$TEMPASSIN/$1"
-
-    logit "[INFO]" "Adding $FILE to IPFS..."
-    FILE_IPFS_HASH=$(ak-ipfs-add $FILE)
+    logit "[INFO]" "Adding $FILENAME to IPFS..."
+    FILE_IPFS_HASH=$(ak-ipfs-add $FILENAME)
     if [ $? == 0 ]; then
-	    logit "[INFO]" "Added $FILE to IPFS"
+	    logit "[INFO]" "Added $FILENAME to IPFS"
     else
-	    logit "[ERROR]" "Error in adding the $FILE to IPFS"
+	    logit "[ERROR]" "Error in adding the $FILENAME to IPFS"
     fi
 
     logit "[INFO]" "Adding $FILE to SHAMAPSYS..."
-    FILEMAP_SHA512_HASH=$(ak-sm-filesplitter $FILE)
+    FILEMAP_SHA512_HASH=$(ak-sm-filesplitter $FILENAME)
     if [ $? == 0 ]; then
-	    logit "[INFO]" "Added $FILE to SHAMAPSYS"
+	    logit "[INFO]" "Added $FILENAME to SHAMAPSYS"
     else
-	    logit "[ERROR]" "Error in adding the $FILE to SHAMAPSYS"
+	    logit "[ERROR]" "Error in adding the $FILENAME to SHAMAPSYS"
     fi
 
     logit "[INFO]" "Signing..."
     SIGN_FILE=$FILENAME".asc"
-    gpg2 --detach-sign --sign-with $FINGERPRINT --armor --output $SIGN_FILE $FILE
+    gpg2 --detach-sign --sign-with $FINGERPRINT --armor --output $SIGN_FILE $FILENAME
     if [ $? == 0 ]; then
 	    logit "[INFO]" "Signed"
     else
@@ -85,7 +85,7 @@ main(){
     fi
 
     logit "[INFO]" "Adding signature to IPFS"
-    SIGNATURE=$(ak-ipfs-add $TEMPASSIN/$SIGN_FILE)
+    SIGNATURE=$(ak-ipfs-add $SIGN_FILE)
     if [ $? == 0 ]; then
 	    logit "[INFO]" "Added"
     else
@@ -93,29 +93,29 @@ main(){
     fi
 
     logit "[INFO]" "Adding signature to SHAMAPSYS"
-    SHAMAPSIGMAP=$(ak-sm-filesplitter $TEMPASSIN/$SIGN_FILE)
+    SHAMAPSIGMAP=$(ak-sm-filesplitter $SIGN_FILE)
     if [ $? == 0 ]; then
 	    logit "[INFO]" "Added"
     else
 	    logit "[ERROR]" "Error while adding"
     fi
 
-    cat > $TEMPASSIN/data <<EOF
+    cat > data <<EOF
 {
     "timestamp":"$(date -u +%s)",
     "filename":"$FILENAME",
     "shamap":"$FILEMAP_SHA512_HASH",
-    "shamapsigmap":"$SHAMAPSIGMAP",
+    "shamapsig":"$SHAMAPSIGMAP",
     "ipfs":"$FILE_IPFS_HASH",
     "detach":"$SIGNATURE"
 }
 EOF
 
     echo "Printing data..."
-    cat $TEMPASSIN/data
+    cat data
     echo "Publishing..."
 
-    ak-pack_z_block sha-files/announce data
+    ak-pack_z_block sha-files/announce $(pwd)/data
     if [ $? == 0 ]
     then
 	    echo "cool"

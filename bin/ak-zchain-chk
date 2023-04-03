@@ -43,8 +43,7 @@ zblock="$entrance"
 declare -A blocks_found
 
 # Enter temp folder
-TEMPASSIN="/tmp/aktmp_$(date -u +%s)"
-mkdir $TEMPASSIN
+TEMPASSIN="$(ak-tempassin)"
 cd $TEMPASSIN
 counter=0
 
@@ -76,20 +75,20 @@ do
 
 			# We concatenate the zblock's contents, pipe them through filter
 			# ak-json2bash and output them to tmp-file
-			ak-ipfs-cat $zblock | ak-json2bash > $TEMPASSIN/tmp-zblock
+			ak-ipfs-cat $zblock | ak-json2bash > tmp-zblock
 			ak-logthis "[INFO]" "ZBLOCK $zblock READ"
 
 			# Supposingly you are on a safe environment and you only have
 			# access to your chain, I would consider mild secure to source
 			# the files into your bash.
 			# File an issue/pull request if you think it can be done better!!
-			source $TEMPASSIN/tmp-zblock
+			source tmp-zblock
 			ak-logthis "[INFO]" "ZBLOCK SOURCED"
 
 			# Same as above applies to BLOCK and DATA subparts of each ZBLOCK
 			# BLOCKS
-			ak-ipfs-cat $block | ak-json2bash > $TEMPASSIN/tmp-block
-			source $TEMPASSIN/tmp-block
+			ak-ipfs-cat $block | ak-json2bash > tmp-block
+			source tmp-block
 			ak-logthis "[INFO]" "BLOCK $block SOURCED"
 			touch $BLOCKDIR/$block
 			ak-logthis "[INFO]" "BLOCK REFERENCED"

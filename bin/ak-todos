@@ -95,7 +95,7 @@ EOF
 		echo "File $FILE doesn't exist";
 		exit 2
 	fi
-	ak-pack_z_block "todos/add" data
+    ak-pack_z_block "todos/add" $(pwd)/data
 	if [ $? == 0 ]
 	then
 		ak-logthis "Todos added successfully"
