@@ -8,4 +8,4 @@
 #
 # Usage:
 # ak-ipfs-cat <hash> | ak-json2bash
-sed -e 's/{//g' | sed -e 's/}//g' | sed -e 's/":"/=/g' | sed -e 's/"//g' | sed -e 's/,//g' | sed -e 's/ //g'
+sed -e 's/{//g; s/}//g; s/:/=/g; s/"//g; s/,//g; s/ //g'
