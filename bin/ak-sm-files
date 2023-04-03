@@ -2,7 +2,7 @@
 # The following creates a mixtape data message
 # We can extend it by calling the ak-pack_z_block.sh mixtape/add data
 ZFILESDIR="$AK_WORKDIR/files"
-TEMP="/tmp/aktmp"
+
 PROGRAM="$(basename $0)"
 #set -xe
 logit(){
@@ -111,9 +111,9 @@ main(){
 }
 EOF
 
-echo "Printing data..."
-cat $TEMPASSIN/data
-echo "Publishing..."
+    echo "Printing data..."
+    cat $TEMPASSIN/data
+    echo "Publishing..."
 
     ak-pack_z_block sha-files/announce data
     if [ $? == 0 ]
@@ -125,9 +125,22 @@ echo "Publishing..."
     fi
 }
 
-
 index(){
     tail -n1 $AK_WORKDIR/fmp/* | grep '^[abcdef1234567890]' | awk '{ print $2 }'
+}
+
+ls-mapfiles(){
+    cd $AK_WORKDIR/fmp
+    for f in `find . -type f | sed -e 's/\.\///g'`;do
+        FILENAME="$(tail -n1 $f | grep '^[abcdef1234567890]' | awk '{ print $2 }')"
+        FILEHASH="$(tail -n1 $f | grep '^[abcdef1234567890]' | awk '{ print $1 }')"
+        MAPFILE="$f" 
+        printf "\nMap: %s\nFilename: %s\nSum: %s\n\n" $MAPFILE $FILENAME $FILEHASH
+    done
+}
+
+full-index(){
+    tail -n1 $AK_WORKDIR/fmp/* | grep '^[abcdef1234567890]'
 }
 
 if [ ! -z $1 ]; then
@@ -135,6 +148,8 @@ if [ ! -z $1 ]; then
 		help) usage; exit;;
 		add) add $2; exit;;
         index) index; exit;;
+        full-index) full-index; exit;;
+        ls-map-files) ls-mapfiles; exit;;
 		*) usage; exit;;
 	esac
 else usage
