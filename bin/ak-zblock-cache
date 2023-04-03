@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ ! -z "$1" ]
+then
+    ak-zblock-show "$1" > $AK_ZBLOCKDIR/$1
+    exit 0
+else
+    echo not ok
+    exit 1
+fi
+

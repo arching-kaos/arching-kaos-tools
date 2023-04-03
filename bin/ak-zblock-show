@@ -1,17 +1,6 @@
 #!/bin/bash
-# ak-enter
-#
-# Using this tool, we can seek a whole zchain, if available from
-# an IPFS CID or an IPNS link.
-#
-# Default (no arguments) will retrieve the local ZCHAIN starting
-# from the IPFS CID stored in the file that is tracked by the
-# $AK_ZLATEST environment variable.
-#
-# ak-enter [-n IPNS_LINK]
-# ak-enter [IPFS CID]
-# ak-enter -nV
-# ak-enter
+# ak-zblock-show
+# ak-zblock [IPFS CID]
 #
 # Returns a JSON array representing the chain retrieved.
 # Logs messages to $LOGSFILE.
@@ -24,17 +13,11 @@ logit(){
 
 usage(){
     echo "$PROGRAM - Show a zblock"
-    echo "-----------------------------------"
     echo ""
     echo "$PROGRAM <zblock_hash>"
     echo "Usage:"
     echo "    --help, -h        Print this help and exit"
 }
-# Start of tests
-#entrance="QmW5WVXCJfhb4peHG6cbEdamC24vZzMX2Vz386vpENh38U"
-#entrance="QmNjQq7GkuXGF8kFT1z2Mv3i4JhY7sBXVUmHDiR1zkQjoE"
-#entrance="QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH"
-# End of tests
 verify=1
 if [ ! -z "$1" ] && [ "$1" == "-h" ] || [ "$1" == "--help" ]
 then
@@ -112,7 +95,7 @@ counter=0
             logit "[INFO]" "ZBLOCK $zblock is JSON"
 
             # Then we pass it through the filter and save it
-            ak-ipfs-cat $zblock | ak-json2bash > tmp-zblock
+            ak-ipfs-cat $zblock | jq -M | ak-json2bash > tmp-zblock
 
             # Be sure that there are the expected values
             # We need 'block' and 'block_signature' inside a 'zblock'
@@ -148,7 +131,7 @@ counter=0
             # Same as above applies to BLOCK and DATA subparts of each ZBLOCK
             # BLOCKS
             echo -n '"block":"'$block'",'
-            ak-ipfs-cat $block | ak-json2bash > tmp-block
+            ak-ipfs-cat $block | jq -M | ak-json2bash > tmp-block
             if [ "$?" -ne 0 ]
             then
                 logit "[ERROR]" "BLOCK $block READ failed"

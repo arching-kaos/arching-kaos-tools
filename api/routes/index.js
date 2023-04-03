@@ -10,6 +10,7 @@ const getSBlock = require('./getSBlock');
 const getZChain = require('./getZChain');
 const receiveZBlock = require('./receiveZBlock');
 const receiveZChain = require('./receiveZChain');
+const getZblock = require('./getZblock');
 const corsOptions = {
     origin: '*',
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
@@ -34,6 +35,8 @@ router.route(settings.URL_PREFIX+'/sblock').get(getSBlock);
 router.route(settings.URL_PREFIX+'/zchain').get(getZChain);
 // Returns latest zblock from node's local chain
 router.route(settings.URL_PREFIX+'/zlatest').get(getZLatest);
+// Returns zblock
+router.route(settings.URL_PREFIX+'/zblock').get(getZblock);
 // Send a block to the node (zchain block)
 router.route(settings.URL_PREFIX+'/sblk').post(receiveZBlock);
 // Send a zchain link to the node (refering to a valid zchain out there)
