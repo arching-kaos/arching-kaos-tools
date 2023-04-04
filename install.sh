@@ -1,5 +1,6 @@
 #!/bin/bash
-source config.sh
+source ./config.sh
+touch $AK_WORKDIR/logs
 logthis(){
 	echo "Install script: $1" >> $AK_WORKDIR/logs
 }
@@ -37,6 +38,6 @@ else
 	source $HOME/$HAK/rc;
 fi
 sh ipfs-check-install-setup-init-update
-source config.sh
+source ./config.sh
 source $HOME/$SHELLRC
 sh init.sh
