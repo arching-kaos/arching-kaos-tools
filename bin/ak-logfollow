@@ -1,2 +1,2 @@
 #!/bin/bash
-tail -f $LOGSFILE
+tail -f $AK_LOGSFILE
