@@ -1,5 +1,7 @@
 #!/bin/bash
 source ./config.sh
+printf "%s" $(pwd) > wam
+WHEREAMI="$(cat wam)"
 touch $AK_WORKDIR/logs
 logthis(){
 	echo "Install script: $1" >> $AK_WORKDIR/logs
