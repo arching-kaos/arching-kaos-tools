@@ -1,5 +1,9 @@
 #!/bin/bash
 PROGRAM="$(basename $0)"
+if [ ! -d $AK_WORKDIR/ipfs ]
+then
+    mkdir $AK_WORKDIR/ipfs
+fi
 logit(){
 	ak-logthis "<$PROGRAM>" "$1" "$2"
 }
@@ -87,8 +91,9 @@ then
 		logit "[ERROR]" "Error while verifying signature for $DATA"
 		exit 1
 	fi
+    mv $DATA $AK_WORKDIR/ipfs
 	logit "[INFO]" "Block signature verified"
-    echo -n '"data":{"'$1'":'$(ak-ipfs-cat $1)'},'
+    echo -n '"data":"'$1'","'$1'":'$(ak-ipfs-cat $1)','
 	exit 0
 else
 	echo "Usage: $PROGRAM HASH GPG"
