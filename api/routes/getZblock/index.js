@@ -10,8 +10,8 @@ const config = require("../../config");
  *     { zlatest: "Qm..." }
  *
  */
-module.exports = (req, res) => {
-    const command = spawn("ak-zblock-cache",[req.query.zblock]);
+function fetchZblock(zblock, res){
+    const command = spawn("ak-zblock-cache",[zblock]);
     command.stdout.on("data", data => {
     });
 
@@ -27,9 +27,33 @@ module.exports = (req, res) => {
         console.log(`child process exited with code ${code}`);
 
         if ( code == 0 ) {
-            res.send(JSON.parse(fs.readFileSync(config.zblockDir+"/"+req.query.zblock)));
+            const path = config.zblockDir+"/"+zblock;
+            try {
+                if(fs.existsSync(path)){
+                    res.send(JSON.parse(fs.readFileSync(path)));
+                }
+            } catch (error) {
+                res.send({"error":error});
+            }
         } else {
             res.send({"error":"error"});
         }
     });
 };
+module.exports = (req, res) => {
+    console.log(req.query)
+    if ( (req.query.zblock) && req.query.zblock.length === 46 ){
+        regex= /Qm[A-Za-z0-9]{44}/;
+        if (regex.test(req.query.zblock)){
+            if (req.query.zblock === "QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH" ){
+                res.send({errno:"Genesis block"});
+            } else {
+                fetchZblock(req.query.zblock,res);
+            }
+        } else {
+            res.send({errno:"Invalid data: regexp failed to pass"});
+        }
+    } else {
+        res.send({errno:"Invalid data: no valid zblock was provided"});
+    }
+}
