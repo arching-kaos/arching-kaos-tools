@@ -1,8 +1,23 @@
 #!/bin/bash
+PROGRAM="$(basename $0)"
+logit(){
+    ak-logthis "<$PROGRAM>" "$1" "$2"
+}
 
 if [ ! -z "$1" ]
 then
-    ak-zblock-show "$1" > $AK_ZBLOCKDIR/$1
+    if [ -f "$AK_ZBLOCKDIR/$1" ] && [ "$(du -b $AK_ZBLOCKDIR | awk '{ print $1 }')" != "0" ]
+    then
+        if [ "$(sha512sum $AK_ZBLOCKDIR/$1 | awk '{ print $1 }')" == "$(ak-zblock-show $1 | sha512sum | awk '{ print $1 }')" ]
+        then
+            logit "[INFO]" "Cache already there and updated"
+        else
+            logit "[INFO]" "Updating cache"
+            ak-zblock-show "$1" > $AK_ZBLOCKDIR/$1
+        fi
+        logit "[INFO]" "No cache found. Caching..."
+        ak-zblock-show "$1" > $AK_ZBLOCKDIR/$1
+    fi
     exit 0
 else
     echo not ok
