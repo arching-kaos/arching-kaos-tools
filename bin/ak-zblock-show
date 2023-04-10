@@ -28,7 +28,7 @@ then
     echo $1 | grep -e 'Qm.\{44\}' >/dev/null
     if [ "$?" -ne 0 ]
     then
-        logit "[ERROR]" "Argument provided was not an IPFS CIDv0 string"
+        logit "[ERROR]" "Argument provided ($1) was not an IPFS CIDv0 string"
         exit 1
     fi
     entrance="$1"
