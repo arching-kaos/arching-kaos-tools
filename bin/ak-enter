@@ -40,6 +40,7 @@ usage(){
 #entrance="QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH"
 # End of tests
 verify=1
+limit=0
 if [ ! -z "$1" ] && [ "$1" == "-h" ] || [ "$1" == "--help" ]
 then
     usage
@@ -51,6 +52,21 @@ then
 elif [ ! -z "$1" ] && [ "$1" == "-n" ]
 then
     entrance="$(ak-ipns-resolve $2)"
+elif [ ! -z "$1" ] && [ "$1" == "-l" ]
+then
+    limit=$2
+    if [ ! -z "$3" ]
+    then
+        echo $3 | grep -e 'Qm.\{44\}' >/dev/null
+        if [ "$?" -ne 0 ]
+        then
+            logit "[ERROR]" "Argument provided was not an IPFS CIDv0 string"
+            exit 1
+        fi
+        entrance="$3"
+    else
+        entrance="$(cat $AK_ZLATEST)"
+    fi
 elif [ ! -z "$1" ]
 then
     echo $1 | grep -e 'Qm.\{44\}' >/dev/null
@@ -80,7 +96,7 @@ cd $TEMPASSIN
 counter=0
 # The loop
 # We break the loop from inside the loop
-while true
+while true && [ $limit="0" ]
 do
     if [ $counter == 0 ]
     then
@@ -227,8 +243,8 @@ do
                 fi
                 logit "[GPG]" "$gpg signature of $block is verified."
             fi
-            ak-data-expand $data $gpg
 
+            ak-data-expand $data $gpg
             if [ "$?" -ne 0 ]
             then
                 logit "[ERROR]" "Failed on data signature verification [data: $data, gpg: $gpg, zblock: $zblock]"
@@ -254,16 +270,21 @@ do
             else
                 #echo "$zblock after $previous"
                 logit "[INFO]" "Found a previous block for $zblock: $previous"
-                echo -n '"previous":"'$previous'"},'
+                echo -n '"previous":"'$previous'"}'
                 zblock=$previous
+            fi
+            if [ "$limit" != "0" ] && [ "$limit" == "$counter" ]
+            then
+                echo -n ']'
+                exit 0
+            else
+                echo -n ','
             fi
 
         # Now check if it is equal to the seed
         # which apparently means we reached the seed.
         elif [ "$zblock" == "$seed" ]
         then
-            #echo "$zblock is GENESIS block"
-            #echo '"'$zblock'":{ "GENESIS":"GENESIS"}] '
             echo -n '{"genesis":"genesis"}]'
             logit "[INFO]" "Reached $seed, counted $counter zblocks."
             exit 0
