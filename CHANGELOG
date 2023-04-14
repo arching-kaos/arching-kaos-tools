@@ -1,4 +1,160 @@
 ---
+57f1866c1102e6b5fa23222bcc205c0f85917669
+Mon Apr 10 15:55:08 2023 +0300
+    More verbose logs
+---
+762bee582ff2634eeef8fb08b42145d029bd1d7a
+Mon Apr 10 15:54:33 2023 +0300
+    Changed way that we unpack the data field. Now we return both the IPFS hash value in the data field and the inner data block
+---
+27e2fe661df3e299d6ef9f5dfa39f12f4633746a
+Mon Apr 10 15:52:13 2023 +0300
+    Made getZblock a bit more secure and not able to crash the app
+---
+02451920cffb8314656b42bb6f7dc9c8e97f366e
+Mon Apr 10 15:49:11 2023 +0300
+    New API route to fetch content from IPFS hashes that is cached in the filesystem
+---
+5cafa276f4a243740113c5c813fab04918fa5c96
+Mon Apr 10 15:47:17 2023 +0300
+    Added pagination feature, set -l to a number to crawl up to that number (starting by the latest ofc)
+---
+df923aade9354b03fd2dc981fe39bb9a4cbb3fe5
+Mon Apr 10 15:44:49 2023 +0300
+    Cache better
+---
+025f027d9add0751c9fbaa6ffdc728bba61ca4de
+Sat Apr 8 19:30:37 2023 +0300
+    Outputing the directory we were called from to reference the path later
+---
+490c94fef4446b3b8408b81788cf5e24eb018b8a
+Sat Apr 8 19:29:00 2023 +0300
+    Changed forgotten variable name
+---
+704669d5056b46568ae2e3f8b65199c915fc45a9
+Tue Apr 4 19:08:14 2023 +0300
+    Fixed installation errors
+---
+5ead09f48384882c64d77cd4628adbc1897302ee
+Mon Apr 3 08:23:08 2023 +0300
+    At last a working ak-tempassin
+---
+2f11539eef545fc0a9761693ae55e837b460beac
+Mon Apr 3 08:22:39 2023 +0300
+    Added ak-zblock-show with appropriate route in API with caching feature
+---
+05ea0e3dca7209d1490658014c5e598e4d4dfdc4
+Mon Apr 3 07:40:52 2023 +0300
+    Pass clean formatted text to tmpfiles
+---
+2e7c34e1d5c2f407650648b7cba7f1621c9e8705
+Mon Apr 3 07:39:16 2023 +0300
+    Fixed sed expression
+---
+21f76a6dbf6fab5311ab7f4b7b2fb5d0991ea3b2
+Mon Apr 3 05:18:04 2023 +0300
+    Attempt to create cache places for the API to hit instead of running things
+---
+fc91066907e4d16a951c8d72d23aa610945f5407
+Mon Apr 3 05:15:00 2023 +0300
+    Clean up, elimination of duplicate tempassins, fixed current directory problems, introduced new tool
+---
+ad7d6281475c4adb67e0a43017803aeb4a9059ce
+Mon Apr 3 03:22:23 2023 +0300
+    Some cleanup and further working on the tool
+---
+f923b782d6d1dae8af03ab9f1ef709dd0c4c6b10
+Mon Apr 3 01:15:44 2023 +0300
+    ak-tempassin is working upon mktemp from coreutils
+---
+d747677c2860326e7d673861319dcb0e2149daa4
+Mon Apr 3 01:14:58 2023 +0300
+    Fixed temporary folder creation
+---
+4f8fb0a8acd5eec0caaf1087d7ecf91f9166c807
+Mon Apr 3 00:26:07 2023 +0300
+    Clean up and adjustment
+---
+9606644a0beb4f2883e1e0f4c6c81b42ab40b3a1
+Mon Apr 3 00:24:49 2023 +0300
+    Renaming to prefix convention, introduced ipfs wrappers so it can be easier to maintain, changes in filesplitter and filejoiner as they move sm submodule namespace... like there are namespaces in bash or something
+---
+fe1fb88889b2c3949383c254f3058da24ba5e3f2
+Sun Apr 2 20:14:43 2023 +0300
+    Added some comments to what each step is accomplishing
+---
+cb2e7d67bd7fab16ca758b8c04243cc38c49c857
+Sun Apr 2 19:26:05 2023 +0300
+    Updated requirements
+---
+a4e83a94b06110ac3a2b82c1061d0073e359eda8
+Sun Apr 2 19:25:12 2023 +0300
+    Eliminated json_pp usage
+---
+1e779e30ef68bbc07fa7a205403d585868dc6b35
+Sun Apr 2 19:16:48 2023 +0300
+    Makefile for the API
+---
+52e61043bcb716af42f9fd167aa2bb280bde5b5b
+Fri Mar 31 21:34:47 2023 +0300
+    Updated test scripts
+---
+3023b8396d3656887a95f11e45da2e79406d64d1
+Fri Mar 31 21:33:20 2023 +0300
+    Fixed call to the right script
+---
+5157dc62fc6bd010e8616ae59b462fd8c58f1d9b
+Fri Mar 31 21:32:07 2023 +0300
+    Added two new variables
+---
+7257ae0bf26f85082c5a5a5ed505a55d49c0d2ac
+Fri Mar 31 02:30:11 2023 +0300
+    Fixed ZblockValidator an ZchainValidator
+---
+bc99d5f59de11e712fd47c1f30c31996f50ef5d0
+Fri Mar 31 02:19:28 2023 +0300
+    Fixed json2bash call
+---
+b5b6815c29dacefbe77385b8f6c0e5aad201f9b2
+Thu Mar 30 17:47:32 2023 +0300
+    Minor rename
+---
+85a6991d762591fd523155c9671216601c3d60e7
+Thu Mar 30 17:46:19 2023 +0300
+    Fixed not working values
+---
+381e3d2a31ca6fa184f9c5e48288c0f55f84560f
+Thu Mar 30 16:58:56 2023 +0300
+    Updated README
+---
+4f1df24786d4be95e0029e6c142ce376f98377dc
+Thu Mar 30 03:18:43 2023 +0300
+    Fixed test command
+---
+33ee49ef0be280bb5862cc9192b8f506503d3ea9
+Thu Mar 30 01:14:43 2023 +0300
+    Updated README
+---
+e2da6d2db20093ebd2a65aad35c9991ab1a02176
+Thu Mar 30 01:09:30 2023 +0300
+    Introducing an HTTP JSON API
+---
+a4901ad47d2945e9a6c6616661840c97ebbf03e7
+Wed Mar 29 23:58:58 2023 +0300
+    Finished enter to ak-enter
+---
+fd4ecb94584c47aba7494972661f7c9da25f8723
+Wed Mar 29 23:58:58 2023 +0300
+    Finished enter to ak-enter
+---
+d85efb21fa554877b21f08a3ffdd51ebb49c55ca
+Wed Mar 29 23:56:26 2023 +0300
+    Fix json2bash to ak-json2bash
+---
+1c25589a8aca3d6dbb84a37240efd4652fbfeab7
+Wed Mar 29 23:49:57 2023 +0300
+    Renaming of the scripts
+---
 7e45b9def509ff28f70c28f50f5aa931f512d81b
 Wed Mar 29 23:46:45 2023 +0300
     Further renaming
