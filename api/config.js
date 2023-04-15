@@ -1,5 +1,4 @@
-const process = require("process");
-const env = process.env;
+const { env } = require("process");
 
 const config = {
     port : 8610,
