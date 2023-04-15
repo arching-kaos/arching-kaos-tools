@@ -2,6 +2,19 @@
 source ./config.sh
 printf "%s" $(pwd) > wam
 WHEREAMI="$(cat wam)"
+if [[ ! -d $AK_WORKDIR ]] ; then mkdir $AK_WORKDIR ;fi
+if [[ ! -d $AK_CONFIGDIR ]] ; then mkdir $AK_CONFIGDIR ;fi
+if [[ ! -d $AK_BINDIR ]]; then mkdir $AK_BINDIR ;fi
+if [[ ! -d $AK_ZBLOCKDIR ]]; then mkdir $AK_ZBLOCKDIR ;fi
+if [[ ! -d $AK_BLOCKDIR ]]; then mkdir $AK_BLOCKDIR ;fi
+if [[ ! -d $AK_DATADIR ]]; then mkdir $AK_DATADIR ;fi
+if [[ ! -d $AK_ARCHIVESDIR ]]; then mkdir $AK_ARCHIVESDIR ;fi
+if [[ ! -f $AK_LOGSFILE ]]; then touch $AK_LOGSFILE ;fi
+if [[ ! -f $AK_GENESIS ]]; then touch $AK_GENESIS;fi
+if [[ ! -f $AK_MINEDBLOCKS ]]; then mkdir $AK_MINEDBLOCKS; fi
+if [[ ! -f $AK_ZBLOCKSFILE ]]; then mkdir $AK_ZBLOCKSFILE; fi
+if [[ ! -f $AK_ZPAIRSFILE ]]; then mkdir $AK_ZPAIRSFILE; fi
+
 touch $AK_WORKDIR/logs
 logthis(){
 	echo "Install script: $1" >> $AK_WORKDIR/logs

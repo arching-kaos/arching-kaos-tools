@@ -1,16 +1,5 @@
 #!/bin/bash
-#source ./config.sh
 echo "INIT started"
-#echo This is our work dir: $WORKDIR
-if [[ ! -d $AK_WORKDIR ]] ; then mkdir $AK_WORKDIR ;fi
-if [[ ! -d $AK_CONFIGDIR ]] ; then mkdir $AK_CONFIGDIR ;fi
-if [[ ! -d $AK_BINDIR ]]; then mkdir $AK_BINDIR ;fi
-if [[ ! -d $AK_ZBLOCKDIR ]]; then mkdir $AK_ZBLOCKDIR ;fi
-if [[ ! -d $AK_BLOCKDIR ]]; then mkdir $AK_BLOCKDIR ;fi
-if [[ ! -d $AK_DATADIR ]]; then mkdir $AK_DATADIR ;fi
-if [[ ! -d $AK_ARCHIVESDIR ]]; then mkdir $AK_ARCHIVESDIR ;fi
-if [[ ! -f $AK_LOGSFILE ]]; then touch $AK_LOGSFILE ;fi
-if [[ ! -f $AK_GENESIS ]] ; then touch $AK_GENESIS;fi
 if [[ -f $AK_ZGENESIS ]] ; then echo "$(ipfs add -q $AK_GENESIS)" > $AK_ZGENESIS;fi
 if [[ ! -f $AK_ZCHAIN ]] ; then echo "$(ipfs key gen zchain)" > $AK_ZCHAIN;fi
 if [[ ! -f $AK_ZLATEST ]] ; then cp $AK_ZGENESIS $AK_ZLATEST;fi
