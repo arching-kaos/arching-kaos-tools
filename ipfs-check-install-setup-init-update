@@ -9,8 +9,7 @@ install(){
 	IPFS_TARGET_FILE="kubo_"$IPFS_VERSION"_linux-amd64.tar.gz"
 	AKBIN="$AK_WORKDIR/bin"
 	mkdir $AKBIN
-	AKAR="$ARCHIVESDIR"
-	mkdir $AKAR
+	AKAR="$AK_ARCHIVESDIR"
 	if [ ! -d $AKAR ]; then
 		mkdir $AKAR
 		if [ $? != 0 ]; then
@@ -36,6 +35,8 @@ install(){
 		mkdir $HOME/.ipfs
 		$AKBIN/ipfs init ;
 	fi
+}
+swarm_install() {
 	if [ ! -f $HOME/.ipfs/swarm.key ]; then
 		wget -O $HOME/.ipfs/swarm.key https://arching-kaos.net/files/swarm.key ;
 	elif [ "$(sha512sum $HOME/.ipfs/swarm.key | awk '{ print $1 }')" == "$SWARMSHA512SUM" ]; then
@@ -49,5 +50,7 @@ which ipfs > /dev/null 2>&1
 if [ $? != 0 ]; then
 	install
 	ipfs init
-else logthis "[INFO]" "Found IPFS! Skipping downloading..."
+else
+    logthis "[INFO]" "Found IPFS! Skipping downloading..."
+    swarm_install
 fi
