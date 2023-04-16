@@ -1,0 +1,96 @@
+#!/bin/bash
+PROGRAM="$(basename $0)"
+logit(){
+    ak-logthis "<$PROGRAM>" "$1" "$2"
+}
+stellarParticipants="$AK_WORKDIR/stellar-network-participants"
+stellarParticipantsOnline="$AK_WORKDIR/stellar-network-participants-online"
+if [ ! -f "$stellarParticipants" ]
+then
+    touch $stellarParticipants
+fi
+if [ ! -f "$stellarParticipantsOnline" ]
+then
+    touch $stellarParticipantsOnline
+fi
+
+if [ ! -z $1 ] && [ "$1" == "-l" ] && [ ! -z $2 ]
+then
+    limit=$2
+else
+    limit=3
+fi
+
+show_ids(){
+    i=0
+    flag=0
+    while [ "$i" -lt "$limit" ]
+    do
+        test="$(cat tmp | jq '.["_embedded"]' | jq .'["records"]' | jq '.['$i']' | jq '.["id"]' | sed -e 's/\"//g')"
+        while IFS="" read -r p || [ -n "$p" ]
+        do
+            if [ "$p" == "$test" ]
+            then
+                flag=1
+                break
+            fi
+        done < $stellarParticipants
+        if [ "$flag" == "0" ]
+        then
+            echo $test >> $stellarParticipants
+            logit "[INFO]" "Added $test"
+        else
+            logit "[INFO]" "$test already there. Skipping..."
+        fi
+        i="$(expr $i + 1)"
+    done
+}
+
+get_next_page(){
+    cat tmp | grep -1 next | grep https | sed -e 's/^.*https/https/' | sed -e 's/\u0026/\&/g; s/"//g; s/\\//g'
+}
+
+proceed_to_next_page(){
+
+    nextURL="$(get_next_page)"
+    curl "$nextURL" > tmp 2>/dev/null
+}
+
+get_asset_holders(){
+    curl https://horizon.stellar.org/accounts\?asset\=ARCHINGKAOS:GB4QVKD6NW3CSNO5TNPARAWNPPXOPSSTKB35XCWB7PUNBIQTK3DVELB2\&limit\=$limit > tmp 2>/dev/null
+}
+
+get_asset_holders 
+while [ "$(tail -1 $stellarParticipants)" != "null" ]
+do
+    show_ids
+    proceed_to_next_page 
+done
+
+grep G $stellarParticipants > tmpaddr
+cat tmpaddr > $stellarParticipants
+rm tmp tmpaddr
+while IFS="" read -r p || [ -n "$p" ]
+do
+    flag=0
+    test="$(curl https://horizon.stellar.org/accounts/$p/data/config 2>/dev/null | grep value)"
+    if [ "$?" == 0 ]
+    then
+        addressValuePair="$(printf '%s %s\n' "$p" "$(echo $test | sed -e 's/^.*: "//g; s/"//g' | base64 -d)")"
+        while IFS="" read -r x || [ -n "$x" ]
+        do
+            if [ "$x" == "$addressValuePair" ]
+            then
+                flag=1
+                break
+            fi
+        done < $stellarParticipantsOnline
+        if [ "$flag" == "0" ]
+        then
+            echo $addressValuePair >> $stellarParticipantsOnline
+            logit "[INFO]" "$p is configured with  $(echo $addressValuePair | awk '{ print $2 }'). Added to online participants."
+        else
+            logit "[INFO]" "$(echo $addressValuePair | awk '{ print $2 }') is already in $stellarParticipantsOnline. Skipping..."
+        fi
+    fi
+done < $stellarParticipants
