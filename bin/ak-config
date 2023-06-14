@@ -19,7 +19,7 @@ usage(){
 show(){
 	echo '
 { 
-    "profile":'$(profile index | jq -M)', 
+    "profile":'$(ak-profile index | jq -M)', 
     "genesis":"'$(cat $HOME/.arching-kaos/config/zgenesis)'",
     "gpg":"'$GPG_PUB_KEY'",
     "zchain":"'$(cat $HOME/.arching-kaos/config/zchain)'" 
@@ -39,7 +39,7 @@ publish(){
 }
 
 published(){
-	ak-ipfs-cat $(get_akid)
+	ak-ipfs-cat $(ak-get-akid) | jq -c
 }
 
 # We will be using our public key also to put it in the block later

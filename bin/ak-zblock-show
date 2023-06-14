@@ -118,7 +118,7 @@ counter=0
 
             # We create files named after each ZBLOCK IPFS CID for later
             # reference. Files are empty.
-            touch $ZBLOCKDIR/$zblock
+            touch $AK_ZBLOCKDIR/$zblock
             logit "[INFO]" "Created reference"
 
             # Supposingly you are on a safe environment and you only have
@@ -148,7 +148,7 @@ counter=0
 
             source tmp-block
             logit "[INFO]" "BLOCK $block SOURCED"
-            touch $BLOCKDIR/$block
+            touch $AK_BLOCKDIR/$block
             logit "[INFO]" "BLOCK REFERENCED"
             module="$(echo $action | sed -e 's/\// /g' | awk '{ print $1 }')"
             logit "[INFO]" "DATA is $module module."
@@ -211,7 +211,7 @@ counter=0
             # DATA (but we don't source it's stuff)
             # Only print to stdout
             #ak-ipfs-cat $data
-            touch $DATADIR/$data
+            touch $AK_DATADIR/$data
 
             # Now, since we sourced the BLOCK to our terminal, we can search
             # for $previous variable. In case we don't find one, we append one
