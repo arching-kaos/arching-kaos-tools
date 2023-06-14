@@ -11,6 +11,7 @@ const getZChain = require('./getZChain');
 const receiveZBlock = require('./receiveZBlock');
 const receiveZChain = require('./receiveZChain');
 const getZblock = require('./getZblock');
+const getAkid = require('./getAkid');
 const getInnerIPFSContent = require('./getInnerIPFSContent');
 const corsOptions = {
     origin: '*',
@@ -36,6 +37,8 @@ router.route(settings.URL_PREFIX+'/sblock').get(getSBlock);
 router.route(settings.URL_PREFIX+'/zchain').get(getZChain);
 // Returns latest zblock from node's local chain
 router.route(settings.URL_PREFIX+'/zlatest').get(getZLatest);
+// Returns local node's akid
+router.route(settings.URL_PREFIX+'/akid').get(getAkid);
 // Returns content
 router.route(settings.URL_PREFIX+'/content').get(getInnerIPFSContent);
 // Returns zblock
