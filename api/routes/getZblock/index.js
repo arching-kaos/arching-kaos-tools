@@ -36,7 +36,7 @@ function fetchZblock(zblock, res){
                 res.send({"error":error});
             }
         } else {
-            res.send({"error":"error"});
+            res.send({"error":"invalid or unreachable"});
         }
     });
 };
