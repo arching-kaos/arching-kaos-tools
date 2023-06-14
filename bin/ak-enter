@@ -39,48 +39,106 @@ usage(){
 #entrance="QmNjQq7GkuXGF8kFT1z2Mv3i4JhY7sBXVUmHDiR1zkQjoE"
 #entrance="QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH"
 # End of tests
+
 verify=1
 limit=0
-if [ ! -z "$1" ] && [ "$1" == "-h" ] || [ "$1" == "--help" ]
-then
-    usage
-    exit
-elif [ ! -z "$1" ] && [ "$1" == "-nV" ] || [ "$1" == "--no-verify" ]
-then
-    verify=0
-    entrance="$(cat $AK_ZLATEST)"
-elif [ ! -z "$1" ] && [ "$1" == "-n" ]
-then
-    entrance="$(ak-ipns-resolve $2)"
-elif [ ! -z "$1" ] && [ "$1" == "-l" ]
-then
-    limit=$2
-    if [ ! -z "$3" ]
-    then
-        echo $3 | grep -e 'Qm.\{44\}' >/dev/null
-        if [ "$?" -ne 0 ]
-        then
-            logit "[ERROR]" "Argument provided was not an IPFS CIDv0 string"
+fromIpns=0
+VALID_ARGS=$(getopt -o hl:Nn:: --long help.ipns:,no-verify,chain:,limit:,beta,gamma:,delta: -- "$@")
+if [[ $? -ne 0 ]]; then
+  exit 1;
+fi
+
+eval set -- "$VALID_ARGS"
+while [ : ]; do
+    case "$1" in
+        -h | --help)
+            usage
+            exit
+            ;;
+        -a | --alpha)
+            echo "Processing 'alpha' option"
+            shift
+            ;;
+        -l | --limit)
+            limit=$2
+            shift 2
+            ;;
+        -N | --no-verify)
+            verify=0
+            shift
+            ;;
+        -n | --chain | --ipns)
+            fromIpns=1
+            entrance="$(ak-ipns-resolve $2)"
+            shift 2
+            ;;
+        *)  
+            test="$2"
+            if [ ! -z "$test" ] && [ "$fromIpns" == "0" ]
+            then
+                echo $test | grep -e 'Qm.\{44\}' >/dev/null
+                if [ "$?" -ne 0 ]
+                then
+                    logit "[ERROR]" "Argument provided was not an IPFS CIDv0 string"
+                    exit 1
+                fi
+                entrance="$test"
+            else
+                entrance="$(cat $AK_ZLATEST)"
+            fi
+            break
+            ;;
+        :)
+            echo -e "option requires an argument.\nUsage: $(basename $0) [-a] [-b] [-c arg]"
             exit 1
-        fi
-        entrance="$3"
-    else
-        entrance="$(cat $AK_ZLATEST)"
-    fi
-elif [ ! -z "$1" ]
-then
-    echo $1 | grep -e 'Qm.\{44\}' >/dev/null
-    if [ "$?" -ne 0 ]
-    then
-        logit "[ERROR]" "Argument provided was not an IPFS CIDv0 string"
-        exit 1
-    fi
-    entrance="$1"
-else
+            ;;
+        ?)
+            echo -e "Invalid command option.\nUsage: $(basename $0) [-a] [-b] [-c arg]"
+            exit 1
+            ;;
+    esac
+done
+
+#if [ ! -z "$1" ] && [ "$1" == "-h" ] || [ "$1" == "--help" ]
+#then
+#    usage
+#    exit
+#elif [ ! -z "$1" ] && [ "$1" == "-nV" ] || [ "$1" == "--no-verify" ]
+#then
+#    verify=0
+#    entrance="$(cat $AK_ZLATEST)"
+#elif [ ! -z "$1" ] && [ "$1" == "-n" ]
+#then
+#    entrance="$(ak-ipns-resolve $2)"
+#elif [ ! -z "$1" ] && [ "$1" == "-l" ]
+#then
+#    limit=$2
+#    if [ ! -z "$3" ]
+#    then
+#        echo $3 | grep -e 'Qm.\{44\}' >/dev/null
+#        if [ "$?" -ne 0 ]
+#        then
+#            logit "[ERROR]" "Argument provided was not an IPFS CIDv0 string"
+#            exit 1
+#        fi
+#        entrance="$3"
+#    else
+#        entrance="$(cat $AK_ZLATEST)"
+#    fi
+#elif [ ! -z "$1" ]
+#then
+#    echo $1 | grep -e 'Qm.\{44\}' >/dev/null
+#    if [ "$?" -ne 0 ]
+#    then
+#        logit "[ERROR]" "Argument provided was not an IPFS CIDv0 string"
+#        exit 1
+#    fi
+#    entrance="$1"
+#else
     # By default we ak-enter from the latest block
     # We can alter this by changing this value
-    entrance="$(cat $AK_ZLATEST)"
-fi
+#    entrance="$(cat $AK_ZLATEST)"
+#fi
 # We assign the IPFS CIDv0 of an empty file as this is used
 # as our GENESIS block, hence the "seed" that the tree grows
 # from.
