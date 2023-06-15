@@ -1,8 +1,13 @@
 #!/bin/bash
-extract-cids > to_stats
+ak-extract-cids > to_stats
 sum=0 ; while IFS="" read -r p || [ -n "$p" ]
 do
-	num=$(ak-ipfs-block-stat $p | grep Size | sed -e 's/Size: //g')
+    if [ "$p" != "" ]
+    then
+        num=$(ak-ipfs-block-stat $p | grep Size | sed -e 's/Size: //g')
+    else
+        num=0
+    fi
 	sum=$(expr $sum + $num )
 done < to_stats
 echo "Chain is : $sum bytes"
