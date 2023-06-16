@@ -103,7 +103,7 @@ app.use('/', routes);
  * of the application that run the test.
  *
  * Returns:
- *     - errno on failure
+ *     - error on failure
  *     - on success we process with addNSEntriesToFile()
  *
  */
@@ -115,7 +115,7 @@ function continuethingsNS(validitycode,sh,res,gotit){
         };
         addNSEntriesToFile(entry,res);
     } else {
-        res.send({errno:"Invalid data"});
+        res.send({error:"Invalid data"});
     }
 }
 
@@ -124,7 +124,7 @@ function continuethingsNS(validitycode,sh,res,gotit){
  * of the application that run the test.
  *
  * Returns :
- *     - errno on failure
+ *     - error on failure
  *     - on success we process with addEntriesToFile()
  *
  */
@@ -133,7 +133,7 @@ function continuethings(exitcode,sh,res){
         var entry = {zblock:sh};
         addEntriesToFile(entry,res);
     } else {
-        res.send({errno:"Invalid data"});
+        res.send({error:"Invalid data"});
     }
 }
 
@@ -156,7 +156,7 @@ function addNSEntriesToFile(entry,res){
     data.forEach(a=>{
         if ( a.zchain === entry.zchain && a.latest=== entry.latest ){
             duplicate_entry = 1;
-            res.send({errno:"already there"});
+            res.send({error:"already there"});
         }
     });
 
@@ -200,7 +200,7 @@ function addEntriesToFile(entry,res){
     data.forEach(a=>{
         if ( a.zblock === entry.zblock ){
             duplicate_entry = 1;
-            res.send({errno:"already there"});
+            res.send({error:"already there"});
         }
     });
 

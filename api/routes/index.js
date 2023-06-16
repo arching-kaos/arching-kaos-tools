@@ -48,5 +48,5 @@ router.route(settings.URL_PREFIX+'/sblk').post(receiveZBlock);
 // Send a zchain link to the node (refering to a valid zchain out there)
 router.route(settings.URL_PREFIX+'/szch').post(receiveZChain);
 
-router.route('/*').get((req,res)=>{console.log(req.url);res.send({errno:"404"})});
+router.route('/*').get((req,res)=>{console.log(req.url);res.send({error:"404"})});
 module.exports = router;

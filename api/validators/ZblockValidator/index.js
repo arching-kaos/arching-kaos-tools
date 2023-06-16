@@ -26,7 +26,7 @@ function addEntriesToFile(entry,res){
     data.forEach(a=>{
         if ( a.zblock === entry.zblock ){
             duplicate_entry = 1;
-            res.send({errno:"already there"});
+            res.send({error:"already there"});
         }
     });
 
@@ -48,7 +48,7 @@ function addEntriesToFile(entry,res){
  * of the application that run the test.
  *
  * Returns :
- *     - errno on failure
+ *     - error on failure
  *     - on success we process with addEntriesToFile()
  *
  */
@@ -57,7 +57,7 @@ function continuethings(exitcode,sh,res){
         var entry = {zblock:sh};
         addEntriesToFile(entry,res);
     } else {
-        res.send({errno:"Invalid data"});
+        res.send({error:"Invalid data"});
     }
 }
 /*

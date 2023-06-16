@@ -3,7 +3,7 @@
  * of the application that run the test.
  *
  * Returns:
- *     - errno on failure
+ *     - error on failure
  *     - on success we process with addNSEntriesToFile()
  *
  */
@@ -15,7 +15,7 @@ function continuethingsNS(validitycode,sh,res,gotit){
         };
         addNSEntriesToFile(entry,res);
     } else {
-        res.send({errno:"Invalid data"});
+        res.send({error:"Invalid data"});
     }
 }
 /*
@@ -27,7 +27,7 @@ function continuethingsNS(validitycode,sh,res,gotit){
  *     3. Matches regular expression /k51qzi5uqu5d[A-Za-z0-9]{50}/
  *
  * Returns:
- *     - errno on failure
+ *     - error on failure
  *     - on success the string is processed for further validation to the
  *     function getNSvalidity()
  *
@@ -40,9 +40,9 @@ module.exports = (req, res) => {
         if (regex.test(req.body.zchain)){ // && regex.test(req.body.block_signature)){
             getNSvalidity(req.body.zchain,res);
         } else {
-            res.send({errno:"Invalid data"});
+            res.send({error:"Invalid data"});
         }
     } else {
-        res.send({errno:"Invalid data"});
+        res.send({error:"Invalid data"});
     }
 }

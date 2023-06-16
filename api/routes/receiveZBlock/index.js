@@ -7,7 +7,7 @@
  *     3. Matches regular expression /Qm[A-Za-z0-9]{44}/
  *
  * Returns:
- *     - errno on failure
+ *     - error on failure
  *     - on success the string is processed for further
  *    validation to the function getvalidity()
  *
@@ -20,9 +20,9 @@ module.exports = (req, res) => {
         if (regex.test(req.body.zblock)){
             getvalidity(req.body.zblock,res);
         } else {
-            res.send({errno:"Invalid data"});
+            res.send({error:"Invalid data"});
         }
     } else {
-        res.send({errno:"Invalid data"});
+        res.send({error:"Invalid data"});
     }
 }

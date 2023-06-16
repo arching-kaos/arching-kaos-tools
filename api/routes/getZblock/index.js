@@ -46,14 +46,14 @@ module.exports = (req, res) => {
         regex= /Qm[A-Za-z0-9]{44}/;
         if (regex.test(req.query.zblock)){
             if (req.query.zblock === "QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH" ){
-                res.send({errno:"Genesis block"});
+                res.send({error:"Genesis block"});
             } else {
                 fetchZblock(req.query.zblock,res);
             }
         } else {
-            res.send({errno:"Invalid data: regexp failed to pass"});
+            res.send({error:"Invalid data: regexp failed to pass"});
         }
     } else {
-        res.send({errno:"Invalid data: no valid zblock was provided"});
+        res.send({error:"Invalid data: no valid zblock was provided"});
     }
 }
