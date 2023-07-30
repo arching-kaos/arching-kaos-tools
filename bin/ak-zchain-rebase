@@ -16,7 +16,7 @@ usage(){
 rebase (){
     ZTARGET="$1"
 	echo "Reseting ZLATEST to ZTARGET"
-	echo $ZTARGET > $ZLATEST
+	echo $ZTARGET > $AK_ZLATEST
 	if [ $? != 0 ]; then exit 1; fi
 
 	echo "Make sure /zarchive folder exists within IPFS FS"
@@ -32,12 +32,12 @@ rebase (){
 	if [ $? != 0 ]; then exit 1; fi
 
 	echo "Copying rebased ZLATEST"
-	CZLATEST="$(cat $ZLATEST)"
+	CZLATEST="$(cat $AK_ZLATEST)"
 	ak-ipfs-files-cp /ipfs/$CZLATEST /zlatest
 	if [ $? != 0 ]; then exit 1; fi
 
 	echo "Publishing new (rebased) ZLATEST"
-	ak-ipfs-name-publish --key=zchain /ipfs/$(cat $ZLATEST)
+	ak-ipfs-name-publish --key=zchain /ipfs/$(cat $AK_ZLATEST)
 	if [ $? != 0 ]; then exit 1; fi
 	
 	echo "Rebase was successful"
