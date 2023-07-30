@@ -109,7 +109,7 @@ then
 	# Optional or extending with
 	# python send_as_ak_tx $ZBLOCK
 	# or for "offline" use
-	echo $ZBLOCK > $ZLATEST
+	echo $ZBLOCK > $AK_ZLATEST
 	ak-ipfs-name-publish --key=zchain $ZBLOCK > /dev/null 2>&1
     if [ "$?" -ne 0 ]
     then
