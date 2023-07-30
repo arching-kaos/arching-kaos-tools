@@ -44,7 +44,7 @@ published(){
 
 # We will be using our public key also to put it in the block later
 KEY="tmp-gpg.pub"
-gpg2 --armour --output $KEY --export $FINGERPRINT
+gpg2 --armour --output $KEY --export $AK_FINGERPRINT
 GPG_PUB_KEY=$(ak-ipfs-add $KEY)
 rm $KEY
 

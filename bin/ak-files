@@ -63,7 +63,7 @@ main(){
     fi
     logit "[INFO]" "Signing..."
     SIGN_FILE=$FILENAME".asc"
-    gpg2 --detach-sign --sign-with $FINGERPRINT --armor --output $SIGN_FILE $FILE
+    gpg2 --detach-sign --sign-with $AK_FINGERPRINT --armor --output $SIGN_FILE $FILE
     if [ $? == 0 ]; then
 	    logit "[INFO]" "Signed"
     else

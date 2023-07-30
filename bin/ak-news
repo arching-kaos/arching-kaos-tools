@@ -90,7 +90,7 @@ add2(){
 		TITLE=$(head -n 1 $FILE)
 		FILE_IPFS_HASH=$(ak-ipfs-add $FILE)
 		FILE_SIGN_FILE=$FILE".asc"
-		gpg --detach-sign --sign-with $FINGERPRINT --armor --output $FILE_SIGN_FILE $FILE
+		gpg --detach-sign --sign-with $AK_FINGERPRINT --armor --output $FILE_SIGN_FILE $FILE
 		FILE_SIGNATURE=$(ak-ipfs-add $FILE_SIGN_FILE)
 		cat > data <<EOF
 {
@@ -124,7 +124,7 @@ add(){
 		TITLE=$(head -n 1 $ZNEWSDIR/$FILE)
 		FILE_IPFS_HASH=$(ak-ipfs-add $ZNEWSDIR/$FILE)
 		FILE_SIGN_FILE=$FILE".asc"
-		gpg --detach-sign --sign-with $FINGERPRINT --armor --output $FILE_SIGN_FILE $ZNEWSDIR/$FILE
+		gpg --detach-sign --sign-with $AK_FINGERPRINT --armor --output $FILE_SIGN_FILE $ZNEWSDIR/$FILE
 		FILE_SIGNATURE=$(ak-ipfs-add $FILE_SIGN_FILE)
 		cat > data <<EOF
 {
