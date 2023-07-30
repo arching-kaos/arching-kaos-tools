@@ -1,3 +1,8 @@
 #!/bin/bash
+PROGRAM="$(basename $0)"
 ipfs block stat "$1"
-
+if [ "$?" != "0" ]
+then
+    ak-logthis "<$PROGRAM>" "[ERROR]" "Failed to retrieve stat of block $1"
+    exit 1
+fi

@@ -1,3 +1,9 @@
 #!/bin/bash
+PROGRAM="$(basename $0)"
 ipfs name resolve "$1"
+if [ "$?" != "0" ]
+then
+    ak-logthis "<$PROGRAM>" "[ERROR]" "Failed to resolve $1"
+    exit 1
+fi
 

@@ -1,2 +1,8 @@
 #!/bin/bash
+PROGRAM="$(basename $0)"
 ipfs key list
+if [ "$?" != "0" ]
+then
+    ak-logthis "<$PROGRAM>" "[ERROR]" "Failed to get key list"
+    exit 1
+fi
