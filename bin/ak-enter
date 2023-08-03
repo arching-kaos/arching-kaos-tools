@@ -155,6 +155,7 @@ do
             if [ "$?" -ne 0 ]
             then
                 logit "[ERROR]" "ZBLOCK $zblock is not JSON"
+                cat /dev/null > $AK_ZBLOCKDIR/$zblock > /dev/null 2>&1
                 exit 1
             fi
             logit "[INFO]" "ZBLOCK $zblock is JSON"
