@@ -1,0 +1,219 @@
+#!/bin/bash
+#
+# The concept is simple
+# 
+# 1. For a given file we split in 1MB files inside a temporary directory
+#
+# 2. We then create a map file, containing the resulted files and their sha512sum
+#
+# 3. We move the files to our $CHKDIR named after their checksums
+#
+# We ultimately want to be seeding the file so
+#
+# 4. We append the checksum of the original file with its name into the map file
+#
+# 5. We rename the map file after its checksum and move it to maps directory
+#
+# 6. We are done!
+#
+
+# Uncomment next line if you want to debug 
+# set -xe
+PROGRAM="$(basename $0)"
+
+if [ ! -f "$1" ]
+then
+    echo "[ERROR] File not found"
+    exit 1
+else
+    FILE="$1"
+fi
+
+# The directory where the chunked data will be living at
+CHKDIR="$AK_WORKDIR/ftr/"
+# The directory for the map files so we can reconstruct the file
+FILEMAPSDIR="$AK_WORKDIR/fmp/"
+# Merkle tree file/references
+MERKLEDIR="$AK_WORKDIR/fmrk/"
+# A temporary root dir to work on
+TEMPORARYDIR="/tmp/tltmp"
+# A subdir to split the files there
+TECHDIR="/tmp/tltmp/chks/"
+# A pin point to return from where we came from 
+CURRENTDIR="$(pwd)/"
+
+# Our snippet for logging debug info
+logit(){
+    ak-logthis "<$PROGRAM>" "$1" "$2"
+}
+
+# Checking directories and create them if necessary
+rm -rf $TEMPORARYDIR
+ 
+# TECHDIR
+if [ ! -d "$TECHDIR" ]
+then
+    mkdir -p "$TECHDIR"
+    if [ "$?" == 0 ]
+    then
+        logit "[INFO]" "Folder $TECHDIR created!"
+    else
+        logit "[ERROR]" "Problem occured while creating $TECHDIR"
+        echo "[ERROR] Can't create $TECHDIR"
+        exit 1
+    fi
+else
+    logit "[INFO]" "Temp dir found"
+fi
+
+# FILEMAPSDIR
+if [ ! -d "$FILEMAPSDIR" ]
+then
+    mkdir -p "$FILEMAPSDIR"
+    if [ "$?" == 0 ]
+    then
+        logit "[INFO]" "Folder $FILEMAPSDIR created!"
+    else
+        logit "[ERROR]" "Problem occured while creating $FILEMAPSDIR"
+        echo "[ERROR] Can't create $FILEMAPSDIR"
+        exit 1
+    fi
+else
+    logit "[INFO]" "Mapsdir found"
+fi
+
+# CHKDIR
+if [ ! -d "$CHKDIR" ]
+then
+    mkdir -p "$CHKDIR"
+    if [ "$?" == 0 ]
+    then
+        logit "[INFO]" "Folder $CHKDIR created!"
+    else
+        logit "[ERROR]" "Problem occured while creating $CHKDIR"
+        echo "[ERROR] Can't create $CHKDIR"
+        exit 1
+    fi
+else
+    logit "[INFO]" "Workdir found"
+fi
+
+# MERKLEDIR
+if [ ! -d "$MERKLEDIR" ]
+then
+    mkdir -p "$MERKLEDIR"
+    if [ "$?" == 0 ]
+    then
+        logit "[INFO]" "Folder $MERKLEDIR created!"
+    else
+        logit "[ERROR]" "Problem occured while creating $MERKLEDIR"
+        echo "[ERROR] Can't create $MERKLEDIR"
+        exit 1
+    fi
+else
+    logit "[INFO]" "Workdir found"
+fi
+# Uncomment next line in case you want to debug the resulting script as well
+# echo 'set -xe' > $TEMPORARYDIR/cmd_queue.sh
+
+# We get the SHA512 hash for the $FILE given
+CHECKSUM=$(sha512sum "$FILE"|awk '{print $1}')
+
+# We split the file into 4*1024 bytes and output the chunks into TECHDIR
+split -a 50 -b 4096 --additional-suffix ".chk" -d "$FILE" "$TECHDIR$(basename "$FILE")-"
+
+# We go over there...
+cd $TECHDIR
+#set -xe
+# We get every chunks' SHA512 and we craft a script to rename the chunks and 
+# move them to CHKDIR
+for file in $TEMPORARYDIR/chks/* 
+do
+    sha512sum $file >> $TEMPORARYDIR/map
+done
+# Append last chk if not even number
+appendLastIfNotEven(){
+    if [ "$(expr $(wc -l "$1" | awk '{ print $1 }') % 2)" != 0 ]
+    then
+        tail -n 1 "$1" >> "$1"
+    fi
+}
+appendLastIfNotEven "$TEMPORARYDIR/map"
+# Figure out how many times we need to pack
+totalChunks=`grep 'chk' $TEMPORARYDIR/map | wc -l`
+temp="$totalChunks"
+timesRan=0
+while [ $temp != 1 ]
+do
+    temp=`expr $temp / 2`
+    timesRan=`expr $timesRan + 1`
+done
+printf "Ran %s times \n" "$timesRan"
+printf "Total chunks %s \n" "$totalChunks"
+
+workingIndex="$TEMPORARYDIR/map"
+c=$timesRan
+while [ "$c" != 0 ]
+do
+    a=1
+    printf "Level: %s, will work on %s chunks\n" "$c" "$totalChunks"
+    while [[ "$a" -lt "$totalChunks" ]]
+    do
+        b=`expr "$a" + 1`
+        printf "Lines of map: %s and %s of %s\n" "$a" "$b" "$totalChunks"
+        sed -n "$a"p "$workingIndex" | awk '{ print $1 }' >> level.$c.pair.$a-$b
+        sed -n "$b"p "$workingIndex" | awk '{ print $1 }' >> level.$c.pair.$a-$b
+        shaSum="$(sha512sum level.$c.pair.$a-$b | awk '{ print $1 }')"
+        cp level.$c.pair.$a-$b $MERKLEDIR/$shaSum
+        sha512sum level.$c.pair.$a-$b | awk '{ print $1 }' >> level.$c.map
+        a=`expr "$a" + 2`
+        printf "Next thing: %s\n" "$a"
+    done
+    workingIndex="level.$c.map"
+    shaSum=`sha512sum $workingIndex | awk '{ print $1 }'`
+    cp $workingIndex $MERKLEDIR/$shaSum
+    appendLastIfNotEven "$workingIndex"
+    totalChunks=`cat $workingIndex | wc -l`
+    c=`expr $c - 1`
+done
+
+if [ -f level.1.map ]
+then
+    sha512sum level.1.map
+else
+    echo error
+    exit 1
+fi
+
+# Reset file with uniq
+cat $TEMPORARYDIR/map | uniq > $TEMPORARYDIR/map2
+cat $TEMPORARYDIR/map2 > $TEMPORARYDIR/map
+rm $TEMPORARYDIR/map2 
+
+counter=0
+while IFS="" read -r p || [ -n "$p" ]
+do
+    printf "mv %s %s%s\n" "$(echo $p | awk '{ print $2 }')" "$CHKDIR" "$(echo $p | awk '{ print $1 }')" >> $TEMPORARYDIR/cmd_queue.sh
+    counter=`expr "$counter" + 1`
+done < $TEMPORARYDIR/map
+
+# We run the crafted script
+sh $TEMPORARYDIR/cmd_queue.sh
+
+# and we delete it
+rm $TEMPORARYDIR/cmd_queue.sh
+
+# We inform the map about the original $FILE name and SHA512
+echo "$CHECKSUM  $(basename "$FILE")" >> $TEMPORARYDIR/map
+
+# We get the SHA512 hash of the resulted map file
+MAPFILEHASH="$(sha512sum $TEMPORARYDIR/map | awk '{ print $1 }')"
+
+# and we rename it with it and move it to FILEMAPSDIR
+`sha512sum $TEMPORARYDIR/map | awk '{print "mv " $2 " '$FILEMAPSDIR'" $1}'`
+
+# We remove the TEMPORARYDIR
+rm -rf $TEMPORARYDIR
+
+# and print the MAPFILEHASH
+echo "$MAPFILEHASH"
