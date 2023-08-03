@@ -3,90 +3,91 @@ ZREFERENCESDIR="$AK_WORKDIR/references"
 TEMP="/tmp/aktmp"
 echo $ZREFERENCESDIR
 if [ ! -d $ZREFERENCESDIR ]; then
-	mkdir $ZREFERENCESDIR
-	cd $ZREFERENCESDIR
-	echo "zreferencesdir created"
+    mkdir $ZREFERENCESDIR
+    cd $ZREFERENCESDIR
+    echo "zreferencesdir created"
 else
-	ak-logthis "zreferencesdir found"
+    ak-logthis "zreferencesdir found"
 fi
 
 create(){
     TEMP="$(ak-tempassin)"
     cd $TEMP
-	#pwd
-	export REFERENCEFILE="$(date -u +%s)"
-	if [ ! -z $1 ] && [ ! -z $2 ]
-	then
-		TO_FILE="$(date -u +%s)-$1-$2"
-		cat > $REFERENCEFILE << EOF
+    export REFERENCEFILE="$(date -u +%s)"
+    if [ ! -z $1 ] && [ ! -z $2 ]
+    then
+        TO_FILE="$(date -u +%s)-$1-$2"
+        cat > $REFERENCEFILE << EOF
 $1
 $2
 EOF
-		
-	else
-		vi $REFERENCEFILE
-	fi
-	REFERENCE="$(head -n 1 $REFERENCEFILE)"
-	REFER_TO="$(tail -n 1 $REFERENCEFILE)"
-	TO_FILE="$REFERENCEFILE-$REFERENCE-$REFER_TO"
-	mv $REFERENCEFILE $ZREFERENCESDIR/$TO_FILE
-	echo $TO_FILE
-	IPFS_FILE=$(ak-ipfs-add $ZREFERENCESDIR/$TO_FILE)
-	sed -e 's,Qm.*,'"$IPFS_FILE"',g' $ZREFERENCESDIR/README
-	add $ZREFERENCESDIR/$TO_FILE
-	cd $ZREFERENCESDIR
+        
+    else
+        vi $REFERENCEFILE
+    fi
+    REFERENCE="$(head -n 1 $REFERENCEFILE)"
+    REFER_TO="$(tail -n 1 $REFERENCEFILE)"
+    TO_FILE="$REFERENCEFILE-$REFERENCE-$REFER_TO"
+    mv $REFERENCEFILE $ZREFERENCESDIR/$TO_FILE
+    echo $TO_FILE
+    IPFS_FILE=$(ak-ipfs-add $ZREFERENCESDIR/$TO_FILE)
+    sed -e 's,Qm.*,'"$IPFS_FILE"',g' $ZREFERENCESDIR/README
+    add $ZREFERENCESDIR/$TO_FILE
+    cd $ZREFERENCESDIR
 }
 index(){
-	FILES="$(ls -1 $ZREFERENCESDIR)"
-	i=0
-	for FILE in $FILES
-	do
-		DATE=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
-		TITLE=$(head -n 1 $ZREFERENCESDIR/$FILE)
-		REFE=$(tail -n 1 $ZREFERENCESDIR/$FILE)
-		echo $i \| $DATE \| $TITLE \| $REFE
-		let i+=1
-	done	
+    FILES="$(ls -1 $ZREFERENCESDIR)"
+    i=0
+    for FILE in $FILES
+    do
+        DATE=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
+        TITLE=$(head -n 1 $ZREFERENCESDIR/$FILE)
+        REFE=$(tail -n 1 $ZREFERENCESDIR/$FILE)
+        echo $i \| $DATE \| $TITLE \| $REFE
+        let i+=1
+    done    
 }
 title(){
-	echo ak-references-cli
-	echo "--------------"
+    echo ak-references-cli
+    echo "--------------"
 }
 import(){
-	echo "#TODO"
-	if [ ! -z $1 ]
-	then
-		if [ ! -d $1 ]
-		then
-			echo "Folder does not exists"
-			exit 4
-		else
-			echo "Folder $1 exists"
-			fl="$(ls -1 $1)"
-			for f in $fl
-			do
-				add $1/$f
-			done
-		fi
-	else
-		echo "No value"
-		exit 6
-	fi
-	exit 224
+    echo "#TODO"
+    if [ ! -z $1 ]
+    then
+        if [ ! -d $1 ]
+        then
+            echo "Folder does not exists"
+            exit 4
+        else
+            echo "Folder $1 exists"
+            fl="$(ls -1 $1)"
+            for f in $fl
+            do
+                add $1/$f
+            done
+        fi
+    else
+        echo "No value"
+        exit 6
+    fi
+    exit 224
 }
 add(){
     TEMP="$(ak-tempassin)"
     cd $TEMP
-	if [ -f $1 ]; then
-		FILE="$1"
-		echo "Adding references from " $FILE
-		DATETIME=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
-		#FILE=$(head -n 1 $FILE)
-		FILE_IPFS_HASH=$(ak-ipfs-add $FILE)
-		FILE_SIGN_FILE=$FILE".asc"
-		gpg --detach-sign --sign-with $AK_FINGERPRINT --armor --output $FILE_SIGN_FILE $FILE
-		FILE_SIGNATURE=$(ak-ipfs-add $FILE_SIGN_FILE)
-		cat > data <<EOF
+    if [ ! -f $1 ]; then
+        echo "File $FILE doesn't exist";
+        exit 2
+    fi
+    FILE="$1"
+    echo "Adding references from " $FILE
+    DATETIME=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
+    FILE_IPFS_HASH=$(ak-ipfs-add $FILE)
+    FILE_SIGN_FILE=$FILE".asc"
+    gpg --detach-sign --sign-with $AK_FINGERPRINT --armor --output $FILE_SIGN_FILE $FILE
+    FILE_SIGNATURE=$(ak-ipfs-add $FILE_SIGN_FILE)
+    cat > data <<EOF
 {
    "datetime":"$(date -u +%s)",
    "reference":"$REFERENCE",
@@ -95,41 +96,39 @@ add(){
    "detach":"$FILE_SIGNATURE"
 }
 EOF
-	else
-		echo "File $FILE doesn't exist";
-		exit 2
-	fi
+    cat data | jq -M -c > tmp
+    cat tmp > data
+    rm tmp
     ak-pack_z_block "references/add" $(pwd)/data
-	if [ $? == 0 ]
-	then
-		echo "References added successfully"
-	else
-		echo "error??"
-		exit 1
-	fi
+    if [ $? != 0 ]
+    then
+        echo "error??"
+        exit 1
+    fi
+    echo "References added successfully"
 }
 
 usage(){
-	title
-	echo "#TODO"
-	echo "All you need to know is that there are two options available:"
-	echo "help			Prints this help message"
-	echo "index			Prints an indexed table of your references files"
-	echo "import <file>		#TODO"
-	echo "add <file>		Creates a data file from the references file you point to"
-	echo "create [ref] [to]		Vim is going to pop up, you will write and save your"
-	echo "                 		referencesletter and it's going to be saved"
-	exit 0
+    title
+    echo "#TODO"
+    echo "All you need to know is that there are two options available:"
+    echo "help                     Prints this help message"
+    echo "index                    Prints an indexed table of your references files"
+    echo "import <file>            #TODO"
+    echo "add <file>               Creates a data file from the references file you point to"
+    echo "create [ref] [to]        Vim is going to pop up, you will write and save your"
+    echo "                         referencesletter and it's going to be saved"
+    exit 0
 }
 
 if [ ! -z $1 ]; then
-	case $1 in
-		help) usage; exit;;
-		index) index; exit;;
-		import) import $2; exit;;
-		add) add $2; exit;;
-		create) create $2 $3; exit;;
-		* ) usage;;
-	esac
+    case $1 in
+        help) usage; exit;;
+        index) index; exit;;
+        import) import $2; exit;;
+        add) add $2; exit;;
+        create) create $2 $3; exit;;
+        * ) usage;;
+    esac
 else usage
 fi
