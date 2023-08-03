@@ -1,19 +1,25 @@
 #!/bin/bash
 # The following creates a mixtape data message
+PROGRAM="$(basename $0)"
 ZFOLDERSDIR="$AK_WORKDIR/folders"
 TEMP="/tmp/aktmp"
+
+logit(){
+    ak-logthis "<$PROGRAM>" "$1" "$2"
+}
+
 if [ ! -d $ZFOLDERSDIR ]; then
-	mkdir $ZFOLDERSDIR
-	cd $ZFOLDERSDIR
+    mkdir $ZFOLDERSDIR
+    cd $ZFOLDERSDIR
 else
-	ak-logthis "error $ZFOLDERSDIR not found"
+    logit "[ERROR]" "error $ZFOLDERSDIR not found or/and could not be created"
 fi
 TEMPASSIN="$(ak-tempassin)"
 cd $TEMPASSIN
 
 usage(){
-	title
-	echo "$0 - folder"
+    title
+    echo "$PROGRAM - folder"
 }
 
 add(){
@@ -27,49 +33,25 @@ main(){
     FOLDERNAME="$1"
     CRP="$2"
     echo "Adding $FOLDERNAME"
-    ak-logthis "Copying $1 to temporary folder"
+    logit "[INFO]" "Copying $1 to temporary folder"
     cp -r $2/$1 $1
     if [ $? == 0 ]; then
-	    ak-logthis "Copied successfully"
+        logit "[INFO]" "Copied successfully"
     else
-	    ak-logthis "Error copying..."
+        logit "[ERROR]" "Error copying..."
     fi
 
     FOLDER="$1"
 
-    ak-logthis "Adding $FOLDER to IPFS..."
+    logit "[INFO]" "Adding $FOLDER to IPFS..."
     FOLDER_IPFS_HASH=$(ak-ipfs-add $FOLDER)
     if [ $? == 0 ]; then
-	    ak-logthis "done"
+        logit "[INFO]" "done"
     else
-	    ak-logthis "error"
+        logit "[ERROR]" "error"
     fi
-    ak-logthis "Folders are not signing..."
+    logit "[WARNING]" "Folders are not signing..."
 
-#    NOT NEEDED HERE
-#    SIGN_FOLDER=$FOLDERNAME".asc"
-#    gpg2 --detach-sign --sign-with $FINGERPRINT --armor --output $SIGN_FOLDER $FOLDER
-#    if [ $? == 0 ]; then
-#	    ak-logthis "Signed"
-#    else
-#	    ak-logthis "Error while signing"
-#    fi
-#
-#    ak-logthis "Adding signature to IPFS"
-#    SIGNATURE=$(ak-ipfs-add $SIGN_FOLDER)
-#    if [ $? == 0 ]; then
-#	    ak-logthis "Added"
-#    else
-#	    ak-logthis "Error while adding"
-#    fi
-
-#     cat > data <<EOF
-# {
-#     "timestamp":"$(date -u +%s)",
-#     "foldername":"$FOLDERNAME",
-#     "ipfs":"$FOLDER_IPFS_HASH"
-# }
-# EOF
     printf '{"timestamp":"%s","foldername":"%s","ipfs":"%s"}' $(date -u +%s) $FOLDERNAME $FOLDER_IPFS_HASH
 
     echo "Printing data..."
@@ -79,23 +61,24 @@ main(){
     ak-pack_z_block folders/add $(pwd)/data
     if [ $? == 0 ]
     then
-	    echo "cool"
+        echo "cool"
     else
-	    echo "not?"
-	    exit 2
+        echo "not?"
+        exit 2
     fi
 }
 
 title(){
+    echo "$PROGRAM"
     echo "Folder block creator"
 }
 
 
 if [ ! -z $1 ]; then
-	case $1 in
-		help) usage; exit;;
-		add) add $2; exit;;
-		*) usage; exit;;
-	esac
+    case $1 in
+        help) usage; exit;;
+        add) add $2; exit;;
+        *) usage; exit;;
+    esac
 else usage
 fi
