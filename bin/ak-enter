@@ -116,6 +116,7 @@ zblock="$entrance"
 TEMPASSIN="$(ak-tempassin)"
 cd $TEMPASSIN
 counter=0
+
 # The loop
 # We break the loop from inside the loop
 while true && [ $limit="0" ]
@@ -136,12 +137,10 @@ do
             # Announce to logs which ZBLOCK is being read at the moment
             logit "[INFO]" "Examining $zblock"
 
-            # We concatenate the zblock's contents, pipe
-            # them through filter ak-json2bash and output
-            # them to tmp-file
-            # 
+            isIPFSv0 "$zblock"
+
             # We check if any $zblock at all
-            ak-ipfs-cat $zblock > /dev/null 2>&1
+            ak-ipfs-cat $zblock | jq -c -M > $AK_ZBLOCKDIR/$zblock
             if [ "$?" -ne 0 ]
             then
                 logit "[ERROR]" "ZBLOCK $zblock READ failed"
@@ -151,7 +150,7 @@ do
             echo -n '{"id":"'$counter'","zblock":"'$zblock'",'
   
             # If it's JSON formated
-            ak-ipfs-cat $zblock | jq -M > /dev/null 2>&1
+            cat $AK_ZBLOCKDIR/$zblock | jq -M > /dev/null 2>&1
             if [ "$?" -ne 0 ]
             then
                 logit "[ERROR]" "ZBLOCK $zblock is not JSON"
@@ -160,51 +159,39 @@ do
             fi
             logit "[INFO]" "ZBLOCK $zblock is JSON"
 
-            # Then we pass it through the filter and save it
-            ak-ipfs-cat $zblock | jq -M | ak-json2bash > tmp-zblock
-
             # Be sure that there are the expected values
             # We need 'block' and 'block_signature' inside a 'zblock'
             # Exit if any is missing
-            grep -e 'block_signature' tmp-zblock > /dev/null 2>&1
-            if [ "$?" -ne 0 ]
-            then
-                logit "[ERROR]" "ZBLOCK $zblock doesn't contain a block_signature"
-                exit 1
-            fi
-            logit "[INFO]" "ZBLOCK $zblock contains a block_signature"
-
-            grep -e 'block=' tmp-zblock > /dev/null 2>&1
-            if [ "$?" -ne 0 ]
+            block="$(cat $AK_ZBLOCKDIR/$zblock | jq -M -r .block)"
+            if [ "$block" == "null" ]
             then
                 logit "[ERROR]" "ZBLOCK $zblock has no block"
                 exit 1
             fi
+            isIPFSv0 "$block"
             logit "[INFO]" "ZBLOCK $zblock has block"
 
-            # We create files named after each ZBLOCK IPFS CID for later
-            # reference. Files are empty.
-            touch $AK_ZBLOCKDIR/$zblock
-            logit "[INFO]" "Created reference"
-
-            # Supposingly you are on a safe environment and you only have
-            # access to your chain, I would consider mild secure to source
-            # the files into your bash.
-            # File an issue/pull request if you think it can be done better!!
-            source tmp-zblock
-            logit "[INFO]" "ZBLOCK SOURCED"
+            block_signature="$(cat $AK_ZBLOCKDIR/$zblock | jq -M -r .block_signature)"
+            if [ "$block_signature" == "null" ]
+            then
+                logit "[ERROR]" "ZBLOCK $zblock doesn't contain a block_signature"
+                exit 1
+            fi
+            isIPFSv0 "$block_signature"
+            logit "[INFO]" "ZBLOCK $zblock contains a block_signature"
 
             # Same as above applies to BLOCK and DATA subparts of each ZBLOCK
             # BLOCKS
             echo -n '"block":"'$block'",'
-            ak-ipfs-cat $block | jq -M | ak-json2bash > tmp-block
+            ak-ipfs-cat $block | jq -c -M > $AK_BLOCKDIR/$block
+            cat $AK_BLOCKDIR/$block | jq -M > /dev/null 2>&1
             if [ "$?" -ne 0 ]
             then
                 logit "[ERROR]" "BLOCK $block READ failed"
                 exit 1
             fi
 
-            grep -e 'timestamp' -e 'gpg' -e 'data' -e 'action' -e 'detach' -e 'previous' tmp-block > /dev/null 2>&1
+            grep -e 'timestamp' -e 'gpg' -e 'data' -e 'action' -e 'detach' -e 'previous' $AK_BLOCKDIR/$block > /dev/null 2>&1
             if [ "$?" -ne 0 ]
             then
                 logit "[ERROR]" "BLOCK $block is NOT a valid block"
@@ -212,23 +199,31 @@ do
             fi
             logit "[INFO]" "BLOCK $block is a block"
 
-            source tmp-block
-            logit "[INFO]" "BLOCK $block SOURCED"
-            touch $AK_BLOCKDIR/$block
-            logit "[INFO]" "BLOCK REFERENCED"
+            action="$(cat $AK_BLOCKDIR/$block | jq -M -r .action)"
             module="$(echo $action | sed -e 's/\// /g' | awk '{ print $1 }')"
             logit "[INFO]" "DATA is $module module."
+
             command="$(echo $action | sed -e 's/\// /g' | awk '{ print $2 }')"
             logit "[INFO]" "COMMAND is $command"
-            if [ ! -v $timestamp ]
+
+            timestamp="$(cat $AK_BLOCKDIR/$block | jq -M -r .timestamp)"
+            if [ "$timestamp" != "null" ]
             then
                 echo -n '"timestamp":"'$timestamp'",'
             fi
+
             echo -n '"block_signature":"'$block_signature'",'
+
+            detach="$(cat $AK_BLOCKDIR/$block | jq -M -r .detach)"
             echo -n '"detach":"'$detach'",'
+
             echo -n '"module":"'$module'",'
+
             echo -n '"action":"'$command'",'
+
+            gpg="$(cat $AK_BLOCKDIR/$block | jq -M -r .gpg)"
             echo -n '"gpg":"'$gpg'",'
+
             if [ $verify == 1 ]
             then
                 ak-ipfs-get $gpg > /dev/null 2>&1
@@ -251,6 +246,7 @@ do
                 fi
                 mv $block_signature $block.asc
                 logit "[INFO]" "Block signature downloaded"
+
                 ak-ipfs-get $block > /dev/null 2>&1
                 if [ "$?" -ne 0 ]
                 then
@@ -258,6 +254,7 @@ do
                     exit 1
                 fi
                 logit "[INFO]" "Downloaded block $block."
+
                 gpg2 --verify $block.asc > /dev/null 2>&1
                 if [ "$?" -ne 0 ]
                 then
@@ -267,6 +264,8 @@ do
                 logit "[GPG]" "$gpg signature of $block is verified."
             fi
 
+            data="$(cat $AK_BLOCKDIR/$block | jq -M -r .data)"
+            isIPFSv0 "$data"
             ak-data-expand $data $gpg
             if [ "$?" -ne 0 ]
             then
@@ -274,20 +273,21 @@ do
                 exit 1
             fi
 
-            # DATA (but we don't source it's stuff)
+            # DATA
             # Only print to stdout
-            #ak-ipfs-cat $data
+            # ak-ipfs-cat $data
             touch $AK_DATADIR/$data
 
             # Now, since we sourced the BLOCK to our terminal, we can search
             # for $previous variable. In case we don't find one, we append one
             # and we exit.
+            previous="$(cat $AK_BLOCKDIR/$block | jq -M -r .previous)"
             if [ -v $previous ]
             then
-                logit "[WARNING]" "Block $block has no previous zblock, appending pseudo genesis to exit gracefully."
+                logit "[WARNING]" "Block $block has no previous zblock, appending pseudo genesis to exit with 2."
                 echo -n '"previous":"genesis"},{"genesis":"genesis"}]'
                 logit "[INFO]" "Reached pseudo-genesis, counted $counter zblocks."
-                exit 0
+                exit 2
 
             # Otherwise, we inform of the sequence
             else
