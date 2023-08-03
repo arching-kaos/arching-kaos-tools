@@ -1,25 +1,28 @@
 #!/bin/bash
+PROGRAM="$(basename $0)"
 FOLLOWING="$HOME/.arching-kaos/following"
 fentries="$(cat $FOLLOWING)"
 if [ ! -z $1 ]
 then
-	search="$1"
-	sed -i -e 's,'"$search"',,g' $FOLLOWING
-	if [ $? == 0 ]
-	then
-		IPFS="$(ak-ipfs-add $FOLLOWING)"
-		if [ $? == 0 ]
-		then
-			profile set repositories "$IPFS"
-		else
-			ak-logthis "IPFS problem"
-		fi
-	else
-		ak-logthis "sed didn't found $search"
-	fi
+    search="$1"
+    sed -i -e 's,'"$search"',,g' $FOLLOWING
+    if [ $? != 0 ]
+    then
+        ak-logthis "<$PROGRAM>" "[ERROR]" "sed didn't found $search"
+        exit 1
+    fi
+    IPFS="$(ak-ipfs-add $FOLLOWING)"
+    if [ $? != 0 ]
+    then
+        ak-logthis "<$PROGRAM>" "[ERROR]" "IPFS problem"
+        exit 1
+    fi
+    ak-profile set repositories "$IPFS"
+    exit 0
 else
-	echo "Who to unfollow?"
-	echo "Type following to see them"
-fi	
-	
+    echo "Who to unfollow?"
+    echo "Type following to see them"
+    exit 1
+fi    
+    
 
