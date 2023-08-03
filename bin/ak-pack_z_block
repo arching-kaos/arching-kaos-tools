@@ -9,10 +9,10 @@
 # We can extend this with calling the encoder and further send the transaction
 #
 
-#FINGERPRINT="CHANGE THIS TO YOUR DEFAULT FINGERPRINT"
+#AK_FINGERPRINT="CHANGE THIS TO YOUR DEFAULT AK_FINGERPRINT"
 # We acquire the GPG fingerprint by email address
 # The following example finds kaos@kaos.kaos' GPG fingerprint like this
-# FINGERPRINT="$(gpg2 --list-keys | grep kaos@kaos.kaos -1 | head -n1 | awk '{print $1}')"
+# AK_FINGERPRINT="$(gpg2 --list-keys | grep kaos@kaos.kaos -1 | head -n1 | awk '{print $1}')"
 
 PROGRAM="$(basename $0)"
 set -xe
