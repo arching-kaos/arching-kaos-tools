@@ -1,18 +1,19 @@
-const { spawn } = require('child_process');
-const config = require("../../config.js");
-
-
 /*
- * Gets a SBLOCK from superchain
- * LOL
+ * Receives an SHA512SUM as a SBlock and if exists returns the SBlock content.
  *
  */
+
+const { spawn } = require('child_process');
+const fs = require('fs');
+const config = require("../../config.js");
+
 module.exports = (req, res) => {
     regex= /[a-f0-9]{128}/
-    if (regex.test(req.query.sblock)){
+    if (regex.test(req.params.sblock)){
         genesisreg = /0{128}/
-        if (!genesisreg.test(req.query.sblock)){
-            const command = spawn("cat",[config.minedBlocksDir+req.query.sblock]);
+        if (!genesisreg.test(req.params.sblock)){
+            var path = config.minedBlocksDir+"/"+req.params.sblock;
+            const command = spawn("cat",[config.minedBlocksDir+"/"+req.params.sblock]);
             response_string = "";
             command.stdout.on("data", data => {
                 response_string = response_string+data;
@@ -28,9 +29,11 @@ module.exports = (req, res) => {
             });
 
             command.on("close", code => {
-                smt = JSON.stringify(response_string);
-                res.send({hrefPrevious:"http://127.0.0.1:8610/v0/sblock?sblock="+smt.previous,sblock:smt});
-        //                res.send(JSON.parse(response_string));
+                if ( code === 0 ) {
+                    res.send(JSON.parse(fs.readFileSync(path)));
+                } else {
+                    res.send({"error":"Sblock not found"})
+                }
                 console.log(`child process exited with code ${code}`);
             });
         } else {

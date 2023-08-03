@@ -32,7 +32,7 @@ router.route(settings.URL_PREFIX+'/see').get(seeEntriesFile);
 // Latest known mined block
 router.route(settings.URL_PREFIX+'/slatest').get(getSLatest);
 // Shows a mined block (provided that /sblock?sblock=SHA512 hash)
-router.route(settings.URL_PREFIX+'/sblock').get(getSBlock);
+router.route(settings.URL_PREFIX+'/sblock/:sblock').get(getSBlock);
 // Outputs node's local chain
 router.route(settings.URL_PREFIX+'/zchain').get(getZChain);
 // Returns latest zblock from node's local chain
@@ -42,7 +42,7 @@ router.route(settings.URL_PREFIX+'/akid').get(getAkid);
 // Returns content
 router.route(settings.URL_PREFIX+'/content').get(getInnerIPFSContent);
 // Returns zblock
-router.route(settings.URL_PREFIX+'/zblock').get(getZblock);
+router.route(settings.URL_PREFIX+'/zblock/:zblock').get(getZblock);
 // Send a block to the node (zchain block)
 router.route(settings.URL_PREFIX+'/sblk').post(receiveZBlock);
 // Send a zchain link to the node (refering to a valid zchain out there)
