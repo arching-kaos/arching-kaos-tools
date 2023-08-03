@@ -93,7 +93,7 @@ then
 	fi
     mv $DATA $AK_WORKDIR/ipfs
 	logit "[INFO]" "Block signature verified"
-    echo -n '"data":"'$1'","'$1'":'$(ak-ipfs-cat $1)','
+    echo -n '"data":"'$1'","'$1'":'$(ak-ipfs-cat $1|jq -M -c)','
 	exit 0
 else
 	echo "Usage: $PROGRAM HASH GPG"
