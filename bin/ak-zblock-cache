@@ -13,17 +13,23 @@ then
             logit "[INFO]" "Cache already there and updated"
         else
             logit "[INFO]" "Updating cache"
-            ak-zblock-show "$1" > $AK_ZBLOCKDIR/$1
+            ak-zblock-show "$1" > $AK_CACHEDIR/fzblocks/$1
         fi
         logit "[INFO]" "No cache found. Caching..."
-        ak-zblock-show "$1" 
+        ak-zblock-show "$1"
         if [ "$?" -ne "0" ]
         then
             logit "[ERROR]" "ak-zblock-show failed..."
-            exit 1
+            exit 2
         fi
-        ak-zblock-show "$1" > $AK_ZBLOCKDIR/$1
+        ak-zblock-show "$1" > $AK_CACHEDIR/fzblocks/$1
     else
+        ak-zblock-show "$1" > $AK_CACHEDIR/fzblocks/$1
+        if [ "$?" -ne "0" ]
+        then
+            logit "[ERROR]" "ak-zblock-show failed..."
+            exit 2
+        fi
         logit "[ERROR]" "Could not find zblock $1..."
         exit 1
     fi
