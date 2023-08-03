@@ -135,7 +135,6 @@ do
             timestamp=''
             # Announce to logs which ZBLOCK is being read at the moment
             logit "[INFO]" "Examining $zblock"
-            echo -n '{"zblock":"'$zblock'",'
 
             # We concatenate the zblock's contents, pipe
             # them through filter ak-json2bash and output
@@ -149,6 +148,7 @@ do
                 exit 1
             fi
             logit "[INFO]" "ZBLOCK $zblock READ"
+            echo -n '{"id":"'$counter'","zblock":"'$zblock'",'
   
             # If it's JSON formated
             ak-ipfs-cat $zblock | jq -M > /dev/null 2>&1
