@@ -5,12 +5,7 @@ echo $ZREFERENCESDIR
 if [ ! -d $ZREFERENCESDIR ]; then
 	mkdir $ZREFERENCESDIR
 	cd $ZREFERENCESDIR
-	git init
-	echo "References repository" > README
-	echo "Qmetc" >> README
-	git add README
-	git commit -m "Initiated references repository"
-	echo "zreferencesdir created along with git repo"
+	echo "zreferencesdir created"
 else
 	ak-logthis "zreferencesdir found"
 fi
@@ -39,11 +34,7 @@ EOF
 	IPFS_FILE=$(ak-ipfs-add $ZREFERENCESDIR/$TO_FILE)
 	sed -e 's,Qm.*,'"$IPFS_FILE"',g' $ZREFERENCESDIR/README
 	add $ZREFERENCESDIR/$TO_FILE
-	echo "Adding to git repo..."
 	cd $ZREFERENCESDIR
-	git add $TO_FILE README
-	git commit -m "Added $TO_FILE with $(head -n 1 $ZREFERENCESDIR/$TO_FILE)"
-	git clean --force
 }
 index(){
 	FILES="$(ls -1 $ZREFERENCESDIR)"
@@ -58,7 +49,7 @@ index(){
 	done	
 }
 title(){
-	echo	ak-references-cli
+	echo ak-references-cli
 	echo "--------------"
 }
 import(){
