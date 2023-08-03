@@ -1,14 +1,23 @@
 #!/bin/bash
 FOLLOWING="$HOME/.arching-kaos/following"
+PROGRAM="$(basename $0)"
 if [ ! -z $1 ]
 then
-	echo $1 >> $FOLLOWING
-	IPFS=$(ak-ipfs-add $FOLLOWING)
-	if [ $? == 0 ]
-	then
-		profile set following $IPFS
-	else
-		ak-logthis "Addition aborted"
-		exit 1
-	fi
+    grep $1 $FOLLOWING
+    if [ $? == 0 ]
+    then
+        ak-logthis "<$(basename $0)>" "[ERROR]" "Already exists"
+        exit 1
+    fi
+    echo $1 >> $FOLLOWING
+    IPFS=$(ak-ipfs-add $FOLLOWING)
+    if [ $? != 0 ]
+    then
+        ak-logthis "<$PROGRAM>" "[ERROR]" "Addition failed"
+        exit 1
+    fi
+    ak-profile set following $IPFS
+    exit 0
 fi
+printf "Usage:\n\t%s <AKID_IPFS_CID_v0>\n" $PROGRAM
+exit 1
