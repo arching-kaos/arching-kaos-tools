@@ -161,14 +161,12 @@ do
     while [[ "$a" -lt "$totalChunks" ]]
     do
         b=`expr "$a" + 1`
-        printf "Lines of map: %s and %s of %s\n" "$a" "$b" "$totalChunks"
         sed -n "$a"p "$workingIndex" | awk '{ print $1 }' >> level.$c.pair.$a-$b
         sed -n "$b"p "$workingIndex" | awk '{ print $1 }' >> level.$c.pair.$a-$b
         shaSum="$(sha512sum level.$c.pair.$a-$b | awk '{ print $1 }')"
         cp level.$c.pair.$a-$b $MERKLEDIR/$shaSum
         sha512sum level.$c.pair.$a-$b | awk '{ print $1 }' >> level.$c.map
         a=`expr "$a" + 2`
-        printf "Next thing: %s\n" "$a"
     done
     workingIndex="level.$c.map"
     shaSum=`sha512sum $workingIndex | awk '{ print $1 }'`
