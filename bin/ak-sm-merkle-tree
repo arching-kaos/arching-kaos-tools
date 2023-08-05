@@ -37,9 +37,9 @@ FILEMAPSDIR="$AK_WORKDIR/fmp/"
 # Merkle tree file/references
 MERKLEDIR="$AK_WORKDIR/fmrk/"
 # A temporary root dir to work on
-TEMPORARYDIR="/tmp/tltmp"
+TEMPORARYDIR="$(ak-tempassin)"
 # A subdir to split the files there
-TECHDIR="/tmp/tltmp/chks/"
+TECHDIR="$TEMPORARYDIR/chks/"
 # A pin point to return from where we came from 
 CURRENTDIR="$(pwd)/"
 
