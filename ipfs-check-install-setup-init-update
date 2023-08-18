@@ -59,3 +59,8 @@ else
     logthis "[INFO]" "Found IPFS! Skipping downloading..."
     swarm_install
 fi
+if [ ! -d $HOME/.ipfs ]; then
+    mkdir $HOME/.ipfs
+    $AK_BINDIR/ipfs init ;
+    swarm_install
+fi
