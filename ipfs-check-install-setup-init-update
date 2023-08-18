@@ -60,7 +60,6 @@ else
     swarm_install
 fi
 if [ ! -d $HOME/.ipfs ]; then
-    mkdir $HOME/.ipfs
-    $AK_BINDIR/ipfs init ;
+    ipfs init
     swarm_install
 fi
