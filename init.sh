@@ -8,7 +8,7 @@ ak_gpg_check_or_create(){
     gpg2 --homedir $AK_GPGHOME --list-keys | grep kaos@kaos.kaos -1
     if [ "$?" -ne "0" ]
     then
-        gpg2 --homedir $AK_GPGHOME --batch --passphrase '' --quick-key-gen kaos@kaos.kaos rsa3072 sign 0
+        gpg2 --homedir $AK_GPGHOME --batch --passphrase '' --quick-gen-key kaos@kaos.kaos rsa3072 sign 0
         AK_FINGERPRINT="$(gpg2 --homedir $AK_GPGHOME --list-keys | grep kaos@kaos.kaos -1 | head -n 1 | awk '{print $1}')"
         gpg2 --homedir $AK_GPGHOME --batch --passphrase '' --quick-add-key $AK_FINGERPRINT rsa3072 encrypt 0
     fi
