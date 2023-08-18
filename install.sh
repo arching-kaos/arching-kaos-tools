@@ -14,6 +14,7 @@ if [[ ! -f $AK_GENESIS ]]; then touch $AK_GENESIS;fi
 if [[ ! -f $AK_MINEDBLOCKS ]]; then mkdir $AK_MINEDBLOCKS; fi
 if [[ ! -f $AK_ZBLOCKSFILE ]]; then mkdir $AK_ZBLOCKSFILE; fi
 if [[ ! -f $AK_ZPAIRSFILE ]]; then mkdir $AK_ZPAIRSFILE; fi
+if [[ ! -d $AK_GPGHOME ]]; then mkdir $AK_GPGHOME && chmod 700 -R $AK_GPGHOME; fi
 
 touch $AK_WORKDIR/logs
 logthis(){

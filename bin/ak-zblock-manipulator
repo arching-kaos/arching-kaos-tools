@@ -12,7 +12,7 @@
 #FINGERPRINT="CHANGE THIS TO YOUR DEFAULT FINGERPRINT"
 # We acquire the GPG fingerprint by email address
 # The following example finds kaos@kaos.kaos' GPG fingerprint like this
-# FINGERPRINT="$(gpg2 --list-keys | grep kaos@kaos.kaos -1 | head -n1 | awk '{print $1}')"
+# FINGERPRINT="$(gpg2 --homedir $AK_GPGHOME --list-keys | grep kaos@kaos.kaos -1 | head -n1 | awk '{print $1}')"
 
 # Below, the usage information
 PROGRAM="zblock_manipulator"
@@ -49,14 +49,14 @@ main(){
 
 	# We create a detached and armor signature of it
 	MESSAGE_SIGN_FILE=$MESSAGE".asc"
-	gpg2 --detach-sign --sign-with $AK_FINGERPRINT --armor --output $MESSAGE_SIGN_FILE $MESSAGE
+	gpg2 --homedir $AK_GPGHOME --detach-sign --sign-with $AK_FINGERPRINT --armor --output $MESSAGE_SIGN_FILE $MESSAGE
 
 	# We add the signature to IPFS
 	MESSAGE_SIGNATURE=$(ak-ipfs-add $MESSAGE_SIGN_FILE)
 
 	# We will be using our public key also to put it in the block later
 	KEY="gpg.pub"
-	gpg2 --armour --output $KEY --export $AK_FINGERPRINT
+	gpg2 --homedir $AK_GPGHOME --armour --output $KEY --export $AK_FINGERPRINT
 	GPG_PUB_KEY=$(ak-ipfs-add $KEY)
 
 	# Acquire last block of information, to chain this one with previous posted
@@ -78,7 +78,7 @@ makeZBlock(){
 	BLOCK="block"
 	BLOCK_SIG=$BLOCK".asc"
 	# We have a block now, so we sign it
-	gpg2 --detach-sign --sign-with $AK_FINGERPRINT --armor --output $BLOCK_SIG $BLOCK
+	gpg2 --homedir $AK_GPGHOME --detach-sign --sign-with $AK_FINGERPRINT --armor --output $BLOCK_SIG $BLOCK
 
 	# We now add the signature to IPFS
 	BLOCK_SIGNATURE=$(ak-ipfs-add $BLOCK_SIG)

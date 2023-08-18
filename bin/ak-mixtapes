@@ -13,7 +13,7 @@ main(){
     MIXTAPE_IPFS_HASH=$(ak-ipfs-add $MIXTAPE_FILE)
 
     MIXTAPE_SIGN_FILE=$MIXTAPE_FILE".asc"
-    gpg2 --detach-sign --sign-with $AK_FINGERPRINT --armor --output $MIXTAPE_SIGN_FILE $MIXTAPE_FILE
+    gpg2 --homedir $AK_GPGHOME --detach-sign --sign-with $AK_FINGERPRINT --armor --output $MIXTAPE_SIGN_FILE $MIXTAPE_FILE
 
     MIXTAPE_SIGNATURE=$(ak-ipfs-add $MIXTAPE_SIGN_FILE)
 

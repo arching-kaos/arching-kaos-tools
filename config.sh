@@ -21,4 +21,5 @@ export AK_FINGERPRINT="$(gpg --list-keys | grep test@test.test -1 | head -n1 | a
 export AK_MINEDBLOCKS="$AK_WORKDIR/mined_blocks/"
 export AK_ZBLOCKSFILE="$AK_WORKDIR/zBlocksFile"
 export AK_ZPAIRSFILE="$AK_WORKDIR/pairsFile"
+export AK_GPGHOME="$AK_WORKDIR/keyring/"
 

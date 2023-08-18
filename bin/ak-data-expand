@@ -64,7 +64,7 @@ then
 	logit "[ERROR]" "Could not get GPG key: $gpg"
 	exit 1
     fi
-    gpg2 --import $gpg > /dev/null 2>&1
+    gpg2 --homedir $AK_GPGHOME --import $gpg > /dev/null 2>&1
     if [ "$?" -ne 0 ]
     then
 		logit "[ERROR]" "Could not import GPG key: $gpg"
@@ -85,7 +85,7 @@ then
 		exit 1
 	fi
 	logit "[INFO]" "Data downloaded: $DATA"
-	gpg2 --verify $DATA.asc $DATA > /dev/null 2>&1
+	gpg2 --homedir $AK_GPGHOME --verify $DATA.asc $DATA > /dev/null 2>&1
 	if [ "$?" -ne 0 ]
 	then
 		logit "[ERROR]" "Error while verifying signature for $DATA"

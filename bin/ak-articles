@@ -82,7 +82,7 @@ add(){
 		TITLE=$(head -n 1 $FILE)
 		FILE_IPFS_HASH=$(ak-ipfs-add $FILE)
 		FILE_SIGN_FILE=$FILE".asc"
-		gpg --detach-sign --sign-with $AK_FINGERPRINT --armor --output $FILE_SIGN_FILE $FILE
+		gpg2 --homedir $AK_GPGHOME --detach-sign --sign-with $AK_FINGERPRINT --armor --output $FILE_SIGN_FILE $FILE
 		FILE_SIGNATURE=$(ak-ipfs-add $FILE_SIGN_FILE)
 		cat > data <<EOF
 {

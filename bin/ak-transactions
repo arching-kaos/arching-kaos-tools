@@ -20,7 +20,7 @@ EOF
     FILE_IPFS_HASH=$(ak-ipfs-add $TRANSACTION_FILE)
 
     SIGN_FILE=$TRANSACTION_FILE".asc"
-    gpg2 --detach-sign --sign-with $AK_FINGERPRINT --armor --output $SIGN_FILE $TRANSACTION_FILE
+    gpg2 --homedir $AK_GPGHOME --detach-sign --sign-with $AK_FINGERPRINT --armor --output $SIGN_FILE $TRANSACTION_FILE
 
     FILE_SIGNATURE=$(ak-ipfs-add $SIGN_FILE)
 

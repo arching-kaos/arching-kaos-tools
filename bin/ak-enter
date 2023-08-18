@@ -232,7 +232,7 @@ do
                     logit "[ERROR]" "Could not get GPG key: $gpg ."
                     exit 1
                 fi
-                gpg2 --import $gpg > /dev/null 2>&1
+                gpg2 --homedir $AK_GPGHOME --import $gpg > /dev/null 2>&1
                 if [ "$?" -ne 0 ]
                 then
                     logit "[ERROR]" "Could not import GPG key: $gpg ."
@@ -255,7 +255,7 @@ do
                 fi
                 logit "[INFO]" "Downloaded block $block."
 
-                gpg2 --verify $block.asc > /dev/null 2>&1
+                gpg2 --homedir $AK_GPGHOME --verify $block.asc > /dev/null 2>&1
                 if [ "$?" -ne 0 ]
                 then
                     logit "[ERROR]" "Could not verify $block with GPG key $gpg."
