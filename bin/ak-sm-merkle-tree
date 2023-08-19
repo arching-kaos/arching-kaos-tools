@@ -122,9 +122,14 @@ fi
 
 # We get the SHA512 hash for the $FILE given
 CHECKSUM=$(sha512sum "$FILE"|awk '{print $1}')
-
-# We split the file into 4*1024 bytes and output the chunks into TECHDIR
-split -a 50 -b 4096 --additional-suffix ".chk" -d "$FILE" "$TECHDIR$(basename "$FILE")-"
+FILE_SIZE="$(du -b $FILE | awk '{ print $1 }')"
+if [ $FILE_SIZE -lt 4097 ]
+then
+    cp $FILE "$TECHDIR$(basename "$FILE")-00000000000000000000000000000000000000000000000000.chk"
+else
+    # We split the file into 4*1024 bytes and output the chunks into TECHDIR
+    split -a 50 -b 4096 --additional-suffix ".chk" -d "$FILE" "$TECHDIR$(basename "$FILE")-"
+fi
 
 # We go over there...
 cd $TECHDIR
@@ -172,9 +177,9 @@ do
         a=`expr "$a" + 2`
     done
     workingIndex="level.$c.map"
+    appendLastIfNotEven "$workingIndex"
     shaSum=`sha512sum $workingIndex | awk '{ print $1 }'`
     cp $workingIndex $MERKLEDIR/$shaSum
-    appendLastIfNotEven "$workingIndex"
     totalChunks=`cat $workingIndex | wc -l`
     c=`expr $c - 1`
 done
