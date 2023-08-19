@@ -11,6 +11,8 @@ const getZChain = require('./getZChain');
 const receiveZBlock = require('./receiveZBlock');
 const receiveZChain = require('./receiveZChain');
 const getZblock = require('./getZblock');
+const getMrk = require('./getMrk');
+const getTr = require('./getTr');
 const getAkid = require('./getAkid');
 const getInnerIPFSContent = require('./getInnerIPFSContent');
 const corsOptions = {
@@ -43,6 +45,10 @@ router.route(settings.URL_PREFIX+'/akid').get(getAkid);
 router.route(settings.URL_PREFIX+'/content').get(getInnerIPFSContent);
 // Returns zblock
 router.route(settings.URL_PREFIX+'/zblock/:zblock').get(getZblock);
+// Returns a mrk
+router.route(settings.URL_PREFIX+'/mrk/:mrk').get(getMrk);
+// Returns a tr
+router.route(settings.URL_PREFIX+'/tr/:tr').get(getTr);
 // Send a block to the node (zchain block)
 router.route(settings.URL_PREFIX+'/sblk').post(receiveZBlock);
 // Send a zchain link to the node (refering to a valid zchain out there)
