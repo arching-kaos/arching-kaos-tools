@@ -1,12 +1,15 @@
 #!/bin/bash
 #
-# The concept is simple
+# The concept is bit more complicated now
 # 
-# 1. For a given file we split in 1MB files inside a temporary directory
+# 1. For a given file we split in 4KB files inside a temporary directory
 #
-# 2. We then create a map file, containing the resulted files and their sha512sum
+# 2. We then create a map file and a merkle tree containing the resulted files
+# and their sha512sum.
 #
-# 3. We move the files to our $CHKDIR named after their checksums
+# 3. We move the splitted files to our $CHKDIR named after their checksums
+#
+# 4. We move the merkle tree pairs to $MERKLEDIR
 #
 # We ultimately want to be seeding the file so
 #
