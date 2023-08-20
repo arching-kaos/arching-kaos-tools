@@ -28,6 +28,11 @@ show(){
 
 publish(){
 	show | jq -M > tmpfile
+    ipfs key list | grep ak-config 2> /dev/null 1>&2
+    if [ "$?" -ne 0 ]
+    then
+        ipfs key gen ak-config
+    fi
 	ak-ipfs-name-publish --key=ak-config /ipfs/$(ak-ipfs-add tmpfile)
 	if [ "$?" != 0 ]
 	then
