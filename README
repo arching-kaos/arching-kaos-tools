@@ -4,6 +4,8 @@ Arching Kaos Tools
 > Warning: The tools and the whole project is in an experimental state.
 > Everything is subject to change.
 
+> Hint: Find the "Script usage" section for sum up of the scripts
+
 Introduction
 ------------
 Tools that help you to create a blockchain called `zchain` by preparing small
@@ -198,3 +200,112 @@ Concepts under thought
 - Spam defence (e.g. how to protect the network from abuse cases) (important)
 - Reduce size of all parts of chain (stringify JSON) (improvement)
 
+Script usage
+------------
+
+Utilities
+---------
+ak-calculate-size       # Calculates the overall size of your ZCHAIN
+ak-clean                # Cleans up temporary folders created by these tools
+ak-config               # Publish your configuration to IPNS
+ak-data-expand          # Expands and verifies DATA blocks
+ak-enter                # Crawls ZCHAINS
+ak-extract-cids         # Prints the CIDs from your ZCHAIN for further usage
+ak-get-akid             # Returns IPFS CID of your AKID (ak-config)
+ak-get-chain-minified   # Obsolete, ak-enter default output
+ak-get-gpg              # Return your GPG key as IPFS CID
+ak-get-latest           # Returns zlatest ZBLOCK according to IPFS FS
+ak-tempassin            # Creates temporary directories
+
+Logging
+-------
+ak-logfollow    # Tails the log file
+ak-logthis      # Logs a message to the log file
+
+Schain tools
+------------
+ak-mempool                      # TODO
+ak-miner-script                 # Prototype miner
+ak-network                      # in the works
+ak-show_sblock                  # Returns a mined SBLOCK
+ak-find-latest-mined-sblock     # In a hay of SBLOCKS finds the latest
+
+Network scouting
+----------------
+ak-stellar-get-participants     # Returns a list of stellar address trusting ARCHINGKAOS
+
+Modules
+-------
+ak-articles                 PROTO Adds an article to your ZCHAIN
+ak-categories               PROTO Adds or references categories to the ZCHAIN
+ak-comments                     # References a comment to a ZBLOCK
+ak-files                        # Adds a file to the ZCHAIN
+ak-folders                  PROTO Adds a folder to the ZCHAIN
+ak-mixtapes                     # Adds a mixtape to the ZCHAIN
+ak-news                         # Adds a news article to the ZCHAIN
+ak-profile                      # Adds key-value pairs to the ZCHAIN
+ak-reference                    # Adds references to the ZCHAIN
+ak-repositories                 # Adds repositories to the ZCHAIN
+ak-roadmap                  PROTO Adds a roadmap to the ZCHAIN 
+ak-transactions                 # Prototype of transactions in the ZCHAIN
+ak-sm-files                     # Adds a split file's map to the ZCHAIN
+ak-todos                    PROTO Adds todo list to the ZCHAIN
+
+Public following (uses ak-profile module)
+-----------------------------------------
+ak-follow       # Follow something
+ak-following    # List your follows
+ak-unfollow     # Unfollow something
+
+Zblock tools
+------------
+ak-zblock-cache         # Caches a whole zblock as it would be done by ak-enter
+ak-zblock-manipulator   # TODO
+ak-zblock-show          # Shows a specified ZBLOCK
+ak-pack_z_block         # Creates and publishes a ZBLOCK (used by modules)
+
+Zchain tools
+------------
+ak-zchain-chk     # TODO
+ak-zchain-rebase  # Rebases ZCHAIN to specified ZBLOCK
+ak-zchain-reset   # Resets ZCHAIN to GENESIS
+
+File splitters
+--------------
+ak-sm-filejoiner            # Joins a file from a map
+ak-sm-filesplitter          # Splits a file to chunks and creates a map
+ak-sm-merkle-tree           # Splits a file to merkle tree and returns the root
+ak-sm-merkle-tree-to-file   # Joins a file from a merkle root
+
+IPFS Wrappers
+-------------
+ak-ipfs-add
+ak-ipfs-block-stat
+ak-ipfs-cat
+ak-ipfs-check
+ak-ipfs-files-cp
+ak-ipfs-files-ls
+ak-ipfs-files-mkdir
+ak-ipfs-files-mv
+ak-ipfs-files-rm
+ak-ipfs-files-stat
+ak-ipfs-get
+ak-ipfs-key-gen
+ak-ipfs-key-list
+ak-ipfs-key-list-full
+ak-ipfs-name-publish
+ak-ipfs-name-resolve
+ak-ipfs-starter
+ak-ipfs-swarm-peers
+ak-ipns-resolve
+
+Not completed or just odd
+-------------------------
+ak2html                                             # TODO
+ak-get-ipfs-hashes-from-my-zchain                   # Retuns CIDs of "ipfs" DATA
+ak-get-only-ipfs-key-values-from-our-or-a-zchain    # Retuns CIDs of "ipfs" DATA
+ak-get-only-ipfs-key-values-from-our-zchain         # Retuns CIDs of "ipfs" DATA
+
+Deprecated
+----------
+ak-json2bash
