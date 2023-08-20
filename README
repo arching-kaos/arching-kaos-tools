@@ -17,11 +17,12 @@ Most of the times, IPFS_CID in DATA is expected to be a file. And the module
 is responsible for handling it properly.
 
 For the zchain to be valid, all the signatures must be verifiable against the
-provided GPG key.
+provided GPG key that is included in the BLOCK.
 
-Latest developments
--------------------
-1. A proof of work blockchain is introduced to synchronize the zchains among them.
+Previous developments
+---------------------
+1. A proof of work blockchain is introduced to synchronize the zchains among
+   them.
 2. A miner prototype is introduced as well.
 3. From a directory full of blocks, find the latest block of the longest chain
 4. API for calling some of the bash scripts
@@ -42,20 +43,20 @@ ACTION tools (modules):
 `ak-profile` - Can be used to build up a profile of the contributor.
 
 Based on your GPG, zchain and other values provided by `profile`, you can create
-with `akconfig` a pointer to some basic information that you can share with others
-in order for them to crawl your zchain or view your "profile".
+with `akconfig` a pointer to some basic information that you can share with
+others in order for them to crawl your zchain or view your "profile".
 
 There are more tools available under the `bin` folder. Make sure you deeply
 understand what they are doing before using them. 
 
-Changes are mentioned in `git log` of the repo, as well as in [CHANGELOG](https://github.com/arching-kaos/arching-kaos-tools/blob/master/CHANGELOG) file.
+Changes are mentioned in `git log` of the repo, as well as in CHANGELOG file.
 
 Requirements
 ------------
 Some Linux machine will propably work. It's tested under Fedora Linux. External
 programs used are:
 
-- bash (v5.1.8) or zsh (v5.8)
+- bash (v5.1.8)
 - gpg (v2.3.4)
 - wget (v1.21.2)
 - curl (v7.79.1)
@@ -73,7 +74,7 @@ Write on your terminal:
 ```
 git clone https://github.com/arching-kaos/arching-kaos-tools
 cd arching-kaos-tools
-sh install.sh
+./install.sh
 ```
 
 If you encounter any errors, please open an issue.
@@ -87,6 +88,17 @@ Navigate to your cloned repository and execute the following commands:
 git pull
 ./update.sh
 ```
+Uninstall
+---------
+
+Navigate to your cloned repository and execute the following command:
+
+```
+./uninstall.sh
+```
+This will output an archive with your aknet-gpg-keyring to your $HOME folder.
+
+It will NOT remove your IPFS repository, neither is going to clean it.
 
 Examples
 --------
@@ -98,9 +110,15 @@ You could use ZCHAIN with NEWS model. Or MIXTAPE model, or make your own.
 $ ak-news create
 ```
 
-This would pop up a vim editor for you to write a news article or whatever is text or markdown format with a title.
+This would pop up a vim editor for you to write a news article or whatever is
+text or markdown format with a title.
 
-Saving the file, will save it locally, add it to IPFS, sign it, pack detached signature with metadata on a JSON object. Then a block will be created packing your GPG public key, the news/add action with the JSON object and a detached signature of this, timestamp and finally an entry for the previous *zblock*. After that (!) we finally write this as a json object, add it to IPFS, sign it and pack a *zblock*. That, is published over our IPNS zchain key.
+Saving the file, will save it locally, add it to IPFS, sign it, pack detached
+signature with metadata on a JSON object. Then a block will be created packing
+your GPG public key, the news/add action with the JSON object and a detached
+signature of this, timestamp and finally an entry for the previous *zblock*.
+After that, we finally write this as a JSON object, add it to IPFS, sign it
+and pack a *ZBLOCK*. The ZBLOCK is then published over our IPNS zchain key.
 
 Other options... let's try help! 
 
@@ -119,11 +137,15 @@ create          Vim is going to pop up, you will write and save your
 ```
 
 Clearly there is a TODO item. Import is not working so avoid it, or fix it.
-Add is nice, you can add an already existing file directly. `news` is the second module after `mixtape`. Both modules need refactoring but they work at a level that someone can be productive with these tools.  
+Add is nice, you can add an already existing file directly. `news` is the second
+module after `mixtape`. Both modules need refactoring but they work at a level
+that someone can be productive with these tools.  
 
 ### Explore chains ( `ak-enter` )
 
-You can view your zchain as a JSON object using `enter`. There are some flags in order to either view other zchains or change the depth of view ( includes or ignores data object and action ).
+You can view your zchain as a JSON object using `enter`. There are some flags
+in order to either view other zchains or change the depth of view ( includes or
+ignores data object and action ).
 
 ``` console
 $ ak-enter -h
@@ -144,7 +166,8 @@ Running with no flags crawls your chain
 Podman (or Docker)
 ------------------
 
-There is a ContainerFile that you can use to build an image which you can then deploy in a container.
+There is a ContainerFile that you can use to build an image which you can then
+deploy in a container.
 
 Use:
 
@@ -156,12 +179,15 @@ TODO
 ----
 
 Next things to come are:
-- [ ] - zblock manipulator to fix wrong previous block references and repack zblocks.
-- [X] - zchain rebase-like procedure to move the zblocks to another seed or set another previous block (e.g. join chains)
+- [ ] - zblock manipulator to fix wrong previous block references and repack
+        zblocks.
+- [X] - zchain rebase-like procedure to move the zblocks to another seed or set
+        another previous block (e.g. join chains)
 - [ ] - Clean up installation and filesystem usage
 - [ ] - Log rotate to gzip archives
 - [ ] - Filters for log searching for IPFS hashes or names
-- [ ] - Use of IPFS file system to store/pin sub chains, previous chains or other chains
+- [ ] - Use of IPFS file system to store/pin sub chains, previous chains or
+        other chains
 
 Concepts under thought
 ----------------------
