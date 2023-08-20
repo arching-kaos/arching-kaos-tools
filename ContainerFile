@@ -1,8 +1,7 @@
 FROM fedora:latest
 RUN sudo dnf update -y && sudo dnf install wget which git screen pinentry -y 
-COPY . /repo
-RUN gpg --import /repo/test.sk
-RUN bash -c 'cd /repo && /repo/install.sh'
+COPY . /root/arching-kaos-tools
+RUN bash -c 'cd /root/arching-kaos-tools && /root/arching-kaos-tools/install.sh'
 RUN git config --global user.email "test@test.test"
 RUN git config --global user.name "test"
 RUN git config --global init.defaultBranch master
