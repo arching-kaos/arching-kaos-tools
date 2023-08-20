@@ -22,4 +22,5 @@ export AK_FINGERPRINT="$(gpg2 --homedir $AK_GPGHOME --list-keys | grep kaos@kaos
 export AK_MINEDBLOCKSDIR="$AK_WORKDIR/mined_blocks"
 export AK_ZBLOCKSFILE="$AK_WORKDIR/zBlocksFile"
 export AK_ZPAIRSFILE="$AK_WORKDIR/pairsFile"
+export AK_CACHEDIR="$AK_WORKDIR/cache"
 
