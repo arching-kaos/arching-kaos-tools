@@ -1,11 +1,5 @@
 #!/bin/bash
-AK_CACHE="$AK_WORKDIR/cache"
-if [ ! -d $AK_CACHE ]
-then
-    mkdir $AK_CACHE
-fi
-
-ak-find-latest-mined-sblock > $AK_CACHE/ak-find-latest-mined-sblock.json
-ak-get-chain-minified > $AK_CACHE/ak-get-chain-minified.json
-ak-get-latest > $AK_CACHE/ak-get-latest.json
+ak-find-latest-mined-sblock > $AK_CACHEDIR/ak-find-latest-mined-sblock.json
+ak-get-chain-minified > $AK_CACHEDIR/ak-get-chain-minified.json
+ak-get-latest > $AK_CACHEDIR/ak-get-latest.json
 
