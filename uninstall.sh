@@ -2,7 +2,7 @@
 printf "Arching Kaos Tools - Uninstaller\n"
 printf "--------------------------------\n"
 printf "Backing up your GPG keyring..."
-tar cvfz $AK_ROOT/aknet-gpg-keyring-backup-`date -u +%Y%m%d`.tar.gz $AK_GPGHOME
+tar cfz $AK_ROOT/aknet-gpg-keyring-backup-`date -u +%Y%m%d`.tar.gz $AK_GPGHOME
 if [ $? -ne 0 ]
 then
     printf "\tFailed! Aborting...\n"
