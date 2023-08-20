@@ -3,7 +3,7 @@ printf "Arching Kaos Tools - Uninstaller\n"
 echo '--------------------------------'
 if [ ! -d "$AK_WORKDIR" ] ; then printf "No arching-kaos found... Aborting...\n"; exit 1; fi
 printf "Backing up your GPG keyring..."
-tar cfz $AK_ROOT/aknet-gpg-keyring-backup-`date -u +%Y%m%d`.tar.gz $AK_GPGHOME
+tar cfz $AK_ROOT/aknet-gpg-keyring-backup-`date -u +%Y%m%d`.tar.gz $AK_GPGHOME > /dev/null 2>&1
 if [ $? -ne 0 ]
 then
     printf "\tFailed! Aborting...\n"
