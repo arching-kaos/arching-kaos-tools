@@ -51,7 +51,16 @@ printf "Initialization started... \n"
 ak_gpg_check_or_create
 
 if [ -f $AK_ZGENESIS ] ; then printf "%s" "$(ipfs add -q $AK_GENESIS)" > $AK_ZGENESIS;fi
-if [ ! -f $AK_ZCHAIN ] ; then printf "%s" "$(ipfs key gen zchain)" > $AK_ZCHAIN;fi
+if [ ! -f $AK_ZCHAIN ]
+then
+    ipfs key list | grep zchain
+    if [ "$?" -ne 0 ]
+    then
+        printf "%s" "$(ipfs key gen zchain)" > $AK_ZCHAIN
+    else
+        printf "%s" "$(ipfs key list -l | grep zchain | awk '{ print $1 }')" > $AK_ZCHAIN
+    fi
+fi
 if [ ! -f $AK_ZLATEST ] ; then cp $AK_ZGENESIS $AK_ZLATEST;fi
 if [ ! -f $AK_ZCHAINASC ] ; then gpg2 --homedir $AK_GPGHOME -bao $AK_ZCHAINASC $AK_ZCHAIN;fi
 if [ ! -f $AK_ZZCHAIN ] ; then printf "%s" "$(ipfs add -q $AK_ZCHAINASC)" > $AK_ZZCHAIN;fi
