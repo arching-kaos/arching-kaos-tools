@@ -1,7 +1,7 @@
 #!/bin/bash
 printf "Arching Kaos Tools - Uninstaller\n"
-printf "--------------------------------\n"
-if [ -d "$AK_WORKDIR" ] ; then printf "No arching-kaos found... Aborting...\n"; exit 1; fi
+echo '--------------------------------'
+if [ ! -d "$AK_WORKDIR" ] ; then printf "No arching-kaos found... Aborting...\n"; exit 1; fi
 printf "Backing up your GPG keyring..."
 tar cfz $AK_ROOT/aknet-gpg-keyring-backup-`date -u +%Y%m%d`.tar.gz $AK_GPGHOME
 if [ $? -ne 0 ]
