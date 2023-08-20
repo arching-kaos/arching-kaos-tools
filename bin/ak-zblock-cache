@@ -4,6 +4,11 @@ logit(){
     ak-logthis "<$PROGRAM>" "$1" "$2"
 }
 
+if [ ! -d "$AK_CACHEDIR/fzblocks" ]
+then
+    mkdir $AK_CACHEDIR/fzblocks
+fi
+
 if [ ! -z "$1" ]
 then
     if [ -f "$AK_ZBLOCKDIR/$1" ] && [ "$(du -b $AK_ZBLOCKDIR | awk '{ print $1 }')" != "0" ]
