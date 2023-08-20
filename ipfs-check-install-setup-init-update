@@ -2,24 +2,25 @@
 if [ ! -d $AK_BINDIR ]; then mkdir $AK_BINDIR ;fi
 if [ ! -d $AK_ARCHIVESDIR ]; then mkdir $AK_ARCHIVESDIR ;fi
 logthis(){
-	echo "$(date -u +%s) $1 $2" >> $AK_WORKDIR/logs
+    echo "$(date -u +%s) $1 $2" >> $AK_WORKDIR/logs
 }
 
 install(){
-	logthis "[INFO]" "Attempting to install IPFS..."
-	IPFS_VERSION="$(curl -s https://dist.ipfs.tech/kubo/versions | tail -1)"
+    logthis "[INFO]" "Attempting to install IPFS..."
+    IPFS_VERSION="$(curl -s https://dist.ipfs.tech/kubo/versions | tail -1)"
 
     # Setting the SHA512SUM for our swarm
-	SWARMSHA512SUM="7001e37412758c43d372a969e977ca11511e034c8c1e233a58dc3ce1c6f3c1aa7d2da8cba9944a5eabaa8885742bfe6cc6794224c146b7129da8f633b53b9cfc"
+    SWARMSHA512SUM="7001e37412758c43d372a969e977ca11511e034c8c1e233a58dc3ce1c6f3c1aa7d2da8cba9944a5eabaa8885742bfe6cc6794224c146b7129da8f633b53b9cfc"
 
-	IPFS_TARGET_FILE="kubo_"$IPFS_VERSION"_linux-amd64.tar.gz"
+    IPFS_TARGET_FILE="kubo_"$IPFS_VERSION"_linux-amd64.tar.gz"
 
-	logthis "[INFO]" "Downloading ipfs $IPFS_VERSION"
-	if [ ! -f $AK_ARCHIVESDIR/$IPFS_TARGET_FILE ]; then
-		wget -O $AK_ARCHIVESDIR/$IPFS_TARGET_FILE https://dist.ipfs.tech/kubo/$IPFS_VERSION/$IPFS_TARGET_FILE ;
-	fi
+    logthis "[INFO]" "Downloading ipfs $IPFS_VERSION"
+    if [ ! -f $AK_ARCHIVESDIR/$IPFS_TARGET_FILE ]
+    then
+        wget -O $AK_ARCHIVESDIR/$IPFS_TARGET_FILE https://dist.ipfs.tech/kubo/$IPFS_VERSION/$IPFS_TARGET_FILE ;
+    fi
 
-	logthis "[INFO]" "Making temp files"
+    logthis "[INFO]" "Making temp files"
     pwd > pwd
     mktemp > tempassin
     ak_curdir=$(cat pwd)
@@ -29,30 +30,31 @@ install(){
     cp kubo/ipfs $AK_BINDIR/ipfs
     cd $ak_curdir
     rm -rf $TEMPASSIN
-	logthis "[INFO]" "ipfs installed on $AK_BINDIR"
+    logthis "[INFO]" "ipfs installed on $AK_BINDIR"
 
-	if [ ! -d $HOME/.ipfs ]; then
-		mkdir $HOME/.ipfs
-		$AK_BINDIR/ipfs init ;
-	fi
+    if [ ! -d $HOME/.ipfs ]
+    then
+        mkdir $HOME/.ipfs
+        $AK_BINDIR/ipfs init
+    fi
 }
 
 swarm_install() {
-	if [ ! -f $HOME/.ipfs/swarm.key ]; then
+    if [ ! -f $HOME/.ipfs/swarm.key ]; then
         logthis "[INFO]" "Downloading swarm key"
-		wget -O $HOME/.ipfs/swarm.key https://arching-kaos.net/files/swarm.key ;
-	elif [ ! -f $HOME/.ipfs/swarm.key ] && [ "$(sha512sum $HOME/.ipfs/swarm.key | awk '{ print $1 }')" == "$SWARMSHA512SUM" ]; then
-		logthis "[INFO]" "Congrats! You are already in our swarm" ;
-	else
-		logthis "[ERROR]" "Found swarm.key but not ours"
-		logthis "[ERROR]" "Visit https\:\/\/arching-kaos.net\/files\/swarm.key and copy it to your ipfs folder" ;
-	fi
+        wget -O $HOME/.ipfs/swarm.key https://arching-kaos.net/files/swarm.key
+    elif [ -f $HOME/.ipfs/swarm.key ] && [ "$(sha512sum $HOME/.ipfs/swarm.key | awk '{ print $1 }')" == "$SWARMSHA512SUM" ]; then
+        logthis "[INFO]" "Congrats! You are already in our swarm"
+    else
+        logthis "[ERROR]" "Found swarm.key but not ours"
+        logthis "[ERROR]" "Visit https://arching-kaos.net/files/swarm.key and copy it to your ipfs folder"
+    fi
 }
 
 which ipfs > /dev/null 2>&1
 if [ $? != 0 ]; then
-	install
-	ipfs init
+    install
+    ipfs init
     swarm_install
 else
     logthis "[INFO]" "Found IPFS! Skipping downloading..."
