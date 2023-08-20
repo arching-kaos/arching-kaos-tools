@@ -50,13 +50,13 @@ printf "Initialization started... \n"
 
 ak_gpg_check_or_create
 
-if [[ -f $AK_ZGENESIS ]] ; then printf "%s" "$(ipfs add -q $AK_GENESIS)" > $AK_ZGENESIS;fi
-if [[ ! -f $AK_ZCHAIN ]] ; then printf "%s" "$(ipfs key gen zchain)" > $AK_ZCHAIN;fi
-if [[ ! -f $AK_ZLATEST ]] ; then cp $AK_ZGENESIS $AK_ZLATEST;fi
-if [[ ! -f $AK_ZCHAINASC ]] ; then gpg2 --homedir $AK_GPGHOME -bao $AK_ZCHAINASC $AK_ZCHAIN;fi
-if [[ ! -f $AK_ZZCHAIN ]] ; then printf "%s" "$(ipfs add -q $AK_ZCHAINASC)" > $AK_ZZCHAIN;fi
-if [[ ! -f $AK_GENESISASC ]] ; then gpg2 --homedir $AK_GPGHOME -bao $AK_GENESISASC $AK_GENESIS;fi
-if [[ ! -f $AK_ZGENESISASC ]] ; then printf "%s" "$(ipfs add -q $AK_GENESISASC)" > $AK_ZGENESISASC;fi
+if [ -f $AK_ZGENESIS ] ; then printf "%s" "$(ipfs add -q $AK_GENESIS)" > $AK_ZGENESIS;fi
+if [ ! -f $AK_ZCHAIN ] ; then printf "%s" "$(ipfs key gen zchain)" > $AK_ZCHAIN;fi
+if [ ! -f $AK_ZLATEST ] ; then cp $AK_ZGENESIS $AK_ZLATEST;fi
+if [ ! -f $AK_ZCHAINASC ] ; then gpg2 --homedir $AK_GPGHOME -bao $AK_ZCHAINASC $AK_ZCHAIN;fi
+if [ ! -f $AK_ZZCHAIN ] ; then printf "%s" "$(ipfs add -q $AK_ZCHAINASC)" > $AK_ZZCHAIN;fi
+if [ ! -f $AK_GENESISASC ] ; then gpg2 --homedir $AK_GPGHOME -bao $AK_GENESISASC $AK_GENESIS;fi
+if [ ! -f $AK_ZGENESISASC ] ; then printf "%s" "$(ipfs add -q $AK_GENESISASC)" > $AK_ZGENESISASC;fi
 
 ipfs_zarchive_check_or_mkdir
 
@@ -70,7 +70,7 @@ ipfs_zlatest_check_or_create
 binfiles=$(ls -1 $(pwd)/bin)
 for b in $binfiles
 do
-    if [[ ! -L $AK_BINDIR/$b ]]
+    if [ ! -L $AK_BINDIR/$b ]
     then
         printf "Creating symlink to %s..." "$b"
         ln -s $(pwd)/bin/$b $AK_BINDIR/$b

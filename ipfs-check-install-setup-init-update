@@ -1,6 +1,6 @@
 #!/bin/bash
-if [[ ! -d $AK_BINDIR ]]; then mkdir $AK_BINDIR ;fi
-if [[ ! -d $AK_ARCHIVESDIR ]]; then mkdir $AK_ARCHIVESDIR ;fi
+if [ ! -d $AK_BINDIR ]; then mkdir $AK_BINDIR ;fi
+if [ ! -d $AK_ARCHIVESDIR ]; then mkdir $AK_ARCHIVESDIR ;fi
 logthis(){
 	echo "$(date -u +%s) $1 $2" >> $AK_WORKDIR/logs
 }
