@@ -40,10 +40,12 @@ install(){
 }
 
 swarm_install() {
-    if [ ! -f $HOME/.ipfs/swarm.key ]; then
+    if [ ! -f $HOME/.ipfs/swarm.key ]
+    then
         logthis "[INFO]" "Downloading swarm key"
         wget -O $HOME/.ipfs/swarm.key https://arching-kaos.net/files/swarm.key
-    elif [ -f $HOME/.ipfs/swarm.key ] && [ "$(sha512sum $HOME/.ipfs/swarm.key | awk '{ print $1 }')" == "$SWARMSHA512SUM" ]; then
+    elif [ -f $HOME/.ipfs/swarm.key ] && [ "$(sha512sum $HOME/.ipfs/swarm.key | awk '{ print $1 }')" == "$SWARMSHA512SUM" ]
+    then
         logthis "[INFO]" "Congrats! You are already in our swarm"
     else
         logthis "[ERROR]" "Found swarm.key but not ours"
