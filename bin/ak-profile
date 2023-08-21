@@ -64,7 +64,6 @@ EOF
 		IPFS_FILE=$(ak-ipfs-add $ZPROPERTY_FILE)
 		echo "Prop writting,,, $IPFS_FILE"
 		add $ZPROPERTY_KEY
-		echo "Adding to git repo..."
 		cd $ZPROFILEDIR
 	else
 		echo "Couldn't write to file $ZPROFILEDIR/$TO_FILE"
