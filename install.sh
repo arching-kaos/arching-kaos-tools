@@ -1,4 +1,99 @@
 #!/bin/bash
+clear
+printf "Arching Kaos Tools Installer\n"
+printf "============================\n"
+printf "Welcome to our ever involving installer\n"
+printf "We will be as verbose as possible, yet minimal\n"
+printf "Our default behaviour is to ask the less is needed\n"
+printf "\n"
+printf "For minimum overall friction, we will ask sudo access only if it's\n"
+printf "needed for a missing package.\n"
+printf "\n"
+printf "We discourage running the installer with sudo.\n"
+printf "\n"
+printf "Installation starts in..."
+countdown=30
+printf " %s" "$countdown"
+countdown="$(expr $countdown - 1)"
+sleep 1
+while [ $countdown -gt 0 ]
+do
+    if [ $countdown -lt 10 ]
+    then
+        printf "\b\b %s" "$countdown"
+    else
+        printf "\b\b%s" "$countdown"
+    fi
+    countdown="$(expr $countdown - 1)"
+    sleep 1
+done
+printf "\b\b starting!!!"
+sleep 1
+printf "\n"
+packageManager=""
+checkPkgManager(){
+    printf "Searching for package manager..."
+    which dnf
+    if [ $? == 0 ]
+    then
+        printf "\tFound DNF\n"
+        packageManager="$(which dnf)"
+    fi
+    which apt
+    if [ $? == 0 ]
+    then
+        printf "\tFound APT\n"
+        packageManager="$(which apt)"
+    fi
+    if [ "$packageManager" == "" ]
+    then
+        printf "Could not find package manager\n"
+    fi
+}
+checkPkgManager
+
+# Depedencies check and install
+declare -a depedencies=("curl","wget","bash","jq","node","npm","gpg","git")
+for dep in "${depedencies[@]}"
+do
+    printf "Checking for %s..." "$dep"
+    which $dep
+    if [ $? -ne 0 ]
+    then
+        printf "\t Not found!"
+        if [ "$packageManager" != "" ]
+        then
+            if [ "$packageManager" == "apt" ] && [ "$dep" == "node" ]
+            then
+                dep="nodejs"
+            fi
+            sudo $packageManager install -y $dep 1> /dev/null 2>&1
+            if [ $? -ne 0 ]
+            then
+                printf "\t Failed to install!\n"
+                exit 1
+            fi
+            printf "\t installed!\n"
+        else
+            printf "\t Don't know how to install!\n"
+            exit 1
+        fi
+    else
+        printf "\t Found!\n"
+    fi
+done
+
+# Work-around for gpg2 calls on distros that don't provide a link
+which gpg2
+if [ $? -ne 0 ]
+then
+    which gpg
+    if [ $? == 0 ]
+    then
+        sudo ln -s /usr/bin/gpg /usr/bin/gpg2
+    fi
+fi
+
 source ./config.sh
 printf "%s" $(pwd) > wam
 WHEREAMI="$(cat wam)"
