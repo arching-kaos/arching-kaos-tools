@@ -33,13 +33,13 @@ printf "\n"
 packageManager=""
 checkPkgManager(){
     printf "Searching for package manager..."
-    which dnf
+    which dnf 2> /dev/null 1>&2
     if [ $? == 0 ]
     then
         printf "\tFound DNF\n"
         packageManager="$(which dnf)"
     fi
-    which apt
+    which apt 2> /dev/null 1>&2
     if [ $? == 0 ]
     then
         printf "\tFound APT\n"
@@ -57,7 +57,7 @@ declare -a depedencies=("curl","wget","bash","jq","node","npm","gpg","git")
 for dep in "${depedencies[@]}"
 do
     printf "Checking for %s..." "$dep"
-    which $dep
+    which $dep 2> /dev/null 1>&2
     if [ $? -ne 0 ]
     then
         printf "\t Not found!"
