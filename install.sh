@@ -53,7 +53,7 @@ checkPkgManager(){
 checkPkgManager
 
 # Depedencies check and install
-declare -a depedencies=("curl","wget","bash","jq","node","npm","gpg","git")
+declare -a depedencies=("curl" "wget" "bash" "jq" "node" "npm" "gpg" "git")
 for dep in "${depedencies[@]}"
 do
     printf "Checking for %s..." "$dep"
