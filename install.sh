@@ -97,7 +97,16 @@ fi
 source ./config.sh
 printf "%s" $(pwd) > wam
 WHEREAMI="$(cat wam)"
-if [ ! -d $AK_WORKDIR ] ; then mkdir $AK_WORKDIR ;fi
+if [ ! -d $AK_WORKDIR ]
+then
+    mkdir $AK_WORKDIR
+else
+    printf "Error: Found %s.\n" "$AK_WORKDIR"
+    printf "Please back up your previous installation\n"
+    printf "and rerun ./install.sh.\n"
+    exit 5
+fi
+
 if [ ! -d $AK_CONFIGDIR ] ; then mkdir $AK_CONFIGDIR ;fi
 if [ ! -d $AK_BINDIR ]; then mkdir $AK_BINDIR ;fi
 if [ ! -d $AK_ZBLOCKDIR ]; then mkdir $AK_ZBLOCKDIR ;fi
