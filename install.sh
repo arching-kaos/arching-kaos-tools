@@ -51,6 +51,14 @@ checkPkgManager(){
         installCommand="install"
         dontAskFlag="-y"
     fi
+    which pacman 2> /dev/null 1>&2
+    if [ $? == 0 ]
+    then
+        printf "\tFound APT\n"
+        packageManager="$(which pacman)"
+        installCommand="-S"
+        dontAskFlag="--noconfirm"
+    fi
     if [ "$packageManager" == "" ]
     then
         printf "Could not find package manager\n"
