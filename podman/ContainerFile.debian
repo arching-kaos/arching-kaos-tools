@@ -1,0 +1,13 @@
+FROM debian:latest
+RUN apt update -y && apt upgrade  && apt install which git screen -y 
+COPY . /root/arching-kaos-tools
+RUN bash -c 'cd /root/arching-kaos-tools && /root/arching-kaos-tools/install.sh'
+RUN git config --global user.email "kaos@kaos.kaos"
+RUN git config --global user.name "kaos"
+RUN git config --global init.defaultBranch master
+EXPOSE 4001/tcp
+EXPOSE 5001/tcp
+EXPOSE 8080/tcp
+ENTRYPOINT ["tail","-f","/root/.arching-kaos/logs"]
+
+
