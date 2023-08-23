@@ -2,8 +2,8 @@ FROM fedora:latest
 RUN dnf update -y && dnf install which git screen pinentry -y
 COPY . /root/arching-kaos-tools
 RUN bash -c 'cd /root/arching-kaos-tools && /root/arching-kaos-tools/install.sh'
-RUN git config --global user.email "test@test.test"
-RUN git config --global user.name "test"
+RUN git config --global user.email "kaos@kaos.kaos"
+RUN git config --global user.name "kaos"
 RUN git config --global init.defaultBranch master
 EXPOSE 4001/tcp
 EXPOSE 5001/tcp
