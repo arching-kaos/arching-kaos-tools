@@ -83,7 +83,7 @@ do
             then
                 dep="nodejs"
             fi
-            sudo $packageManager install -y $dep 1> /dev/null 2>&1
+            $sudoBin $packageManager $installCommand $dontAskFlag $dep 1> /dev/null 2>&1
             if [ $? -ne 0 ]
             then
                 printf "\t Failed to install!\n"
@@ -106,7 +106,7 @@ then
     which gpg
     if [ $? == 0 ]
     then
-        sudo ln -s /usr/bin/gpg /usr/bin/gpg2
+        $sudoBin ln -s /usr/bin/gpg /usr/bin/gpg2
     fi
 fi
 
