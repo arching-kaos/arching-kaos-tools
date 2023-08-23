@@ -31,6 +31,8 @@ printf "\b\b starting!!!"
 sleep 1
 printf "\n"
 packageManager=""
+installCommand=""
+dontAskFlag=""
 checkPkgManager(){
     printf "Searching for package manager..."
     which dnf 2> /dev/null 1>&2
@@ -38,12 +40,16 @@ checkPkgManager(){
     then
         printf "\tFound DNF\n"
         packageManager="$(which dnf)"
+        installCommand="install"
+        dontAskFlag="-y"
     fi
     which apt 2> /dev/null 1>&2
     if [ $? == 0 ]
     then
         printf "\tFound APT\n"
         packageManager="$(which apt)"
+        installCommand="install"
+        dontAskFlag="-y"
     fi
     if [ "$packageManager" == "" ]
     then
