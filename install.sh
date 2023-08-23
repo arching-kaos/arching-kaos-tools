@@ -58,6 +58,16 @@ checkPkgManager(){
 }
 checkPkgManager
 
+sudoBin="sudo"
+checkIfSudoAvailable(){
+    which sudo
+    if [ $? -ne 0 ]
+    then
+        sudoBin=""
+    fi
+}
+checkIfSudoAvailable
+
 # Depedencies check and install
 declare -a depedencies=("curl" "wget" "bash" "jq" "nodejs" "npm" "gpg" "git")
 for dep in "${depedencies[@]}"
