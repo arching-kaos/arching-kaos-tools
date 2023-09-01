@@ -67,6 +67,14 @@ checkPkgManager(){
         installCommand="-S"
         dontAskFlag="--noconfirm"
     fi
+    which apk 2> /dev/null 1>&2
+    if [ $? == 0 ]
+    then
+        printf "\tFound APK\n"
+        packageManager="$(which apk)"
+        installCommand="add"
+        dontAskFlag="-q"
+    fi
     if [ "$packageManager" == "" ]
     then
         printf "Could not find package manager\n"
