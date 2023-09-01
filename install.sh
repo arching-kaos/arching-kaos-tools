@@ -51,6 +51,14 @@ checkPkgManager(){
         installCommand="install"
         dontAskFlag="-y"
     fi
+    which zypper 2> /dev/null 1>&2
+    if [ $? == 0 ]
+    then
+        printf "\tFound ZYPPER\n"
+        packageManager="$(which zypper)"
+        installCommand="install"
+        dontAskFlag="-y"
+    fi
     which pacman 2> /dev/null 1>&2
     if [ $? == 0 ]
     then
