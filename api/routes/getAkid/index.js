@@ -24,7 +24,7 @@ module.exports = (req, res) => {
     });
 
     command.on("close", code => {
-            res.send(buffer);
+            res.send(JSON.parse(buffer));
             console.log(`child process exited with code ${code}`);
     });
 };
