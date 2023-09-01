@@ -11,38 +11,44 @@ const config = require("../../config");
  *
  */
 function fetchZblock(zblock, res){
-    const command = spawn("ak-zblock-cache",[zblock]);
-    command.stdout.on("data", data => {
-    });
+    regex= /Qm[A-Za-z0-9]{44}/;
+    if (regex.test(req.params.zblock)){
+        const command = spawn("ak-zblock-cache",[zblock]);
+        command.stdout.on("data", data => {
+        });
 
-    command.stderr.on("data", data => {
-            console.log(`stderr: ${data}`);
-    });
+        command.stderr.on("data", data => {
+                console.log(`stderr: ${data}`);
+        });
 
-    command.on('error', (error) => {
-            console.log(`error: ${error.message}`);
-    });
+        command.on('error', (error) => {
+                console.log(`error: ${error.message}`);
+        });
 
-    command.on("close", code => {
-        console.log(`child process exited with code ${code}`);
+        command.on("close", code => {
+            console.warn(`child process exited with code ${code}`);
 
-        if ( code === 0 ) {
-            const path = config.cacheDir+"/fzblocks/"+zblock;
-            console.log(path)
-            try {
-                if(fs.existsSync(path)){
-                    res.send(JSON.parse(fs.readFileSync(path)));
+            if ( code === 0 ) {
+                const path = config.cacheDir+"/fzblocks/"+zblock;
+                console.log(path)
+                try {
+                    if(fs.existsSync(path)){
+                        res.send(JSON.parse(fs.readFileSync(path)));
+                    }
+                } catch (error) {
+                    res.send({"error":error.message});
                 }
-            } catch (error) {
-                res.send({"error":error.message});
+            } else if ( code === 2){
+                res.send({"error":"The roof is on fire"});
+            } else {
+                res.send({"error":"invalid or unreachable"});
             }
-        } else if ( code === 2){
-            res.send({"error":"The roof is on fire"});
-        } else {
-            res.send({"error":"invalid or unreachable"});
-        }
-    });
+        });
+    } else {
+        res.send({error:"Invalid data: regexp failed to pass"});
+    }
 };
+
 module.exports = (req, res) => {
     console.log(req.params)
     if ( (req.params.zblock) && req.params.zblock.length === 46 ){
