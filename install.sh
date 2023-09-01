@@ -62,7 +62,7 @@ checkPkgManager(){
     which pacman 2> /dev/null 1>&2
     if [ $? == 0 ]
     then
-        printf "\tFound APT\n"
+        printf "\tFound PACMAN\n"
         packageManager="$(which pacman)"
         installCommand="-S"
         dontAskFlag="--noconfirm"
