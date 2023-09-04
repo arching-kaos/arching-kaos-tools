@@ -43,11 +43,13 @@ rebase (){
     echo "Rebase was successful"
     exit 0
 }
-if [ ! -z $1 ] && [ ! -z $2 ]; then
-	case $1 in
-		rebase) rebase $2; exit;;
-		* ) usage;;
-	esac
+if [ ! -z $1 ] ; then
+#&& [ ! -z $2 ]
+    case $1 in
+        rebase) if [ ! -z $2 ]; then rebase $2; else exit 1; fi;;
+        rebase-back-one) rebase "`ak-enter -l 2 | jq -r '.[1].zblock'`" ; exit ;;
+        * ) usage;;
+    esac
 else usage
 fi
 
