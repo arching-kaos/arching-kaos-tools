@@ -84,7 +84,7 @@ checkPkgManager
 
 sudoBin="sudo"
 checkIfSudoAvailable(){
-    which sudo
+    which sudo 2> /dev/null 1>&2
     if [ $? -ne 0 ]
     then
         sudoBin=""
