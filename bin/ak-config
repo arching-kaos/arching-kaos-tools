@@ -7,7 +7,7 @@ title(){
 usage(){
 	title
 	echo ""
-	echo "Usage:	$PROGRAM [ <show> | <publish> ]"
+	echo "Usage:	$PROGRAM [ show | publish | get-published ]"
 	echo ""
 	echo "	show		Show current configuration (from FileSystem)"
 	echo "	publish		Publish current configuration"
