@@ -198,3 +198,10 @@ sh ipfs-check-install-setup-init-update
 source ./config.sh
 source $HOME/$SHELLRC
 sh init.sh
+make
+if [ $? -ne 0 ]
+then
+    printf 'Building API daemon failed\n'
+    exit 1
+fi
+ln -s $WHEREAMI/build/ak-daemon $AK_BINDIR/ak-daemon
