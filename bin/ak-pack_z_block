@@ -54,7 +54,7 @@ main(){
     done < tempisalreadythere
     rm tempisalreadythere
  
-	logit "[INFO]" "We are doing" $ACTION "with content" $MESSAGE
+	logit "[INFO]" "We are doing $ACTION with content $MESSAGE"
 	# We add it to IPFS
 	MESSAGE_HASH=$(ak-ipfs-add $MESSAGE)
 
