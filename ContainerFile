@@ -8,6 +8,7 @@ RUN git config --global init.defaultBranch master
 EXPOSE 4001/tcp
 EXPOSE 5001/tcp
 EXPOSE 8080/tcp
-ENTRYPOINT ["tail","-f","/root/.arching-kaos/logs"]
+EXPOSE 8610/tcp
+ENTRYPOINT ["/root/.arching-kaos/bin/ak-startup"]
 
 
