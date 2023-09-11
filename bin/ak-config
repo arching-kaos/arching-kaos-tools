@@ -19,7 +19,7 @@ usage(){
 show(){
 	echo '
 { 
-    "profile":'$(ak-profile index | jq -M)', 
+    "profile":'$(ak-profile index | jq -cM)',
     "genesis":"'$(cat $HOME/.arching-kaos/config/zgenesis)'",
     "gpg":"'$GPG_PUB_KEY'",
     "zchain":"'$(cat $HOME/.arching-kaos/config/zchain)'" 
@@ -27,7 +27,7 @@ show(){
 }
 
 publish(){
-	show | jq -M > tmpfile
+	show | jq -c -M > tmpfile
     ipfs key list | grep ak-config 2> /dev/null 1>&2
     if [ "$?" -ne 0 ]
     then
