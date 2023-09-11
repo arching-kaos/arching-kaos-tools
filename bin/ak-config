@@ -22,7 +22,8 @@ show(){
     "profile":'$(ak-profile index | jq -cM)',
     "genesis":"'$(cat $HOME/.arching-kaos/config/zgenesis)'",
     "gpg":"'$GPG_PUB_KEY'",
-    "zchain":"'$(cat $HOME/.arching-kaos/config/zchain)'" 
+    "zchain":"'$(cat $HOME/.arching-kaos/config/zchain)'",
+    "zlatest":"'$(ak-get-latest)'"
 }';
 }
 

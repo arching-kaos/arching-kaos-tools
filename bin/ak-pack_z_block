@@ -145,6 +145,12 @@ then
         logit "[ERROR]" "Could not copy $ZBLOCK to /zlatest"
         exit 1
     fi
+    ak-config publish
+    if [ "$?" -ne 0 ]
+    then
+        logit "[ERROR]" "Could not publish new configuration"
+        exit 1
+    fi
 else
 	usage
 	exit 0

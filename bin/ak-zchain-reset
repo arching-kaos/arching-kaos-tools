@@ -38,6 +38,13 @@ reset (){
 	echo "Publishing new (reset) ZLATEST"
 	ak-ipfs-name-publish --key=zchain /ipfs/$(cat $ZLATEST)
 	if [ $? != 0 ]; then exit 1; fi
+
+    ak-config publish
+    if [ "$?" -ne 0 ]
+    then
+        logit "[ERROR]" "Could not publish new configuration"
+        exit 1
+    fi
 	
 	echo "Reset was successful"
 	exit 0
