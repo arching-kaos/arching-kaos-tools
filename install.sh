@@ -199,6 +199,9 @@ sh ipfs-check-install-setup-init-update
 source ./config.sh
 source $HOME/$SHELLRC
 sh init.sh
+cd api
+npm i
+cd ..
 make
 if [ $? -ne 0 ]
 then
