@@ -103,6 +103,7 @@ do
         printf "\t Not found!"
         if [ "$packageManager" != "" ]
         then
+            printf "\t Attempting installation..."
             $sudoBin $packageManager $installCommand $dontAskFlag $dep 1> /dev/null 2>&1
             if [ $? -ne 0 ]
             then
