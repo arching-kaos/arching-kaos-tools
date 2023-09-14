@@ -1,0 +1,137 @@
+Installation instructions
+-------------------------
+
+Part 0: Introduction
+--------------------
+
+There are two ways of installing arching-kaos-tools:
+1) in a Linux environment,
+2) in a container environment.
+
+In the following two sections you 'll read the relevant instructions for each
+case. Requirements can be found in the `REQUIRMENTS` file and it's essentially
+a list of dependencies.
+
+Part 1: Obtaining the source code
+---------------------------------
+
+1.1 Using `git`
+---------------
+You can clone this repository using `git`. To be more specific, you can choose
+cloning from:
+a) https://github.com/arching-kaos/arching-kaos-tools
+b) https://git.kaotisk-hund.com/arching-kaos-tools/.git
+c) http://git.z.kaotisk-hund.com/arching-kaos-tools/.git
+
+Note:
+(c) link is working only if you are connected to the public cjdns network. If
+you are not, consider it!
+
+Example:
+In a bash terminal issue the following commands:
+```
+cd $HOME
+git clone https://github.com/arching-kaos/arching-kaos-tools
+cd arching-kaos-tools
+```
+
+After that, continue to Part 2.
+
+1.2 Downloading an archive
+--------------------------
+If you don't want to use `git`, you can get the latest nightly build from:
+a) https://arching-kaos.net/files/arching-kaos-tools/
+b) http://[fc59:6076:6299:6776:c13d:fbb2:1226:ead0]/files/arching-kaos-tools/
+
+Note:
+(b) link is working only if you are connected to the public cjdns network. If
+you are not, consider it!
+
+Example:
+In a bash terminal issue the following commands:
+```
+cd $HOME
+mkdir arching-kaos-tools
+cd arching-kaos-tools
+wget https://arching-kaos.net/files/arching-kaos-tools/arching-kaos-tools-nightly-20230914.tar.gz
+tar xvf arching-kaos-tools-nightly-20230914.tar.gz
+
+```
+
+Part 2: Installation
+--------------------
+
+In this part, we are supposing you have the source code obtained and laying at
+$HOME/arching-kaos-tools folder. We also assume that you have an open terminal
+and that you are navigated inside that folder.
+
+2.1 Linux environment
+---------------------
+The source code comes with an installation script called `install.sh`. It will
+check and attempt to install missing software.
+
+Do NOT run the `install.sh` script with sudo, it will call sudo on its own
+whenever is needed. Be sure to be cautious to provide it with your password when
+this occurs. In case you don't have sudo access, ask your administrator to
+install the dependencies that are described in the `REQUIRMENTS` file.
+
+From inside the source code's folder issue the following command:
+```
+./install.sh
+```
+
+The script will prompt some paragraphs introducing you in more or less what we
+already mentioned above, but it may worth reading. You get also 30 seconds to
+consider if you want to continue or cancel the installation. You can cancel by
+hitting CTRL+C combination from your keyboard. Closing or killing the terminal
+you are running the script on, MAY have the same result.
+
+After the process is finished and it doesn't appear to have any errors occured,
+you would have completed the installation successfully.
+
+You can move to Part 3.
+
+2.2 Container environment
+-------------------------
+There are several ContainerFiles on the podman folder. Supposingly, you can use
+docker as well but podman is prefered as a container environment because it is
+the one that was tested.
+
+The one that is most heavily tested is the one in the root folder of the source
+code which is a link to `podman/ContainerFile.fedora`.
+
+You can issue the following command to build the container:
+```
+podman build -f ContainerFile -t arching-kaos-tools .
+```
+
+After the image is build you can start it with the command:
+```
+podman run -p 8610:8610 -p 4001:4001 -d --name aknode arching-kaos-tools:latest
+```
+
+You can now on-board on the `aknode` running container and use the tools from
+there:
+```
+podman exec -it aknode bash
+```
+
+Congratulations! You installed arching-kaos-tools in a container environment.
+
+Part 3: After installation
+--------------------------
+
+Practically, you got the tools installed but you can expand more the reach of
+the system. You can take a look at the `README` file if you haven't already as
+it covers a lot about what is and how the tools can be used.
+
+One way to extend your reachability is to connect to the cjdns network as
+described on the `NETWORKING` file. Another way is to use Stellar network as
+described in the same file.
+
+Some notes
+----------
+As of publishing this very document, NETWORKING file does not exist. It will
+appear soon though.
+
+Thanks for your patience.
