@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+# Needs CJDNS tools in your PATH
+# 
+# Ref: https://github.com/cjdelisle/cjdns
+#
+counter=0
+printf '[' > walk.aknet
+dumpLinks | cut -d ' ' -f 2,4 | sed 's/ /\n/g' | sort | uniq | while read -r ip || [ -n "$ip" ]
+do
+    akid="`curl --connect-timeout 3 "http://[$(publictoip6 $ip)]:8610/v0/akid" 2>/dev/null`"
+    if [ "$?" == "0" ]
+    then
+        if [ "$counter" -ne "0" ]
+        then
+            printf ',' >> walk.aknet
+        fi
+        printf '{"cjdnsPublicKey":"%s","cjdnsIp":"%s","akid":%s}' "$ip" "`publictoip6 $ip`" "$akid" >> walk.aknet
+        counter="`expr $counter + 1`"
+    fi
+done
+printf ']' >> walk.aknet
