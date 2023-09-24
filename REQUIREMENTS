@@ -1,0 +1,28 @@
+Requirements
+------------
+
+Even though there is a brief description of them in the README file, this space
+would be more convenient to mention these.
+
+To run this repository with no errors from missing depedencies you will need at
+least the following:
+
+bash
+gpg
+jq
+node
+npm
+npx
+make
+curl
+wget
+screen
+
+Note that some of those are checked if they already exist in your system during
+installation and if not found there is an attempt to install them.
+
+IPFS command line tool is also needed but is installed as well during the
+installation process.
+
+CJDNS can be used as a peering method. ak-cjdns-scanner can be used to retrieve
+them. This requires CJDNS to be running and `dumpLinks` tool to be in your PATH.
