@@ -1,0 +1,47 @@
+Networking
+----------
+
+Part 0: Introduction
+--------------------
+There are various ways of achieving a network in arching-kaos and some of them
+are documented here. The ones that are missing, either their are under testing,
+considered to be covered or not yet grasped.
+
+Part 1: Preassumptions
+----------------------
+This document assumes you somehow familiarized yourself with the scripts and
+their usage.
+
+Part 2: Networking via IPFS
+---------------------------
+We need to mention here that when you install arching-kaos-tools, IPFS is also
+installed. Furthermore, a swarm key is downloaded and installed as well. This
+is used to connect to aknet swarm in IPFS. Hence, you 'll need some peers to
+connect to via IPFS. Ask for that in #arching-kaos over at IRC. See `SUPPORT`
+file as well.
+
+Other than that, you can make up yourself a swarm and express your creativity
+there.
+
+Part 3: Networking via Stellar Network
+--------------------------------------
+Stellar Network is used as a peering system. If you own an address in XLM, you
+can store a named variable in your address. You 'll be required to "lock" 0.5XLM
+to persist the value you want. You'll be also required to trust ARCHINGKAOS
+asset if you want your content to be retrievable via https://arching-kaos.net
+and contribute with your creativity there.
+
+TODO: Steps?!
+
+Part 4: Networking with CJDNS
+-----------------------------
+CJDNS is a decentralized mesh networking alternative to the internet. It uses
+the fc00::/8 private space of IPv6 protocol. Your IPv6 derives from your public
+key where its private part is used to decrypt your incoming packets.
+
+Using CJDNS and arching-kaos-tools to netwok around is pretty easy but there are
+steps to make it work as well. Of course, you will need CJDNS to be running in
+the machine you want to network with/from.
+
+TODO: Steps?!
+
