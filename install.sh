@@ -127,7 +127,7 @@ then
     which gpg
     if [ $? == 0 ]
     then
-        $sudoBin ln -s /usr/bin/gpg /usr/bin/gpg2
+        $sudoBin ln -s `which gpg` /usr/bin/gpg2
     fi
 fi
 
