@@ -31,7 +31,54 @@ to persist the value you want. You'll be also required to trust ARCHINGKAOS
 asset if you want your content to be retrievable via https://arching-kaos.net
 and contribute with your creativity there.
 
-TODO: Steps?!
+3.1 Assumption
+--------------
+We assume you already have a Stellar wallet and you also have direct access to
+your private key. This will be needed in case you don't use some wallet,
+compatible with https://laboratory.stellar.org/ which we will be using for
+connecting our arching-kaos configuration link (aka AKID) with our Stellar
+address.
+
+3.2 Preparation
+---------------
+Before we publish anything, we need to know what we need to publish and where.
+
+Issuing the command
+```
+ipfs key list -l | grep ak-config | cut -d ' ' -f 1
+```
+will return to us the IPNS key that points to our current AKID.
+
+We will need this value for the next step
+
+3.3 Publishing IPNS key to Stellar network
+------------------------------------------
+1. Visit https://laboratory.stellar.org/#?network=public and go to the "Build
+transaction" option,
+2. Enter your Stellar address in the Source Address field,
+3. Click the "Fetch next sequence number for account starting with ..." button,
+4. Scroll down to find the "Operation Type" and select from the dropdown menu
+the "Manage data" option,
+5. Use as "Entry name": "config" (without the double quotes),
+6. Paste the IPNS link we got from the previous section, in the "Entry value"
+field,
+7. Scroll further down and click the "Sign in Transaction Signer" button,
+8. Sign the transaction with your wallet or your private key,
+9. Submit the transaction to the Stellar Network!
+
+Congratulations! You successfully published your IPNS reference to your AKID in
+the Stellar Network.
+
+3.4 Open a trustline to ARCHINGKAOS
+-----------------------------------
+To be able to post content on arching-kaos.net you will need to trust the asset
+ARCHINGKAOS issued by GB4QVKD6NW3CSNO5TNPARAWNPPXOPSSTKB35XCWB7PUNBIQTK3DVELB2.
+
+Build a transaction as described above, but instead of "Manage data" select
+"ChangeTrust" option. Set the information above in the appropriate fields,
+sign the transaction and submit it.
+
+Now, your contributions will appear at https://arching-kaos.net 
 
 Part 4: Networking with CJDNS
 -----------------------------
@@ -41,7 +88,17 @@ key where its private part is used to decrypt your incoming packets.
 
 Using CJDNS and arching-kaos-tools to netwok around is pretty easy but there are
 steps to make it work as well. Of course, you will need CJDNS to be running in
-the machine you want to network with/from.
+the machine you want to network with/from. Furthermore, you will also need the
+cjdns-tools, laying under the tools folder in the cjdns repository to be in your
+PATH.
 
-TODO: Steps?!
+You then can use the `ak-cjdns-scanner` to find other akdaemon(s) running around
+your relative neighbourhood. `dumpLinks` is used to retrieve the nodes in this
+area. You can find more intense scanning scripts around like `walk.sh` by ircerr
+which is able to reach the whole public network of cjdns.
 
+- http://hia.cjdns.ca/watchlist/c/walk.sh  (seq)
+- http://hia.cjdns.ca/watchlist/c/walk2.sh (threaded)
+
+TODO: We should be storing the output on a relevant file so it can be reached by
+the API as well or ask for current known nodes without rescanning the network.
