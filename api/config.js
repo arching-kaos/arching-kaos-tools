@@ -17,6 +17,7 @@ const config = {
     workDir:env.AK_WORKDIR,
     blocksFile : env.AK_ZBLOCKSFILE,
     pairsFile : env.AK_ZPAIRSFILE,
+    peersFile : env.AK_ZPEERSFILE,
     cacheDir : env.AK_CACHEDIR,
     minedBlocksDir: env.AK_MINEDBLOCKSDIR
 

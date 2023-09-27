@@ -14,6 +14,7 @@ const getZblock = require('./getZblock');
 const getMrk = require('./getMrk');
 const getTr = require('./getTr');
 const getAkid = require('./getAkid');
+const getPeers = require('./getPeers');
 const getInnerIPFSContent = require('./getInnerIPFSContent');
 const corsOptions = {
     origin: '*',
@@ -41,6 +42,8 @@ router.route(settings.URL_PREFIX+'/zchain').get(getZChain);
 router.route(settings.URL_PREFIX+'/zlatest').get(getZLatest);
 // Returns local node's akid
 router.route(settings.URL_PREFIX+'/akid').get(getAkid);
+// Returns local node's peers
+router.route(settings.URL_PREFIX+'/peers').get(getPeers);
 // Returns content
 router.route(settings.URL_PREFIX+'/content').get(getInnerIPFSContent);
 // Returns zblock
