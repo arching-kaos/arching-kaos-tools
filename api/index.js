@@ -6,18 +6,8 @@
  * License: MIT
  */
 
-/*
- * Loading configuration
- *
- */
 const config = require('./config');
 
-/*
- * PORT we run the service on.
- *
- * Default: 8610
- *
- */
 const DEFAULT_PORT = 8610;
 const PORT = config.port || DEFAULT_PORT;
 
@@ -94,10 +84,6 @@ const routes = require('./routes');
 //Routes.provideTheAppHere(app);
 app.use('/', routes);
 
-
-
-
-
 /*
  * After NS validation went through we examine the return code
  * of the application that run the test.
@@ -136,8 +122,6 @@ function continuethings(exitcode,sh,res){
         res.send({error:"Invalid data"});
     }
 }
-
-
 
 /*
  * Adds a latest resolved IPFS path for a given IPNS link
@@ -211,13 +195,13 @@ function addEntriesToFile(entry,res){
         }
         var json = JSON.stringify(all);
         fs.writeFile(config.blocksFile, json, 'utf8', finished);
+        // wtf is dis?
         function finished(err) {
             console.log('finished writing file');
         }
         res.send(json);
     }
 }
-
 
 app.use(cors);
 var corsOptions = {
