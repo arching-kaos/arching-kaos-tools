@@ -66,6 +66,9 @@ if [ ! -f $AK_ZCHAINASC ] ; then gpg2 --homedir $AK_GPGHOME -bao $AK_ZCHAINASC $
 if [ ! -f $AK_ZZCHAIN ] ; then printf "%s" "$(ipfs add -q $AK_ZCHAINASC)" > $AK_ZZCHAIN;fi
 if [ ! -f $AK_GENESISASC ] ; then gpg2 --homedir $AK_GPGHOME -bao $AK_GENESISASC $AK_GENESIS;fi
 if [ ! -f $AK_ZGENESISASC ] ; then printf "%s" "$(ipfs add -q $AK_GENESISASC)" > $AK_ZGENESISASC;fi
+if [ ! -f $AK_ZBLOCKSFILE ] ; then printf "[]" > $AK_ZBLOCKSFILE;fi
+if [ ! -f $AK_ZPAIRSFILE ] ; then printf "[]" > $AK_ZPAIRSFILE;fi
+if [ ! -f $AK_ZPEERSFILE ] ; then printf "[]" > $AK_ZPEERSFILE;fi
 
 ipfs_zarchive_check_or_mkdir
 
