@@ -1,5 +1,8 @@
 #!/bin/bash
 PROGRAM="$(basename $0)"
+tempdir=`mktemp -d`
+tempfile="$tempdir/tmp"
+tempaddr="$tempdir/tmpaddr"
 logit(){
     ak-logthis "<$PROGRAM>" "$1" "$2"
 }
@@ -12,6 +15,14 @@ fi
 if [ ! -f "$stellarParticipantsOnline" ]
 then
     touch $stellarParticipantsOnline
+fi
+if [ ! -f "$tempdir" ]
+then
+    touch $tempdir
+fi
+if [ ! -f "$tempaddr" ]
+then
+    touch $tempaddr
 fi
 
 if [ ! -z $1 ] && [ "$1" == "-l" ] && [ ! -z $2 ]
@@ -26,7 +37,7 @@ show_ids(){
     flag=0
     while [ "$i" -lt "$limit" ]
     do
-        test="$(cat tmp | jq '.["_embedded"]' | jq .'["records"]' | jq '.['$i']' | jq '.["id"]' | sed -e 's/\"//g')"
+        test="$(cat $tempfile | jq '.["_embedded"]' | jq .'["records"]' | jq '.['$i']' | jq '.["id"]' | sed -e 's/\"//g')"
         while IFS="" read -r p || [ -n "$p" ]
         do
             if [ "$p" == "$test" ]
@@ -47,17 +58,17 @@ show_ids(){
 }
 
 get_next_page(){
-    cat tmp | grep -1 next | grep https | sed -e 's/^.*https/https/' | sed -e 's/\u0026/\&/g; s/"//g; s/\\//g'
+    cat $tempfile | grep -1 next | grep https | sed -e 's/^.*https/https/' | sed -e 's/\u0026/\&/g; s/"//g; s/\\//g'
 }
 
 proceed_to_next_page(){
 
     nextURL="$(get_next_page)"
-    curl "$nextURL" > tmp 2>/dev/null
+    curl "$nextURL" > $tempfile 2>/dev/null
 }
 
 get_asset_holders(){
-    curl https://horizon.stellar.org/accounts\?asset\=ARCHINGKAOS:GB4QVKD6NW3CSNO5TNPARAWNPPXOPSSTKB35XCWB7PUNBIQTK3DVELB2\&limit\=$limit > tmp 2>/dev/null
+    curl https://horizon.stellar.org/accounts\?asset\=ARCHINGKAOS:GB4QVKD6NW3CSNO5TNPARAWNPPXOPSSTKB35XCWB7PUNBIQTK3DVELB2\&limit\=$limit > $tempfile 2>/dev/null
 }
 
 get_asset_holders 
@@ -67,9 +78,9 @@ do
     proceed_to_next_page 
 done
 
-grep G $stellarParticipants > tmpaddr
-cat tmpaddr > $stellarParticipants
-rm tmp tmpaddr
+grep G $stellarParticipants > $tempaddr
+cat $tempaddr > $stellarParticipants
+rm $tempfile $tempaddr
 while IFS="" read -r p || [ -n "$p" ]
 do
     flag=0
