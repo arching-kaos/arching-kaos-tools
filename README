@@ -217,7 +217,7 @@ ak-extract-cids         # Prints the CIDs from your ZCHAIN for further usage
 ak-get-akid             # Returns IPFS CID of your AKID (ak-config)
 ak-get-chain-minified   # Obsolete, ak-enter default output
 ak-get-gpg              # Return your GPG key as IPFS CID
-ak-get-latest           # Returns zlatest ZBLOCK according to IPFS FS
+ak-get-zlatest          # Returns zlatest ZBLOCK according to IPFS FS
 ak-tempassin            # Creates temporary directories
 
 Logging

@@ -9,7 +9,7 @@ const { spawn } = require('child_process');
  *
  */
 module.exports = (req, res) => {
-    const command = spawn("ak-get-latest");
+    const command = spawn("ak-get-zlatest");
     command.stdout.on("data", data => {
             res.send({zlatest:`${data}`});
     });
