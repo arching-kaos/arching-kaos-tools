@@ -1,2 +1,13 @@
 #!/bin/bash
-tail -f $AK_LOGSFILE
+tail -f $AK_LOGSFILE | while read -r p || [ -n "$p" ]
+do
+    timestamp="$(echo "$p" | awk '{print $1}')"
+    program="$(echo "$p" | awk '{print $2}')"
+    messagetype="$(echo "$p" | awk '{print $3}')"
+    message="$(echo "$p" | cut -d ' ' -f4-)"
+    printf '%s %s %s %s\n' \
+        "$(date --date=@$timestamp +%Y%m%d_%H%M%S)" \
+        "$program" \
+        "$messagetype" \
+        "$message"
+done
