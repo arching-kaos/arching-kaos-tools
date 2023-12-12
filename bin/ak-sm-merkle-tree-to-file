@@ -22,6 +22,11 @@ outputFilename="$2"
 fmrk="$AK_WORKDIR/fmrk"
 ftr="$AK_WORKDIR/ftr"
 
+# This would be a kind of bootstrap for remote downloads
+#
+#remoteMrk="http://z.kaotisk-hund.com:8610/mrk"
+#remoteTr="http://z.kaotisk-hund.com:8610/tr"
+#
 pwd>.pwd
 
 dirWeWere=$(cat .pwd)
@@ -42,6 +47,13 @@ findDepth(){
         printf "%s" "$counter" > depth
     else
         exit 111
+# Try to download stuff
+#        wget -s $remoteMrk/$currentNode -O $fmrk/$currentNode
+#        if [ "$?" -ne 0 ]
+#        then
+#            exit 111
+#        fi
+#        findDepth "$currentNode"
     fi
 }
 
