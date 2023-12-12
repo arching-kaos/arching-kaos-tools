@@ -1,2 +1,2 @@
 #!/bin/bash
-akconfig show|jq| grep gpg | sed -e 's/"gpg": "//g; s/[," ]//g'
+ak-config show | jq -r '.gpg'
