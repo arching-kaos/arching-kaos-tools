@@ -45,7 +45,7 @@ publish(){
 }
 
 published(){
-	ak-ipfs-cat $(ak-get-akid) | jq -c
+	ak-ipfs-cat $(ak-akid-get-ipfs-hash) | jq -c
 }
 
 # We will be using our public key also to put it in the block later
