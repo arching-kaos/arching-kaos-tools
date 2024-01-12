@@ -43,14 +43,23 @@ create(){
 index(){
     FILES="$(ls -1 $ZNEWSDIR)"
     i=0
+    ak-get-ipfs-hashes-from-my-zchain | sort | uniq > temp
     for FILE in $FILES
     do
-        DATE=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
-        TITLE=$(head -n 1 $ZNEWSDIR/$FILE)
-        IPFS_HASH=$(ak-ipfs-addn $ZNEWSDIR/$FILE)
-        echo $i \| $IPFS_HASH \| $DATE \| $TITLE
+        DATE="$(echo $FILE | cut -d - -f 1 | awk '{print $1}')"
+        TITLE="$(head -n 1 $ZNEWSDIR/$FILE)"
+        IPFS_HASH="$(ipfs add -nQ $ZNEWSDIR/$FILE)"
+        ONLINE="Not in zchain"
+        grep "$IPFS_HASH" temp > /dev/null 2>&1
+        if [ $? -eq 0 ]
+        then
+            ONLINE="On zchain"
+        fi
+        printf "%3d | %5s | %52s | %10s | %56s \n"\
+            "$i" "$ONLINE" "$IPFS_HASH" "$DATE" "$TITLE"
         let i+=1
     done    
+    rm temp
 }
 title(){
     echo $PROGRAM
