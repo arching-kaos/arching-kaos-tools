@@ -58,4 +58,8 @@ router.route(settings.URL_PREFIX+'/sblk').post(receiveZBlock);
 router.route(settings.URL_PREFIX+'/szch').post(receiveZChain);
 
 router.route('/*').get((req,res)=>{console.log(req.url);res.send({error:"404"})});
+router.route('/*').post((req,res)=>{console.log(req.url);res.send({error:"404"})});
+router.route('/*').put((req,res)=>{console.log(req.url);res.send({error:"404"})});
+router.route('/*').delete((req,res)=>{console.log(req.url);res.send({error:"404"})});
+router.route('/*').patch((req,res)=>{console.log(req.url);res.send({error:"404"})});
 module.exports = router;
