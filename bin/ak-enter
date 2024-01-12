@@ -147,7 +147,9 @@ do
                 exit 1
             fi
             logit "[INFO]" "ZBLOCK $zblock READ"
-            echo -n '{"id":"'$counter'","zblock":"'$zblock'",'
+            echo -n '{'
+#            echo -n '"id":"'$counter'",'
+            echo -n '"zblock":"'$zblock'",'
   
             # If it's JSON formated
             cat $AK_ZBLOCKDIR/$zblock | jq -M > /dev/null 2>&1
