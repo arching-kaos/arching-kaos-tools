@@ -90,10 +90,12 @@ import(){
 }
 add2(){
     TEMP="$(ak-tempassin)"
-    cd $TEMP
-    if [ -f $1 ]; then
-        FILE="$1"
+    if [ -f "$1" ]; then
+        FILE="$(realpath $1)"
         cp $FILE $ZNEWSDIR
+        cp $FILE $TEMP
+        FILE="$(basename $1)"
+        cd $TEMP
         echo "Adding news from " $FILE
         DATETIME=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
         TITLE=$(head -n 1 $FILE)
@@ -105,7 +107,7 @@ add2(){
 {
    "datetime":"$DATETIME",
    "title":"$TITLE",
-   "filename":"$FILE",
+   "filename":"$(basename $FILE)",
    "ipfs":"$FILE_IPFS_HASH",
    "detach":"$FILE_SIGNATURE"
 }
@@ -122,6 +124,7 @@ EOF
         echo "error??"
         exit 1
     fi
+    rm -rf $TEMP
 }
 add(){
     TEMP="$(ak-tempassin)"
