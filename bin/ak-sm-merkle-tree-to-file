@@ -10,7 +10,8 @@ then
     echo "Please an output filename"
     exit 2
 fi
-echo $1 | grep ".\{128\}"
+
+echo $1 | grep "[0123456789abcdef]\{128\}"
 if [ $? -ne 0 ]
 then
     echo "Look, I asked for a SHA512 hash, please try again"
