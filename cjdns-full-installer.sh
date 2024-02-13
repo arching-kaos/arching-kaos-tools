@@ -19,6 +19,5 @@ sudo cp cjdns/target/release/randombytes /usr/bin/
 sudo cp cjdns/target/release/sybilsim /usr/bin/
 sudo cp cjdns/contrib/systemd/cjdns.service /etc/systemd/system/
 sudo cp cjdns/contrib/systemd/cjdns-resume.service /etc/systemd/system
-cp -r cjdns/tools/lib ~/.arching-kaos/bin/
-cp cjdns/tools/dumpLinks ~/.arching-kaos/bin/
+ln -s `realpath cjdns/tools/dumpLinks` ~/.arching-kaos/bin/dumpLinks
 sudo systemctl enable --now cjdns.service
