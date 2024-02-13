@@ -1,0 +1,493 @@
+#!/bin/bash
+#set -xe
+program=`basename $0`
+tempdir=`mktemp -d`
+curdir=`pwd`
+launch_timestamp=`date -u +%s`
+description_text="Arching Kaos command line interface"
+
+new_line(){
+    printf '\n'
+}
+
+# logit "ERROR" "Message"
+# logit "WARNING" "Message"
+# logit "INFO" "Message"
+logit(){
+    ak-logthis "<$program>" "[$1]" "$2"
+}
+
+# exit_program 0 'Clean exit'
+# exit_program 1 'Dirty exit... saves tmpdir in archive' 'save_log'
+exit_program(){
+    cd $curdir
+    if [ "$3" == "save_log" ]
+    then
+        tar cvfz $curdir/$(basename $tempdir)-$launch_timestamp.tgz $tempdir
+    fi
+    rm -rf $tempdir
+    logit "EXIT" "$2"
+    exit $1
+}
+
+description(){
+  full_title="$(printf '%s - %s' "$program" "$description_text")"
+  delimiter_count=`echo -n $full_title | wc -c`
+  printf '%s' "$full_title"
+  new_line
+  while [ $delimiter_count -gt 0 ]
+  do
+    printf '='
+    delimiter_count=$(($delimiter_count-1))
+  done
+  new_line
+}
+#description(){
+#    printf '%s - \n' "$program"
+#    printf '===========================================\n' "$program"
+#}
+
+help_all(){
+    description
+
+    help_config
+    new_line
+
+    help_log
+    new_line
+    
+    help_follow
+    new_line
+
+    printf '    modules             Various modules'
+    help_modules
+    new_line
+
+    printf '    ipfs                IPFS wrapper tools'
+    help_ipfs
+    new_line
+
+    printf '    network             Networking tools'
+    help_network
+    new_line
+
+    printf '    utils               Utilities for maintainance'
+    help_utils
+    new_line
+
+    printf '    zblock              zblock focused tools'
+    help_zblock
+    new_line
+
+    printf '    sblock              sblock and schain tools'
+    help_sblock
+    new_line
+
+    printf '    zchain              zchain tools'
+    help_zchain
+    new_line
+
+    printf '    uncategorized'
+    printf '\t\tother tools not fitting in other categories\n'
+    help_uncatecorized
+}
+
+help_config(){
+    cat /home/kaotisk/projects/arching-kaos-tools/txts/manuals/config_subcommands
+}
+
+_config(){
+    if [ ! -z "$1" ]
+    then
+        case "$1" in
+            show)
+                ak-config show | jq
+                ;;
+            get-published)
+                ak-config get-published | jq
+                ;;
+            publish)
+                ak-config publish
+                ;;
+            get-akid)
+                ak-akid-get-ipfs-hash
+                ;;
+            get-akid-ipns)
+                ak-akid-get-ipns-key
+                ;;
+            *)
+                help_config
+                ;;
+        esac
+    else
+        help_config
+    fi
+}
+
+help_log(){
+    cat /home/kaotisk/projects/arching-kaos-tools/txts/manuals/log_subcommands
+}
+
+_log(){
+    if [ ! -z "$1" ]
+    then
+        case "$1" in
+            tail)
+                ak-logfollow
+                exit_program 0 "$subcommand $1 command finished";
+                ;;
+            write)
+                ak-logthis "$2" "$3" "$4"
+                exit_program 0 "$subcommand $1 command finished";
+                ;;
+            rotate)
+                ak-logrotate
+                exit_program 0 "$subcommand $1 command finished";
+                ;;
+            cat)
+                cat $AK_WORKDIR/akd.log $AK_WORKDIR/akd.err $AK_WORKDIR/logs
+                exit_program 0 "$subcommand $1 command finished";
+                ;;
+            *)
+                help_log
+                exit_program 0 "$subcommand $1 command finished";
+        esac
+    else
+        help_log
+        exit_program 0 "$subcommand $1 command finished";
+    fi
+}
+
+help_follow(){
+    cat /home/kaotisk/projects/arching-kaos-tools/txts/manuals/follow_subcommands
+}
+
+_follow(){
+    if [ ! -z "$1" ]
+    then
+        case "$1" in
+            add)
+                ak-follow "$2"
+                ;;
+            list)
+                ak-following
+                ;;
+            remove)
+                ak-unfollow "$2"
+                ;;
+            *)
+                help_follow
+                ;;
+        esac
+    else
+        help_follow
+    fi
+}
+
+help_modules(){
+    printf '
+        ak-articles
+    '
+    printf '
+        ak-categories
+    '
+    printf '
+        ak-comments
+    '
+    printf '
+        ak-files
+    '
+    printf '
+        ak-sm-files
+    '
+    printf '
+        ak-folders
+    '
+    printf '
+        ak-mixtapes
+    '
+    printf '
+        ak-news
+    '
+    printf '
+        ak-profile
+    '
+    printf '
+        ak-reference
+    '
+    printf '
+        ak-repositories
+    '
+    printf '
+        ak-roadmap
+    '
+    printf '
+        ak-todos
+    '
+    printf '
+        ak-transactions
+    '
+}
+
+help_zblock(){
+    printf '
+        ak-pack_z_block
+    '
+    printf '
+        ak-zblock-cache
+    '
+    printf '
+        ak-zblock-manipulator
+    '
+    printf '
+        ak-zblock-show
+    '
+}
+
+help_ipfs(){
+    printf '
+        ak-ipfs-add
+    '
+    printf '
+        ak-ipfs-block-stat
+    '
+    printf '
+        ak-ipfs-cat
+    '
+    printf '
+        ak-ipfs-check
+    '
+    printf '
+        ak-ipfs-files-cp
+    '
+    printf '
+        ak-ipfs-files-ls
+    '
+    printf '
+        ak-ipfs-files-mkdir
+    '
+    printf '
+        ak-ipfs-files-mv
+    '
+    printf '
+        ak-ipfs-files-rm
+    '
+    printf '
+        ak-ipfs-files-stat
+    '
+    printf '
+        ak-ipfs-get
+    '
+    printf '
+        ak-ipfs-get-peers
+    '
+    printf '
+        ak-ipfs-key-gen
+    '
+    printf '
+        ak-ipfs-key-list
+    '
+    printf '
+        ak-ipfs-key-list-full
+    '
+    printf '
+        ak-ipfs-name-publish
+    '
+    printf '
+        ak-ipfs-name-resolve
+    '
+    printf '
+        ak-ipfs-scanner
+    '
+    printf '
+        ak-ipfs-starter
+    '
+    printf '
+        ak-ipfs-swarm-peers
+    '
+    printf '
+        ak-ipns-resolve
+    '
+}
+
+help_network(){
+    printf '
+        ak-network
+    '
+    printf '
+        ak-get-peers-cjdns
+    '
+    printf '
+        ak-get-peers-ipfs
+    '
+    printf '
+        ak-get-peers-stellar
+    '
+    printf '
+        ak-cjdns-scanner
+    '
+    printf '
+        ak-stellar-get-participants
+    '
+}
+
+help_utils(){
+    printf '
+        ak-calculate-size
+    '
+    printf '
+        ak-data-expand
+    '
+    printf '
+        ak-get-gpg
+    '
+    printf '
+        ak-get-zlatest
+    '
+}
+
+help_uncatecorized(){
+    printf '
+        ak2html
+    '
+    printf '
+        ak-clean
+    '
+    printf '
+        ak-get-chain-minified
+    '
+    printf '
+        ak-extract-cids
+    '
+    printf '
+        ak-get-ipfs-hashes-from-my-zchain
+    '
+    printf '
+        ak-get-only-ipfs-key-values-from-our-or-a-zchain
+    '
+    printf '
+        ak-get-only-ipfs-key-values-from-our-zchain
+    '
+    printf '
+        ak-json2bash
+    '
+    printf '
+        ak-mempool
+    '
+    printf '
+        ak-sm-filejoiner
+    '
+    printf '
+        ak-sm-filesplitter
+    '
+    printf '
+        ak-sm-merkle-tree
+    '
+    printf '
+        ak-sm-merkle-tree-to-file
+    '
+    printf '
+        ak-startup
+    '
+    printf '
+        ak-tempassin
+    '
+}
+
+help_sblock(){
+    printf '
+        ak-find-latest-mined-sblock
+    '
+    printf '
+        ak-miner-script
+    '
+    printf '
+        ak-show_sblock
+    '
+}
+
+help_zchain(){
+    printf '
+        ak-enter
+    '
+    printf '
+        ak-zchain-chk
+    '
+    printf '
+        ak-zchain-rebase
+    '
+    printf '
+        ak-zchain-reset
+    '
+}
+
+# Change directory to the temporary directory
+cd $tempdir
+
+if [ -z "$1" ]
+then
+    help_all
+else
+    subcommand="$1"
+    case "$1" in
+        config)
+            _config "$2"
+            exit_program 0 "$1 command finished";
+            ;;
+        log)
+            _log "$2" "$3" "$4" "$5"
+            exit_program 0 "$1 command finished";
+            ;;
+        follow)
+            _follow "$2"
+            exit_program 0 "$1 command finished";
+            ;;
+        modules)
+            exit_program 1 "$1 Not implemented";
+            help_modules
+            ;;
+        ipfs)
+            exit_program 1 "$1 Not implemented";
+            _ipfs
+            help_ipfs
+            ;;
+        network)
+            exit_program 1 "$1 Not implemented";
+            _network
+            help_network
+            ;;
+        utils)
+            exit_program 1 "$1 Not implemented";
+            _utils
+            help_utils
+            ;;
+        zblock)
+            exit_program 1 "$1 Not implemented";
+            _zblock
+            help_zblock
+            ;;
+        sblock)
+            exit_program 1 "$1 Not implemented";
+            _sblock
+            help_sblock
+            ;;
+        zchain)
+            exit_program 1 "$1 Not implemented";
+            _zchain
+            help_zchain
+            ;;
+        uncategorized)
+            exit_program 1 "$1 Not implemented";
+            _uncategorized
+            help_uncatecorized
+            ;;
+        *)
+            help_all;
+            exit_program 0 "No command issued";
+    esac
+
+fi
+
+# Successful test: after changing dir the following, variable is not changing
+# echo $curdir
+
