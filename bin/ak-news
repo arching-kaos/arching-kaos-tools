@@ -22,7 +22,7 @@ fi
 
 cd $ZNEWSDIR
 
-create(){
+_ak_modules_news_create(){
     TEMP="$(ak-tempassin)"
     cd $TEMP
     cd 
@@ -35,12 +35,12 @@ create(){
     IPFS_FILE=$(ak-ipfs-add $NEWS_FILE)
     mv $NEWS_FILE $ZNEWSDIR/$TO_FILE
     sed -e 's,Qm.*,'"$IPFS_FILE"',g' $ZNEWSDIR/README
-    add $TO_FILE
+    _ak_modules_news_add $TO_FILE
     echo "Adding to git repo..."
     cd $ZNEWSDIR
     # rm -rf $TEMP 
 }
-index(){
+_ak_modules_news_index(){
     FILES="$(ls -1 $ZNEWSDIR)"
     i=0
     ak-get-ipfs-hashes-from-my-zchain | sort | uniq > temp
@@ -61,10 +61,10 @@ index(){
     done    
     rm temp
 }
-title(){
+_ak_modules_news_title(){
     echo $PROGRAM
 }
-import(){
+_ak_modules_news_import(){
     echo "#TODO"
     if [ ! -z $1 ]
     then
@@ -79,7 +79,7 @@ import(){
             for f in $fl
             do
                 echo $1 $f
-                add2 "$1/$f"
+                _ak_modules_news_add2 "$1/$f"
             done
         fi
     else
@@ -88,7 +88,7 @@ import(){
     fi
     exit 224
 }
-add2(){
+_ak_modules_news_add2(){
     TEMP="$(ak-tempassin)"
     if [ -f "$1" ]; then
         FILE="$(realpath $1)"
@@ -126,7 +126,7 @@ EOF
     fi
     rm -rf $TEMP
 }
-add(){
+_ak_modules_news_add(){
     TEMP="$(ak-tempassin)"
     cd $TEMP
     if [ -f $ZNEWSDIR/$1 ]; then
@@ -160,7 +160,7 @@ EOF
         exit 1
     fi
 }
-usage(){
+_ak_modules_news_usage(){
     echo "#TODO"
     echo "All you need to know is that there are two options available:"
     echo "help        Prints this help message"
@@ -171,7 +171,7 @@ usage(){
     echo "                  newsletter and it's going to be saved"
     exit 0
 }
-akNewsRead(){
+_ak_modules_news_read(){
     ak-enter -l 1 $1 > temp
     if [ $? -ne 0 ]
     then
@@ -194,16 +194,16 @@ akNewsRead(){
     fi
     rm temp
 }
-title
+_ak_modules_news_title
 if [ ! -z $1 ]; then
     case $1 in
-        help) usage; exit;;
-        local-index) index; exit;;
-        import) import $2; exit;;
-        add) add2 $2; exit;;
-        create) create; exit;;
-        read) akNewsRead $2; exit;;
-        * ) usage;;
+        help) _ak_modules_news_usage; exit;;
+        local-index) _ak_modules_news_index; exit;;
+        import) _ak_modules_news_import $2; exit;;
+        add) _ak_modules_news_add2 $2; exit;;
+        create) _ak_modules_news_create; exit;;
+        read) _ak_modules_news_read $2; exit;;
+        * ) _ak_modules_news_usage;;
     esac
-else usage
+else _ak_modules_news_usage
 fi

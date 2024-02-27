@@ -9,7 +9,7 @@ else
 	ak-logthis "[INFO]" "zcommentsdir found"
 fi
 
-create(){
+_ak_modules_comments_create(){
 	if [ ! -z $1 ]
 	then
 		REFER_TO="$1"
@@ -26,7 +26,7 @@ create(){
 	TO_FILE=$COMMENTS_FILE
 	IPFS_FILE=$(ak-ipfs-add $COMMENTS_FILE)
 	mv $COMMENTS_FILE $ZCOMMENTSDIR/$TO_FILE
-	add $TO_FILE
+	_ak_modules_comments_add $TO_FILE
 	ak-logthis "[INFO]" "Adding to git repo..."
 	cd $ZCOMMENTSDIR
 	if [ ! -z $REFER_TO ]
@@ -35,7 +35,7 @@ create(){
 	fi
 }
 
-index(){
+_ak_modules_comments_index(){
 	FILES="$(ls -1 $ZCOMMENTSDIR)"
 	i=0
 	for FILE in $FILES
@@ -46,10 +46,10 @@ index(){
 		let i+=1
 	done	
 }
-title(){
+_ak_modules_comments_title(){
 	echo comments
 }
-add(){
+_ak_modules_comments_add(){
     TEMP="$(ak-tempassin)"
     cd $TEMP
 	if [ -f "$ZCOMMENTSDIR/$1" ]; then
@@ -74,8 +74,8 @@ add(){
 		exit 1
 	fi
 }
-usage(){
-	title
+_ak_modules_comments_usage(){
+	_ak_modules_comments_title
 	echo "All you need to know is that there are two options available:"
 	echo ""
 	echo "help				Prints this help message"
@@ -88,11 +88,11 @@ usage(){
 
 if [ ! -z $1 ]; then
 	case $1 in
-		help) usage; exit;;
-		index) index; exit;;
-		add) add $2 $3; exit;;
-		create) create $2; exit;;
-		* ) usage;;
+		help) _ak_modules_comments_usage; exit;;
+		index) _ak_modules_comments_index; exit;;
+		add) _ak_modules_comments_add $2 $3; exit;;
+		create) _ak_modules_comments_create $2; exit;;
+		* ) _ak_modules_comments_usage;;
 	esac
-else usage
+else _ak_modules_comments_usage
 fi

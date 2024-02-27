@@ -1,6 +1,6 @@
 #!/bin/bash
 PROGRAM="$(basename $0)"
-usage(){
+_ak_modules_transactions_usage(){
 	echo "$PROGRAM from to amount"
 }
 
@@ -8,7 +8,7 @@ logit(){
 	ak-logthis "<$PROGRAM>" "$1" "$2"
 }
 
-main(){
+_ak_modules_transactions_main(){
     logit "[INFO]" "$FROM_ADDRESS to $TO_ADDRESS value sent: $AMOUNT"
     cat > transaction_file <<EOF
 $FROM_ADDRESS
@@ -43,8 +43,8 @@ then
     FROM_ADDRESS="$1"
     TO_ADDRESS="$2"
     AMOUNT="$3"
-    main
+    _ak_modules_transactions_main
     cat $PWD/data | jq -M
     ak-pack_z_block transaction/add $PWD/data
-else usage
+else _ak_modules_transactions_usage
 fi

@@ -24,7 +24,7 @@ fi
 # The profile settings/configuration is part of the blockchain produced.
 # Hence, we need a specific DATA block that actually has the announcement of a
 # {"key":"value"} pair.
-show(){
+_ak_modules_profile_show(){
 	if [ ! -z $1 ]
 	then
 		logit "[INFO]" "Working with $1"
@@ -37,7 +37,7 @@ show(){
 
 # This should retrieve a specific value from our profile otherwise it dumps the
 # whole profile values.
-propget(){
+_ak_modules_profile_propget(){
 	if [ ! -z $1 ]
 	then
 		if [ ! -f $ZPROFILEDIR/$1 ]
@@ -48,7 +48,7 @@ propget(){
 		fi
 	else
 		echo "No particular property... indexing"
-		index
+		_ak_modules_profile_index
 	fi
 }
 
@@ -63,7 +63,7 @@ EOF
 		echo "Added successfully... proceeding"
 		IPFS_FILE=$(ak-ipfs-add $ZPROPERTY_FILE)
 		echo "Prop writting,,, $IPFS_FILE"
-		add $ZPROPERTY_KEY
+		_ak_modules_profile_add $ZPROPERTY_KEY
 		cd $ZPROFILEDIR
 	else
 		echo "Couldn't write to file $ZPROFILEDIR/$TO_FILE"
@@ -71,7 +71,7 @@ EOF
 	fi
 }
 
-propset(){
+_ak_modules_profile_propset(){
 	if [ ! -z $1 ]
 	then
 		ZPROPERTY_FILE="$ZPROFILEDIR/$1"
@@ -99,14 +99,14 @@ propset(){
 				* ) echo "Answer please";;
 			esac
 			echo $IPFS_FILE
-			show $IPFS_FILE
+			_ak_modules_profile_show $IPFS_FILE
 		fi
 	else
 		echo "conditions unmet"
 		exit 244
 	fi
 }
-index(){
+_ak_modules_profile_index(){
 	FILES="$(ls -1 $ZPROFILEDIR)"
 	i=0
 	echo -n "{"
@@ -124,7 +124,7 @@ index(){
 	done
 	echo "}"
 }
-import(){
+_ak_modules_profile_import(){
 	if [ ! -z $1 ]
 	then
 		if [ ! -d $1 ]
@@ -136,7 +136,7 @@ import(){
 			fl="$(ls -1 $1)"
 			for f in $fl
 			do
-				add $1/$f
+				_ak_modules_profile_add $1/$f
 			done
 		fi
 	else
@@ -147,7 +147,7 @@ import(){
 }
 
 # Adds a file as a profile/add ACTION on the zchain.
-add(){
+_ak_modules_profile_add(){
     TEMP="$(ak-tempassin)"
     cd $TEMP
 	if [ -f $ZPROFILEDIR/$1 ]; then
@@ -179,7 +179,7 @@ EOF
     cd $ZPROFILEDIR
     rm -rf "$TEMPASSIN"
 }
-usage(){
+_ak_modules_profile_usage(){
 	echo "Usage:"
 	echo "		$PROGRAM command [options]"
 	echo ""
@@ -200,14 +200,14 @@ usage(){
 }
 if [ ! -z $1 ]; then
 	case $1 in
-		help) usage; exit;;
-		index) index; exit;;
-		show) show $2; exit;;
-		import) import $2; exit;;
-		add) add $2; exit;;
-		set) propset $2 "$3"; exit;;
-		get) propget $2; exit;;
-		* ) usage;;
+		help) _ak_modules_profile_usage; exit;;
+		index) _ak_modules_profile_index; exit;;
+		show) _ak_modules_profile_show $2; exit;;
+		import) _ak_modules_profile_import $2; exit;;
+		add) _ak_modules_profile_add $2; exit;;
+		set) _ak_modules_profile_propset $2 "$3"; exit;;
+		get) _ak_modules_profile_propget $2; exit;;
+		* ) _ak_modules_profile_usage;;
 	esac
-else usage
+else _ak_modules_profile_usage
 fi

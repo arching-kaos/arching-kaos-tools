@@ -21,11 +21,11 @@ else
 	logit "[INFO]" "$ZFILESDIR found!"
 fi
 
-usage(){
+_ak_modules_files_usage(){
 	echo "$PROGRAM - file"
 }
 
-add(){
+_ak_modules_files_add(){
     CRP="$(pwd)"
     FILENAME="$1"
     main $FILENAME $CRP
@@ -103,9 +103,9 @@ echo "Publishing..."
 
 if [ ! -z $1 ]; then
 	case $1 in
-		help) usage; exit;;
-		add) add $2; exit;;
-		*) usage; exit;;
+		help) _ak_modules_files_usage; exit;;
+		add) _ak_modules_files_add $2; exit;;
+		*) _ak_modules_files_usage; exit;;
 	esac
-else usage
+else _ak_modules_files_usage
 fi

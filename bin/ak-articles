@@ -15,7 +15,7 @@ else
 	echo "zarticlesdir found"
 fi
 
-create(){
+_ak_modules_articles_create(){
     TEMP="$(ak-tempassin)"
     cd $TEMP
 	pwd
@@ -27,7 +27,7 @@ create(){
 	IPFS_FILE=$(ak-ipfs-add $ARTICLES_FILE)
 	mv $ARTICLES_FILE $ZARTICLESDIR/$TO_FILE
 	sed -e 's,Qm.*,'"$IPFS_FILE"',g' $ZARTICLESDIR/README
-	add $ZARTICLESDIR/$TO_FILE
+	_ak_modules_articles_add $ZARTICLESDIR/$TO_FILE
 	echo "Adding to git repo..."
 	cd $ZARTICLESDIR
 	git add $TO_FILE README
@@ -35,7 +35,7 @@ create(){
 	git clean --force
 	# rm -rf $TEMP 
 }
-index(){
+_ak_modules_articles_index(){
 	FILES="$(ls -1 $ZARTICLESDIR)"
 	i=0
 	for FILE in $FILES
@@ -46,11 +46,11 @@ index(){
 		let i+=1
 	done	
 }
-title(){
+_ak_modules_articles_title(){
 	echo	ak-articles-cli
 	echo "--------------"
 }
-import(){
+_ak_modules_articles_import(){
 	echo "#TODO"
 	if [ ! -z $1 ]
 	then
@@ -63,7 +63,7 @@ import(){
 			fl="$(ls -1 $1)"
 			for f in $fl
 			do
-				add $1/$f
+				_ak_modules_articles_add $1/$f
 			done
 		fi
 	else
@@ -72,7 +72,7 @@ import(){
 	fi
 	exit 224
 }
-add(){
+_ak_modules_articles_add(){
     TEMP="$(ak-tempassin)"
     cd $TEMP
 	if [ -f $1 ]; then
@@ -106,7 +106,7 @@ EOF
 		exit 1
 	fi
 }
-usage(){
+_ak_modules_articles_usage(){
 	echo "#TODO"
 	echo "All you need to know is that there are two options available:"
 	echo "help		Prints this help message"
@@ -117,15 +117,15 @@ usage(){
 	echo "                  articlesletter and it's going to be saved"
 	exit 0
 }
-title
+_ak_modules_articles_title
 if [ ! -z $1 ]; then
 	case $1 in
-		help) usage; exit;;
-		index) index; exit;;
-		import) import $2; exit;;
-		add) add $2; exit;;
-		create) create; exit;;
-		* ) usage;;
+		help) _ak_modules_articles_usage; exit;;
+		index) _ak_modules_articles_index; exit;;
+		import) _ak_modules_articles_import $2; exit;;
+		add) _ak_modules_articles_add $2; exit;;
+		create) _ak_modules_articles_create; exit;;
+		* ) _ak_modules_articles_usage;;
 	esac
-else usage
+else _ak_modules_articles_usage
 fi

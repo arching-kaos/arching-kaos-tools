@@ -1,11 +1,11 @@
 #!/bin/bash
 PROGRAM="$(basename $0)"
-title(){
+_ak_config_title(){
 	echo "Arching Kaos Configuration Tool"
 	echo "==============================="
 }
-usage(){
-	title
+_ak_config_usage(){
+	_ak_config_title
 	echo ""
 	echo "Usage:	$PROGRAM [ show | publish | get-published ]"
 	echo ""
@@ -16,7 +16,7 @@ usage(){
 	exit 0
 }
 
-show(){
+_ak_config_show(){
 	echo '
 { 
     "profile":'$(ak-profile index | jq -cM)',
@@ -27,8 +27,8 @@ show(){
 }';
 }
 
-publish(){
-	show | jq -c -M > tmpfile
+_ak_config_publish(){
+	_ak_config_show | jq -c -M > tmpfile
     ipfs key list | grep ak-config 2> /dev/null 1>&2
     if [ "$?" -ne 0 ]
     then
@@ -44,7 +44,7 @@ publish(){
 	rm tmpfile
 }
 
-published(){
+_ak_config_published(){
 	ak-ipfs-cat $(ak-akid-get-ipfs-hash) | jq -c
 }
 
@@ -56,11 +56,11 @@ rm $KEY
 
 if [ ! -z $1 ]; then
 	case $1 in
-		show) show;exit;;
-		publish) publish;exit;;
-		get-published) published;exit;;
-		*) usage;exit;;
+		show) _ak_config_show;exit;;
+		publish) _ak_config_publish;exit;;
+		get-published) _ak_config_published;exit;;
+		*) _ak_config_usage;exit;;
 	esac
 else
-	usage
+    _ak_config_usage
 fi

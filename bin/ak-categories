@@ -11,7 +11,7 @@ else
 	echo "AK_CATEGORIES found"
 fi
 
-create(){
+_ak_modules_categories_create(){
     TEMP="$(ak-tempassin)"
     cd $TEMP
 	export NEWS_FILE="$(date +%Y%m%d_%H%M%S)"
@@ -22,10 +22,10 @@ create(){
 	IPFS_FILE=$(ak-ipfs-add $NEWS_FILE)
 	mv $NEWS_FILE $AK_CATEGORIES/$TO_FILE
 	sed -e 's,Qm.*,'"$IPFS_FILE"',g' $AK_CATEGORIES/README
-	add $AK_CATEGORIES/$TO_FILE
+	_ak_modules_categories_add $AK_CATEGORIES/$TO_FILE
 	cd $AK_CATEGORIES
 }
-index(){
+_ak_modules_categories_index(){
 	FILES="$(ls -1 $AK_CATEGORIES)"
 	i=0
 	for FILE in $FILES
@@ -36,11 +36,11 @@ index(){
 		let i+=1
 	done	
 }
-title(){
+_ak_modules_categories_title(){
     echo "$PROGRAM"
 }
 
-import(){
+_ak_modules_categories_import(){
 	echo "#TODO"
 	if [ ! -z $1 ]
 	then
@@ -53,7 +53,7 @@ import(){
 			fl="$(ls -1 $1)"
 			for f in $fl
 			do
-				add $1/$f
+				_ak_modules_categories_add $1/$f
 			done
 		fi
 	else
@@ -62,7 +62,7 @@ import(){
 	fi
 	exit 224
 }
-add(){
+_ak_modules_categories_add(){
     TEMP="$(ak-tempassin)"
     cd $TEMP
 	if [ -f $1 ]; then
@@ -96,7 +96,7 @@ EOF
 		exit 1
 	fi
 }
-usage(){
+_ak_modules_categories_usage(){
 	echo "#TODO"
 	echo "All you need to know is that there are two options available:"
 	echo "help		Prints this help message"
@@ -107,15 +107,15 @@ usage(){
 	echo "                  newsletter and it's going to be saved"
 	exit 0
 }
-title
+_ak_modules_categories_title
 if [ ! -z $1 ]; then
 	case $1 in
-		help) usage; exit;;
-		index) index; exit;;
-		import) import $2; exit;;
-		add) add $2; exit;;
-		create) create; exit;;
-		* ) usage;;
+		help) _ak_modules_categories_usage; exit;;
+		index) _ak_modules_categories_index; exit;;
+		import) _ak_modules_categories_import $2; exit;;
+		add) _ak_modules_categories_add $2; exit;;
+        create) _ak_modules_categories_create; exit;;
+		* ) _ak_modules_categories_usage;;
 	esac
-else usage
+else _ak_modules_categories_usage
 fi

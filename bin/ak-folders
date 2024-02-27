@@ -17,19 +17,19 @@ fi
 TEMPASSIN="$(ak-tempassin)"
 cd $TEMPASSIN
 
-usage(){
-    title
+_ak_modules_folders_usage(){
+    _ak_modules_folders_title
     echo "$PROGRAM - folder"
 }
 
-add(){
+_ak_modules_folders_add(){
     CRP="$(pwd)"
     FOLDERNAME="$1"
-    main $FOLDERNAME $CRP
+    _ak_modules_folders_main $FOLDERNAME $CRP
     cat data | jq -M
 }
 
-main(){
+_ak_modules_folders_main(){
     FOLDERNAME="$1"
     CRP="$2"
     echo "Adding $FOLDERNAME"
@@ -68,7 +68,7 @@ main(){
     fi
 }
 
-title(){
+_ak_modules_folders_title(){
     echo "$PROGRAM"
     echo "Folder block creator"
 }
@@ -76,9 +76,9 @@ title(){
 
 if [ ! -z $1 ]; then
     case $1 in
-        help) usage; exit;;
-        add) add $2; exit;;
-        *) usage; exit;;
+        help) _ak_modules_folders_usage; exit;;
+        add) _ak_modules_folders_add $2; exit;;
+        *) _ak_modules_folders_usage; exit;;
     esac
-else usage
+else _ak_modules_folders_usage
 fi

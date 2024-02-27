@@ -14,7 +14,7 @@ else
 	ak-logthis "ztodosdir found"
 fi
 
-create(){
+_ak_modules_todos_create(){
     TEMP="$(ak-tempassin)"
     cd $TEMP
 	export TODOS_FILE="$(date -u +%s)"
@@ -25,7 +25,7 @@ create(){
 	IPFS_FILE=$(ak-ipfs-add $TODOS_FILE)
 	mv $TODOS_FILE $ZTODOSDIR/$TO_FILE
 	sed -e 's,Qm.*,'"$IPFS_FILE"',g' $ZTODOSDIR/README
-	add $ZTODOSDIR/$TO_FILE
+	_ak_modules_todos_add $ZTODOSDIR/$TO_FILE
 	ak-logthis "Adding to git repo..."
 	cd $ZTODOSDIR
 	git add $TO_FILE README
@@ -33,7 +33,7 @@ create(){
 	git clean --force
 	# rm -rf $TEMP 
 }
-index(){
+_ak_modules_todos_index(){
 	FILES="$(ls -1 $ZTODOSDIR)"
 	i=0
 	for FILE in $FILES
@@ -44,11 +44,11 @@ index(){
 		let i+=1
 	done
 }
-title(){
+_ak_modules_todos_title(){
 	echo	ak-todos-cli
 	echo "--------------"
 }
-import(){
+_ak_modules_todos_import(){
 	echo "#TODO"
 	if [ ! -z $1 ]
 	then
@@ -61,7 +61,7 @@ import(){
 			fl="$(ls -1 $1)"
 			for f in $fl
 			do
-				add $1/$f
+				_ak_modules_todos_add $1/$f
 			done
 		fi
 	else
@@ -70,7 +70,7 @@ import(){
 	fi
 	exit 224
 }
-add(){
+_ak_modules_todos_add(){
     TEMP="$(ak-tempassin)"
     cd $TEMP
 	if [ -f $1 ]; then
@@ -104,8 +104,8 @@ EOF
 		exit 1
 	fi
 }
-usage(){
-	title
+_ak_modules_todos_usage(){
+	_ak_modules_todos_title
 	echo "#TODO"
 	echo "All you need to know is that there are two options available:"
 	echo "help		Prints this help message"
@@ -118,12 +118,12 @@ usage(){
 }
 if [ ! -z $1 ]; then
 	case $1 in
-		help) usage; exit;;
-		index) index; exit;;
-		import) import $2; exit;;
-		add) add $2; exit;;
-		create) create; exit;;
-		* ) usage;;
+		help) _ak_modules_todos_usage; exit;;
+		index) _ak_modules_todos_index; exit;;
+		import) _ak_modules_todos_import $2; exit;;
+		add) _ak_modules_todos_add $2; exit;;
+		create) _ak_modules_todos_create; exit;;
+		* ) _ak_modules_todos_usage;;
 	esac
-else usage
+else _ak_modules_todos_usage
 fi

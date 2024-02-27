@@ -10,7 +10,7 @@ else
     ak-logthis "zreferencesdir found"
 fi
 
-create(){
+_ak_modules_reference_create(){
     TEMP="$(ak-tempassin)"
     cd $TEMP
     export REFERENCEFILE="$(date -u +%s)"
@@ -32,10 +32,10 @@ EOF
     echo $TO_FILE
     IPFS_FILE=$(ak-ipfs-add $ZREFERENCESDIR/$TO_FILE)
     sed -e 's,Qm.*,'"$IPFS_FILE"',g' $ZREFERENCESDIR/README
-    add $ZREFERENCESDIR/$TO_FILE
+    _ak_modules_reference_add $ZREFERENCESDIR/$TO_FILE
     cd $ZREFERENCESDIR
 }
-index(){
+_ak_modules_reference_index(){
     FILES="$(ls -1 $ZREFERENCESDIR)"
     i=0
     for FILE in $FILES
@@ -47,11 +47,11 @@ index(){
         let i+=1
     done    
 }
-title(){
+_ak_modules_reference_title(){
     echo ak-references-cli
     echo "--------------"
 }
-import(){
+_ak_modules_reference_import(){
     echo "#TODO"
     if [ ! -z $1 ]
     then
@@ -64,7 +64,7 @@ import(){
             fl="$(ls -1 $1)"
             for f in $fl
             do
-                add $1/$f
+                _ak_modules_reference_add $1/$f
             done
         fi
     else
@@ -73,7 +73,7 @@ import(){
     fi
     exit 224
 }
-add(){
+_ak_modules_reference_add(){
     TEMP="$(ak-tempassin)"
     cd $TEMP
     if [ ! -f $1 ]; then
@@ -108,8 +108,8 @@ EOF
     echo "References added successfully"
 }
 
-usage(){
-    title
+_ak_modules_reference_usage(){
+    _ak_modules_reference_title
     echo "#TODO"
     echo "All you need to know is that there are two options available:"
     echo "help                     Prints this help message"
@@ -123,12 +123,12 @@ usage(){
 
 if [ ! -z $1 ]; then
     case $1 in
-        help) usage; exit;;
-        index) index; exit;;
-        import) import $2; exit;;
-        add) add $2; exit;;
-        create) create $2 $3; exit;;
-        * ) usage;;
+        help) _ak_modules_reference_usage; exit;;
+        index) _ak_modules_reference_index; exit;;
+        import) _ak_modules_reference_import $2; exit;;
+        add) _ak_modules_reference_add $2; exit;;
+        create) _ak_modules_reference_create $2 $3; exit;;
+        * ) _ak_modules_reference_usage;;
     esac
-else usage
+else _ak_modules_reference_usage
 fi
