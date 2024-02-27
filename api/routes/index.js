@@ -40,8 +40,8 @@ router.route(settings.URL_PREFIX+'/sblock/:sblock').get(getSBlock);
 router.route(settings.URL_PREFIX+'/zchain').get(getZChain);
 // Returns latest zblock from node's local chain
 router.route(settings.URL_PREFIX+'/zlatest').get(getZLatest);
-// Returns local node's akid
-router.route(settings.URL_PREFIX+'/akid').get(getAkid);
+// Returns local node's info
+router.route(settings.URL_PREFIX+'/node_info').get(getAkid);
 // Returns local node's peers
 router.route(settings.URL_PREFIX+'/peers').get(getPeers);
 // Returns content

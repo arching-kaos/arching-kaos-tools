@@ -13,18 +13,18 @@ dumpLinks \
     | uniq \
     | while read -r ip || [ -n "$ip" ]
 do
-    akid="`curl \
+    node_info="`curl \
         -A 'akd/0.1.0; https://github.com/arching-kaos' \
         --connect-timeout 3 \
-        "http://[$(publictoip6 $ip)]:8610/v0/akid" 2>/dev/null`"
+        "http://[$(publictoip6 $ip)]:8610/v0/node_info" 2>/dev/null`"
     if [ "$?" == "0" ]
     then
         if [ "$counter" -ne "0" ]
         then
             printf ',' >> walk.aknet
         fi
-        printf '{"cjdnsPublicKey":"%s","cjdnsIp":"%s","akid":%s}' \
-            "$ip" "`publictoip6 $ip`" "$akid" >> walk.aknet
+        printf '{"cjdns":{"public_key":"%s","ip":"%s"},"node_info":%s}' \
+            "$ip" "`publictoip6 $ip`" "$node_info" >> walk.aknet
         counter="`expr $counter + 1`"
     fi
 done

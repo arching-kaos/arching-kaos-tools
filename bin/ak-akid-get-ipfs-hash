@@ -1,5 +1,0 @@
-#!/bin/bash
-# Resolves the IPNS key "ak-config" to its current IPFS value
-# Return IPFS CIDv0 without /ipfs/ prefix
-ak-ipfs-name-resolve /ipns/$(ak-akid-get-ipns-key) | sed -e 's/\/ipfs\///'
-

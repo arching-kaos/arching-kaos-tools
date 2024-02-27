@@ -51,7 +51,7 @@ _ak_config_publish(){
 }
 
 _ak_config_published(){
-	ak-ipfs-cat $(ak-akid-get-ipfs-hash) | jq -c
+	ak-ipfs-cat $(ak-node-info ipfs) | jq -c
 }
 
 if [ ! -z $1 ]; then

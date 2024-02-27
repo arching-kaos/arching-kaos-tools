@@ -1,0 +1,34 @@
+#!/bin/bash
+PROGRAM="$(basename $0)"
+# Resolves the IPNS key "ak-config" to its current IPFS value
+# Return IPFS CIDv0 without /ipfs/ prefix
+_ak_node_info_ipfs_hash(){
+    ak-ipfs-name-resolve /ipns/$(_ak_node_info_ipns_key) | sed -e 's/\/ipfs\///'
+}
+
+# Finds ak-config ipns key
+# Returns IPNS key
+_ak_node_info_ipns_key(){
+    ak-ipfs-key-list-full | grep ak-config | awk '{print $1}'
+}
+
+_ak_node_info_usage(){
+    echo "$PROGRAM ipfs | ipns"
+}
+
+if [ ! -z "$1" ]
+then
+    case "$1" in
+        ipfs)
+            _ak_node_info_ipfs_hash
+            ;;
+        ipns)
+            _ak_node_info_ipns_key
+            ;;
+        *)
+            _ak_node_info_usage
+            ;;
+    esac
+else
+    _ak_node_info_usage
+fi

@@ -9,7 +9,7 @@ module.exports = (req, res) => {
                 {gathered_zchain_zlatest_pairs:settings.DEF_PROTO+"["+settings.LOCAL_IP+"]:"+settings.PORT+settings.URL_PREFIX+"/seens"},
                 {node_local_chain:settings.DEF_PROTO+"["+settings.LOCAL_IP+"]:"+settings.PORT+settings.URL_PREFIX+"/chain"},
                 {node_local_peers:settings.DEF_PROTO+"["+settings.LOCAL_IP+"]:"+settings.PORT+settings.URL_PREFIX+"/peers"},
-                {node_local_akid:settings.DEF_PROTO+"["+settings.LOCAL_IP+"]:"+settings.PORT+settings.URL_PREFIX+"/akid"},
+                {node_local_info:settings.DEF_PROTO+"["+settings.LOCAL_IP+"]:"+settings.PORT+settings.URL_PREFIX+"/node_info"},
                 {node_local_zlatest:settings.DEF_PROTO+"["+settings.LOCAL_IP+"]:"+settings.PORT+settings.URL_PREFIX+"/zlatest"},
                 {latest_known_mined_block:settings.DEF_PROTO+"["+settings.LOCAL_IP+"]:"+settings.PORT+settings.URL_PREFIX+"/slatest"},
                 {show_mined_block:settings.DEF_PROTO+"["+settings.LOCAL_IP+"]:"+settings.PORT+settings.URL_PREFIX+"/sblock"},

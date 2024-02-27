@@ -109,11 +109,11 @@ _config(){
             publish)
                 ak-config publish
                 ;;
-            get-akid)
-                ak-akid-get-ipfs-hash
+            node-info-ipfs)
+                ak-node-info ipfs
                 ;;
-            get-akid-ipns)
-                ak-akid-get-ipns-key
+            node-info-ipns)
+                ak-node-info ipns
                 ;;
             *)
                 help_config
