@@ -1,9 +1,9 @@
 #!/bin/bash
 PROGRAM="show_sblock"
-MINED_BLOCKS_DIR="/home/kaotisk/.arching-kaos/mined_blocks/"
+MINED_BLOCKS_DIR="/home/kaotisk/.arching-kaos/mined_blocks"
 if [ ! -z $1 ]
 then
-	cat $MINED_BLOCKS_DIR$1 | jq
+	cat $MINED_BLOCKS_DIR/$1 | jq
 else
 	echo "No sblock hash input"
 fi
