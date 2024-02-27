@@ -4,9 +4,22 @@
 if [ $# -lt 1 ]
 then
     echo "Error: Not enough arguments provided"
+    echo "Give a zblock's IPFS CID v0 as an argument"
     exit 1
 fi
+if [ -n "$1" ]
+then
+    test="$(echo -n "$1" | sed 's/Qm[A-Za-z0-9]\{44\}//g')"
+    if [ -n "$test" ]
+    then
+        echo not ok
+        exit 1
+    fi
+fi
+ak-enter -l 1 "$1" | jq '.[]' > tempz
+arg="tempz"
 
+( \
 # Create HTML document
 echo "<html>"
 echo "<head>"
@@ -15,31 +28,48 @@ echo "</head>"
 echo "<body>"
 
 # Iterate through each argument and parse data
-for arg in "$@"
-do
+# for arg in "$@"
+if [ -f $arg ]
+then
+#do
     # Extract data from argument
-    zblock=$(echo $arg | jq -r '.zblock')
-    block=$(echo $arg | jq -r '.block')
-    timestamp=$(echo $arg | jq -r '.timestamp')
-    block_signature=$(echo $arg | jq -r '.block_signature')
-    detach=$(echo $arg | jq -r '.detach')
-    module=$(echo $arg | jq -r '.module')
-    action=$(echo $arg | jq -r '.action')
-    gpg=$(echo $arg | jq -r '.gpg')
-    previous=$(echo $arg | jq -r '.previous')
+    zblock=$(cat $arg | jq -r '.zblock')
+    block=$(cat $arg | jq -r '.block')
+    timestamp=$(cat $arg | jq -r '.timestamp')
+    block_signature=$(cat $arg | jq -r '.block_signature')
+    detach=$(cat $arg | jq -r '.detach')
+    data=$(cat $arg | jq -r '.data')
+    module=$(cat $arg | jq -r '.module')
+    action=$(cat $arg | jq -r '.action')
+    gpg=$(cat $arg | jq -r '.gpg')
+    previous=$(cat $arg | jq -r '.previous')
+    datablock=$(cat $arg | jq -r ".$data")
 
     # Output data in HTML format
-    echo "  <h2>ZBLOCK: $zblock</h2>"
-    echo "  <p>BLOCK: $block</p>"
-    echo "  <p>TIMESTAMP: $timestamp</p>"
+    echo "  <h1>ZBLOCK: $zblock</h1>"
     echo "  <p>BLOCK SIGNATURE: $block_signature</p>"
+    echo "  <pre>$(ak-ipfs-cat $zblock | jq)</pre>"
+    echo "  <h2>BLOCK: $block</h2>"
+    echo "  <pre>$(ak-ipfs-cat $block | jq)</pre>"
+    echo "  <p>TIMESTAMP: $timestamp</p>"
     echo "  <p>DETACH: $detach</p>"
+    echo "  <pre>$(ak-ipfs-cat $detach)</pre>"
     echo "  <p>MODULE: $module</p>"
     echo "  <p>ACTION: $action</p>"
     echo "  <p>GPG: $gpg</p>"
+    echo "  <pre>$(ak-ipfs-cat $gpg)</pre>"
     echo "  <p>PREVIOUS: $previous</p>"
-done
+    echo "  <h3>DATA: $data</h3>"
+    echo "  <pre>$datablock</pre>"
+    echo "  <p>ipfs: $(echo $datablock | jq -r '.ipfs')</p>"
+    echo "  <p>detach: $(echo $datablock | jq -r '.detach')</p>"
+    echo "  <pre>$(ak-ipfs-cat $(echo $datablock | jq -r '.detach'))</pre>"
+    echo "  <h2>Rendered ZBLOCK</h2>"
+    echo "  <pre>$(cat $arg | jq)</p>"
+fi
+#done
 
 echo "</body>"
-echo "</html>"
+echo "</html>" ) > zblock-$1.html
 
+rm tempz
