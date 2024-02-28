@@ -1,0 +1,10 @@
+#!/bin/bash
+if [ -z $1 ]
+then
+    gpg2 --fingerprint $(ak-ipfs-cat $(ak-get-gpg) | gpg2 --import 2>&1 | head -n 1 | cut -d ' ' -f 3 | sed 's/://') | head -n 2 | tail -n 1 | sed 's/ //g'
+elif [ -n "$1" ]
+then
+    gpg2 --fingerprint $(ak-ipfs-cat "$1" | gpg2 --import 2>&1 | head -n 1 | cut -d ' ' -f 3 | sed 's/://') | head -n 2 | tail -n 1 | sed 's/ //g'
+
+fi
+
