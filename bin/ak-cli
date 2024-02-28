@@ -333,7 +333,7 @@ help_network(){
 
 help_utils(){
     printf '
-        ak-calculate-size
+        ak-zchain-calculate-size
     '
     printf '
         ak-data-expand
@@ -357,7 +357,7 @@ help_uncatecorized(){
         ak-get-chain-minified
     '
     printf '
-        ak-extract-cids
+        ak-zchain-extract-cids
     '
     printf '
         ak-get-ipfs-hashes-from-my-zchain

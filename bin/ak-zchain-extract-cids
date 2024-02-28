@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+# Extracts unique IPFS CIDs from an ak-entered zchain
+#
+# Previously:
+# ak-enter | jq | grep Qm | sed -e 's/^.*Qm/Qm/g' | cut -d '"' -f 1
+#
+if [ ! -z $1 ] && [ -n "$1" ]
+then
+    ak-enter $1 | jq | grep Qm | sed -e 's/".*"://g; s/ //g; s/[{,"]//g' | sort | uniq
+else
+    ak-enter | jq | grep Qm | sed -e 's/".*"://g; s/ //g; s/[{,"]//g' | sort | uniq
+fi
