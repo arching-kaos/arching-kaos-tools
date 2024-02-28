@@ -354,19 +354,10 @@ help_uncatecorized(){
         ak-clean
     '
     printf '
-        ak-get-chain-minified
-    '
-    printf '
         ak-zchain-extract-cids
     '
     printf '
-        ak-get-ipfs-hashes-from-my-zchain
-    '
-    printf '
-        ak-get-only-ipfs-key-values-from-our-or-a-zchain
-    '
-    printf '
-        ak-get-only-ipfs-key-values-from-our-zchain
+        ak-zchain-extract-data-cids
     '
     printf '
         ak-json2bash
