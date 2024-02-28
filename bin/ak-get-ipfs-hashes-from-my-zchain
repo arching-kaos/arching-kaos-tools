@@ -1,2 +1,0 @@
-#!/bin/bash
-ak-enter | jq -M | grep Qm | sed -e 's/{"zblock":"//g; s/",//; s/".*".*: "//g; s/"//g; s/{//g; s/://g; s/ //g'

@@ -43,7 +43,7 @@ _ak_modules_news_create(){
 _ak_modules_news_index(){
     FILES="$(ls -1 $ZNEWSDIR)"
     i=0
-    ak-get-ipfs-hashes-from-my-zchain | sort | uniq > temp
+    ak-zchain-extract-cids | sort | uniq > temp
     for FILE in $FILES
     do
         DATE="$(echo $FILE | cut -d - -f 1 | awk '{print $1}')"
