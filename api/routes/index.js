@@ -13,7 +13,7 @@ const receiveZChain = require('./receiveZChain');
 const getZblock = require('./getZblock');
 const getMrk = require('./getMrk');
 const getTr = require('./getTr');
-const getAkid = require('./getAkid');
+const getNodeInfo = require('./getNodeInfo');
 const getPeers = require('./getPeers');
 const getInnerIPFSContent = require('./getInnerIPFSContent');
 const corsOptions = {
@@ -41,7 +41,7 @@ router.route(settings.URL_PREFIX+'/zchain').get(getZChain);
 // Returns latest zblock from node's local chain
 router.route(settings.URL_PREFIX+'/zlatest').get(getZLatest);
 // Returns local node's info
-router.route(settings.URL_PREFIX+'/node_info').get(getAkid);
+router.route(settings.URL_PREFIX+'/node_info').get(getNodeInfo);
 // Returns local node's peers
 router.route(settings.URL_PREFIX+'/peers').get(getPeers);
 // Returns content
