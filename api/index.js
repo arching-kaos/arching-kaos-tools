@@ -7,10 +7,12 @@
  */
 
 const config = require('./config');
+const akLogThis = require('./lib/akLogThis');
 
 const DEFAULT_PORT = 8610;
 const PORT = config.port || DEFAULT_PORT;
 
+akLogThis("INFO", "Daemon started")
 /*
  * Split the prefix of each API call in segments for better management
  *

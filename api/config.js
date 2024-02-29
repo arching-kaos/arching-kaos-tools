@@ -19,7 +19,8 @@ const config = {
     pairsFile : env.AK_ZPAIRSFILE,
     peersFile : env.AK_ZPEERSFILE,
     cacheDir : env.AK_CACHEDIR,
-    minedBlocksDir: env.AK_MINEDBLOCKSDIR
+    minedBlocksDir: env.AK_MINEDBLOCKSDIR,
+    printDebug: env.AK_DEBUG
 
 }
 module.exports = config; 
