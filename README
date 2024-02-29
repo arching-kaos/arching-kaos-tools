@@ -312,3 +312,19 @@ ak-get-only-ipfs-key-values-from-our-zchain         # Retuns CIDs of "ipfs" DATA
 Deprecated
 ----------
 ak-json2bash
+
+
+Debugging
+---------
+
+Setting `AK_DEBUG` shell variable to `"yes"` will make all log messages to
+appear on your stderr (file descriptor 2). After setting this variable, run the
+tools you want.
+
+Example:
+``` console
+
+AK_DEBUG="yes"; ak-enter -l 1
+
+```
+
