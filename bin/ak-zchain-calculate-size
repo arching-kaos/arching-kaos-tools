@@ -7,9 +7,9 @@ cd $temp
 
 if [ ! -z $1 ] && [ -n "$1" ]
 then
-    ak-extract-cids $1 > to_stats
+    ak-zchain-extract-cids $1 > to_stats
 else
-    ak-extract-cids > to_stats
+    ak-zchain-extract-cids > to_stats
 fi
 
 sum=0 ; while IFS="" read -r p || [ -n "$p" ]

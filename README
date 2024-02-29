@@ -213,7 +213,6 @@ ak-clean                # Cleans up temporary folders created by these tools
 ak-config               # Publish your configuration to IPNS
 ak-data-expand          # Expands and verifies DATA blocks
 ak-enter                # Crawls ZCHAINS
-ak-extract-cids         # Prints the CIDs from your ZCHAIN for further usage
 ak-node-info            # Returns IPFS CID or IPNS key for your online config
 ak-get-chain-minified   # Obsolete, ak-enter default output
 ak-get-gpg              # Return your GPG key as IPFS CID
@@ -272,6 +271,7 @@ Zchain tools
 ak-zchain-chk     # TODO
 ak-zchain-rebase  # Rebases ZCHAIN to specified ZBLOCK
 ak-zchain-reset   # Resets ZCHAIN to GENESIS
+ak-zchain-extract-cids          # Retuns CIDs from a zchain
 
 File splitters
 --------------
