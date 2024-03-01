@@ -91,7 +91,7 @@ _ak_modules_comments_usage(){
 
 if [ ! -z $1 ]; then
     case $1 in
-        help) _ak_modules_comments_usage; exit;;
+        -h | --help) _ak_modules_comments_usage; exit;;
         index) _ak_modules_comments_index; exit;;
         add) _ak_modules_comments_add $2 $3; exit;;
         create) _ak_modules_comments_create $2; exit;;
