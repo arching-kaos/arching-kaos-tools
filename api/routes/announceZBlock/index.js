@@ -14,7 +14,8 @@
  */
 const getvalidity = require('../../validators/ZblockValidator')
 module.exports = (req, res) => {
-    console.log("okay we got called")
+    console.log(req);
+    console.log("okay we got called");
     if ( (req.body.zblock) && req.body.zblock.length === 46 ){
         regex= /Qm[A-Za-z0-9]{44}/;
         if (regex.test(req.body.zblock)){

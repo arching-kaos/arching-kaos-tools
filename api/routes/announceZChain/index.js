@@ -35,6 +35,7 @@ function continuethingsNS(validitycode,sh,res,gotit){
 const getNSvalidity = require('../../validators/ZchainValidator')
 
 module.exports = (req, res) => {
+    console.log(req);
     if ( (req.body.zchain) && req.body.zchain.length === 62 ){//&& req.body.block_signature.length === 46){
         regex= /k51qzi5uqu5d[A-Za-z0-9]{50}/
         if (regex.test(req.body.zchain)){ // && regex.test(req.body.block_signature)){

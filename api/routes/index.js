@@ -8,8 +8,8 @@ const getSLatest = require('./getSLatest');
 const getZLatest = require('./getZLatest');
 const getSBlock = require('./getSBlock');
 const getZChain = require('./getZChain');
-const receiveZBlock = require('./receiveZBlock');
-const receiveZChain = require('./receiveZChain');
+const announceZBlock = require('./announceZBlock');
+const announceZChain = require('./announceZChain');
 const getZblock = require('./getZblock');
 const getMrk = require('./getMrk');
 const getTr = require('./getTr');
@@ -53,9 +53,9 @@ router.route(settings.URL_PREFIX+'/mrk/:mrk').get(getMrk);
 // Returns a tr
 router.route(settings.URL_PREFIX+'/tr/:tr').get(getTr);
 // Send a block to the node (zchain block)
-router.route(settings.URL_PREFIX+'/sblk').post(receiveZBlock);
+router.route(settings.URL_PREFIX+'/announce/zblock').post(announceZBlock);
 // Send a zchain link to the node (refering to a valid zchain out there)
-router.route(settings.URL_PREFIX+'/szch').post(receiveZChain);
+router.route(settings.URL_PREFIX+'/announce/zchain').post(announceZChain);
 
 router.route('/*').get((req,res)=>{console.log(req.url);res.send({error:"404"})});
 router.route('/*').post((req,res)=>{console.log(req.url);res.send({error:"404"})});
