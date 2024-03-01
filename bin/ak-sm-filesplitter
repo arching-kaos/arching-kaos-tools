@@ -23,7 +23,7 @@ PROGRAM="$(basename $0)"
 
 if [ ! -f "$1" ]
 then
-	echo "[ERROR] File not found"
+	echo "ERROR File not found"
 	exit 1
 else
 	FILE="$1"
@@ -42,7 +42,7 @@ CURRENTDIR="$(pwd)/"
 
 # Our snippet for logging debug info
 logit(){
-	ak-logthis "<$PROGRAM>" "$1" "$2"
+	ak-logthis "$PROGRAM" "$1" "$2"
 }
 
 # Checking directories and create them if necessary
@@ -53,14 +53,14 @@ then
 	mkdir -p "$TECHDIR"
 	if [ "$?" == 0 ]
 	then
-		logit "[INFO]" "Folder $TECHDIR created!"
+		logit "INFO" "Folder $TECHDIR created!"
 	else
-		logit "[ERROR]" "Problem occured while creating $TECHDIR"
-		echo "[ERROR] Can't create $TECHDIR"
+		logit "ERROR" "Problem occured while creating $TECHDIR"
+		echo "ERROR Can't create $TECHDIR"
 		exit 1
 	fi
 else
-	logit "[INFO]" "Temp dir found"
+	logit "INFO" "Temp dir found"
 fi
 
 # FILEMAPSDIR
@@ -69,14 +69,14 @@ then
 	mkdir -p "$FILEMAPSDIR"
 	if [ "$?" == 0 ]
 	then
-		logit "[INFO]" "Folder $FILEMAPSDIR created!"
+		logit "INFO" "Folder $FILEMAPSDIR created!"
 	else
-		logit "[ERROR]" "Problem occured while creating $FILEMAPSDIR"
-		echo "[ERROR] Can't create $FILEMAPSDIR"
+		logit "ERROR" "Problem occured while creating $FILEMAPSDIR"
+		echo "ERROR Can't create $FILEMAPSDIR"
 		exit 1
 	fi
 else
-	logit "[INFO]" "Mapsdir found"
+	logit "INFO" "Mapsdir found"
 fi
 
 # CHKDIR
@@ -85,14 +85,14 @@ then
 	mkdir -p "$CHKDIR"
 	if [ "$?" == 0 ]
 	then
-		logit "[INFO]" "Folder $CHKDIR created!"
+		logit "INFO" "Folder $CHKDIR created!"
 	else
-		logit "[ERROR]" "Problem occured while creating $CHKDIR"
-		echo "[ERROR] Can't create $CHKDIR"
+		logit "ERROR" "Problem occured while creating $CHKDIR"
+		echo "ERROR Can't create $CHKDIR"
 		exit 1
 	fi
 else
-	logit "[INFO]" "Workdir found"
+	logit "INFO" "Workdir found"
 fi
 
 # Uncomment next line in case you want to debug the resulting script as well

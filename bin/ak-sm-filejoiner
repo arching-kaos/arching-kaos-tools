@@ -76,7 +76,7 @@ then
     # We check if everything is okay
 	sha512sum -c $MAPSDIR/$MAPSFILE
     if [ "$?" != "0" ]; then
-        logit "[ERROR]" "Error while checking sums"
+        logit "ERROR" "Error while checking sums"
         exit 1
     fi
 	

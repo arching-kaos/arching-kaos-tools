@@ -3,6 +3,6 @@ PROGRAM="$(basename $0)"
 screen -dmS ipfs-daemon ipfs daemon
 if [ "$?" != "0" ]
 then
-    ak-logthis "<$PROGRAM>" "[ERROR]" "Failed to start IPFS daemon"
+    ak-logthis "$PROGRAM" "ERROR" "Failed to start IPFS daemon"
     exit 1
 fi

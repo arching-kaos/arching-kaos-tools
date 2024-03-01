@@ -5,6 +5,6 @@ PROGRAM="$(basename $0)"
 ipfs add -Qr "$1"
 if [ "$?" != "0" ]
 then
-    ak-logthis "<$PROGRAM>" "[ERROR]" "Failed to add $1"
+    ak-logthis "$PROGRAM" "ERROR" "Failed to add $1"
     exit 1
 fi

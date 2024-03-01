@@ -4,21 +4,21 @@ ZFILESDIR="$AK_WORKDIR/files"
 TEMP="/tmp/aktmp"
 PROGRAM="$(basename $0)"
 logit(){
-	ak-logthis "<$PROGRAM>" "$1" "$2"
+    ak-logthis "$PROGRAM" "$1" "$2"
 }
 if [ ! -d $ZFILESDIR ]; then
-	mkdir $ZFILESDIR
-	if [ $? == 0 ]
-	then
-		logit "[INFO]" "Folder $ZFILESDIR created!"
-	else
-		logit "[ERROR]" "Failed to create $ZFILESDIR folder"
-		exit 1
-	fi
-	cd $ZFILESDIR
-	git init
+    mkdir $ZFILESDIR
+    if [ $? == 0 ]
+    then
+        logit "INFO" "Folder $ZFILESDIR created!"
+    else
+        logit "ERROR" "Failed to create $ZFILESDIR folder"
+        exit 1
+    fi
+    cd $ZFILESDIR
+    git init
 else
-	logit "[INFO]" "$ZFILESDIR found!"
+    logit "INFO" "$ZFILESDIR found!"
 fi
 
 _ak_modules_files_usage(){
@@ -35,47 +35,47 @@ main(){
     FILENAME="$1"
     CRP="$2"
     echo "Adding $FILENAME"
-    logit "[INFO]" "Switching to tmp folder..."
+    logit "INFO" "Switching to tmp folder..."
     TEMPASSIN="$(ak-tempassin)"
     cd $TEMPASSIN
     if [ $? == 0 ]; then
-	    logit "[INFO]" "Success"
+        logit "INFO" "Success"
     else
-	    logit "[ERROR]" "Error with tmp folder"
-	    exit 5
+        logit "ERROR" "Error with tmp folder"
+        exit 5
     fi
-    logit "[INFO]" "Copying $1 to $TEMPASSIN"
+    logit "INFO" "Copying $1 to $TEMPASSIN"
     cp $2/$1 $TEMPASSIN/$1
     if [ $? == 0 ]; then
-	    logit "[INFO]" "Copied successfully"
+        logit "INFO" "Copied successfully"
     else
-	    logit "[ERROR]" "Error copying..."
+        logit "ERROR" "Error copying..."
     fi
 
     FILE="$TEMPASSIN/$1"
 
-    logit "[INFO]" "Adding $FILE to IPFS..."
+    logit "INFO" "Adding $FILE to IPFS..."
     FILE_IPFS_HASH=$(ak-ipfs-add $FILE)
     if [ $? == 0 ]; then
-	    logit "[INFO]" "Added $FILE to IPFS"
+        logit "INFO" "Added $FILE to IPFS"
     else
-	    logit "[ERROR]" "Error in adding the $FILE to IPFS"
+        logit "ERROR" "Error in adding the $FILE to IPFS"
     fi
-    logit "[INFO]" "Signing..."
+    logit "INFO" "Signing..."
     SIGN_FILE=$FILENAME".asc"
     gpg2 --homedir $AK_GPGHOME --detach-sign --sign-with $AK_FINGERPRINT --armor --output $SIGN_FILE $FILE
     if [ $? == 0 ]; then
-	    logit "[INFO]" "Signed"
+        logit "INFO" "Signed"
     else
-	    logit "[ERROR]" "Error while signing"
+        logit "ERROR" "Error while signing"
     fi
 
-    logit "[INFO]" "Adding signature to IPFS"
+    logit "INFO" "Adding signature to IPFS"
     SIGNATURE=$(ak-ipfs-add $TEMPASSIN/$SIGN_FILE)
     if [ $? == 0 ]; then
-	    logit "[INFO]" "Added"
+        logit "INFO" "Added"
     else
-	    logit "[ERROR]" "Error while adding"
+        logit "ERROR" "Error while adding"
     fi
 
     cat > $TEMPASSIN/data <<EOF
@@ -102,10 +102,10 @@ echo "Publishing..."
 }
 
 if [ ! -z $1 ]; then
-	case $1 in
-		help) _ak_modules_files_usage; exit;;
-		add) _ak_modules_files_add $2; exit;;
-		*) _ak_modules_files_usage; exit;;
-	esac
+    case $1 in
+        -h | --help) _ak_modules_files_usage; exit;;
+        add) _ak_modules_files_add $2; exit;;
+        *) _ak_modules_files_usage; exit;;
+    esac
 else _ak_modules_files_usage
 fi

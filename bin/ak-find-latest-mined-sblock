@@ -4,18 +4,18 @@ cd $MINED_BLOCKS_DIR
 PROGRAM="$(basename $0)"
 declare -A counters
 logitnowint(){
-	ak-logthis "<$PROGRAM>" "$1" "$2"
+	ak-logthis "$PROGRAM" "$1" "$2"
 }
 further(){
-	# logitnowint "[INFO]" "Diving into $1"
+	# logitnowint "INFO" "Diving into $1"
 	lookfor $1
 }
 
 lookfor(){
-	echo -n $1 | grep -e '[0-9a-f]\{128\}' > /dev/null 
+	echo -n $1 | grep -e '[0-9a-f]\{128\}' > /dev/null
 	if [ ! $? = 0 ]
 	then
-		logitnowint "[ERROR]" "Oops!!! The argument passed, does not match the regular expression!"
+		logitnowint "ERROR" "Oops!!! The argument passed, does not match the regular expression!"
 	else
 		counters[$CHAIN_PARENT]="$(expr ${counters[$CHAIN_PARENT]} + 1)"
 		if [ ! $? = 0 ]
@@ -23,22 +23,22 @@ lookfor(){
 			echo "$1, $counters[$1]"
 			exit 1
 		fi
-		logitnowint "[INFO]" "Accessing file: $1"
+		logitnowint "INFO" "Accessing file: $1"
 	#	echo "$1 file:"
 	#	cat "$1" | jq
 		NEXT_TARGET="$(cat "$1" | jq | grep previous | tr -d ' ' | sed -e 's/previous//g; s/[",:]//g;')"
 		if [ ! "$NEXT_TARGET" = "" ]
 		then
-			logitnowint "[INFO]" "Found previous: $NEXT_TARGET"
+			logitnowint "INFO" "Found previous: $NEXT_TARGET"
 			if [ ! -f "$NEXT_TARGET" ]
 			then
-				logitnowint "[WARNING]" "Could not find $NEXT_TARGET"
+				logitnowint "WARNING" "Could not find $NEXT_TARGET"
 			else
 				further "$NEXT_TARGET"
 			fi
 		else
 
-			logitnowint "[WARNING]" "No next target found. So long for $1"
+			logitnowint "WARNING" "No next target found. So long for $1"
 		fi
 	fi
 }
@@ -50,12 +50,12 @@ do
 #	if [ ! "$p" = "" ] && [ ! "$p" = "tmplistblock" ]
 	if [ "$(echo $p | tr -d '\n' | wc -c)" = 128 ]
 	then
-		logitnowint "[INFO]" "Investigating $p..."
+		logitnowint "INFO" "Investigating $p..."
 		export CHAIN_PARENT="$p"
 		counters[$CHAIN_PARENT]=1
 		lookfor "$p"
 	else
-		logitnowint "[WARNING]" "Nothing to do with $p"
+		logitnowint "WARNING" "Nothing to do with $p"
 	fi
 done < tmplistblock
 rm tmplistblock
@@ -68,7 +68,7 @@ do
 	then
 		max="${counters[${value}]}"
 		max_holder="${value}"
-		logitnowint "[INFO]" "New MAX $max on $max_holder"
+		logitnowint "INFO" "New MAX $max on $max_holder"
 
 
 	fi	

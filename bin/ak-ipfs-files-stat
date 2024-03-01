@@ -3,6 +3,6 @@ PROGRAM="$(basename $0)"
 ipfs files stat "$1"
 if [ "$?" != "0" ]
 then
-    ak-logthis "<$PROGRAM>" "[ERROR]" "Failed to get file's stats $1"
+    ak-logthis "$PROGRAM" "ERROR" "Failed to get file's stats $1"
     exit 1
 fi

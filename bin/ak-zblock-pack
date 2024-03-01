@@ -19,7 +19,7 @@ set -xe
 
 # Logging patch
 logit(){
-	ak-logthis "<$PROGRAM>" "$1" "$2"
+	ak-logthis "$PROGRAM" "$1" "$2"
 }
 
 # Below, the usage information
@@ -48,13 +48,13 @@ main(){
     do
         if [ "$p" == "$TO_CHECK" ]
         then
-            logit "[ERROR]" "Value $TO_CHECK already mentioned on the zchain"
+            logit "ERROR" "Value $TO_CHECK already mentioned on the zchain"
             exit 1
         fi
     done < tempisalreadythere
     rm tempisalreadythere
- 
-	logit "[INFO]" "We are doing $ACTION with content $MESSAGE"
+
+	logit "INFO" "We are doing $ACTION with content $MESSAGE"
 	# We add it to IPFS
 	MESSAGE_HASH=$(ak-ipfs-add $MESSAGE)
 
@@ -101,7 +101,7 @@ then
 	if [ -f "$MESSAGE" ]; then
 		main
 	else
-		logit "[ERROR]" "File does not exist. Aborting..."
+		logit "ERROR" "File does not exist. Aborting..."
 		exit 1
 	fi
 
@@ -113,42 +113,42 @@ then
 	ak-ipfs-name-publish --key=zchain $ZBLOCK > /dev/null 2>&1
     if [ "$?" -ne 0 ]
     then
-        logit "[ERROR]" "Failed publishing ZBLOCK: $ZBLOCK"
+        logit "ERROR" "Failed publishing ZBLOCK: $ZBLOCK"
         exit 1
     fi
 	ak-ipfs-files-ls /zarchive > /dev/null 2>&1
     if [ "$?" -ne 0 ]
     then
-        logit "[WARNING]" "/zarchive does not exist"
+        logit "WARNING" "/zarchive does not exist"
         ak-ipfs-files-mkdir /zarchive > /dev/null 2>&1
         if [ "$?" -ne 0 ]
         then
-            logit "[ERROR]" "Could not create /zarchive directory. Aborting."
+            logit "ERROR" "Could not create /zarchive directory. Aborting."
             exit 1
         fi
     fi
 	ak-ipfs-files-cp /zlatest /zarchive/$(date -u +%s)-$(ak-ipfs-files-stat /zlatest | head -n 1) > /dev/null 2>&1
     if [ "$?" -ne 0 ]
     then
-        logit "[ERROR]" "Could not back up previous /zlatest"
+        logit "ERROR" "Could not back up previous /zlatest"
         exit 1
     fi
 	ak-ipfs-files-rm /zlatest > /dev/null 2>&1
     if [ "$?" -ne 0 ]
     then
-        logit "[ERROR]" "Could not remove previous /zlatest"
+        logit "ERROR" "Could not remove previous /zlatest"
         exit 1
     fi
 	ak-ipfs-files-cp /ipfs/$ZBLOCK /zlatest > /dev/null 2>&1
     if [ "$?" -ne 0 ]
     then
-        logit "[ERROR]" "Could not copy $ZBLOCK to /zlatest"
+        logit "ERROR" "Could not copy $ZBLOCK to /zlatest"
         exit 1
     fi
     ak-config publish
     if [ "$?" -ne 0 ]
     then
-        logit "[ERROR]" "Could not publish new configuration"
+        logit "ERROR" "Could not publish new configuration"
         exit 1
     fi
 else

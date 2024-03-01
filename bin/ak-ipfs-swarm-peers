@@ -3,6 +3,6 @@ PROGRAM="$(basename $0)"
 ipfs swarm peers
 if [ "$?" != "0" ]
 then
-    ak-logthis "<$PROGRAM>" "[ERROR]" "Failed to get list of peers"
+    ak-logthis "$PROGRAM" "ERROR" "Failed to get list of peers"
     exit 1
 fi

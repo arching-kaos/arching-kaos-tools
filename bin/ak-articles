@@ -1,7 +1,29 @@
 #!/bin/bash
+
+PROGRAM=$(basename $0)
+descriptionString="Articles module for Arching Kaos"
+
+logit(){
+    ak-logthis "$PROGRAM" "$1" "$2"
+}
+new_line(){
+  printf '\n'
+}
+description(){
+  full_title="$(printf '%s - %s' "$PROGRAM" "$descriptionString")"
+  delimiter_count=`echo -n $full_title | wc -c`
+  printf '%s' "$full_title"
+  new_line
+  while [ $delimiter_count -gt 0 ]
+  do
+    printf '='
+    delimiter_count=$(($delimiter_count-1))
+  done
+  new_line
+}
+
 ZARTICLESDIR="$AK_WORKDIR/articles"
 TEMP="/tmp/aktmp"
-echo $ZARTICLESDIR
 if [ ! -d $ZARTICLESDIR ]; then
     mkdir $ZARTICLESDIR
     cd $ZARTICLESDIR
@@ -47,8 +69,7 @@ _ak_modules_articles_index(){
     done
 }
 _ak_modules_articles_title(){
-	echo	ak-articles-cli
-	echo "--------------"
+    description
 }
 _ak_modules_articles_import(){
     echo "#TODO"

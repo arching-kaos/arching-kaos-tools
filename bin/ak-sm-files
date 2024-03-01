@@ -44,14 +44,14 @@ main(){
     cd $TEMPASSIN
 
     echo "Adding $FILENAME"
-    logit "[INFO]" "Switching to tmp folder..."
+    logit "INFO" "Switching to tmp folder..."
     if [ $? == 0 ]; then
         logit "INFO" "Success"
     else
         logit "ERROR" "Error with tmp folder"
         exit 5
     fi
-    logit "[INFO]" "Copying $1 to $TEMPASSIN"
+    logit "INFO" "Copying $1 to $TEMPASSIN"
 
     cp $CRP/$FILENAME $FILENAME
     if [ $? == 0 ]; then
@@ -60,7 +60,7 @@ main(){
         logit "ERROR" "Error copying..."
     fi
 
-    logit "[INFO]" "Adding $FILENAME to IPFS..."
+    logit "INFO" "Adding $FILENAME to IPFS..."
     FILE_IPFS_HASH=$(ak-ipfs-add $FILENAME)
     if [ $? == 0 ]; then
         logit "INFO" "Added $FILENAME to IPFS"
@@ -68,7 +68,7 @@ main(){
         logit "ERROR" "Error in adding the $FILENAME to IPFS"
     fi
 
-    logit "[INFO]" "Adding $FILE to SHAMAPSYS..."
+    logit "INFO" "Adding $FILE to SHAMAPSYS..."
     FILEMAP_SHA512_HASH=$(ak-sm-filesplitter $FILENAME)
     if [ $? == 0 ]; then
         logit "INFO" "Added $FILENAME to SHAMAPSYS"
@@ -76,7 +76,7 @@ main(){
         logit "ERROR" "Error in adding the $FILENAME to SHAMAPSYS"
     fi
 
-    logit "[INFO]" "Signing..."
+    logit "INFO" "Signing..."
     SIGN_FILE=$FILENAME".asc"
     gpg2 --homedir $AK_GPGHOME --detach-sign --sign-with $AK_FINGERPRINT --armor --output $SIGN_FILE $FILENAME
     if [ $? == 0 ]; then
@@ -85,7 +85,7 @@ main(){
         logit "ERROR" "Error while signing"
     fi
 
-    logit "[INFO]" "Adding signature to IPFS"
+    logit "INFO" "Adding signature to IPFS"
     SIGNATURE=$(ak-ipfs-add $SIGN_FILE)
     if [ $? == 0 ]; then
         logit "INFO" "Added"
@@ -93,7 +93,7 @@ main(){
         logit "ERROR" "Error while adding"
     fi
 
-    logit "[INFO]" "Adding signature to SHAMAPSYS"
+    logit "INFO" "Adding signature to SHAMAPSYS"
     SHAMAPSIGMAP=$(ak-sm-filesplitter $SIGN_FILE)
     if [ $? == 0 ]; then
         logit "INFO" "Added"

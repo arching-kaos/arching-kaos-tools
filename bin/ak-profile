@@ -5,7 +5,7 @@ TEMP="/tmp/aktmp"
 
 # Outputs to log file in the classic format :)
 logit(){
-	ak-logthis "<$PROGRAM>" "$1" "$2"
+    ak-logthis "$PROGRAM" "$1" "$2"
 }
 
 # Whatever the command is, we check if $ZPROFILEDIR is there.

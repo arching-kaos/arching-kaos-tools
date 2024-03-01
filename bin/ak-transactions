@@ -5,11 +5,11 @@ _ak_modules_transactions_usage(){
 }
 
 logit(){
-	ak-logthis "<$PROGRAM>" "$1" "$2"
+	ak-logthis "$PROGRAM" "$1" "$2"
 }
 
 _ak_modules_transactions_main(){
-    logit "[INFO]" "$FROM_ADDRESS to $TO_ADDRESS value sent: $AMOUNT"
+    logit "INFO" "$FROM_ADDRESS to $TO_ADDRESS value sent: $AMOUNT"
     cat > transaction_file <<EOF
 $FROM_ADDRESS
 $TO_ADDRESS

@@ -1,8 +1,8 @@
 #!/bin/bash
 PROGRAM="$(basename $0)"
-ipfs --timeout=10s get "$1"
+ipfs --timeout=10s get "$1" > /dev/null 2>&1
 if [ "$?" != "0" ]
 then
-    ak-logthis "<$PROGRAM>" "[ERROR]" "Failed to get $1"
+    ak-logthis "$PROGRAM" "ERROR" "Failed to get $1"
     exit 1
 fi

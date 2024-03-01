@@ -9,18 +9,18 @@ usage(){
 	echo "Returns the resolved IPFS CIDv0"
 }
 logit(){
-	ak-logthis "<$PROGRAM>" "$1" "$2"
+	ak-logthis "$PROGRAM" "$1" "$2"
 }
 if [ ! -z $1 ]
 then
 	rsld=$(ak-ipfs-name-resolve $1)
 	if [ "$?" != 0 ]
 	then
-		logit "[ERROR]" "Failed to resolve $1"
+		logit "ERROR" "Failed to resolve $1"
 		exit 1
 	fi
        	echo -n $rsld | sed -e 's/\/ipfs\///'
-	logit "[INFO]" "Resolved $1 to $rsld"
+	logit "INFO" "Resolved $1 to $rsld"
 else
 	usage
 fi

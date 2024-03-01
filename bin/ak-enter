@@ -20,7 +20,7 @@
 PROGRAM="$(basename $0)"
 
 logit(){
-    ak-logthis "<$PROGRAM>" "$1" "$2"
+    ak-logthis "$PROGRAM" "$1" "$2"
 }
 
 usage(){
@@ -45,7 +45,7 @@ isIPFSv0 () {
         echo $1 | grep -e 'Qm.\{44\}' > /dev/null
         if [ "$?" -ne 0 ]
         then
-            logit "[ERROR]" "Argument provided was not an IPFS CIDv0 string"
+            logit "ERROR" "Argument provided was not an IPFS CIDv0 string"
             exit 1
         fi
     else
@@ -84,7 +84,7 @@ while [ "$#" ]; do
             entrance="$(ak-ipns-resolve $1)"
             if [ "$?" -ne 0 ]
             then
-                logit "[ERROR]" "Could not resolve IPNS name"
+                logit "ERROR" "Could not resolve IPNS name"
                 exit 1
             fi
             shift
@@ -135,7 +135,7 @@ do
             # Reset timestamp since it's introduced later
             timestamp=''
             # Announce to logs which ZBLOCK is being read at the moment
-            logit "[INFO]" "Examining $zblock"
+            logit "INFO" "Examining $zblock"
 
             isIPFSv0 "$zblock"
 
@@ -143,23 +143,23 @@ do
             ak-ipfs-cat $zblock | jq -c -M > $AK_ZBLOCKDIR/$zblock
             if [ "$?" -ne 0 ]
             then
-                logit "[ERROR]" "ZBLOCK $zblock READ failed"
+                logit "ERROR" "ZBLOCK $zblock READ failed"
                 exit 1
             fi
-            logit "[INFO]" "ZBLOCK $zblock READ"
+            logit "INFO" "ZBLOCK $zblock READ"
             echo -n '{'
 #            echo -n '"id":"'$counter'",'
             echo -n '"zblock":"'$zblock'",'
-  
+
             # If it's JSON formated
             cat $AK_ZBLOCKDIR/$zblock | jq -M > /dev/null 2>&1
             if [ "$?" -ne 0 ]
             then
-                logit "[ERROR]" "ZBLOCK $zblock is not JSON"
+                logit "ERROR" "ZBLOCK $zblock is not JSON"
                 cat /dev/null > $AK_ZBLOCKDIR/$zblock > /dev/null 2>&1
                 exit 1
             fi
-            logit "[INFO]" "ZBLOCK $zblock is JSON"
+            logit "INFO" "ZBLOCK $zblock is JSON"
 
             # Be sure that there are the expected values
             # We need 'block' and 'block_signature' inside a 'zblock'
@@ -167,20 +167,20 @@ do
             block="$(cat $AK_ZBLOCKDIR/$zblock | jq -M -r .block)"
             if [ "$block" == "null" ]
             then
-                logit "[ERROR]" "ZBLOCK $zblock has no block"
+                logit "ERROR" "ZBLOCK $zblock has no block"
                 exit 1
             fi
             isIPFSv0 "$block"
-            logit "[INFO]" "ZBLOCK $zblock has block"
+            logit "INFO" "ZBLOCK $zblock has block"
 
             block_signature="$(cat $AK_ZBLOCKDIR/$zblock | jq -M -r .block_signature)"
             if [ "$block_signature" == "null" ]
             then
-                logit "[ERROR]" "ZBLOCK $zblock doesn't contain a block_signature"
+                logit "ERROR" "ZBLOCK $zblock doesn't contain a block_signature"
                 exit 1
             fi
             isIPFSv0 "$block_signature"
-            logit "[INFO]" "ZBLOCK $zblock contains a block_signature"
+            logit "INFO" "ZBLOCK $zblock contains a block_signature"
 
             # Same as above applies to BLOCK and DATA subparts of each ZBLOCK
             # BLOCKS
@@ -189,24 +189,24 @@ do
             cat $AK_BLOCKDIR/$block | jq -M > /dev/null 2>&1
             if [ "$?" -ne 0 ]
             then
-                logit "[ERROR]" "BLOCK $block READ failed"
+                logit "ERROR" "BLOCK $block READ failed"
                 exit 1
             fi
 
             grep -e 'timestamp' -e 'gpg' -e 'data' -e 'action' -e 'detach' -e 'previous' $AK_BLOCKDIR/$block > /dev/null 2>&1
             if [ "$?" -ne 0 ]
             then
-                logit "[ERROR]" "BLOCK $block is NOT a valid block"
+                logit "ERROR" "BLOCK $block is NOT a valid block"
                 exit 1
             fi
-            logit "[INFO]" "BLOCK $block is a block"
+            logit "INFO" "BLOCK $block is a block"
 
             action="$(cat $AK_BLOCKDIR/$block | jq -M -r .action)"
             module="$(echo $action | sed -e 's/\// /g' | awk '{ print $1 }')"
-            logit "[INFO]" "DATA is $module module."
+            logit "INFO" "DATA is $module module."
 
             command="$(echo $action | sed -e 's/\// /g' | awk '{ print $2 }')"
-            logit "[INFO]" "COMMAND is $command"
+            logit "INFO" "COMMAND is $command"
 
             timestamp="$(cat $AK_BLOCKDIR/$block | jq -M -r .timestamp)"
             if [ "$timestamp" != "null" ]
@@ -231,36 +231,36 @@ do
                 ak-ipfs-get $gpg > /dev/null 2>&1
                 if [ "$?" -ne 0 ]
                 then
-                    logit "[ERROR]" "Could not get GPG key: $gpg ."
+                    logit "ERROR" "Could not get GPG key: $gpg ."
                     exit 1
                 fi
                 gpg2 --homedir $AK_GPGHOME --import $gpg > /dev/null 2>&1
                 if [ "$?" -ne 0 ]
                 then
-                    logit "[ERROR]" "Could not import GPG key: $gpg ."
+                    logit "ERROR" "Could not import GPG key: $gpg ."
                     exit 1
                 fi
                 ak-ipfs-get $block_signature > /dev/null 2>&1
                 if [ "$?" -ne 0 ]
                 then
-                    logit "[ERROR]" "Error while getting $block_signature for $block"
+                    logit "ERROR" "Error while getting $block_signature for $block"
                     exit 1
                 fi
                 mv $block_signature $block.asc
-                logit "[INFO]" "Block signature downloaded"
+                logit "INFO" "Block signature downloaded"
 
                 ak-ipfs-get $block > /dev/null 2>&1
                 if [ "$?" -ne 0 ]
                 then
-                    logit "[ERROR]" "Could not get $block block"
+                    logit "ERROR" "Could not get $block block"
                     exit 1
                 fi
-                logit "[INFO]" "Downloaded block $block."
+                logit "INFO" "Downloaded block $block."
 
                 gpg2 --homedir $AK_GPGHOME --verify $block.asc > /dev/null 2>&1
                 if [ "$?" -ne 0 ]
                 then
-                    logit "[ERROR]" "Could not verify $block with GPG key $gpg."
+                    logit "ERROR" "Could not verify $block with GPG key $gpg."
                     exit 1
                 fi
                 logit "[GPG]" "$gpg signature of $block is verified."
@@ -271,7 +271,7 @@ do
             ak-data-expand $data $gpg
             if [ "$?" -ne 0 ]
             then
-                logit "[ERROR]" "Failed on data signature verification [data: $data, gpg: $gpg, zblock: $zblock]"
+                logit "ERROR" "Failed on data signature verification [data: $data, gpg: $gpg, zblock: $zblock]"
                 exit 1
             fi
 
@@ -286,15 +286,15 @@ do
             previous="$(cat $AK_BLOCKDIR/$block | jq -M -r .previous)"
             if [ -v $previous ]
             then
-                logit "[WARNING]" "Block $block has no previous zblock, appending pseudo genesis to exit with 2."
+                logit "WARNING" "Block $block has no previous zblock, appending pseudo genesis to exit with 2."
                 echo -n '"previous":"genesis"},{"genesis":"genesis"}]'
-                logit "[INFO]" "Reached pseudo-genesis, counted $counter zblocks."
+                logit "INFO" "Reached pseudo-genesis, counted $counter zblocks."
                 exit 2
 
             # Otherwise, we inform of the sequence
             else
                 #echo "$zblock after $previous"
-                logit "[INFO]" "Found a previous block for $zblock: $previous"
+                logit "INFO" "Found a previous block for $zblock: $previous"
                 echo -n '"previous":"'$previous'"}'
                 zblock=$previous
             fi
@@ -311,7 +311,7 @@ do
         elif [ "$zblock" == "$seed" ]
         then
             echo -n '{"genesis":"genesis"}]'
-            logit "[INFO]" "Reached $seed, counted $counter zblocks."
+            logit "INFO" "Reached $seed, counted $counter zblocks."
             exit 0
         fi
     # And finally, if nothing is there exit with error
