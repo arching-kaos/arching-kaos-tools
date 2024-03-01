@@ -1,0 +1,51 @@
+#!/bin/bash
+
+PROGRAM=$(basename $0)
+
+logit(){
+    ak-logthis "$PROGRAM" "$1" "$2"
+}
+
+if [ $# -eq 0 ]
+then
+    logit "WARNING" "No command given"
+    (
+        find $AK_BINDIR | grep 'ak-' | while read available
+        do
+            #subcmd="$(basename $available | cut -d '-' -f 2)"
+            subcmd="$(basename $available)"
+            args="-h"
+            if [ -n "$subcmd" ]
+            then
+                echo $subcmd
+                # $(echo $subcmd) $args
+            fi
+        done
+    ) | sort | uniq
+    exit 1
+fi
+
+subcmd="$(echo $* | sed -e 's/ /-/g')"
+if [ -f "$AK_BINDIR/ak-$subcmd" ]
+then
+    $(echo ak-$subcmd)
+    exit $?
+else
+    argc=$#
+    argv="$*"
+    counter=1
+    while [ $counter -lt $argc ]
+    do
+        subcmd="$(echo $argv | cut -d ' ' -f -$counter | sed -e 's/ /\-/g')"
+        args="$(echo "$argv"| cut -d ' ' -f $(($counter + 1))-)"
+        if [ -n "$subcmd" ] && [ -f "$AK_BINDIR/ak-$subcmd" ]
+        then
+            logit "INFO" "Running: ak-$subcmd with args: $args"
+            $(echo ak-$subcmd) $args
+            exit $?
+        fi
+        counter=$(($counter + 1))
+    done
+    logit "ERROR" "Unknown subcommand: $*"
+    exit 1
+fi
