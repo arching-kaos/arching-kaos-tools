@@ -143,21 +143,21 @@ publish(){
 }
 
 usage(){
-	echo "TODO"
+    echo "-h, --help"
     echo "index | add | publish | update"
     exit
 }
 
 if [ ! -z $1 ]
 then
-	case $1 in
-		help) usage; exit;;
-		index) index; exit;;
-		add) add "$2"; exit;;
-		publish) publish "$2"; exit;;
-		update) update "$2"; exit;;
-		*) echo "No command $1";usage; exit;;
-	esac
+    case $1 in
+        -h | --help) usage; exit;;
+        index) index; exit;;
+        add) add "$2"; exit;;
+        publish) publish "$2"; exit;;
+        update) update "$2"; exit;;
+        *) echo "No command $1";usage; exit;;
+    esac
 else
     usage
 fi

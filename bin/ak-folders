@@ -78,7 +78,7 @@ _ak_modules_folders_title(){
 
 if [ ! -z $1 ]; then
     case $1 in
-        help) _ak_modules_folders_usage; exit;;
+        -h | --help) _ak_modules_folders_usage; exit;;
         add) _ak_modules_folders_add $2; exit;;
         *) _ak_modules_folders_usage; exit;;
     esac

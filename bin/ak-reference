@@ -112,7 +112,7 @@ _ak_modules_reference_usage(){
     _ak_modules_reference_title
     echo "#TODO"
     echo "All you need to know is that there are two options available:"
-    echo "help                     Prints this help message"
+    echo "-h, --help               Prints this help message"
     echo "index                    Prints an indexed table of your references files"
     echo "import <file>            #TODO"
     echo "add <file>               Creates a data file from the references file you point to"
@@ -123,7 +123,7 @@ _ak_modules_reference_usage(){
 
 if [ ! -z $1 ]; then
     case $1 in
-        help) _ak_modules_reference_usage; exit;;
+        -h | --help) _ak_modules_reference_usage; exit;;
         index) _ak_modules_reference_index; exit;;
         import) _ak_modules_reference_import $2; exit;;
         add) _ak_modules_reference_add $2; exit;;

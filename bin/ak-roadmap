@@ -21,11 +21,11 @@ search(){
 
 if [ ! -z $1 ];
 then
-	case $1 in
-		help) usage; exit;;
-		search) search; exit;;
-		*) usage; exit;;
-	esac
+    case $1 in
+        -h | --help) usage; exit;;
+        search) search; exit;;
+        *) usage; exit;;
+    esac
 else
     usage
     exit 0

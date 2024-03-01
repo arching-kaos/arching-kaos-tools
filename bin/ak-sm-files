@@ -145,9 +145,9 @@ full-index(){
 }
 
 if [ ! -z $1 ]; then
-	case $1 in
-		help) usage; exit;;
-		add) add $2; exit;;
+    case $1 in
+        -h | --help) usage; exit;;
+        add) add $2; exit;;
         index) index; exit;;
         full-index) full-index; exit;;
         ls-map-files) ls-mapfiles; exit;;

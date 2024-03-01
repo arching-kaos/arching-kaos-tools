@@ -196,7 +196,7 @@ _ak_modules_news_read(){
 _ak_modules_news_title
 if [ ! -z $1 ]; then
     case $1 in
-        help) _ak_modules_news_usage; exit;;
+        -h | --help) _ak_modules_news_usage; exit;;
         local-index) _ak_modules_news_index; exit;;
         import) _ak_modules_news_import $2; exit;;
         add) _ak_modules_news_add2 $2; exit;;
