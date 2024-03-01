@@ -59,6 +59,9 @@ help_all(){
     help_follow
     new_line
 
+    help_node_info
+    new_line
+
     printf '    modules             Various modules'
     help_modules
     new_line
@@ -92,6 +95,28 @@ help_all(){
     help_uncatecorized
 }
 
+help_node_info(){
+    ak-node-info
+}
+
+_node_info(){
+    if [ ! -z "$1" ]
+    then
+        case "$1" in
+            ipfs)
+                ak-node-info ipfs
+                ;;
+            ipns)
+                ak-node-info ipns
+                ;;
+            *)
+                help_node_info
+                ;;
+        esac
+    else
+        help_node_info
+    fi
+}
 help_config(){
     cat /home/kaotisk/projects/arching-kaos-tools/txts/manuals/config_subcommands
 }
@@ -423,6 +448,10 @@ else
     case "$1" in
         config)
             _config "$2"
+            exit_program 0 "$1 command finished";
+            ;;
+        node)
+            _node_info "$2"
             exit_program 0 "$1 command finished";
             ;;
         log)
