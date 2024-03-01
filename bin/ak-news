@@ -5,19 +5,19 @@ ZNEWSDIR="$AK_WORKDIR/news"
 TEMP="/tmp/aktmp"
 
 logit(){
-    ak-logthis "<$PROGRAM>" "$1" "$2"
+    ak-logthis "$PROGRAM" "$1" "$2"
 }
 
 if [ ! -d $ZNEWSDIR ]; then
     mkdir $ZNEWSDIR
     if [ "$?" == 0 ]; then
-        logit "[INFO]" "$ZNEWSDIR created"
+        logit "INFO" "$ZNEWSDIR created"
     else
-        logit "[ERROR]" "$ZNEWSDIR couldn't be created"
+        logit "ERROR" "$ZNEWSDIR couldn't be created"
         exit 1
     fi
 else
-    logit "[INFO]" "$ZNEWSDIR found"
+    logit "INFO" "$ZNEWSDIR found"
 fi
 
 cd $ZNEWSDIR
@@ -188,8 +188,8 @@ _ak_modules_news_read(){
 
         ak-ipfs-cat $linkToText
     else
-        ak-logthis "[ERROR]" "Not a news block."
-        echo "[ERROR] Not a news block."
+        logit "ERROR" "Not a news block."
+        echo "ERROR Not a news block."
         exit 1
     fi
     rm temp

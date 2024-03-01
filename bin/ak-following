@@ -1,10 +1,14 @@
 #!/bin/bash
+PROGRAM="$(basename $0)"
+logit(){
+    ak-logthis "$PROGRAM" "$1" "$2"
+}
 FOLLOWING="$HOME/.arching-kaos/following"
 if [ -f $FOLLOWING ]
 then
 	cat $FOLLOWING
 else
-	ak-logthis "No following file, creating"
+	logit "INFO" "No following file, creating"
 	touch $FOLLOWING
 	echo "None found"
 fi

@@ -1,88 +1,92 @@
 #!/bin/bash
+PROGRAM="$(basename $0)"
+logit(){
+    ak-logthis "$PROGRAM" "$1" "$2"
+}
 ZTODOSDIR="$AK_WORKDIR/todos"
 TEMP="/tmp/aktmp"
 if [ ! -d $ZTODOSDIR ]; then
-	mkdir $ZTODOSDIR
-	cd $ZTODOSDIR
-	git init
-	echo "Todos repository" > README
-	echo "Qmetc" >> README
-	git add README
-	git commit -m "Initiated todos repository"
-	ak-logthis "ztodosdir created along with git repo"
+    mkdir $ZTODOSDIR
+    cd $ZTODOSDIR
+    git init
+    echo "Todos repository" > README
+    echo "Qmetc" >> README
+    git add README
+    git commit -m "Initiated todos repository"
+    logit "[INFO]" "ztodosdir created along with git repo"
 else
-	ak-logthis "ztodosdir found"
+    logit "[INFO]" "ztodosdir found"
 fi
 
 _ak_modules_todos_create(){
     TEMP="$(ak-tempassin)"
     cd $TEMP
-	export TODOS_FILE="$(date -u +%s)"
-	vi $TODOS_FILE
-	ak-logthis "Renaming..."
-	TITLE="$(head -n 1 $TODOS_FILE)"
-	TO_FILE=$TODOS_FILE-$(echo $TITLE | tr '[:upper:]' '[:lower:]' | sed -e 's/ /\_/g' )
-	IPFS_FILE=$(ak-ipfs-add $TODOS_FILE)
-	mv $TODOS_FILE $ZTODOSDIR/$TO_FILE
-	sed -e 's,Qm.*,'"$IPFS_FILE"',g' $ZTODOSDIR/README
-	_ak_modules_todos_add $ZTODOSDIR/$TO_FILE
-	ak-logthis "Adding to git repo..."
-	cd $ZTODOSDIR
-	git add $TO_FILE README
-	git commit -m "Added $TO_FILE with $(head -n 1 $ZTODOSDIR/$TO_FILE)"
-	git clean --force
-	# rm -rf $TEMP 
+    export TODOS_FILE="$(date -u +%s)"
+    vi $TODOS_FILE
+    logit "[INFO]" "Renaming..."
+    TITLE="$(head -n 1 $TODOS_FILE)"
+    TO_FILE=$TODOS_FILE-$(echo $TITLE | tr '[:upper:]' '[:lower:]' | sed -e 's/ /\_/g' )
+    IPFS_FILE=$(ak-ipfs-add $TODOS_FILE)
+    mv $TODOS_FILE $ZTODOSDIR/$TO_FILE
+    sed -e 's,Qm.*,'"$IPFS_FILE"',g' $ZTODOSDIR/README
+    _ak_modules_todos_add $ZTODOSDIR/$TO_FILE
+    logit "[INFO]" "Adding to git repo..."
+    cd $ZTODOSDIR
+    git add $TO_FILE README
+    git commit -m "Added $TO_FILE with $(head -n 1 $ZTODOSDIR/$TO_FILE)"
+    git clean --force
+    # rm -rf $TEMP
 }
 _ak_modules_todos_index(){
-	FILES="$(ls -1 $ZTODOSDIR)"
-	i=0
-	for FILE in $FILES
-	do
-		DATE=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
-		TITLE=$(head -n 1 $ZTODOSDIR/$FILE)
-		echo $i \| $DATE \| $TITLE
-		let i+=1
-	done
+    FILES="$(ls -1 $ZTODOSDIR)"
+    i=0
+    for FILE in $FILES
+    do
+        DATE=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
+        TITLE=$(head -n 1 $ZTODOSDIR/$FILE)
+        echo $i \| $DATE \| $TITLE
+        let i+=1
+    done
 }
 _ak_modules_todos_title(){
-	echo	ak-todos-cli
-	echo "--------------"
+    echo    ak-todos-cli
+    echo "--------------"
 }
 _ak_modules_todos_import(){
-	echo "#TODO"
-	if [ ! -z $1 ]
-	then
-		if [ ! -d $1 ]
-		then
-			echo "Folder does not exists"
-			exit 4
-		else
-			echo "Folder $1 exists"
-			fl="$(ls -1 $1)"
-			for f in $fl
-			do
-				_ak_modules_todos_add $1/$f
-			done
-		fi
-	else
-		echo "No value"
-		exit 6
-	fi
-	exit 224
+    echo "#TODO"
+    if [ ! -z $1 ]
+    then
+        if [ ! -d $1 ]
+        then
+            echo "Folder does not exists"
+            exit 4
+        else
+            echo "Folder $1 exists"
+            fl="$(ls -1 $1)"
+            for f in $fl
+            do
+                _ak_modules_todos_add $1/$f
+            done
+        fi
+    else
+        echo "No value"
+        exit 6
+    fi
+    exit 224
 }
 _ak_modules_todos_add(){
     TEMP="$(ak-tempassin)"
     cd $TEMP
-	if [ -f $1 ]; then
-		FILE="$1"
-		ak-logthis "Adding todos from $FILE"
-		DATETIME=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
-		TITLE=$(head -n 1 $FILE)
-		FILE_IPFS_HASH=$(ak-ipfs-add $FILE)
-		FILE_SIGN_FILE=$FILE".asc"
-		gpg2 --homedir $AK_GPGHOME --detach-sign --sign-with $AK_FINGERPRINT --armor --output $FILE_SIGN_FILE $FILE
-		FILE_SIGNATURE=$(ak-ipfs-add $FILE_SIGN_FILE)
-		cat > data <<EOF
+    if [ -f $1 ]; then
+        FILE="$1"
+        logit "[INFO]" "Adding todos from $FILE"
+        DATETIME=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
+        TITLE=$(head -n 1 $FILE)
+        FILE_IPFS_HASH=$(ak-ipfs-add $FILE)
+        FILE_SIGN_FILE=$FILE".asc"
+        gpg2 --homedir $AK_GPGHOME --detach-sign --sign-with $AK_FINGERPRINT --armor --output $FILE_SIGN_FILE $FILE
+        FILE_SIGNATURE=$(ak-ipfs-add $FILE_SIGN_FILE)
+        cat > data <<EOF
 {
    "datetime":"$TODOS_FILE",
    "title":"$TITLE",
@@ -96,13 +100,13 @@ EOF
 		exit 2
 	fi
     ak-zblock-pack "todos/add" $(pwd)/data
-	if [ $? == 0 ]
-	then
-		ak-logthis "Todos added successfully"
-	else
-		echo "error??"
-		exit 1
-	fi
+    if [ $? == 0 ]
+    then
+        logit "[INFO]" "Todos added successfully"
+    else
+        echo "error??"
+        exit 1
+    fi
 }
 _ak_modules_todos_usage(){
 	_ak_modules_todos_title

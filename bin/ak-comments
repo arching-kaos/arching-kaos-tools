@@ -1,4 +1,8 @@
 #!/bin/bash
+PROGRAM="$(basename $0)"
+logit(){
+    ak-logthis "$PROGRAM" "$1" "$2"
+}
 ZCOMMENTSDIR="$AK_WORKDIR/comments"
 TEMP="/tmp/aktmp"
 if [ ! -d $ZCOMMENTSDIR ]; then
@@ -6,33 +10,33 @@ if [ ! -d $ZCOMMENTSDIR ]; then
 	cd $ZCOMMENTSDIR
 	ak-logthis "[INFO]" "zcommentsdir created"
 else
-	ak-logthis "[INFO]" "zcommentsdir found"
+    logit "INFO" "zcommentsdir found"
 fi
 
 _ak_modules_comments_create(){
-	if [ ! -z $1 ]
-	then
-		REFER_TO="$1"
-	else
-		ak-logthis "[ERROR]" "No reference given"
-		echo "[ERROR]" "No reference given"
-		exit 1
-	fi
+    if [ ! -z $1 ]
+    then
+        REFER_TO="$1"
+    else
+        logit "ERROR" "No reference given"
+        echo "ERROR" "No reference given"
+        exit 1
+    fi
     TEMP="$(ak-tempassin)"
     cd $TEMP
-	export COMMENTS_FILE="$(date -u +%s)"
-	vi $COMMENTS_FILE
-	echo "Renaming..."
-	TO_FILE=$COMMENTS_FILE
-	IPFS_FILE=$(ak-ipfs-add $COMMENTS_FILE)
-	mv $COMMENTS_FILE $ZCOMMENTSDIR/$TO_FILE
-	_ak_modules_comments_add $TO_FILE
-	ak-logthis "[INFO]" "Adding to git repo..."
-	cd $ZCOMMENTSDIR
-	if [ ! -z $REFER_TO ]
-	then
-		ak-reference create $REFERENCE $REFER_TO
-	fi
+    export COMMENTS_FILE="$(date -u +%s)"
+    vi $COMMENTS_FILE
+    echo "Renaming..."
+    TO_FILE=$COMMENTS_FILE
+    IPFS_FILE=$(ak-ipfs-add $COMMENTS_FILE)
+    mv $COMMENTS_FILE $ZCOMMENTSDIR/$TO_FILE
+    _ak_modules_comments_add $TO_FILE
+    logit "INFO" "Adding to git repo..."
+    cd $ZCOMMENTSDIR
+    if [ ! -z $REFER_TO ]
+    then
+        ak-reference create $REFERENCE $REFER_TO
+    fi
 }
 
 _ak_modules_comments_index(){

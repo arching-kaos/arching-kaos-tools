@@ -1,6 +1,6 @@
 #!/bin/bash
 #set -xe
-program=`basename $0`
+PROGRAM=`basename $0`
 tempdir=`mktemp -d`
 curdir=`pwd`
 launch_timestamp=`date -u +%s`
@@ -14,7 +14,7 @@ new_line(){
 # logit "WARNING" "Message"
 # logit "INFO" "Message"
 logit(){
-    ak-logthis "<$program>" "[$1]" "$2"
+    ak-logthis "$PROGRAM" "$1" "$2"
 }
 
 # exit_program 0 'Clean exit'
@@ -31,7 +31,7 @@ exit_program(){
 }
 
 description(){
-  full_title="$(printf '%s - %s' "$program" "$description_text")"
+  full_title="$(printf '%s - %s' "$PROGRAM" "$description_text")"
   delimiter_count=`echo -n $full_title | wc -c`
   printf '%s' "$full_title"
   new_line
@@ -43,8 +43,8 @@ description(){
   new_line
 }
 #description(){
-#    printf '%s - \n' "$program"
-#    printf '===========================================\n' "$program"
+#    printf '%s - \n' "$PROGRAM"
+#    printf '===========================================\n' "$PROGRAM"
 #}
 
 help_all(){
