@@ -11,11 +11,11 @@ logit(){
 # Whatever the command is, we check if $ZPROFILEDIR is there.
 # If NOT we create it and we change dir there.
 if [ ! -d $ZPROFILEDIR ]; then
-	mkdir $ZPROFILEDIR
-	cd $ZPROFILEDIR
-	logit "[INFO]" "zprofiledir created"
+    mkdir $ZPROFILEDIR
+    cd $ZPROFILEDIR
+    logit "INFO" "zprofiledir created"
 else
-	logit "[INFO]" "zprofiledir found"
+    logit "INFO" "zprofiledir found"
 fi
 
 
@@ -25,189 +25,190 @@ fi
 # Hence, we need a specific DATA block that actually has the announcement of a
 # {"key":"value"} pair.
 _ak_modules_profile_show(){
-	if [ ! -z $1 ]
-	then
-		logit "[INFO]" "Working with $1"
+    if [ ! -z $1 ]
+    then
+        logit "INFO" "Working with $1"
         ak-ipfs-cat $(echo $(ak-ipfs-cat $1) | jq '.ipfs' -r)
-	else
-		echo "No DATA provided"
-		exit 1
-	fi
+    else
+        echo "No DATA provided"
+        exit 1
+    fi
 }
 
 # This should retrieve a specific value from our profile otherwise it dumps the
 # whole profile values.
 _ak_modules_profile_propget(){
-	if [ ! -z $1 ]
-	then
-		if [ ! -f $ZPROFILEDIR/$1 ]
-		then
-			echo "property not found"
-		else
-			cat $ZPROFILEDIR/$1
-		fi
-	else
-		echo "No particular property... indexing"
-		_ak_modules_profile_index
-	fi
+    if [ ! -z $1 ]
+    then
+        if [ ! -f $ZPROFILEDIR/$1 ]
+        then
+            echo "property not found"
+        else
+            cat $ZPROFILEDIR/$1
+        fi
+    else
+        echo "No particular property... indexing"
+        _ak_modules_profile_index
+    fi
 }
 
 propwrite(){
-	cat > $ZPROPERTY_FILE << EOF
+    cat > $ZPROPERTY_FILE << EOF
 {
     "$ZPROPERTY_KEY":"${ZPROPERTY_VALUE}"
 }
 EOF
-	if [ $? == 0 ]
-	then
-		echo "Added successfully... proceeding"
-		IPFS_FILE=$(ak-ipfs-add $ZPROPERTY_FILE)
-		echo "Prop writting,,, $IPFS_FILE"
-		_ak_modules_profile_add $ZPROPERTY_KEY
-		cd $ZPROFILEDIR
-	else
-		echo "Couldn't write to file $ZPROFILEDIR/$TO_FILE"
-		exit 1
-	fi
+    if [ $? == 0 ]
+    then
+        echo "Added successfully... proceeding"
+        IPFS_FILE=$(ak-ipfs-add $ZPROPERTY_FILE)
+        echo "Prop writting,,, $IPFS_FILE"
+        _ak_modules_profile_add $ZPROPERTY_KEY
+        cd $ZPROFILEDIR
+    else
+        echo "Couldn't write to file $ZPROFILEDIR/$TO_FILE"
+        exit 1
+    fi
 }
 
 _ak_modules_profile_propset(){
-	if [ ! -z $1 ]
-	then
-		ZPROPERTY_FILE="$ZPROFILEDIR/$1"
-		ZPROPERTY_KEY="$1"
-		if [ ! -f $ZPROPERTY_FILE ]
-		then
-			echo "No such property: $ZPROPERTY_KEY ... creating"
-			ZPROPERTY_VALUE="$2"
-			if [ ! -z "$ZPROPERTY_VALUE" ]
-			then
-				touch $ZPROPERTY_FILE
-				echo "$ZPROPERTY_KEY = $ZPROPERTY_VALUE in file $ZPROPERTY_FILE"
-				propwrite #"$ZPROPERTY_FILE" "${ZPROPERTY_VALUE}"
-			else 
-				echo "No value for $1"
-			fi
-		else
-			echo found $ZPROPERTY_FILE
-			echo "$ZPROPERTY_KEY = $ZPROPERTY_VALUE in file $ZPROPERTY_FILE"
-			ZPROPERTY_VALUE="$2"
-			read -p "Overwrite $1 with ${ZPROPERTY_VALUE} ? " yn
-			case $yn in
-				[Yy]* ) propwrite;;# "$ZPROPERTY_" "${ZPROPERTY_VALUE}";;
-				[Nn]* ) exit 130;;
-				* ) echo "Answer please";;
-			esac
-			echo $IPFS_FILE
-			_ak_modules_profile_show $IPFS_FILE
-		fi
-	else
-		echo "conditions unmet"
-		exit 244
-	fi
+    if [ ! -z $1 ]
+    then
+        ZPROPERTY_FILE="$ZPROFILEDIR/$1"
+        ZPROPERTY_KEY="$1"
+        if [ ! -f $ZPROPERTY_FILE ]
+        then
+            echo "No such property: $ZPROPERTY_KEY ... creating"
+            ZPROPERTY_VALUE="$2"
+            if [ ! -z "$ZPROPERTY_VALUE" ]
+            then
+                touch $ZPROPERTY_FILE
+                echo "$ZPROPERTY_KEY = $ZPROPERTY_VALUE in file $ZPROPERTY_FILE"
+                propwrite #"$ZPROPERTY_FILE" "${ZPROPERTY_VALUE}"
+            else
+                echo "No value for $1"
+            fi
+        else
+            echo found $ZPROPERTY_FILE
+            echo "$ZPROPERTY_KEY = $ZPROPERTY_VALUE in file $ZPROPERTY_FILE"
+            ZPROPERTY_VALUE="$2"
+            read -p "Overwrite $1 with ${ZPROPERTY_VALUE} ? " yn
+            case $yn in
+                [Yy]* ) propwrite;;# "$ZPROPERTY_" "${ZPROPERTY_VALUE}";;
+                [Nn]* ) exit 130;;
+                * ) echo "Answer please";;
+            esac
+            echo $IPFS_FILE
+            _ak_modules_profile_show $IPFS_FILE
+        fi
+    else
+        echo "conditions unmet"
+        exit 244
+    fi
 }
 _ak_modules_profile_index(){
-	FILES="$(ls -1 $ZPROFILEDIR)"
-	i=0
-	echo -n "{"
-	for FILE in $FILES
-	do
-		if [ $FILE != "README" ]; then
-			if [ $i != "0" ]; then
-				echo -n ",";
-			fi
-			PROP=$(echo $(cat $ZPROFILEDIR/$FILE | ak-json2bash) | cut -d '=' -f 1 | awk '{print $0}')
-			VAL=$(echo $(cat $ZPROFILEDIR/$FILE | ak-json2bash) | cut -d '=' -f 2 | awk '{print $1}')
-			echo -n '"'$PROP'":"'$VAL'"';
-			let i+=1
-		fi
-	done
-	echo "}"
+    FILES="$(ls -1 $ZPROFILEDIR)"
+    i=0
+    echo -n "{"
+    for FILE in $FILES
+    do
+        if [ $FILE != "README" ]; then
+            if [ $i != "0" ]; then
+                echo -n ",";
+            fi
+            PROP=$(echo $(cat $ZPROFILEDIR/$FILE | ak-json2bash) | cut -d '=' -f 1 | awk '{print $0}')
+            VAL=$(echo $(cat $ZPROFILEDIR/$FILE | ak-json2bash) | cut -d '=' -f 2 | awk '{print $1}')
+            echo -n '"'$PROP'":"'$VAL'"';
+            let i+=1
+        fi
+    done
+    echo "}"
 }
 _ak_modules_profile_import(){
-	if [ ! -z $1 ]
-	then
-		if [ ! -d $1 ]
-		then
-			echo "Profile folder check: Folder $1 does not exist. Stopping..."
-			exit 4
-		else
-			echo "Profile folder check: Folder $1 exists."
-			fl="$(ls -1 $1)"
-			for f in $fl
-			do
-				_ak_modules_profile_add $1/$f
-			done
-		fi
-	else
-		echo "No value"
-		exit 6
-	fi
-	exit 224
+    if [ ! -z $1 ]
+    then
+        if [ ! -d $1 ]
+        then
+            echo "Profile folder check: Folder $1 does not exist. Stopping..."
+            exit 4
+        else
+            echo "Profile folder check: Folder $1 exists."
+            fl="$(ls -1 $1)"
+            for f in $fl
+            do
+                _ak_modules_profile_add $1/$f
+            done
+        fi
+    else
+        echo "No value"
+        exit 6
+    fi
+    exit 224
 }
 
 # Adds a file as a profile/add ACTION on the zchain.
 _ak_modules_profile_add(){
     TEMP="$(ak-tempassin)"
     cd $TEMP
-	if [ -f $ZPROFILEDIR/$1 ]; then
-		FILE="$ZPROFILEDIR/$1"
-		echo "Adding from " $FILE
-		FILE_IPFS_HASH=$(ak-ipfs-add $FILE)
-		FILE_SIGN_FILE=$(pwd)/$1".asc"
-		gpg2 --homedir $AK_GPGHOME --detach-sign --sign-with $AK_FINGERPRINT --armor --output $FILE_SIGN_FILE $FILE
-		FILE_SIGNATURE=$(ak-ipfs-add $FILE_SIGN_FILE)
-		cat > data <<EOF
+    if [ -f $ZPROFILEDIR/$1 ]; then
+        FILE="$ZPROFILEDIR/$1"
+        echo "Adding from " $FILE
+        FILE_IPFS_HASH=$(ak-ipfs-add $FILE)
+        FILE_SIGN_FILE=$(pwd)/$1".asc"
+        gpg2 --homedir $AK_GPGHOME --detach-sign --sign-with $AK_FINGERPRINT --armor --output $FILE_SIGN_FILE $FILE
+        FILE_SIGNATURE=$(ak-ipfs-add $FILE_SIGN_FILE)
+        cat > data <<EOF
 {
    "datetime":"$(date -u +%s)",
    "ipfs":"$FILE_IPFS_HASH",
    "detach":"$FILE_SIGNATURE"
 }
 EOF
-	else
-		echo "File $FILE doesn't exist";
-		exit 2
-	fi
+    else
+        echo "File $FILE doesn't exist";
+        exit 2
+    fi
 
     ak-zblock-pack "profile/add" $(pwd)/data
-	if [ "$?" -ne 0 ]
-	then
-		echo "error??"
-		exit 1
-	fi
+    if [ "$?" -ne 0 ]
+    then
+        echo "error??"
+        exit 1
+    fi
     echo "Profile added successfully"
     cd $ZPROFILEDIR
     rm -rf "$TEMPASSIN"
 }
 _ak_modules_profile_usage(){
-	echo "Usage:"
-	echo "		$PROGRAM command [options]"
-	echo ""
-	echo "Indexes, shows, imports, adds, sets and gets values from and to the"
+    echo "Usage:"
+    echo "        $PROGRAM command [options]"
+    echo ""
+    echo "Indexes, shows, imports, adds, sets and gets values from and to the"
     echo "zchain and files."
-	echo ""
-	echo -e "\thelp\t\t\t\tPrints this help message"
-	echo -e "\tindex\t\t\t\tShow current status"
-	echo -e "\tshow <data>\t\t\tShow profile entry from specified DATA IPFS CIDv0"
-	echo -e "\tset <property> <value>\t\tSets a profile value"
-	echo -e "\tget <property>\t\t\tGets a profile value from the on-disk file."
-	echo ""
+    echo ""
+    echo "    -h, --help                Prints this help message"
+    echo "    index                     Show current status"
+    echo "    show <data>               Show profile entry from specified DATA IPFS CIDv0"
+    echo "    set <property> <value>    Sets a profile value"
+    echo "    get <property>            Gets a profile value from the on-disk file."
+    echo ""
     echo "Advanced (use with caution may produce duplicate entries):"
-	echo -e "\tadd <file>\t\t\tCreates a data file from the profile file you point to (file should already be in ZPROFILEDIR."
-	echo -e "\timport <folder>\t\t\tImport a folder to zchain #TODO"
-	echo ""
-	exit 0
+    echo "    add <file>                 Creates a data file from the profile file you point"
+    echo "                               to (file should already be in ZPROFILEDIR."
+    echo "    import <folder>            Import a folder to zchain #TODO"
+    echo ""
+    exit 0
 }
 if [ ! -z $1 ]; then
-	case $1 in
-		help) _ak_modules_profile_usage; exit;;
-		index) _ak_modules_profile_index; exit;;
-		show) _ak_modules_profile_show $2; exit;;
-		import) _ak_modules_profile_import $2; exit;;
-		add) _ak_modules_profile_add $2; exit;;
-		set) _ak_modules_profile_propset $2 "$3"; exit;;
-		get) _ak_modules_profile_propget $2; exit;;
-		* ) _ak_modules_profile_usage;;
-	esac
+    case $1 in
+        -h | --help) _ak_modules_profile_usage; exit;;
+        index) _ak_modules_profile_index; exit;;
+        show) _ak_modules_profile_show $2; exit;;
+        import) _ak_modules_profile_import $2; exit;;
+        add) _ak_modules_profile_add $2; exit;;
+        set) _ak_modules_profile_propset $2 "$3"; exit;;
+        get) _ak_modules_profile_propget $2; exit;;
+        * ) _ak_modules_profile_usage;;
+    esac
 else _ak_modules_profile_usage
 fi

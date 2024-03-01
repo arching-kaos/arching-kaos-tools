@@ -23,6 +23,6 @@ else
     echo "Who to unfollow?"
     echo "Type following to see them"
     exit 1
-fi    
-    
+fi
+
 

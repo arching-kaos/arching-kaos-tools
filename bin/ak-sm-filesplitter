@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # The concept is simple
-# 
+#
 # 1. For a given file we split in 1MB files inside a temporary directory
 #
 # 2. We then create a map file, containing the resulted files and their sha512sum
@@ -17,7 +17,7 @@
 # 6. We are done!
 #
 
-# Uncomment next line if you want to debug 
+# Uncomment next line if you want to debug
 # set -xe
 PROGRAM="$(basename $0)"
 
@@ -37,7 +37,7 @@ FILEMAPSDIR="$AK_WORKDIR/fmp/"
 TEMPORARYDIR="/tmp/tltmp"
 # A subdir to split the files there
 TECHDIR="/tmp/tltmp/chks/"
-# A pin point to return from where we came from 
+# A pin point to return from where we came from
 CURRENTDIR="$(pwd)/"
 
 # Our snippet for logging debug info
@@ -46,7 +46,7 @@ logit(){
 }
 
 # Checking directories and create them if necessary
- 
+
 # TECHDIR
 if [ ! -d "$TECHDIR" ]
 then
@@ -107,7 +107,7 @@ split -b 1048576 --additional-suffix ".chk" -d "$FILE" "$TECHDIR$(basename "$FIL
 # We go over there...
 cd $TECHDIR
 
-# We get every chunks' SHA512 and we craft a script to rename the chunks and 
+# We get every chunks' SHA512 and we craft a script to rename the chunks and
 # move them to CHKDIR
 sha512sum  * > $TEMPORARYDIR/map; while IFS="" read -r p || [ -n "$p" ]
 do

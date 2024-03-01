@@ -1,22 +1,22 @@
 #!/bin/bash
 title(){
-	echo "AK Roadmap tool"
+    echo "AK Roadmap tool"
 }
 
 usage(){
-	title
+    title
 }
 
 search(){
-	cd $HOME/projects
-	PRJS="$(ls -1 .)"
-	for prj in $PRJS
-	do
-		if [ -f $prj/ROADMAP.md ];
-		then
-			echo " - Roadmap found in $prj"
-		fi
-	done
+    cd $HOME/projects
+    PRJS="$(ls -1 .)"
+    for prj in $PRJS
+    do
+        if [ -f $prj/ROADMAP.md ];
+        then
+            echo " - Roadmap found in $prj"
+        fi
+    done
 }
 
 if [ ! -z $1 ];
@@ -27,6 +27,6 @@ then
 		*) usage; exit;;
 	esac
 else
-	usage
-	exit 0
+    usage
+    exit 0
 fi

@@ -25,7 +25,7 @@ cd $ZNEWSDIR
 _ak_modules_news_create(){
     TEMP="$(ak-tempassin)"
     cd $TEMP
-    cd 
+    cd
     curpath="$(pwd)"
     export NEWS_FILE="$(date +%Y%m%d_%H%M%S)"
     vi $NEWS_FILE
@@ -38,7 +38,7 @@ _ak_modules_news_create(){
     _ak_modules_news_add $TO_FILE
     echo "Adding to git repo..."
     cd $ZNEWSDIR
-    # rm -rf $TEMP 
+    # rm -rf $TEMP
 }
 _ak_modules_news_index(){
     FILES="$(ls -1 $ZNEWSDIR)"
@@ -58,7 +58,7 @@ _ak_modules_news_index(){
         printf "%3d | %5s | %52s | %10s | %56s \n"\
             "$i" "$ONLINE" "$IPFS_HASH" "$DATE" "$TITLE"
         let i+=1
-    done    
+    done
     rm temp
 }
 _ak_modules_news_title(){
@@ -161,14 +161,13 @@ EOF
     fi
 }
 _ak_modules_news_usage(){
-    echo "#TODO"
-    echo "All you need to know is that there are two options available:"
-    echo "help        Prints this help message"
-    echo "local-index        Prints an indexed table of your news files"
-    echo "import <file>    #TODO"
-    echo "add <file>    Creates a data file from the news file you point to"
-    echo "create        Vim is going to pop up, you will write and save your"
-    echo "                  newsletter and it's going to be saved"
+    echo "-h, --help            Prints this help message"
+    echo "local-index           Prints an indexed table of your news files"
+    echo "import <file>         #TODO"
+    echo "add <file>            Creates a data file from the news file you point to"
+    echo "create                Vim is going to pop up, you will write and save your"
+    echo "                      newsletter and it's going to be saved"
+    echo "specs                 Print specs of data block"
     exit 0
 }
 _ak_modules_news_read(){

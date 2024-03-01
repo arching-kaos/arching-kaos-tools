@@ -6,9 +6,9 @@ logit(){
 ZCOMMENTSDIR="$AK_WORKDIR/comments"
 TEMP="/tmp/aktmp"
 if [ ! -d $ZCOMMENTSDIR ]; then
-	mkdir $ZCOMMENTSDIR
-	cd $ZCOMMENTSDIR
-	ak-logthis "[INFO]" "zcommentsdir created"
+    mkdir $ZCOMMENTSDIR
+    cd $ZCOMMENTSDIR
+    logit "INFO" "zcommentsdir created"
 else
     logit "INFO" "zcommentsdir found"
 fi
@@ -40,43 +40,43 @@ _ak_modules_comments_create(){
 }
 
 _ak_modules_comments_index(){
-	FILES="$(ls -1 $ZCOMMENTSDIR)"
-	i=0
-	for FILE in $FILES
-	do
-		DATE=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
-		TITLE=$(head -n 1 $ZCOMMENTSDIR/$FILE)
-		echo $i \| $DATE \| $TITLE
-		let i+=1
-	done	
+    FILES="$(ls -1 $ZCOMMENTSDIR)"
+    i=0
+    for FILE in $FILES
+    do
+        DATE=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
+        TITLE=$(head -n 1 $ZCOMMENTSDIR/$FILE)
+        echo $i \| $DATE \| $TITLE
+        let i+=1
+    done
 }
 _ak_modules_comments_title(){
-	echo comments
+    echo comments
 }
 _ak_modules_comments_add(){
     TEMP="$(ak-tempassin)"
     cd $TEMP
-	if [ -f "$ZCOMMENTSDIR/$1" ]; then
-		FILE=$ZCOMMENTSDIR/$1
-		echo "Adding comments from " $FILE
-		DATETIME="$1"
-		FILE_IPFS_HASH=$(ak-ipfs-add $FILE)
-		FILE_SIGN_FILE=$FILE".asc"
-		gpg2 --homedir $AK_GPGHOME --detach-sign --sign-with $AK_FINGERPRINT --armor --output $FILE_SIGN_FILE $FILE
-		FILE_SIGNATURE=$(ak-ipfs-add $FILE_SIGN_FILE)
-		printf '{"datetime":"%s","ipfs":"%s","detach":"%s"}' $DATETIME $FILE_IPFS_HASH $FILE_SIGNATURE > data
-	else
-		echo "File $FILE doesn't exist";
-		exit 2
-	fi
+    if [ -f "$ZCOMMENTSDIR/$1" ]; then
+        FILE=$ZCOMMENTSDIR/$1
+        echo "Adding comments from " $FILE
+        DATETIME="$1"
+        FILE_IPFS_HASH=$(ak-ipfs-add $FILE)
+        FILE_SIGN_FILE=$FILE".asc"
+        gpg2 --homedir $AK_GPGHOME --detach-sign --sign-with $AK_FINGERPRINT --armor --output $FILE_SIGN_FILE $FILE
+        FILE_SIGNATURE=$(ak-ipfs-add $FILE_SIGN_FILE)
+        printf '{"datetime":"%s","ipfs":"%s","detach":"%s"}' $DATETIME $FILE_IPFS_HASH $FILE_SIGNATURE > data
+    else
+        echo "File $FILE doesn't exist";
+        exit 2
+    fi
     REFERENCE="$(ak-zblock-pack "comments/add" $(pwd)/data)"
-	if [ $? == 0 ]
-	then
-		echo "Comment added successfully"
-	else
-		echo "error??"
-		exit 1
-	fi
+    if [ $? == 0 ]
+    then
+        echo "Comment added successfully"
+    else
+        echo "error??"
+        exit 1
+    fi
 }
 _ak_modules_comments_usage(){
 	_ak_modules_comments_title
@@ -91,12 +91,12 @@ _ak_modules_comments_usage(){
 }
 
 if [ ! -z $1 ]; then
-	case $1 in
-		help) _ak_modules_comments_usage; exit;;
-		index) _ak_modules_comments_index; exit;;
-		add) _ak_modules_comments_add $2 $3; exit;;
-		create) _ak_modules_comments_create $2; exit;;
-		* ) _ak_modules_comments_usage;;
-	esac
+    case $1 in
+        help) _ak_modules_comments_usage; exit;;
+        index) _ak_modules_comments_index; exit;;
+        add) _ak_modules_comments_add $2 $3; exit;;
+        create) _ak_modules_comments_create $2; exit;;
+        * ) _ak_modules_comments_usage;;
+    esac
 else _ak_modules_comments_usage
 fi

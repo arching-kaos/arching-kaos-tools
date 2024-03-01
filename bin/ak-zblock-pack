@@ -2,7 +2,7 @@
 # This file describe the structure of the ArchingKaos messages in their basis.
 #
 # As previously thought, we exchange one IPFS hash through whatever means we can.
-# 
+#
 # GPG is mentioned as a signing algorithm for encryption, decryption and signing.
 # Let's say we have a file named as `example`
 #

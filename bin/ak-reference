@@ -45,7 +45,7 @@ _ak_modules_reference_index(){
         REFE=$(tail -n 1 $ZREFERENCESDIR/$FILE)
         echo $i \| $DATE \| $TITLE \| $REFE
         let i+=1
-    done    
+    done
 }
 _ak_modules_reference_title(){
     echo ak-references-cli

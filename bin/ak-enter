@@ -87,9 +87,9 @@ while [ "$#" ]; do
                 logit "[ERROR]" "Could not resolve IPNS name"
                 exit 1
             fi
-            shift 
+            shift
             ;;
-        *)  
+        *)
             test="$1"
             if [ ! -z "$test" ] && [ "$fromIpns" == "0" ]
             then

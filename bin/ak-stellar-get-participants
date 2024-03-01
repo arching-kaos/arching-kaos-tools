@@ -71,11 +71,11 @@ get_asset_holders(){
     curl https://horizon.stellar.org/accounts\?asset\=ARCHINGKAOS:GB4QVKD6NW3CSNO5TNPARAWNPPXOPSSTKB35XCWB7PUNBIQTK3DVELB2\&limit\=$limit > $tempfile 2>/dev/null
 }
 
-get_asset_holders 
+get_asset_holders
 while [ "$(tail -1 $stellarParticipants)" != "null" ]
 do
     show_ids
-    proceed_to_next_page 
+    proceed_to_next_page
 done
 
 grep G $stellarParticipants > $tempaddr

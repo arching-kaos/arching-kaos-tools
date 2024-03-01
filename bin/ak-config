@@ -24,7 +24,7 @@ _ak_config_show(){
     rm $KEY
 
 	echo '
-{ 
+{
     "profile":'$(ak-profile index | jq -cM)',
     "genesis":"'$(cat $HOME/.arching-kaos/config/zgenesis)'",
     "gpg":"'$GPG_PUB_KEY'",

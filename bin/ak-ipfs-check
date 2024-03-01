@@ -37,7 +37,7 @@ fi
 
 ak-ipfs-key-list | grep ak-config > /dev/null
 if [ $? != 0 ]; then
-       	logit "[WARNING]" "ak-config key is missing" 
+       	logit "WARNING" "ak-config key is missing"
 	ak-ipfs-key-gen ak-config
 	if [ $? != 0 ]; then
 		logit "[ERROR]" "ak-config fails to create"

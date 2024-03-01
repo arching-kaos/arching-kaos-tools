@@ -55,7 +55,7 @@ help_all(){
 
     help_log
     new_line
-    
+
     help_follow
     new_line
 

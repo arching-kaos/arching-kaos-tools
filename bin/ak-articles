@@ -3,16 +3,16 @@ ZARTICLESDIR="$AK_WORKDIR/articles"
 TEMP="/tmp/aktmp"
 echo $ZARTICLESDIR
 if [ ! -d $ZARTICLESDIR ]; then
-	mkdir $ZARTICLESDIR
-	cd $ZARTICLESDIR
-	git init
-	echo "Articles repository" > README
-	echo "Qmetc" >> README
-	git add README
-	git commit -m "Initiated articles repository"
-	echo "zarticlesdir created along with git repo"
+    mkdir $ZARTICLESDIR
+    cd $ZARTICLESDIR
+    #git init
+    echo "Articles repository" > README
+    echo "Qmetc" >> README
+    #git add README
+    #git commit -m "Initiated articles repository"
+    logit "INFO" "zarticlesdir created"
 else
-	echo "zarticlesdir found"
+    logit "INFO" "zarticlesdir found"
 fi
 
 _ak_modules_articles_create(){
@@ -36,55 +36,55 @@ _ak_modules_articles_create(){
 	# rm -rf $TEMP 
 }
 _ak_modules_articles_index(){
-	FILES="$(ls -1 $ZARTICLESDIR)"
-	i=0
-	for FILE in $FILES
-	do
-		DATE=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
-		TITLE=$(head -n 1 $ZARTICLESDIR/$FILE)
-		echo $i \| $DATE \| $TITLE
-		let i+=1
-	done	
+    FILES="$(ls -1 $ZARTICLESDIR)"
+    i=0
+    for FILE in $FILES
+    do
+        DATE=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
+        TITLE=$(head -n 1 $ZARTICLESDIR/$FILE)
+        echo $i \| $DATE \| $TITLE
+        let i+=1
+    done
 }
 _ak_modules_articles_title(){
 	echo	ak-articles-cli
 	echo "--------------"
 }
 _ak_modules_articles_import(){
-	echo "#TODO"
-	if [ ! -z $1 ]
-	then
-		if [ ! -d $1 ]
-		then
-			echo "Folder does not exists"
-			exit 4
-		else
-			echo "Folder $1 exists"
-			fl="$(ls -1 $1)"
-			for f in $fl
-			do
-				_ak_modules_articles_add $1/$f
-			done
-		fi
-	else
-		echo "No value"
-		exit 6
-	fi
-	exit 224
+    echo "#TODO"
+    if [ ! -z $1 ]
+    then
+        if [ ! -d $1 ]
+        then
+            echo "Folder does not exists"
+            exit 4
+        else
+            echo "Folder $1 exists"
+            fl="$(ls -1 $1)"
+            for f in $fl
+            do
+                _ak_modules_articles_add $1/$f
+            done
+        fi
+    else
+        echo "No value"
+        exit 6
+    fi
+    exit 224
 }
 _ak_modules_articles_add(){
     TEMP="$(ak-tempassin)"
     cd $TEMP
-	if [ -f $1 ]; then
-		FILE="$1"
-		echo "Adding articles from " $FILE
-		DATETIME=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
-		TITLE=$(head -n 1 $FILE)
-		FILE_IPFS_HASH=$(ak-ipfs-add $FILE)
-		FILE_SIGN_FILE=$FILE".asc"
-		gpg2 --homedir $AK_GPGHOME --detach-sign --sign-with $AK_FINGERPRINT --armor --output $FILE_SIGN_FILE $FILE
-		FILE_SIGNATURE=$(ak-ipfs-add $FILE_SIGN_FILE)
-		cat > data <<EOF
+    if [ -f $1 ]; then
+        FILE="$1"
+        echo "Adding articles from " $FILE
+        DATETIME=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
+        TITLE=$(head -n 1 $FILE)
+        FILE_IPFS_HASH=$(ak-ipfs-add $FILE)
+        FILE_SIGN_FILE=$FILE".asc"
+        gpg2 --homedir $AK_GPGHOME --detach-sign --sign-with $AK_FINGERPRINT --armor --output $FILE_SIGN_FILE $FILE
+        FILE_SIGNATURE=$(ak-ipfs-add $FILE_SIGN_FILE)
+        cat > data <<EOF
 {
    "datetime":"$DATETIME",
    "title":"$TITLE",
@@ -93,39 +93,37 @@ _ak_modules_articles_add(){
    "detach":"$FILE_SIGNATURE"
 }
 EOF
-	else
-		echo "File $FILE doesn't exist";
-		exit 2
-	fi
+    else
+        echo "File $FILE doesn't exist";
+        exit 2
+    fi
     ak-zblock-pack "articles/add" $(pwd)/data
-	if [ $? == 0 ]
-	then
-		echo "Articles added successfully"
-	else
-		echo "error??"
-		exit 1
-	fi
+    if [ $? == 0 ]
+    then
+        echo "Articles added successfully"
+    else
+        echo "error??"
+        exit 1
+    fi
 }
 _ak_modules_articles_usage(){
-	echo "#TODO"
-	echo "All you need to know is that there are two options available:"
-	echo "help		Prints this help message"
-	echo "index		Prints an indexed table of your articles files"
-	echo "import <file>	#TODO"
-	echo "add <file>	Creates a data file from the articles file you point to"
-	echo "create		Vim is going to pop up, you will write and save your"
-	echo "                  articlesletter and it's going to be saved"
-	exit 0
+    echo "    -h, --help        Prints this help message"
+    echo "    index             Prints an indexed table of your articles files"
+    echo "    import <file>     #TODO"
+    echo "    add <file>        Creates a data file from the articles file you point to"
+    echo "    create            Vim is going to pop up, you will write and save your"
+    echo "                      articlesletter and it's going to be saved"
+    exit 0
 }
 _ak_modules_articles_title
 if [ ! -z $1 ]; then
-	case $1 in
-		help) _ak_modules_articles_usage; exit;;
-		index) _ak_modules_articles_index; exit;;
-		import) _ak_modules_articles_import $2; exit;;
-		add) _ak_modules_articles_add $2; exit;;
-		create) _ak_modules_articles_create; exit;;
-		* ) _ak_modules_articles_usage;;
-	esac
+    case $1 in
+        -h | --help) _ak_modules_articles_usage; exit;;
+        index) _ak_modules_articles_index; exit;;
+        import) _ak_modules_articles_import $2; exit;;
+        add) _ak_modules_articles_add $2; exit;;
+        create) _ak_modules_articles_create; exit;;
+        * ) _ak_modules_articles_usage;;
+    esac
 else _ak_modules_articles_usage
 fi

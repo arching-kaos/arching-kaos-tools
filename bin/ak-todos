@@ -95,10 +95,10 @@ _ak_modules_todos_add(){
    "detach":"$FILE_SIGNATURE"
 }
 EOF
-	else
-		echo "File $FILE doesn't exist";
-		exit 2
-	fi
+    else
+        echo "File $FILE doesn't exist";
+        exit 2
+    fi
     ak-zblock-pack "todos/add" $(pwd)/data
     if [ $? == 0 ]
     then

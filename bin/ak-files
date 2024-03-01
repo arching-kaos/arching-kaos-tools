@@ -22,7 +22,7 @@ else
 fi
 
 _ak_modules_files_usage(){
-	echo "$PROGRAM - file"
+    echo "$PROGRAM - file"
 }
 
 _ak_modules_files_add(){
@@ -94,10 +94,10 @@ echo "Publishing..."
     ak-zblock-pack files/add $PWD/data
     if [ $? == 0 ]
     then
-	    echo "cool"
+        echo "cool"
     else
-	    echo "not?"
-	    exit 2
+        echo "not?"
+        exit 2
     fi
 }
 

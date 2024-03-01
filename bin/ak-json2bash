@@ -1,9 +1,9 @@
 #!/bin/bash
 #
 # ak-json2bash
-# 
+#
 # Kaotisk Hund <kaotisk/kaotiskhund>
-# 
+#
 # Strips " , { } from input and replaces ":" with =
 #
 # Usage:
