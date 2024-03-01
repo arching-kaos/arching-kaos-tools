@@ -91,7 +91,7 @@ echo "Printing data..."
 cat $TEMPASSIN/data
 echo "Publishing..."
 
-    ak-pack_z_block files/add $PWD/data
+    ak-zblock-pack files/add $PWD/data
     if [ $? == 0 ]
     then
 	    echo "cool"

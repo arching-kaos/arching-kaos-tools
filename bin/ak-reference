@@ -99,7 +99,7 @@ EOF
     cat data | jq -M -c > tmp
     cat tmp > data
     rm tmp
-    ak-pack_z_block "references/add" $(pwd)/data
+    ak-zblock-pack "references/add" $(pwd)/data
     if [ $? != 0 ]
     then
         echo "error??"

@@ -87,7 +87,7 @@ EOF
 		echo "File $FILE doesn't exist";
 		exit 2
 	fi
-    ak-pack_z_block "news/add" $(pwd)/data
+    ak-zblock-pack "news/add" $(pwd)/data
 	if [ $? == 0 ]
 	then
 		echo "News added successfully"

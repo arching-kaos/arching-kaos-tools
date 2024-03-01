@@ -115,7 +115,7 @@ EOF
     cat data
     echo "Publishing..."
 
-    ak-pack_z_block sha-files/announce $(pwd)/data
+    ak-zblock-pack sha-files/announce $(pwd)/data
     if [ $? == 0 ]
     then
 	    echo "cool"

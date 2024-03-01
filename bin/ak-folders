@@ -58,7 +58,7 @@ _ak_modules_folders_main(){
     cat data
     echo "Publishing..."
 
-    ak-pack_z_block folders/add $(pwd)/data
+    ak-zblock-pack folders/add $(pwd)/data
     if [ $? == 0 ]
     then
         echo "cool"

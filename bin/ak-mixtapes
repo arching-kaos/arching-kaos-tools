@@ -1,6 +1,6 @@
 #!/bin/bash
 # The following creates a mixtape data message
-# We can extend it by calling the ak-pack_z_block.sh mixtape/add data ## ORIGINAL LINE
+# We can extend it by calling the ak-zblock-pack.sh mixtape/add data ## ORIGINAL LINE
 
 _ak_modules_mixtapes_usage(){
 	_ak_modules_mixtapes_title
@@ -43,6 +43,6 @@ then
     MIXTAPE_FILE="$PWD/$3"
     _ak_modules_mixtapes_main
     cat $PWD/data | jq -M
-    ak-pack_z_block mixtape/add $PWD/data
+    ak-zblock-pack mixtape/add $PWD/data
 else _ak_modules_mixtapes_usage
 fi

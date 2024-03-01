@@ -231,7 +231,7 @@ help_modules(){
 
 help_zblock(){
     printf '
-        ak-pack_z_block
+        ak-zblock-pack
     '
     printf '
         ak-zblock-cache

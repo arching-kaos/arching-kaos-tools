@@ -65,7 +65,7 @@ _ak_modules_comments_add(){
 		echo "File $FILE doesn't exist";
 		exit 2
 	fi
-    REFERENCE="$(ak-pack_z_block "comments/add" $(pwd)/data)"
+    REFERENCE="$(ak-zblock-pack "comments/add" $(pwd)/data)"
 	if [ $? == 0 ]
 	then
 		echo "Comment added successfully"
