@@ -214,7 +214,6 @@ ak-config               # Publish your configuration to IPNS
 ak-data-expand          # Expands and verifies DATA blocks
 ak-enter                # Crawls ZCHAINS
 ak-node-info            # Returns IPFS CID or IPNS key for your online config
-ak-get-chain-minified   # Obsolete, ak-enter default output
 ak-get-gpg              # Return your GPG key as IPFS CID
 ak-get-zlatest          # Returns zlatest ZBLOCK according to IPFS FS
 ak-tempassin            # Creates temporary directories
