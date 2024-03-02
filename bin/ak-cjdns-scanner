@@ -4,6 +4,13 @@
 #
 # Ref: https://github.com/cjdelisle/cjdns
 #
+which dumpLinks > /dev/null 2>&1
+if [ $? -ne 0 ]
+then
+    echo "You need to install cjdns and cjdns-tools"
+    exit 1
+fi
+
 counter=0
 printf '[' > walk.aknet
 dumpLinks \
