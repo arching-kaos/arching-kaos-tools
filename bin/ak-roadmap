@@ -1,4 +1,7 @@
 #!/bin/bash
+echo "$(basename $0) - Not implemented"
+exit 1
+
 title(){
     echo "AK Roadmap tool"
 }
