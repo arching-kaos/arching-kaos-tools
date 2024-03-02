@@ -8,7 +8,7 @@ proofofwork(){
 	l=1; while [ $l = 1 ]
 	do
 		TIMESTAMP="$(date -u +%s)"
-		SHA="$(echo $TEST'"zpairs":'$(cat /home/$USER/.arching-kaos/mempool/szch)',"nonce":"'$i'","previous":"'$PRE'","timestamp":"'$TIMESTAMP'","miner":"'$MINER'","reward":"40"}' | sha512sum | awk '{ print $1 }')"
+		SHA="$(echo $TEST'"nonce":"'$i'","previous":"'$PRE'","timestamp":"'$TIMESTAMP'","miner":"'$MINER'","reward":"40"}' | sha512sum | awk '{ print $1 }')"
 
         # Static difficulty for securing the sblock
 		echo $SHA | grep -e '^000'
@@ -16,8 +16,8 @@ proofofwork(){
 		then
 			echo "SHA512 is $SHA"
 			echo "Mined block:"
-			echo $TEST'"zpairs":'$(cat /home/$USER/,arching-kaos/mempool/szch)',"nonce":"'$i'","previous":"'$PRE'","timestamp":"'$TIMESTAMP'","miner":"'$MINER'","reward":"40"}' | jq --compact-output > /home/$USER/.arching-kaos/mined_blocks/$SHA
-			cat /home/$USER/.arching-kaos/mined_blocks/$SHA | jq
+			echo $TEST'"nonce":"'$i'","previous":"'$PRE'","timestamp":"'$TIMESTAMP'","miner":"'$MINER'","reward":"40"}' | jq --compact-output > $AK_MINEDBLOCKSDIR/$SHA
+			cat $AK_MINEDBLOCKSDIR/$SHA | jq
 			# exit 0
 			# Instead of exiting, we will now sleep for 60 seconds
 			# after that we continue mining on top of the just mined
