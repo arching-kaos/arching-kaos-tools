@@ -9,8 +9,8 @@ then
 fi
 if [ -n "$1" ]
 then
-    test="$(echo -n "$1" | sed 's/Qm[A-Za-z0-9]\{44\}//g')"
-    if [ -n "$test" ]
+    TEST="$(echo -n "$1" | grep -v '^Qm[A-Za-z0-9]\{44\}$')"
+    if [ -n "$TEST" ]
     then
         echo not ok
         exit 1
@@ -21,6 +21,7 @@ arg="tempz"
 
 ( \
 # Create HTML document
+echo "<!DOCTYPE html>"
 echo "<html>"
 echo "<head>"
 echo "  <title>Arching Kaos Chain Data</title>"
@@ -29,7 +30,7 @@ echo "<body>"
 
 # Iterate through each argument and parse data
 # for arg in "$@"
-if [ -f $arg ]
+if [ -f "$arg" ]
 then
 #do
     # Extract data from argument
