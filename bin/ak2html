@@ -7,6 +7,7 @@ then
     echo "Give a zblock's IPFS CID v0 as an argument"
     exit 1
 fi
+
 if [ -n "$1" ]
 then
     TEST="$(echo -n "$1" | grep -v '^Qm[A-Za-z0-9]\{44\}$')"
@@ -16,6 +17,7 @@ then
         exit 1
     fi
 fi
+
 ak-enter -l 1 "$1" | jq '.[]' > tempz
 arg="tempz"
 
@@ -24,7 +26,7 @@ arg="tempz"
 echo "<!DOCTYPE html>"
 echo "<html>"
 echo "<head>"
-echo "  <title>Arching Kaos Chain Data</title>"
+echo "    <title>Arching Kaos Chain Data</title>"
 echo "</head>"
 echo "<body>"
 
@@ -47,26 +49,26 @@ then
     datablock=$(cat $arg | jq -r ".$data")
 
     # Output data in HTML format
-    echo "  <h1>ZBLOCK: $zblock</h1>"
-    echo "  <p>BLOCK SIGNATURE: $block_signature</p>"
-    echo "  <pre>$(ak-ipfs-cat $zblock | jq)</pre>"
-    echo "  <h2>BLOCK: $block</h2>"
-    echo "  <pre>$(ak-ipfs-cat $block | jq)</pre>"
-    echo "  <p>TIMESTAMP: $timestamp</p>"
-    echo "  <p>DETACH: $detach</p>"
-    echo "  <pre>$(ak-ipfs-cat $detach)</pre>"
-    echo "  <p>MODULE: $module</p>"
-    echo "  <p>ACTION: $action</p>"
-    echo "  <p>GPG: $gpg</p>"
-    echo "  <pre>$(ak-ipfs-cat $gpg)</pre>"
-    echo "  <p>PREVIOUS: $previous</p>"
-    echo "  <h3>DATA: $data</h3>"
-    echo "  <pre>$datablock</pre>"
-    echo "  <p>ipfs: $(echo $datablock | jq -r '.ipfs')</p>"
-    echo "  <p>detach: $(echo $datablock | jq -r '.detach')</p>"
-    echo "  <pre>$(ak-ipfs-cat $(echo $datablock | jq -r '.detach'))</pre>"
-    echo "  <h2>Rendered ZBLOCK</h2>"
-    echo "  <pre>$(cat $arg | jq)</p>"
+    echo "    <h1>ZBLOCK: $zblock</h1>"
+    echo "    <p>BLOCK SIGNATURE: $block_signature</p>"
+    echo "    <pre>$(ak-ipfs-cat $zblock | jq)</pre>"
+    echo "    <h2>BLOCK: $block</h2>"
+    echo "    <pre>$(ak-ipfs-cat $block | jq)</pre>"
+    echo "    <p>TIMESTAMP: $timestamp</p>"
+    echo "    <p>DETACH: $detach</p>"
+    echo "    <pre>$(ak-ipfs-cat $detach)</pre>"
+    echo "    <p>MODULE: $module</p>"
+    echo "    <p>ACTION: $action</p>"
+    echo "    <p>GPG: $gpg</p>"
+    echo "    <pre>$(ak-ipfs-cat $gpg)</pre>"
+    echo "    <p>PREVIOUS: $previous</p>"
+    echo "    <h3>DATA: $data</h3>"
+    echo "    <pre>$datablock</pre>"
+    echo "    <p>ipfs: $(echo $datablock | jq -r '.ipfs')</p>"
+    echo "    <p>detach: $(echo $datablock | jq -r '.detach')</p>"
+    echo "    <pre>$(ak-ipfs-cat $(echo $datablock | jq -r '.detach'))</pre>"
+    echo "    <h2>Rendered ZBLOCK</h2>"
+    echo "    <pre>$(cat $arg | jq)</pre>"
 fi
 #done
 
