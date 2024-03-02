@@ -40,22 +40,26 @@ fi
 _ak_modules_articles_create(){
     TEMP="$(ak-tempassin)"
     cd $TEMP
-	pwd
-	export ARTICLES_FILE="$(date +%Y%m%d_%H%M%S)"
-	vi $ARTICLES_FILE
-	echo "Renaming..."
-	TITLE="$(head -n 1 $ARTICLES_FILE)"
-	TO_FILE=$ARTICLES_FILE-$(echo $TITLE | tr '[:upper:]' '[:lower:]' | sed -e 's/ /\_/g' )
-	IPFS_FILE=$(ak-ipfs-add $ARTICLES_FILE)
-	mv $ARTICLES_FILE $ZARTICLESDIR/$TO_FILE
-	sed -e 's,Qm.*,'"$IPFS_FILE"',g' $ZARTICLESDIR/README
-	_ak_modules_articles_add $ZARTICLESDIR/$TO_FILE
-	echo "Adding to git repo..."
-	cd $ZARTICLESDIR
-	git add $TO_FILE README
-	git commit -m "Added $TO_FILE with $(head -n 1 $ZARTICLESDIR/$TO_FILE)"
-	git clean --force
-	# rm -rf $TEMP 
+    export ARTICLES_FILE="$(date +%Y%m%d_%H%M%S)"
+    if [ -z $EDITOR ]
+    then
+        logit "ERROR" "No $EDITOR found. Exiting..."
+        exit 1
+    fi
+    $EDITOR $ARTICLES_FILE
+    logit "INFO" "Renaming..."
+    TITLE="$(head -n 1 $ARTICLES_FILE)"
+    TO_FILE=$ARTICLES_FILE-$(echo $TITLE | tr '[:upper:]' '[:lower:]' | sed -e 's/ /\_/g' )
+    IPFS_FILE=$(ak-ipfs-add $ARTICLES_FILE)
+    mv $ARTICLES_FILE $ZARTICLESDIR/$TO_FILE
+    sed -e 's,Qm.*,'"$IPFS_FILE"',g' $ZARTICLESDIR/README
+    _ak_modules_articles_add $ZARTICLESDIR/$TO_FILE
+    logit "INFO" "Adding to git repo..."
+    cd $ZARTICLESDIR
+    # git add $TO_FILE README
+    # git commit -m "Added $TO_FILE with $(head -n 1 $ZARTICLESDIR/$TO_FILE)"
+    # git clean --force
+    rm -rf $TEMP
 }
 _ak_modules_articles_index(){
     FILES="$(ls -1 $ZARTICLESDIR)"
