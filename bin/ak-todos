@@ -13,9 +13,9 @@ if [ ! -d $ZTODOSDIR ]; then
     echo "Qmetc" >> README
     git add README
     git commit -m "Initiated todos repository"
-    logit "[INFO]" "ztodosdir created along with git repo"
+    logit "INFO" "ztodosdir created along with git repo"
 else
-    logit "[INFO]" "ztodosdir found"
+    logit "INFO" "ztodosdir found"
 fi
 
 _ak_modules_todos_create(){
@@ -23,14 +23,14 @@ _ak_modules_todos_create(){
     cd $TEMP
     export TODOS_FILE="$(date -u +%s)"
     vi $TODOS_FILE
-    logit "[INFO]" "Renaming..."
+    logit "INFO" "Renaming..."
     TITLE="$(head -n 1 $TODOS_FILE)"
     TO_FILE=$TODOS_FILE-$(echo $TITLE | tr '[:upper:]' '[:lower:]' | sed -e 's/ /\_/g' )
     IPFS_FILE=$(ak-ipfs-add $TODOS_FILE)
     mv $TODOS_FILE $ZTODOSDIR/$TO_FILE
     sed -e 's,Qm.*,'"$IPFS_FILE"',g' $ZTODOSDIR/README
     _ak_modules_todos_add $ZTODOSDIR/$TO_FILE
-    logit "[INFO]" "Adding to git repo..."
+    logit "INFO" "Adding to git repo..."
     cd $ZTODOSDIR
     git add $TO_FILE README
     git commit -m "Added $TO_FILE with $(head -n 1 $ZTODOSDIR/$TO_FILE)"
@@ -79,7 +79,7 @@ _ak_modules_todos_add(){
     cd $TEMP
     if [ -f $1 ]; then
         FILE="$1"
-        logit "[INFO]" "Adding todos from $FILE"
+        logit "INFO" "Adding todos from $FILE"
         DATETIME=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
         TITLE=$(head -n 1 $FILE)
         FILE_IPFS_HASH=$(ak-ipfs-add $FILE)
@@ -102,7 +102,7 @@ EOF
     ak-zblock-pack "todos/add" $(pwd)/data
     if [ $? == 0 ]
     then
-        logit "[INFO]" "Todos added successfully"
+        logit "INFO" "Todos added successfully"
     else
         echo "error??"
         exit 1

@@ -46,7 +46,7 @@ usage(){
 
 main(){
 
-	logit "[INFO]" "We are doing" $BLOCK_TO_ADD "with content" $PREVIOUS
+	logit "INFO" "We are doing" $BLOCK_TO_ADD "with content" $PREVIOUS
 	# We add it to IPFS
 	MESSAGE_HASH=$(ak-ipfs-add $MESSAGE)
 
