@@ -7,6 +7,20 @@ _ak_modules_mixtapes_usage(){
 	echo "$0 - artist title file"
 }
 
+_ak_modules_mixtapes_specs(){
+    datetime_mask=$(printf '^[0-9]\{8\}_[0-9]\{6\}$' | xxd -p)
+    ipfs_mask=$(printf '^Qm[a-zA-Z0-9]\{44\}$' | xxd -p)
+    text_dash_underscore_space_mask=$(printf '^[a-zA-Z0-9][a-zA-Z0-9[:space:]\_]\{1,128\}$' | xxd -p -c 64)
+    echo '
+        {
+           "datetime": "'$datetime_mask'",
+           "artist":   "'$text_dash_underscore_space_mask'",
+           "title":    "'$text_dash_underscore_space_mask'",
+           "ipfs":     "'$ipfs_mask'",
+           "detach":   "'$ipfs_mask'"
+        }' | jq
+}
+
 _ak_modules_mixtapes_main(){
     echo $MIXTAPE_FILE "by" $MIXTAPE_ARTIST "named as" $MIXTAPE_TITLE
 
@@ -44,5 +58,9 @@ then
     _ak_modules_mixtapes_main
     cat $PWD/data | jq -M
     ak-zblock-pack mixtape/add $PWD/data
+elif [ "$1" == "specs" ]
+then
+    _ak_modules_mixtapes_specs
+    exit 0
 else _ak_modules_mixtapes_usage
 fi
