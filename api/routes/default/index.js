@@ -17,8 +17,8 @@ module.exports = (req, res) => {
                 {show_mined_block:settings.DEF_PROTO+"["+settings.LOCAL_IP+"]:"+settings.PORT+settings.URL_PREFIX+"/sblock"}
             ],
             POST:[
-                {send_me_a_zchain_link:settings.DEF_PROTO+"["+settings.LOCAL_IP+"]:"+settings.PORT+settings.URL_PREFIX+"/szch"},
-                {send_me_a_zblock:settings.DEF_PROTO+"["+settings.LOCAL_IP+"]:"+settings.PORT+settings.URL_PREFIX+"/sblk"},
+                {send_me_a_zchain_link:settings.DEF_PROTO+"["+settings.LOCAL_IP+"]:"+settings.PORT+settings.URL_PREFIX+"/announce/zchain"},
+                {send_me_a_zblock:settings.DEF_PROTO+"["+settings.LOCAL_IP+"]:"+settings.PORT+settings.URL_PREFIX+"/announce/zblock"},
             ]
         }
     });
