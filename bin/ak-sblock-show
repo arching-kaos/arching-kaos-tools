@@ -1,5 +1,5 @@
 #!/bin/bash
-PROGRAM="show_sblock"
+PROGRAM="$(basename $0)"
 
 if [ ! -z $1 ]
 then
