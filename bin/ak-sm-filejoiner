@@ -39,8 +39,6 @@ then
 	exit 1
 fi
 
-
-
 if [ ! -z $1 ]
 then
 	MAPSFILE="$1"
@@ -63,7 +61,7 @@ then
 	cd $TMPWD
 
 	echo "$PWD"
-    
+
     # Final name we are going to rename to
 	OUTPUT="$(tail -n1 $MAPSDIR/$MAPSFILE | awk '{print $2}')"
 

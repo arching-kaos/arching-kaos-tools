@@ -18,7 +18,6 @@ else
     logit "INFO" "zprofiledir found"
 fi
 
-
 # This is working with DATA blocks. DATA that matched profile/add ACTION
 #
 # The profile settings/configuration is part of the blockchain produced.
@@ -124,6 +123,7 @@ _ak_modules_profile_index(){
     done
     echo "}"
 }
+
 _ak_modules_profile_import(){
     if [ ! -z $1 ]
     then
@@ -179,6 +179,7 @@ EOF
     cd $ZPROFILEDIR
     rm -rf "$TEMPASSIN"
 }
+
 _ak_modules_profile_usage(){
     echo "Usage:"
     echo "        $PROGRAM command [options]"
@@ -199,6 +200,7 @@ _ak_modules_profile_usage(){
     echo ""
     exit 0
 }
+
 if [ ! -z $1 ]; then
     case $1 in
         -h | --help) _ak_modules_profile_usage; exit;;

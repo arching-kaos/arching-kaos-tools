@@ -68,9 +68,7 @@ do
 	then
 		max="${counters[${value}]}"
 		max_holder="${value}"
-		logitnowint "INFO" "New MAX $max on $max_holder"
-
-
+		logit "INFO" "New MAX $max on $max_holder"
 	fi	
 done
 echo '{"latest_block":"'$max_holder'"}'

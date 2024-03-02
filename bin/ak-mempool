@@ -7,7 +7,6 @@
 
 ak-ipfs-swarm-peers > tmp_peers
 
-
 while IFS="" read -r p || [ -n "$p" ]
 do
 	peer="$(echo "$p" | sed -e 's/^.*\///')"

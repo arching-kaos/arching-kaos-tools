@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Needs CJDNS tools in your PATH
-# 
+#
 # Ref: https://github.com/cjdelisle/cjdns
 #
 counter=0

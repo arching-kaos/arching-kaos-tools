@@ -38,7 +38,6 @@ usage(){
 	echo "zblocks directly from IPFS hashes refering to blocks."
 }
 
-
 main(){
     # We check firstly if the encapsulated value of the "ipfs" key has already
     # appeared in the zchain.

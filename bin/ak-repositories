@@ -88,7 +88,6 @@ append-if-needed(){
     fi
 }
 
-
 add(){
     PROJECT="$1"
     PROJECTDIR="$REPODIR/$PROJECT"
@@ -119,6 +118,7 @@ add(){
 index(){
     ak-ipfs-key-list-full | grep -e '\.git'
 }
+
 set-as-profile(){
     IPFS=$(ak-ipfs-add $REPOSTORE)
     if [ $? == 0 ]

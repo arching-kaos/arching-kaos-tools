@@ -75,7 +75,6 @@ _ak_modules_folders_title(){
     echo "$PROGRAM - Folder block creator"
 }
 
-
 if [ ! -z $1 ]; then
     case $1 in
         -h | --help) _ak_modules_folders_usage; exit;;

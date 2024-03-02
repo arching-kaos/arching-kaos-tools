@@ -4,7 +4,6 @@ logit(){
 	ak-logthis "$PROGRAM" "$1" "$2"
 }
 
-
 ak-ipfs-files-ls /zarchive > /dev/null
 if [ $? != 0 ]
 then
@@ -12,7 +11,6 @@ then
 else
 	logit "INFO" "/zarchive OK"
 fi
-
 
 ak-ipfs-files-ls /zlatest > /dev/null
 if [ $? != 0 ]
