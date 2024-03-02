@@ -14,6 +14,7 @@ usage(){
     exit 0
 }
 rebase (){
+    if [ ! -n "$1" ]; then exit 1; fi
     ZTARGET="$1"
     echo "Reseting ZLATEST to ZTARGET"
     echo $ZTARGET > $AK_ZLATEST
