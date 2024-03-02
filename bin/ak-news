@@ -40,6 +40,7 @@ _ak_modules_news_create(){
     cd $ZNEWSDIR
     # rm -rf $TEMP
 }
+
 _ak_modules_news_index(){
     FILES="$(ls -1 $ZNEWSDIR)"
     i=0
@@ -61,9 +62,11 @@ _ak_modules_news_index(){
     done
     rm temp
 }
+
 _ak_modules_news_title(){
     echo $PROGRAM
 }
+
 _ak_modules_news_import(){
     echo "#TODO"
     if [ ! -z $1 ]
@@ -88,6 +91,7 @@ _ak_modules_news_import(){
     fi
     exit 224
 }
+
 _ak_modules_news_add2(){
     TEMP="$(ak-tempassin)"
     if [ -f "$1" ]; then
@@ -126,6 +130,7 @@ EOF
     fi
     rm -rf $TEMP
 }
+
 _ak_modules_news_add(){
     TEMP="$(ak-tempassin)"
     cd $TEMP
@@ -160,6 +165,7 @@ EOF
         exit 1
     fi
 }
+
 _ak_modules_news_usage(){
     echo "-h, --help            Prints this help message"
     echo "local-index           Prints an indexed table of your news files"
@@ -170,6 +176,7 @@ _ak_modules_news_usage(){
     echo "specs                 Print specs of data block"
     exit 0
 }
+
 _ak_modules_news_read(){
     ak-enter -l 1 $1 > temp
     if [ $? -ne 0 ]
@@ -193,7 +200,21 @@ _ak_modules_news_read(){
     fi
     rm temp
 }
-_ak_modules_news_title
+
+_ak_modules_news_specs(){
+    datetime_mask=$(printf '^[0-9]\{8\}_[0-9]\{6\}$' | xxd -p)
+    ipfs_mask=$(printf '^Qm[a-zA-Z0-9]\{44\}$' | xxd -p)
+    text_mask=$(printf '^[a-zA-Z0-9_\-]\{1,128\}$' | xxd -p)
+    echo '
+        {
+           "datetime":"'$datetime_mask'",
+           "title":    "'$text_mask'",
+           "filename": "'$text_mask'",
+           "ipfs":     "'$ipfs_mask'",
+           "detach":   "'$ipfs_mask'"
+        }' | jq
+}
+
 if [ ! -z $1 ]; then
     case $1 in
         -h | --help) _ak_modules_news_usage; exit;;
@@ -202,6 +223,7 @@ if [ ! -z $1 ]; then
         add) _ak_modules_news_add2 $2; exit;;
         create) _ak_modules_news_create; exit;;
         read) _ak_modules_news_read $2; exit;;
+        specs) _ak_modules_news_specs $2; exit;;
         * ) _ak_modules_news_usage;;
     esac
 else _ak_modules_news_usage
