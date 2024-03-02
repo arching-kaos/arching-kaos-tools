@@ -11,6 +11,9 @@ then
     exit 1
 fi
 
+TEMPDIR="$(mktemp -d)"
+AK_ZPEERSFILE="$HOME/.arching-kaos/peersFile"
+cd $TEMPDIR
 counter=0
 printf '[' > walk.aknet
 dumpLinks \
@@ -38,3 +41,5 @@ done
 printf ']' >> walk.aknet
 
 mv walk.aknet $AK_ZPEERSFILE
+
+rm -rf $TEMPDIR
