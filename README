@@ -208,7 +208,6 @@ Script usage
 
 Utilities
 ---------
-ak-calculate-size       # Calculates the overall size of your ZCHAIN
 ak-clean                # Cleans up temporary folders created by these tools
 ak-config               # Publish your configuration to IPNS
 ak-data-expand          # Expands and verifies DATA blocks
@@ -226,9 +225,9 @@ ak-logthis      # Logs a message to the log file
 Schain tools
 ------------
 ak-mempool                      # TODO
-ak-miner-script                 # Prototype miner
-ak-network                      # in the works
-ak-show_sblock                  # Returns a mined SBLOCK
+ak-miner-script             PROTO Prototype miner
+ak-network                      # TODO
+ak-sblock-show                  # Returns a mined SBLOCK
 ak-find-latest-mined-sblock     # In a hay of SBLOCKS finds the latest
 
 Network scouting
@@ -264,13 +263,16 @@ ak-zblock-cache         # Caches a whole zblock as it would be done by ak-enter
 ak-zblock-manipulator   # TODO
 ak-zblock-show          # Shows a specified ZBLOCK
 ak-pack_z_block         # Creates and publishes a ZBLOCK (used by modules)
+ak2html                 # Generates a HTML file for a given zblock
 
 Zchain tools
 ------------
-ak-zchain-chk     # TODO
-ak-zchain-rebase  # Rebases ZCHAIN to specified ZBLOCK
-ak-zchain-reset   # Resets ZCHAIN to GENESIS
+ak-zchain-chk                   # TODO
+ak-zchain-rebase                # Rebases ZCHAIN to specified ZBLOCK
+ak-zchain-reset                 # Resets ZCHAIN to GENESIS
 ak-zchain-extract-cids          # Retuns CIDs from a zchain
+ak-zchain-extract-data-cids     # Retuns CIDs of "ipfs" DATA
+ak-zchain-calculate-size        # Calculates the overall size of your ZCHAIN
 
 File splitters
 --------------
@@ -307,10 +309,6 @@ ak-ipns-resolve
 
 Not completed or just odd
 -------------------------
-ak2html                                             # TODO
-ak-get-ipfs-hashes-from-my-zchain                   # Retuns CIDs of "ipfs" DATA
-ak-get-only-ipfs-key-values-from-our-or-a-zchain    # Retuns CIDs of "ipfs" DATA
-ak-get-only-ipfs-key-values-from-our-zchain         # Retuns CIDs of "ipfs" DATA
 
 Deprecated
 ----------
