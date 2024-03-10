@@ -1,0 +1,103 @@
+#!/bin/bash
+# set -xe
+if [ -z $1 ]
+then
+    echo "Please provide a SHA512 hash"
+    exit 1
+fi
+# if [ -z $2 ]
+# then
+#     echo "Please an output filename"
+#     exit 2
+# fi
+
+echo $1 | grep "[0123456789abcdef]\{128\}"
+if [ $? -ne 0 ]
+then
+    echo "Look, I asked for a SHA512 hash, please try again"
+    exit 1
+fi
+treeRootHash="$1"
+#outputFilename="$2"
+
+fmrk="$AK_WORKDIR/fmrk"
+ftr="$AK_WORKDIR/ftr"
+
+# This would be a kind of bootstrap for remote downloads
+#
+#remoteMrk="http://z.kaotisk-hund.com:8610/mrk"
+#remoteTr="http://z.kaotisk-hund.com:8610/tr"
+#
+pwd>.pwd
+
+dirWeWere=$(cat .pwd)
+
+# Enter temp folder
+TEMPASSIN="$(ak-tempassin)"
+cd $TEMPASSIN
+
+findDepth(){
+    currentNode="$1"
+    if [ -f $fmrk/$currentNode ] && [ "$(du -b $fmrk/$currentNode | awk '{print $1}')" == "258" ]
+    then
+        fileHead="$(head -n 1 $fmrk/$currentNode)"
+        counter="$(expr $counter + 1)"
+        findDepth "$fileHead"
+    elif [ ! -f $fmrk/$currentNode ]
+    then
+        printf "%s" "$counter" > depth
+    else
+        exit 111
+# Try to download stuff
+#        wget -s $remoteMrk/$currentNode -O $fmrk/$currentNode
+#        if [ "$?" -ne 0 ]
+#        then
+#            exit 111
+#        fi
+#        findDepth "$currentNode"
+    fi
+}
+
+currentNode="$treeRootHash"
+counter=0
+
+printf "%s" "$currentNode" > workspace.0
+findDepth "$currentNode"
+depth="$(expr `cat depth` + 1)"
+counter="0"
+printf "%s" "$depth"
+if [ -f output ]
+then
+    rm output
+fi
+touch output
+
+while [ "$counter" != "$depth" ]
+do
+    printf "Entering loop... %s %s\n" "$counter" "$depth" >&2
+    while IFS="" read -r p || [ -n "$p" ]
+    do
+        nextLevel="$(expr $counter + 1)"
+        if [ "$p" == "" ]
+        then
+            echo hi
+        else
+            if [ -f $fmrk/$p ]
+            then
+                if [ "$(head -n 1 $fmrk/$p)" == "$(tail -n 1 $fmrk/$p)" ]
+                then
+                    head -n 1 $fmrk/$p >> workspace.$nextLevel
+                else
+                    cat $fmrk/$p >> workspace.$nextLevel
+                fi
+            elif [ -f $ftr/$p ]
+            then
+                cat $ftr/$p >> output
+            fi
+        fi
+    done < workspace.$counter
+    counter="$(expr $counter + 1)"
+done
+
+base64 -d output #> $dirWeWere/$outputFilename
+rm $dirWeWere/.pwd

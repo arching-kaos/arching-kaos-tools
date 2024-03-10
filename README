@@ -280,7 +280,8 @@ ak-sm-filesplitter          # Splits a file to chunks and creates a map
 File system
 -----------
 ak-fs-add                   # Adds a file to filesystem tree (returns root hash)
-ak-fs-get                   # Constructs a file from root hash
+ak-fs-get                   # Constructs a file from root hash to filename
+ak-fs-cat                   # Constructs a file from root hash to stdout
 
 IPFS Wrappers
 -------------
