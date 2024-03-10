@@ -49,7 +49,7 @@ with `akconfig` a pointer to some basic information that you can share with
 others in order for them to crawl your zchain or view your "profile".
 
 There are more tools available under the `bin` folder. Make sure you deeply
-understand what they are doing before using them. 
+understand what they are doing before using them.
 
 Changes are mentioned in `git log` of the repo, as well as in CHANGELOG file.
 
@@ -125,7 +125,7 @@ signature of this, timestamp and finally an entry for the previous *zblock*.
 After that, we finally write this as a JSON object, add it to IPFS, sign it
 and pack a *ZBLOCK*. The ZBLOCK is then published over our IPNS zchain key.
 
-Other options... let's try help! 
+Other options... let's try help!
 
 ``` console
 $ ak-news help
@@ -144,7 +144,7 @@ create          Vim is going to pop up, you will write and save your
 Clearly there is a TODO item. Import is not working so avoid it, or fix it.
 Add is nice, you can add an already existing file directly. `news` is the second
 module after `mixtape`. Both modules need refactoring but they work at a level
-that someone can be productive with these tools.  
+that someone can be productive with these tools.
 
 ### Explore chains ( `ak-enter` )
 
@@ -247,7 +247,7 @@ ak-news                         # Adds a news article to the ZCHAIN
 ak-profile                      # Adds key-value pairs to the ZCHAIN
 ak-reference                    # Adds references to the ZCHAIN
 ak-repositories                 # Adds repositories to the ZCHAIN
-ak-roadmap                  PROTO Adds a roadmap to the ZCHAIN 
+ak-roadmap                  PROTO Adds a roadmap to the ZCHAIN
 ak-transactions                 # Prototype of transactions in the ZCHAIN
 ak-sm-files                     # Adds a split file's map to the ZCHAIN
 ak-todos                    PROTO Adds todo list to the ZCHAIN
@@ -276,8 +276,11 @@ File splitters
 --------------
 ak-sm-filejoiner            # Joins a file from a map
 ak-sm-filesplitter          # Splits a file to chunks and creates a map
-ak-sm-merkle-tree           # Splits a file to merkle tree and returns the root
-ak-sm-merkle-tree-to-file   # Joins a file from a merkle root
+
+File system
+-----------
+ak-fs-add                   # Adds a file to filesystem tree (returns root hash)
+ak-fs-get                   # Constructs a file from root hash
 
 IPFS Wrappers
 -------------
