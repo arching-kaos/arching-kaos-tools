@@ -86,9 +86,30 @@ do
     then
         printf "Creating symlink to %s..." "$b"
         ln -s $(pwd)/bin/$b $AK_BINDIR/$b
-        if [ "$?" -ne "0" ]
+        if [ $? -ne 0 ]
         then
             if [ -L $AK_BINDIR/$b ]
+            then
+                printf "\tAlready exists!\n"
+                exit 1
+            fi
+            printf "\tFailed!\n"
+            exit 1
+        fi
+        printf "\tOK!\n"
+    fi
+done
+# Find libs and create symlinks
+libfiles=$(ls -1 $(pwd)/lib)
+for b in $libfiles
+do
+    if [ ! -L $AK_LIBDIR/$b ]
+    then
+        printf "Creating symlink to %s..." "$b"
+        ln -s $(pwd)/lib/$b $AK_LIBDIR/$b
+        if [ $? -ne 0 ]
+        then
+            if [ -L $AK_LIBDIR/$b ]
             then
                 printf "\tAlready exists!\n"
                 exit 1

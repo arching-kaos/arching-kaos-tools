@@ -5,9 +5,8 @@ CRD=$(cat .pwd)
 
 PROGRAM="$(basename $0)"
 #set -xe
-logit(){
-    ak-logthis "$PROGRAM" "$1" "$2"
-}
+source $AK_LIBDIR/logit
+
 if [ ! -d $ZFILESDIR ]; then
     mkdir $ZFILESDIR
     if [ $? == 0 ]

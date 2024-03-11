@@ -5,18 +5,15 @@ descriptionString="Module to read, create and add zblocks"
 ZNEWSDIR="$AK_WORKDIR/news"
 TEMP="/tmp/aktmp"
 
-logit(){
-    ak-logthis "$PROGRAM" "$1" "$2"
-}
+source $AK_LIBDIR/logit
 
 if [ ! -d $ZNEWSDIR ]; then
     mkdir $ZNEWSDIR
-    if [ "$?" == 0 ]; then
-        logit "INFO" "$ZNEWSDIR created"
-    else
+    if [ $? -ne 0 ]; then
         logit "ERROR" "$ZNEWSDIR couldn't be created"
         exit 1
     fi
+    logit "INFO" "$ZNEWSDIR created"
 else
     logit "INFO" "$ZNEWSDIR found"
 fi
@@ -35,9 +32,8 @@ _ak_modules_news_create(){
     TO_FILE=$NEWS_FILE-$(echo $TITLE | tr '[:upper:]' '[:lower:]' | sed -e 's/ /\_/g' )
     IPFS_FILE=$(ak-ipfs-add $NEWS_FILE)
     mv $NEWS_FILE $ZNEWSDIR/$TO_FILE
-    sed -e 's,Qm.*,'"$IPFS_FILE"',g' $ZNEWSDIR/README
+    sed -i -e 's,Qm.*,'"$IPFS_FILE"',g' $ZNEWSDIR/README
     _ak_modules_news_add $TO_FILE
-    echo "Adding to git repo..."
     cd $ZNEWSDIR
     # rm -rf $TEMP
 }

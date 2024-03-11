@@ -1,9 +1,8 @@
 #!/bin/bash
 AK_TEMP="$(mktemp -d /tmp/aktmp-XXXXXXX)"
 PROGRAM="$(basename $0)"
-logit(){
-    ak-logthis "$PROGRAM" "$1" "$2"
-}
+source $AK_LIBDIR/logit
+
 if [ ! -d "$AK_TEMP" ]
 then
     logit "ERROR" "Could not make $AK_TEMP directory to work in"

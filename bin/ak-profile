@@ -4,9 +4,7 @@ ZPROFILEDIR="$AK_WORKDIR/profile"
 TEMP="/tmp/aktmp"
 
 # Outputs to log file in the classic format :)
-logit(){
-    ak-logthis "$PROGRAM" "$1" "$2"
-}
+source $AK_LIBDIR/logit
 
 # Whatever the command is, we check if $ZPROFILEDIR is there.
 # If NOT we create it and we change dir there.

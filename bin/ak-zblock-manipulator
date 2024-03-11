@@ -16,9 +16,7 @@
 
 # Below, the usage information
 PROGRAM="$(basename $0)"
-logit(){
-    ak-logthis "$PROGRAM" "$1" "$2"
-}
+source $AK_LIBDIR/logit
 
 usage(){
 	echo "Usage:"	

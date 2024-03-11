@@ -3,9 +3,8 @@ PROGRAM="$(basename $0)"
 tempdir=`mktemp -d`
 tempfile="$tempdir/tmp"
 tempaddr="$tempdir/tmpaddr"
-logit(){
-    ak-logthis "$PROGRAM" "$1" "$2"
-}
+source $AK_LIBDIR/logit
+
 stellarParticipants="$AK_WORKDIR/stellar-network-participants"
 stellarParticipantsOnline="$AK_WORKDIR/stellar-network-participants-online"
 if [ ! -f "$stellarParticipants" ]

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+logit(){
+    ak-logthis "$PROGRAM" "$1" "$2"
+}

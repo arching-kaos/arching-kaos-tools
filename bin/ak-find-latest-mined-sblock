@@ -3,9 +3,8 @@ MINED_BLOCKS_DIR="/home/$USER/.arching-kaos/mined_blocks"
 cd $MINED_BLOCKS_DIR
 PROGRAM="$(basename $0)"
 declare -A counters
-logit(){
-	ak-logthis "$PROGRAM" "$1" "$2"
-}
+source $AK_LIBDIR/logit
+
 further(){
 	# logit "INFO" "Diving into $1"
 	lookfor $1

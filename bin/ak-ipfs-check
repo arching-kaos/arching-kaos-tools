@@ -1,8 +1,6 @@
 #!/bin/bash
 PROGRAM="$(basename $0)"
-logit(){
-	ak-logthis "$PROGRAM" "$1" "$2"
-}
+source $AK_LIBDIR/logit
 
 ak-ipfs-files-ls /zarchive > /dev/null
 if [ $? != 0 ]
