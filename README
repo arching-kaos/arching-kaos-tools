@@ -153,19 +153,19 @@ in order to either view other zchains or change the depth of view ( includes or
 ignores data object and action ).
 
 ``` console
-$ ak-enter -h
-ak-enter - Crawl an arching kaos chain
+$ ak enter -h
+ ak-enter - Crawl an arching kaos chain
 -----------------------------------
+ak-enter [-N | --no-verify] [-l | --limit <number>] [zblock]
+ak-enter [-N | --no-verify] [-l | --limit <number>] -n <zchain>
 Usage:
-        --help, -h                              Print this help and exit
-        --chain <ipns-link>, -n <ipns-link>     Crawl specified chain
-        --show-zblocks-only, -z                 Show only zblocks
-        --no-verify, -nV                        Don't verify signatures
-        <ipfs-link>                             Specify IPFS CID for entrance
-
+    --help, -h                             Print this help and exit
+    --chain <ipns-link>, -n <ipns-link>    Crawl specified chain
+    --no-verify, -N                        Don't verify signatures
+    <ipfs-link>                            Specify IPFS CID for entrance
 
 Note that combined flags don't work for now
-Running with no flags crawls your chain
+Running with no flags crawls your chain based on AK_ZLATEST environment variable
 ```
 
 Podman (or Docker)

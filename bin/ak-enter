@@ -263,7 +263,7 @@ do
                     logit "ERROR" "Could not verify $block with GPG key $gpg."
                     exit 1
                 fi
-                logit "[GPG]" "$gpg signature of $block is verified."
+                logit "GPG" "$gpg signature of $block is verified."
             fi
 
             data="$(cat $AK_BLOCKDIR/$block | jq -M -r .data)"
