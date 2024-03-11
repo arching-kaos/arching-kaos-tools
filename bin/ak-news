@@ -1,5 +1,6 @@
 #!/bin/bash
 PROGRAM=$(basename $0)
+descriptionString="Module to read, create and add zblocks"
 
 ZNEWSDIR="$AK_WORKDIR/news"
 TEMP="/tmp/aktmp"
@@ -63,8 +64,25 @@ _ak_modules_news_index(){
     rm temp
 }
 
+new_line(){
+  printf '\n'
+}
+
+description(){
+  full_title="$(printf '%s - %s' "$PROGRAM" "$descriptionString")"
+  delimiter_count=`echo -n $full_title | wc -c`
+  printf '%s' "$full_title"
+  new_line
+  while [ $delimiter_count -gt 0 ]
+  do
+    printf '='
+    delimiter_count=$(($delimiter_count-1))
+  done
+  new_line
+}
 _ak_modules_news_title(){
-    echo $PROGRAM
+#    echo $PROGRAM
+    description
 }
 
 _ak_modules_news_import(){
@@ -82,7 +100,7 @@ _ak_modules_news_import(){
             for f in $fl
             do
                 echo $1 $f
-                _ak_modules_news_add2 "$1/$f"
+                _ak_modules_news_add_from_file "$1/$f"
             done
         fi
     else
@@ -92,7 +110,7 @@ _ak_modules_news_import(){
     exit 224
 }
 
-_ak_modules_news_add2(){
+_ak_modules_news_add_from_file(){
     TEMP="$(ak-tempassin)"
     if [ -f "$1" ]; then
         FILE="$(realpath $1)"
@@ -167,13 +185,15 @@ EOF
 }
 
 _ak_modules_news_usage(){
-    echo "-h, --help            Prints this help message"
-    echo "local-index           Prints an indexed table of your news files"
-    echo "import <file>         #TODO"
-    echo "add <file>            Creates a data file from the news file you point to"
-    echo "create                Vim is going to pop up, you will write and save your"
-    echo "                      newsletter and it's going to be saved"
-    echo "specs                 Print specs of data block"
+    _ak_modules_news_title
+    echo "    -h, --help                  Prints this help message"
+    echo "    -l, --local-index           Prints an indexed table of your news files"
+    echo "    -i, --import <file>         #TODO"
+    echo "    -a, --add <file>            Creates a data file from the news file you point to"
+    echo "    -r, --read <zblock>         Reads a zblock as a news data"
+    echo "    -c, --create                Vim is going to pop up, you will write and save your"
+    echo "                                newsletter and it's going to be saved"
+    echo "    -s, --specs                 Print specs of data block"
     exit 0
 }
 
@@ -218,12 +238,12 @@ _ak_modules_news_specs(){
 if [ ! -z $1 ]; then
     case $1 in
         -h | --help) _ak_modules_news_usage; exit;;
-        local-index) _ak_modules_news_index; exit;;
-        import) _ak_modules_news_import $2; exit;;
-        add) _ak_modules_news_add2 $2; exit;;
-        create) _ak_modules_news_create; exit;;
-        read) _ak_modules_news_read $2; exit;;
-        specs) _ak_modules_news_specs $2; exit;;
+        -l | --local-index) _ak_modules_news_index; exit;;
+        -i | --import) _ak_modules_news_import $2; exit;;
+        -a | --add) _ak_modules_news_add_from_file $2; exit;;
+        -c | --create) _ak_modules_news_create; exit;;
+        -r | --read) _ak_modules_news_read $2; exit;;
+        -s | --specs) _ak_modules_news_specs $2; exit;;
         * ) _ak_modules_news_usage;;
     esac
 else _ak_modules_news_usage
