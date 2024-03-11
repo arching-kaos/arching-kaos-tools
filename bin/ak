@@ -17,7 +17,7 @@ then
             args="-h"
             if [ -n "$subcmd" ]
             then
-                echo $subcmd
+                echo $subcmd | cut -d '-' -f 2 | sort | uniq | sed -e 's/^/ak /g'
                 # $(echo $subcmd) $args
             fi
         done
@@ -45,6 +45,12 @@ else
             exit $?
         fi
         counter=$(($counter + 1))
+    done
+    find $AK_BINDIR | while read available
+    do
+        echo $(basename $available) |\
+            grep ak-$(echo $argv | cut -d ' ' -f 1) |\
+            sed -e 's/-/ /g'
     done
     logit "ERROR" "Unknown subcommand: $*"
     exit 1
