@@ -180,6 +180,14 @@ Use:
 podman build -f ContainerFile -t arching-kaos-tools .
 ```
 
+Specialized ContainerFiles are available in `./podman/` for various
+distributions:
+ - alpine
+ - archlinux
+ - debian
+ - fedora
+ - opensuse
+
 TODO
 ----
 
@@ -262,7 +270,7 @@ Zblock tools
 ak-zblock-cache         # Caches a whole zblock as it would be done by ak-enter
 ak-zblock-manipulator   # TODO
 ak-zblock-show          # Shows a specified ZBLOCK
-ak-pack_z_block         # Creates and publishes a ZBLOCK (used by modules)
+ak-zblock-pack          # Creates and publishes a ZBLOCK (used by modules)
 ak-zblock-gen-html      # Generates a HTML file for a given zblock
 
 Zchain tools
