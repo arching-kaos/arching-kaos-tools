@@ -6,7 +6,7 @@ module.exports = (req, res) => {
 //    const command = spawn("ak-config", ["get-published"]);
     const path = config.peersFile;
     if(fs.existsSync(path)){
-        res.send(fs.readFileSync(path));
+        res.send(JSON.parse(fs.readFileSync(path)));
     } else {
         res.send({"error":"404"})
     }
