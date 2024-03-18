@@ -1,6 +1,6 @@
 #!/bin/bash
 PROGRAM="$(basename $0)"
-screen -dmS ipfs-daemon ipfs daemon
+screen -dmS ipfs-daemon ipfs daemon --routing=dht --migrate
 if [ "$?" != "0" ]
 then
     ak-logthis "$PROGRAM" "ERROR" "Failed to start IPFS daemon"
