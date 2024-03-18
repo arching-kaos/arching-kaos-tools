@@ -123,10 +123,17 @@ CHECKSUM=$(sha512sum "$FILE"|awk '{print $1}')
 FILE_SIZE="$(du -b $FILE | awk '{ print $1 }')"
 if [ $FILE_SIZE -lt 4097 ]
 then
-    cp $FILE "$TECHDIR$(basename "$FILE")-00000000000000000000000000000000000000000000000000.chk"
+    cp $FILE "$TECHDIR/$(basename "$FILE")-00000000000000000000000000000000000000000000000000.chk"
 else
+    FACTOR=1024
+    while [ $(( $FILE_SIZE / $FACTOR )) -gt 250 ]
+    do
+        FACTOR=$(( $FACTOR * 2 ))
+    done
+    logit "INFO" "Gonna split in $FACTOR size"
+    sleep 30
     # We split the file into 4*1024 bytes and output the chunks into TECHDIR
-    split -a 50 -b 4096 --additional-suffix ".chk" -d "$FILE" "$TECHDIR$(basename "$FILE")-"
+    split -a 50 -b $FACTOR --additional-suffix ".chk" -d "$FILE" "$TECHDIR/$(basename "$FILE")-"
 fi
 
 # We go over there...
