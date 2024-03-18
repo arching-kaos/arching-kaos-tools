@@ -1,6 +1,6 @@
 #!/bin/bash
 PROGRAM="$(basename $0)"
-source $AK_LIBDIR/logit
+source $AK_LIBDIR/_ak_logit
 
 FOLLOWING="$HOME/.arching-kaos/following"
 if [ -f $FOLLOWING ]

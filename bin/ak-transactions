@@ -4,7 +4,7 @@ _ak_modules_transactions_usage(){
 	echo "$PROGRAM from to amount"
 }
 
-source $AK_LIBDIR/logit
+source $AK_LIBDIR/_ak_logit
 
 _ak_modules_transactions_main(){
     logit "INFO" "$FROM_ADDRESS to $TO_ADDRESS value sent: $AMOUNT"

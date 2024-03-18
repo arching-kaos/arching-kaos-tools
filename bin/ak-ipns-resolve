@@ -8,7 +8,7 @@ usage(){
 	echo ""
 	echo "Returns the resolved IPFS CIDv0"
 }
-source $AK_LIBDIR/logit
+source $AK_LIBDIR/_ak_logit
 
 if [ ! -z $1 ]
 then

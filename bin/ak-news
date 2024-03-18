@@ -5,7 +5,7 @@ descriptionString="Module to read, create and add zblocks"
 ZNEWSDIR="$AK_WORKDIR/news"
 TEMP="/tmp/aktmp"
 
-source $AK_LIBDIR/logit
+source $AK_LIBDIR/_ak_logit
 
 if [ ! -d $ZNEWSDIR ]; then
     mkdir $ZNEWSDIR

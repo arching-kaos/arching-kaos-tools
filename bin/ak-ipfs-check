@@ -1,6 +1,6 @@
 #!/bin/bash
 PROGRAM="$(basename $0)"
-source $AK_LIBDIR/logit
+source $AK_LIBDIR/_ak_logit
 
 ak-ipfs-files-ls /zarchive > /dev/null
 if [ $? != 0 ]

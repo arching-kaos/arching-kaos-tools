@@ -7,7 +7,7 @@
 
 PROGRAM="$(basename $0)"
 
-source $AK_LIBDIR/logit
+source $AK_LIBDIR/_ak_logit
 
 usage(){
     echo "$PROGRAM - Show a zblock"
