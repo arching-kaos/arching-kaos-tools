@@ -1,4 +1,825 @@
 ---
+17659ce1983f39720de51b5fb898af515f701206
+Tue Mar 12 07:37:29 2024 +0200
+    Caching enabled results and a fix
+---
+88e9bb162fecb6c44ac07b01e99fca1f69e2f5b6
+Tue Mar 12 07:34:14 2024 +0200
+    Updated README
+---
+bf87d94330c6c6153eab9f1a3016efeef5ebc754
+Mon Mar 11 19:36:28 2024 +0200
+    Introduced ./lib for common stuff
+
+    ofc, logit was the first lib to add... finally
+---
+d4e498a18f700e288764cdf8799a2b07a76e1615
+Mon Mar 11 18:47:08 2024 +0200
+    More helpful output
+---
+b808eabf7a446a91efa8f5ec5240a8d60f4bc55d
+Mon Mar 11 18:44:31 2024 +0200
+    Minor changes in documentation + a log format fix
+---
+da4c3d92640f8f8e32eafd8ebc5a707bf0d89961
+Mon Mar 11 18:31:31 2024 +0200
+    Turned subcommands into flag like options
+---
+e31fd72048b68daa4dcac1319da0e28cc49c88b7
+Sun Mar 10 05:44:05 2024 +0200
+    ak2html -> ak-zblock-gen-html
+---
+f01707d1ca1c0d5b56e69f280558ff30cfdf19d4
+Sun Mar 10 05:41:58 2024 +0200
+    Updates on README
+---
+fb311543c9b5536b227833e94338e788e04cea47
+Sun Mar 10 05:19:54 2024 +0200
+    new tool: ak-fs-cat
+---
+798a8a50445f894f7e6979b9e688639005d0a5d9
+Sun Mar 10 02:08:24 2024 +0200
+    Renamed ak-sm-merkle-tree* to ak-fs-*
+
+    renamed:    bin/ak-sm-merkle-tree -> bin/ak-fs-add
+    renamed:    bin/ak-sm-merkle-tree-to-file -> bin/ak-fs-get
+    Also, minor fixes in README
+---
+cfdeb61252a100d660c047a4ea1eb5a38bba705b
+Sat Mar 2 17:25:43 2024 +0200
+    Clean up leftovers from refactoring ak-logthis
+---
+1894d8cb5c4050de216f905f8ebbfcc1e7c8d58a
+Sat Mar 2 07:24:49 2024 +0200
+    Follow up to 2e2e16e
+---
+935ee5be8b3d228a7119c77798b5d9dfe2a734fc
+Sat Mar 2 07:02:56 2024 +0200
+    API welcome message update
+---
+d8543fd95a7e4519ef23ca0ea5125fcc4f860e76
+Sat Mar 2 06:00:24 2024 +0200
+    Added specs subcommand
+---
+dcafdd7151abfed1f69407357854ae91deea0c0b
+Sat Mar 2 05:58:11 2024 +0200
+    Exit on launch, no implementation yet
+---
+69ec28812cc1f6c68f139bbc93e95ab4424f8859
+Sat Mar 2 05:57:34 2024 +0200
+    Exit if no value given to rebase onto
+---
+fe55a20c1d3d5eca8dd069167a444a1d82328294
+Sat Mar 2 05:55:07 2024 +0200
+    Removed zpairs section from mining data, only zblocks are supported
+---
+00f7cb02f91e8aae9df69c33e28b05b54bd82561
+Sat Mar 2 05:52:35 2024 +0200
+    Added specs subcommand
+---
+a6c00d58d0818fb6495f8407ff2573ff77bf29d6
+Sat Mar 2 05:46:40 2024 +0200
+    Refactored ak-articles to match rest of scripts
+
+    - Removed git intergration
+    - Uses logit now instead of printing to stdout
+    - Checks for `EDITOR` variable instead of blindly running vi
+    - Spacings fix
+    - Removes temp dir after 'add' command is done
+---
+82934d0325e61669c877122b721f5fe72a25bea5
+Sat Mar 2 05:45:20 2024 +0200
+    PROGRAM from script name instead of hardcoded string
+---
+e3a1c5e5c654c43f02d411b4805699d6a1d652fc
+Sat Mar 2 05:44:30 2024 +0200
+    Make use AK_MINEDBLOCKSDIR variable
+---
+2e2e16eda2c02bf2b783ca5d4c649e17b287e16b
+Sat Mar 2 05:42:27 2024 +0200
+    Removed ak-get-chain-minified in favor of ak-enter
+---
+8f6255ee35875d93b740c868d243eea7949f79c5
+Sat Mar 2 05:39:15 2024 +0200
+    logit as an interface to ak-logthis
+---
+fd33f65d2768ed74346f509a4dd53b72c35bee23
+Sat Mar 2 05:33:23 2024 +0200
+    Do the processing in a temp dir
+---
+9c69a97ad8cdbdd26a3b68bd896c0a439f0e3e7a
+Sat Mar 2 05:30:14 2024 +0200
+    Added check for dumpLinks of cjdns-tools
+---
+a94106c216ea22a09f5149d56ece5c16489dc655
+Sat Mar 2 05:28:07 2024 +0200
+    UTF8 encoding and viewport added
+---
+c619e83d4fcc4dadbe07ead7b58b88ca7524fbfb
+Sat Mar 2 05:27:39 2024 +0200
+    Spacings adjustment
+---
+7fba668be61c89f133d821c2e7b46630c346fb43
+Sat Mar 2 05:23:53 2024 +0200
+    Fixed tests
+---
+70495ffed262f268e2b8dc90617164b175341a78
+Sat Mar 2 02:56:33 2024 +0200
+    Spacings adjustment
+---
+b11434ed1255f3c6a967be093e6e193780bc7ed5
+Sat Mar 2 01:51:33 2024 +0200
+    Removed old ak-cli approach in favor of ak
+
+    Instead of hardcoding things in a big script we simply search in ak's
+    arguments for appropriate scripts and past the rest of values as
+    arguments to the script found.
+
+    Running with no arguments *will* be printing all available scripts with
+    --help flag to provide a good overview.
+---
+a506f0a48e02587f59bbd24f67812416a7a74038
+Sat Mar 2 01:50:19 2024 +0200
+    Replaced obsoleted script
+---
+80bab8913b5ae88a6dc9a200ffb6668df5cffb97
+Fri Mar 1 19:31:34 2024 +0200
+    Changes help subcommand to flag style -h, --help
+---
+3ca95b33f2dc650b384a96dc1d3aa3d8d18553d1
+Fri Mar 1 19:30:33 2024 +0200
+    Changes help subcommand to flag style -h, --help
+---
+f8d2236e55e5c369b218017d1de1058d6a8ee361
+Fri Mar 1 19:26:24 2024 +0200
+    Log formatting adjustment
+---
+7affa2082f61455a413d0c8fea08e79935d4f308
+Fri Mar 1 19:20:34 2024 +0200
+    Spacing adjustment
+---
+cd43e57b999422980ea95df7f1d03117342e358e
+Fri Mar 1 09:36:53 2024 +0200
+    Simplifying logs
+---
+4e8f09fcf92eb8de4e39d512ce36b9ed87fbde87
+Fri Mar 1 05:45:13 2024 +0200
+    ak-node-info for cli
+---
+1b883da0cafceeb82883985486752d98299ece0e
+Fri Mar 1 05:44:05 2024 +0200
+    Firstly clean up AK_BINDIR, then make links
+---
+9cd7baddbfa5a702486e35c2d8625106eb57981e
+Fri Mar 1 05:42:14 2024 +0200
+    Removing old links when updating
+---
+a9a3bbaf400e98d6b4e9cdf765728864fe14a7e2
+Fri Mar 1 05:36:17 2024 +0200
+    Rename ak-pack_z_block to ak-zblock-pack
+---
+c0410df04f57c166c79b8bbe584a97abadaed36e
+Fri Mar 1 02:57:58 2024 +0200
+    Fixes in output format
+---
+6cb0efc1abeccd8f6a9c7ca7f209ff22c42341bd
+Fri Mar 1 02:47:10 2024 +0200
+    Renamed functions and routes
+
+    receive* -> announce*
+
+    szbk -> /v0/announce/zblock
+    szch -> /v0/announce/zchain
+---
+11cd4029ee6e1e5368be22742827dba1547cfc71
+Fri Mar 1 02:21:29 2024 +0200
+    Added debug
+---
+de65283475653e33de0b6be28f08b9d5004e9080
+Fri Mar 1 00:46:46 2024 +0200
+    Fixes leftovers from refactoring
+---
+8323eaa985dcac1152e62df28903c643ce2c9f45
+Fri Mar 1 00:34:50 2024 +0200
+    Added ak-logthis wrapper in API
+---
+f53340fa52437b7a4dbe06834f0cdf1233678c72
+Thu Feb 29 19:44:00 2024 +0200
+    Added debug output
+---
+2e45e945cb7baa3131430c9c069f9ba9d4ee77b9
+Thu Feb 29 08:04:42 2024 +0200
+    Refactoring
+---
+0960d34248a5af0df4a735e9a66476192ef1c971
+Wed Feb 28 08:52:14 2024 +0200
+    Refactoring
+---
+54a6cf3bba10027f2cf9d7d641b667c8d9a400ea
+Wed Feb 28 08:32:20 2024 +0200
+    Refactoring
+---
+9da29bce4fdd4ca0754f9c505b746d68182f6046
+Wed Feb 28 07:09:00 2024 +0200
+    Refactoring
+---
+9c249804a4555793532b7ee3eb2d501c2f328cb9
+Wed Feb 28 07:03:37 2024 +0200
+    Extracts fingerprint from IPFS CID holding a public GPG key
+---
+75c0f9508816bc8f4ca80cc60e5cf84e38927bc1
+Tue Feb 27 07:54:34 2024 +0200
+    ak2html - more analytical zblock to html
+---
+0588b52635b715a5d7ad66a63f8379cb4408032a
+Tue Feb 27 07:21:39 2024 +0200
+    Renamed script
+---
+fa5d6becb482da75e65683b0ae690d35fa3eade6
+Tue Feb 27 07:20:27 2024 +0200
+    Refactor Arching Kaos ID to node_info
+---
+1da7813fe8dab6deb3bcbcfe79f4ad44c5f7fe0c
+Tue Feb 27 06:15:55 2024 +0200
+    Moved block to appropriate place
+---
+94c6cd43413f266f0db898cfb3fc7a9833509ef8
+Tue Feb 27 02:14:19 2024 +0200
+    Refactored function names
+---
+f93ebfadb3e0d89e668784cd781ad33c62e01065
+Tue Feb 13 19:17:19 2024 +0200
+    off to make a cli tool
+---
+779bea336e3c30f89ab3850c625b39636c41cbd0
+Tue Feb 13 06:19:19 2024 +0200
+    Soft link instead to the right place
+---
+a04d8d467406e37133915493f8883a3741ee6305
+Tue Feb 13 06:13:15 2024 +0200
+    Added the libraries for the dumpLinks
+---
+5db7905cacaa1ea73ac31978dd94624600566082
+Tue Feb 13 06:10:48 2024 +0200
+    Adding dumpLinks from cjdns to ak-bin directory
+---
+d744e9daee83ce703405a4ba4d0303daed0d1527
+Tue Feb 13 02:26:07 2024 +0200
+    Clone and install cjdns script
+---
+2d10a049020b844bdfb9bbc62063bc4b07521536
+Mon Feb 12 16:21:05 2024 +0200
+    Bettering the mask for SHA512 strings
+---
+1111b62d12a1df9cbfcc480e3e21e7be554c116d
+Tue Jan 30 06:22:51 2024 +0200
+    Fixed add subcommand bug
+---
+fcca3cfad1008459b30a09ad245458f83d213806
+Fri Jan 12 06:43:34 2024 +0200
+    local-index subcommand enhancment
+
+    Figures if files are published already in your zchain
+---
+7d137436bf7583ac30628d239fec55bb2f8a4ca5
+Fri Jan 12 06:42:38 2024 +0200
+    Proper log script
+---
+72bf886edc73d1a5ddd8cbcdd083d42ce305ce22
+Fri Jan 12 06:41:40 2024 +0200
+    Test when we send a ZBLOCK over the API
+---
+53b2f67cf0a41df6ddd0063d8ab004034e0fc17d
+Fri Jan 12 06:40:09 2024 +0200
+    Now handles various request types
+---
+c047242c82611c3d35b2daf4e6888a3890772ee5
+Fri Jan 12 06:39:25 2024 +0200
+    Changed welcome links to be ipv6 ready
+---
+44da30438cfb07cf08ef3293cc9ccb975d6c184e
+Fri Jan 12 06:37:38 2024 +0200
+    Removed useless IDing
+---
+39866a01e1e08e2ec073a8501122d810c9c23f21
+Thu Dec 14 23:15:08 2023 +0200
+    Follow up on 296074f6f5f45c8ab55b44309f9991dca8ef13da
+---
+f55bd1bba81aed7c90a6f43e3878b0fcbc23aeee
+Tue Dec 12 12:33:33 2023 +0200
+    Working on remote downloads
+---
+82b235d290a330ba44ff81d248ba1ce5552a4393
+Tue Dec 12 12:31:00 2023 +0200
+    A more complete take on a programs startup
+---
+deabc2c4c46237a3d8186f9b59fda5d975dfd50c
+Tue Dec 12 12:29:51 2023 +0200
+    Simplification using jq
+---
+296074f6f5f45c8ab55b44309f9991dca8ef13da
+Tue Dec 12 12:29:03 2023 +0200
+    Renamed scripts for convenience
+---
+a89cb5df04211968a4884b371b5810a708ce8fcf
+Tue Dec 12 12:27:04 2023 +0200
+    Added depedencies to the Containerfile so there can be a cached image
+---
+e2cfcb93135978df20229256447b1a2ca788e2b4
+Thu Nov 2 16:49:12 2023 +0200
+    Log file reader now formats timestamp in a human readable value
+---
+11d38df23c069e3e039cd4919327c8e494f030a1
+Sat Sep 30 03:29:45 2023 +0300
+    Renamed ak-get-latest to ak-get-zlatest
+---
+9ef57d6e987dc15c02a7cfec64834ebd9aed954f
+Sat Sep 30 02:55:51 2023 +0300
+    At last a logrotating script
+---
+41997666e4109b9ce22bb41407314402fe53f260
+Thu Sep 28 06:00:49 2023 +0300
+    Fixed temporary folder/file handling
+---
+35b9daa63ac127e5a2a769cf96a56a0acd8da725
+Wed Sep 27 16:40:43 2023 +0300
+    Got peers into the installation and configuration
+---
+95063fc1bd293520d2c11cc8cc091dbf619505b4
+Wed Sep 27 16:38:12 2023 +0300
+    minor clean up
+---
+b9a7edbb1cdeed788cd0faa1f87bbafdaa4ac50c
+Wed Sep 27 16:37:34 2023 +0300
+    New route: GET /peers
+---
+442ea8af4aefc9c1e04d53ba781e70c7036f17d6
+Sun Sep 24 22:18:23 2023 +0300
+    Link to the location we retrieved from which
+---
+41363b4b99c5d094fbdea426d03b23194cd85a90
+Sun Sep 24 22:17:59 2023 +0300
+    Added screen to the dependencies
+---
+645f2ed1ec9eac0263de95572ed821cf1c8389d9
+Sun Sep 24 22:14:38 2023 +0300
+    Added REQUIREMENTS file
+---
+5e6e0e1dbfc9d7ae61d6917608ece66fd95d1a43
+Sun Sep 24 22:12:58 2023 +0300
+    More info
+---
+f31e5c1b5ff521d24496bedb58a13d02872b56be
+Sun Sep 24 14:51:26 2023 +0300
+    Added NETWORKING
+---
+4c67050673223d4ff714a3bae68e1528fefcc84e
+Sun Sep 24 00:24:55 2023 +0300
+    cjdns network scanner prototype
+---
+47fa6d523d7503d657225413887c6f5c1f48d1ba
+Thu Sep 14 20:19:45 2023 +0300
+    Added INSTALL file
+---
+b9557e0567908a963ffc269865f453fe2a81aedd
+Thu Sep 14 00:29:15 2023 +0300
+    We should first install the api before building it
+---
+4598949d827219dfd202aad666ae70d3a2704ba7
+Thu Sep 14 00:28:46 2023 +0300
+    Added log message
+---
+0319ad5bbf29b360108f9f9f45ed64b081fde569
+Mon Sep 11 21:31:08 2023 +0300
+    Exposes API port, introduced startup script
+---
+7b623c8fb3a7897c567a98d04d0a44780a62f027
+Mon Sep 11 21:26:03 2023 +0300
+    Build and install the API
+---
+143c4d5dbe4dd80163b5259e4d92365ab04aa9f0
+Mon Sep 11 21:14:02 2023 +0300
+    Fixes log output
+---
+5bc6702517b2eaadf7f25f7fbaefc559c20442d8
+Mon Sep 11 21:07:02 2023 +0300
+    Removes nodejs as explicit depedency
+
+    - Avoid name differences from package to executable (nodejs vs node)
+    - Gets installed via npm
+---
+b6c913a12cad506ed6ee2864d76fa93132341558
+Mon Sep 11 21:05:36 2023 +0300
+    Fixes Makefile
+---
+7550b8ccb0b05d3b11a9bfcb45cee0849dc05f76
+Mon Sep 11 20:57:04 2023 +0300
+    Workaround for IPNS unresolvable zchain links
+
+    - Adds a "zlatest" field to the configuration of the node
+    - We update and publish the configuration each time we change the latest
+      block of our zchain
+---
+6732953e0cc1e4d91d19dcddb90a2fc9afdfeace
+Mon Sep 11 20:52:56 2023 +0300
+    Minified output
+---
+13a588499aee287ec819fd6d1f0e71e76df6d326
+Mon Sep 11 20:51:54 2023 +0300
+    Usage info correction
+---
+efb322118ec49e02c3b3c1c52cada9de4142634e
+Fri Sep 8 04:02:22 2023 +0300
+    Clean output
+---
+fafea198f1b587dcca3b4d74b99fb5295eb8b5f5
+Thu Sep 7 16:19:29 2023 +0300
+    Corrected license duration span
+---
+bfa533d422bb6147af11c00c93f7f17ef5e42d8c
+Thu Sep 7 16:15:48 2023 +0300
+    License includes all the work that is in this repository
+---
+f2cadb2a5fdd56c1d44bf9743303f3fef08ebfad
+Tue Sep 5 02:28:38 2023 +0300
+    Added a new option/shortcut to rebase one zblock ago
+---
+d976f0e3f2d4f7d3cce4867ca21ec86c29e4fdef
+Tue Sep 5 02:27:37 2023 +0300
+    Replaced tabs with spaces
+---
+c52361eccf1386d6ad28523f40680fbc527e1ac4
+Tue Sep 5 02:24:29 2023 +0300
+    OpenSUSE podman image creator
+---
+4c2b357ff843ab37acd166928d103e4730e56c04
+Tue Sep 5 02:24:07 2023 +0300
+    Alpine podman image creator
+---
+4d704573c7fb9e3ffebf4b9495cd1dd850c7e8f0
+Fri Sep 1 10:48:52 2023 +0300
+    Added support for apk package manager
+---
+ea857d594dc7a446d6edf86e37ce2085dbbcc693
+Fri Sep 1 10:48:32 2023 +0300
+    Corrected wrong log message
+---
+58dd9788da39d9f77af199fc6bdd68d9a35ddee5
+Fri Sep 1 10:47:30 2023 +0300
+    Added support for zypper package manager
+---
+5390073b9aab92d6dbd601593a116e05fd55ccdb
+Fri Sep 1 09:42:41 2023 +0300
+    [new] ak-news read command
+---
+bfc8039a974bec3dd382ec8c64cc93dfd002a498
+Fri Sep 1 09:23:14 2023 +0300
+    Double check the input
+---
+0a55c353d61c1f3fa624a1d0c68c419868266095
+Fri Sep 1 09:19:59 2023 +0300
+    Return json parse instead of stringified
+---
+32a5805a89e7ebb88d2f0aa66b7fd80749195121
+Fri Sep 1 09:19:04 2023 +0300
+    Added new routes, fixed indentation
+---
+ad861504709c639ccc472f71b7db1fe7f52035d8
+Wed Aug 23 19:27:58 2023 +0300
+    Moved the right variable to the right place
+---
+7cf79933bffcce36123d3a04f74afb11e94e9660
+Wed Aug 23 19:19:59 2023 +0300
+    Added support for ArchLinux
+---
+1f517b6b25a5a1a5859f693015a2ce86df1f4b6f
+Wed Aug 23 19:18:16 2023 +0300
+    Won't need. It was a mistaken assumption fixed at 587c1a5
+---
+a43a28abb7457a3166c8b18fe94245e629e6acc7
+Wed Aug 23 19:16:18 2023 +0300
+    Applying work of two previous commits
+---
+a4b0e5d5cb75ff4af2054ed8df28bb10fe92e16a
+Wed Aug 23 19:14:44 2023 +0300
+    Dynamic sudo usage
+---
+f56867064771d9a3560a2c2310d9703be34d594f
+Wed Aug 23 19:13:35 2023 +0300
+    Preparing for dynamic package manager arguments
+---
+f2ab5bede258894e32f91e5ca6f1458a14f3d3ef
+Wed Aug 23 15:49:46 2023 +0300
+    Provided container build target for Debian Linux
+---
+587c1a5b9aa027d7a6c61d6475703238aeef09d7
+Wed Aug 23 15:34:00 2023 +0300
+    Fixed wrong dependency name
+---
+8759a66767f620e553740521a617ae042d197b49
+Wed Aug 23 15:32:27 2023 +0300
+    Changed previous to new defaults
+---
+4a77f861b105a93e536d5a9717bde2d6296f6592
+Wed Aug 23 15:31:24 2023 +0300
+    Removed sudo command as the container user is root, removed wget from deps
+---
+c4c09ce8912eaa38aaea3d610059c051d13beb9f
+Wed Aug 23 15:29:00 2023 +0300
+    Script provided for testing containers under various Linux distros
+---
+5c6b610e905702074c80ce00b649b07df682fee6
+Tue Aug 22 14:07:44 2023 +0300
+    Aborts installation if AK_WORKDIR is found.
+---
+2e76a77d92bfc5640b942f3b3a297d5cb079e94d
+Tue Aug 22 14:07:15 2023 +0300
+    Fixed wrong array declaration
+---
+d41965e4845e6a722bcbc3ebc6e3ed21001f993b
+Tue Aug 22 14:06:43 2023 +0300
+    Cleans output from which executions
+---
+ca21e17dba116d145e21dce8f96f3d10f987f850
+Tue Aug 22 01:42:58 2023 +0300
+    Added dependency checking and attempts installing them
+---
+ae4a4cc06a1e30765973e9eea9753bcfbf99bab5
+Mon Aug 21 17:27:55 2023 +0300
+    Removed forgotten message
+---
+1c8d1f4710e9f7686222ef842326e4516a5a40b3
+Sun Aug 20 22:33:44 2023 +0300
+    Good update in README
+---
+bcb49941cd1f1d10b38ad0faef554f7f934702d3
+Sun Aug 20 21:28:54 2023 +0300
+    Removed inlined thens
+---
+398a37f497b048ec39b1e20c4f7b42b8c01d94a2
+Sun Aug 20 21:23:47 2023 +0300
+    Full ZBLOCK cache subfolder is created when it's needed
+---
+9dca9167ab62c5c2306e7ea4c3243a2991071461
+Sun Aug 20 21:16:03 2023 +0300
+    Moving initial cache directory here
+---
+d2accf0f1862b81068d4df16e4b28827db245409
+Sun Aug 20 21:14:06 2023 +0300
+    Fixed check
+---
+36a98974e4144fc7a387aa73a37daf040c3131be
+Sun Aug 20 21:12:31 2023 +0300
+    Removed trailing slash
+---
+1a96713b1a5fc0832f83781b5bd96fe870fb5a23
+Sun Aug 20 21:03:03 2023 +0300
+    Cache folder initial appearence
+---
+feb828c6ca4af1708c4c204a86150f37ca3eaa0e
+Sun Aug 20 20:53:09 2023 +0300
+    Fixed bug when ak-config key was not initially created
+---
+0bd4af9936319a0ac122f2dbb61949aa01bf698d
+Sun Aug 20 20:33:51 2023 +0300
+    Tar warnings off
+---
+0a76505ed90768d9695e58590aa0d5716a203c71
+Sun Aug 20 20:30:53 2023 +0300
+    Fixed bug and inconsistency in configuration
+---
+956fb6d7ece35bbbb0162a3c9ac7d2ce73756f46
+Sun Aug 20 15:28:15 2023 +0300
+    Fixed a wrong condition
+---
+b0fe96e841f794055371a2ac301f99e5451198c7
+Sun Aug 20 15:23:14 2023 +0300
+    No need for importing keys manually, they get created during install
+---
+0fb64d189f74ca32dad32401d9789efd6257ab59
+Sun Aug 20 14:47:17 2023 +0300
+    Tidying up and some additions
+---
+f3e77a4ff03b54e0b2db2a46e9eb3ad345a0b0c4
+Sun Aug 20 13:59:51 2023 +0300
+    Fixed a bug where ZGENESIS pointer file wasn't created
+---
+8240bd9106a4c3a019a70340b7709a13a9e7e8f4
+Sun Aug 20 13:24:44 2023 +0300
+    Check if there is already a zchain key in IPFS
+---
+925b16d12bc27aba96b9d543485a20a5e25ddbac
+Sun Aug 20 13:14:38 2023 +0300
+    Corrected condition and worked around printf bug
+---
+038cd220d6edf02a5e92e58ccf1097b49f4cc626
+Sun Aug 20 13:10:46 2023 +0300
+    Now checking if it is installed first
+---
+c17eb61eae6b3aee57ffd2287a88e07aef4ed511
+Sun Aug 20 13:05:53 2023 +0300
+    Removed verbose output
+---
+857f1720f181927249dec7430042eb7b11560bba
+Sun Aug 20 13:03:52 2023 +0300
+    Fixed a bug that could cause installation to fail
+---
+2e5a5246016724aca4f3bbc2d7418542317a5147
+Sun Aug 20 13:01:40 2023 +0300
+    (new) uninstall script
+---
+a53f4930669fe6a1bec6dea3ce76f1a92bbe18ec
+Sun Aug 20 12:41:24 2023 +0300
+    Replaced double brackets with single ones
+---
+5f7fb5e7a9caaf6f5fe4d994e07bef367d41efd4
+Sat Aug 19 23:27:38 2023 +0300
+    Added routes to merkle leafs and file chunks
+---
+3855b9b657568f2270d63eae157923cc119fa866
+Sat Aug 19 14:47:30 2023 +0300
+    Fixed bug for files less than 4097 bytes
+---
+47f0fb1bae66ce55be238578a24b0168076b7f12
+Sat Aug 19 13:39:32 2023 +0300
+    More accurate description
+---
+24d17272e64869fbbc0f465494854ff12e47dc7a
+Fri Aug 18 23:08:37 2023 +0300
+    Needless to create .ipfs manually, needless to call IPFS with specified PATH
+---
+a51fd3cadbcc4be13dda57217fea6232aae1a182
+Fri Aug 18 23:05:17 2023 +0300
+    Added a condition where we have the IPFS binary but we haven't configured
+---
+112e4f7be6c6cbdeab8543b4cc64e5b2ae25e155
+Fri Aug 18 22:44:36 2023 +0300
+    Fixed wrong flag
+---
+49f138f7b2ae9ae46d0d8eb7cc69aad24bd97a14
+Fri Aug 18 22:38:13 2023 +0300
+    Added gpg key create implementation and minor refactor
+---
+da5c4e118f6d5b04ee31ca2374a1bd8aa8c00e37
+Fri Aug 18 22:30:19 2023 +0300
+    Moved GPG keyring to dedicated folder under .arching-kaos/
+---
+39ed9fd836004d44bc31ecb4a63376a3c2087da6
+Sat Aug 5 08:23:30 2023 +0300
+    New tool: Restore file from merkle tree
+---
+776d222eae20aed29ff2e4dbfcececec3c1f0efc
+Sat Aug 5 08:15:06 2023 +0300
+    Removed 1 level of verbosity
+---
+0da28a5de5876e404009cd8dcd4aa131750bea83
+Sat Aug 5 08:14:08 2023 +0300
+    Makes use of ak-tempassin instead of static temp dir
+---
+fbbb358b8faf7e966ffa476cd1125673c69b3ab6
+Sat Aug 5 08:13:10 2023 +0300
+    Encodes file to base64 to avoid losing bytes
+---
+ceab9d276be46d6d136d6a7d48c7ed165f7bc0f1
+Thu Aug 3 20:11:54 2023 +0300
+    New tool: Create merkle tree from file
+---
+67c23e3746159299d5bdd8be03ba94c5d9f2cc3a
+Thu Aug 3 20:04:46 2023 +0300
+    Fixed the way cache is stored or not
+---
+b6d3c26ab4d56b8e3c94e99e43c66b1891fb6477
+Thu Aug 3 19:47:06 2023 +0300
+    Tiny rework and cleanup
+---
+79abed7416cc95f83080a61c497d78891f4a7cbc
+Thu Aug 3 19:40:50 2023 +0300
+    Cleanup
+---
+da98fe9e28ef47488a34b038736d0b765e1e1e8c
+Thu Aug 3 19:35:27 2023 +0300
+    Updated example in the comments
+---
+11a4191c4ccb308614cb8fcf883d29c757109f45
+Thu Aug 3 19:34:39 2023 +0300
+    Cleanup and fixed call to script
+---
+09e8affcadf0106bef20f2ba0a6a19e9f2e3e1fe
+Thu Aug 3 19:33:17 2023 +0300
+    Cleanup
+---
+ec34fa3d4c2fd608930bc95c80283a1be2b5bf62
+Thu Aug 3 19:22:33 2023 +0300
+    Removed git integration
+---
+9372f8efb478243e9575972e73b9d419706add97
+Thu Aug 3 12:04:59 2023 +0300
+    Removed use of json2bash, exit with error if no genesis
+---
+8a31a8395de66dbbbfc9df821d48ca8dce7da979
+Thu Aug 3 10:56:41 2023 +0300
+    Nullify non valid zblock
+---
+d67b39684bd60d9b7df54bd7900407d6ee9a5cc6
+Thu Aug 3 10:51:06 2023 +0300
+    Adds id that counts zblocks, changed when output starts
+---
+46d5134382be9073bb9aac935b36821b1aeedc76
+Thu Aug 3 10:46:11 2023 +0300
+    Minified output
+---
+67450601ebcbf4cd31d316e9e9a8a339a0719766
+Thu Aug 3 10:43:32 2023 +0300
+    Changed to get params instead of query
+---
+eb83dc73c0f71b2cf3480b17658ef7f21e92e570
+Thu Aug 3 10:34:53 2023 +0300
+    Simplified and fixed argument parsing
+---
+63744307feb91bae9206851113d08c64d6c7e413
+Sun Jul 30 20:56:15 2023 +0300
+    Renamed ZLATEST to AK_ZLATEST
+---
+b86dc0b6438709b9138cd8750fe47dcb5189a80b
+Sun Jul 30 20:13:47 2023 +0300
+    Deduped ak-zblock-show to use ak-enter
+---
+e2cb232a4d456bdb3d7ccb0c0eff7a07b2ae9d5e
+Sun Jul 30 20:11:25 2023 +0300
+    cacheDir imported in API
+---
+58b888574923c46c3854090c5cd5d8106e39d46a
+Sun Jul 30 20:08:57 2023 +0300
+    Added checks to detect success and failure of underlying commands being run
+---
+d512be24515b0afb669578d16576fe2db840990b
+Sun Jul 30 20:06:37 2023 +0300
+    Renamed FINGERPRINT to AK_FINGERPRINT
+---
+c6469c308c62218884077a81c3544e9b0128327f
+Sun Jul 30 20:03:30 2023 +0300
+    Added ak- or AK_ prefix to functions called and variables
+---
+6fc35fa5ddf17dfeda8d09de124fef0466ace0bd
+Sat Jul 8 02:57:01 2023 +0300
+    Fix typo
+---
+77c9edf809cac2e9577e1b9de5236fd6de6be578
+Sat Jun 17 02:48:36 2023 +0300
+    API: Error response errno -> error
+---
+01ff1c0a97cd36e69e21bac0776bef21be7ae374
+Thu Jun 15 19:47:29 2023 +0300
+    Fixed script call and one bug
+---
+ff23bc03e5f9f3b08d7d7d60fb33614ad48f9637
+Wed Jun 14 21:12:50 2023 +0300
+    Replaced if..elif with getopts for finding out arguments given
+---
+e667f1e583dda2b9d5a13cd520fdcd0acb627519
+Wed Jun 14 20:50:09 2023 +0300
+    Making sure we get the return codes and display appropriate messages wherever needed
+---
+59ac2791e57066c3fd75e34f6dd037583eba71b9
+Wed Jun 14 20:47:25 2023 +0300
+    Adapting to renaming of scripts
+---
+1860e2326f41382bd8c725ea867bf3a3e3c81133
+Wed Jun 14 20:29:13 2023 +0300
+    Return an actual error message
+---
+d777daf5cfff0f9107efb4feecab671ed372c4fe
+Wed Jun 14 20:28:21 2023 +0300
+    Added new route
+---
+cc2711769f8d90451c53e52ed68fb37cebbab7d6
+Thu May 4 04:03:35 2023 +0300
+    Updated ipfs script
+---
+83680bafd73a3d4c2842902c12d0d15a030d849c
+Fri Apr 21 08:52:43 2023 +0300
+    Fixed references to shell variables
+---
+5c9c4b177400c5279b6a7c3f05e9be113cf5458b
+Sun Apr 16 04:48:19 2023 +0300
+    Added crawler for the Stellar Network, returning addresses and configuration values if any
+---
+b68cfb97905628e60f23c430b253e5c69eeaa3f9
+Sat Apr 15 20:40:53 2023 +0300
+    Install script is broken
+---
+389cf355eb2344b4d5246a2e5c4b2ac31fec7f1b
+Sat Apr 15 20:37:56 2023 +0300
+    Clearly trying to figure out things :)
+---
+0ce8b434e264b0fca5bb900ba57701ee05216170
+Sat Apr 15 20:10:50 2023 +0300
+    still fixing installation
+---
+15d49c853c96ebef6c1826d0eeeeac54d0956d6f
+Fri Apr 14 15:22:32 2023 +0300
+    Updated CHANGELOG
+---
 57f1866c1102e6b5fa23222bcc205c0f85917669
 Mon Apr 10 15:55:08 2023 +0300
     More verbose logs
@@ -222,7 +1043,7 @@ Wed Feb 1 03:26:27 2023 +0200
 aeda467f9c619deb30306023aab8a0e26c42589e
 Wed Feb 1 03:24:43 2023 +0200
     Removed unused code
-    
+
     Signed-off-by: kaotisk <kaotisk@arching-kaos.org>
 ---
 d39b26b36a7079e288dc57611364ef146ce7f0fa
@@ -464,7 +1285,7 @@ Sat Jul 23 18:03:03 2022 +0300
 29cbba119d6c7328a95703a9c365db369f6097d5
 Sat Jul 23 17:59:54 2022 +0300
     GPG verification and an aesthetic patch for logs
-    
+
     - Added gpg verification option (currently works for hosted chain)
     - Refactored the log output
 ---
@@ -487,7 +1308,7 @@ Sun Jun 5 01:30:32 2022 +0300
 1e965d6723ce0a9371d1166d29b246caf5ba8adf
 Wed May 18 17:50:51 2022 +0300
     Added --show-zblocks-only
-    
+
     Feature:
             Outputs your local's chain zblocks, with their signatures,
     timestamp, gpg public key and previous zblock. Iterates the whole chain
@@ -640,10 +1461,10 @@ Mon Jan 31 15:31:35 2022 +0200
 95ffb10421341080bec6529c06b5e7fa2c23979d
 Fri Jan 28 11:19:13 2022 +0200
     [Change and fix]
-    
+
     Change:
     - Brought up detach signatures for both BLOCK and DATA.
-    
+
     Fix:
     - Reset timestamp to avoid printing the latest to blocks that are not
       have any.
@@ -655,7 +1476,7 @@ Thu Jan 27 12:15:59 2022 +0200
 13524d39ee177d8324c1119f4dd1bc23e2d72ed1
 Thu Jan 27 06:28:02 2022 +0200
     Additions and changes
-    
+
     - Added more explanotary depedencies, with versions
     - Minor formatting on #install section
 ---
@@ -666,7 +1487,7 @@ Wed Jan 26 22:13:14 2022 +0200
 da87a28ac0d4f6779ce17be75e9e4183a762c489
 Wed Jan 26 22:06:46 2022 +0200
     Added timestamp inside BLOCK.
-    
+
     Since most of the transactions will be done offline and then published,
     is better to have a timestamp for each addtion.
 ---
@@ -689,7 +1510,7 @@ Mon Jan 17 20:53:06 2022 +0200
 117d9cd6208ca13f6dfdbd90ace987d076189cde
 Wed Jan 5 04:35:27 2022 +0200
     Changes
-    
+
     Minimized the output
     Redirected output to null for programs used
 ---
@@ -744,18 +1565,18 @@ Sun Dec 26 06:33:06 2021 +0200
 b050dabab59a10f0898ea6e2fa0a83b82ff01647
 Sun Dec 26 06:26:13 2021 +0200
     Added various stuff
-    
+
     - gpg imports now from repo the test key
     - git is set up for testing
     - some ports are exposed for ipfs
     - added screen
     - added pinentry
-    
+
     Known  bugs
     -----------
     Major:
     - ipfs doesn't find interfaces to listen to
-    
+
     Minor:
     - gpg generate thing is not working
 ---
@@ -798,7 +1619,7 @@ Sat Dec 25 17:40:02 2021 +0200
 16ef6e4c03e1c69afd9419888f475fe5fb16e9b7
 Fri Dec 24 23:17:15 2021 +0200
     Changes and fixes
-    
+
     - fix binpath and make directories
     - changed logging
     - fix copy to binpath
@@ -814,7 +1635,7 @@ Mon Dec 20 20:36:17 2021 +0200
 339a5d4d9cf54519cad92d5c74da9eb3e0ea864a
 Sat Dec 18 08:52:10 2021 +0200
     Changes
-    
+
     - exit codes
     - gpg2 to gpg
     - break to exit
@@ -830,7 +1651,7 @@ Sat Dec 18 08:10:56 2021 +0200
 7b4deed0b8fe309631f35dfc9ed9b6c09d09f325
 Sat Dec 18 08:01:13 2021 +0200
     Changes
-    
+
      - FINGERPRINT assign is removed since is now part of config and
     environment
      - IPFS files system lowercase policy :)
@@ -845,7 +1666,7 @@ Sat Dec 18 07:59:48 2021 +0200
 73125773584e562b07e2246aa2e11838b0ce7052
 Sat Dec 18 07:56:07 2021 +0200
     Simple pipeline using sed
-    
+
     Inputs a json object with keys and values
     Outputs a bash like assigning to variables
 ---
@@ -856,7 +1677,7 @@ Sat Dec 18 07:54:34 2021 +0200
 0a101637c6e0c2528b9ea9eb02892da3d862c56c
 Sat Dec 18 07:50:49 2021 +0200
     Changes
-    
+
     - lower case names in ipfs fs
     - gpg2 to gpg since gpg is the binary on most distributions
     - add 3 new folders to store references to ZBLOCKs, BLOCKS and DATA
@@ -864,7 +1685,7 @@ Sat Dec 18 07:50:49 2021 +0200
 288e24bcd9c1905bc46a5bc97247bc6c9f642634
 Sat Dec 18 04:43:41 2021 +0200
     Enter script
-    
+
     - Gets the ZLATEST and scrolls back up to the first ever block
     - Dry run script, just scrolls the chain based on latest
 ---
@@ -875,7 +1696,7 @@ Thu Dec 16 11:58:16 2021 +0200
 64d66eac9c37d2d42e6f9cdc9f7dc35e57aa88c3
 Thu Dec 16 11:18:28 2021 +0200
     New command create() for news script
-    
+
     - ZNEWSDIR check/create
     - Create now adds to ZCHAIN
     - git repo integration and updating for new articles
@@ -888,7 +1709,7 @@ Thu Dec 16 11:14:40 2021 +0200
 0ae00eb5468fd8cc681705e0b127d02dfc0eab50
 Thu Dec 16 11:12:30 2021 +0200
     Fixes (2):
-    
+
     - Changed name to variable for rc file
     - Changed order of running scripts
 ---
