@@ -34,17 +34,17 @@ else
 fi
 
 # The directory where the chunked data will be living at
-CHKDIR="$AK_WORKDIR/ftr/"
+CHKDIR="$AK_WORKDIR/ftr"
 # The directory for the map files so we can reconstruct the file
-FILEMAPSDIR="$AK_WORKDIR/fmp/"
+FILEMAPSDIR="$AK_WORKDIR/fmp"
 # Merkle tree file/references
-MERKLEDIR="$AK_WORKDIR/fmrk/"
+MERKLEDIR="$AK_WORKDIR/fmrk"
 # A temporary root dir to work on
 TEMPORARYDIR="$(ak-tempassin)"
 # A subdir to split the files there
-TECHDIR="$TEMPORARYDIR/chks/"
+TECHDIR="$TEMPORARYDIR/chks"
 # A pin point to return from where we came from
-CURRENTDIR="$(pwd)/"
+CURRENTDIR="$(pwd)"
 
 # Our snippet for logging debug info
 source $AK_LIBDIR/_ak_logit
