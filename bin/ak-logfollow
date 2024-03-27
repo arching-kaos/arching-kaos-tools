@@ -5,7 +5,7 @@ do
     program="$(echo "$p" | awk '{print $2}')"
     messagetype="$(echo "$p" | awk '{print $3}')"
     message="$(echo "$p" | cut -d ' ' -f4-)"
-    printf '%s %s %s %s\n' \
+    printf '%s \033[1;32m%s\033[0;00m \033[1;31m%s\033[0;00m %s\n' \
         "$(date --date=@$timestamp +%Y%m%d_%H%M%S)" \
         "$program" \
         "$messagetype" \
