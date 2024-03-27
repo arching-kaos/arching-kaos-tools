@@ -85,7 +85,7 @@ while [ "$#" ]; do
             ipns=$1
             shift
             ol=$1
-            entrance="$(ak-ipns-resolve $1)"
+            entrance="$(_ak_ipns_resolve $1)"
             if [ "$?" -ne 0 ]
             then
                 logit "ERROR" "Could not resolve IPNS name"

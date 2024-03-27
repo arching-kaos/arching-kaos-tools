@@ -26,7 +26,7 @@ then
     entrance="$(cat $AK_ZLATEST)"
 elif [ ! -z "$1" ] && [ "$1" == "-n" ] || [ "$1" == "--chain" ]
 then
-    entrance="$(ak-ipns-resolve $2)"
+    entrance="$(_ak_ipns_resolve $2)"
 elif [ ! -z "$1" ]
 then
     entrance="$1"
