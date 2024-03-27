@@ -4,6 +4,7 @@ descriptionString="Comments module for Arching Kaos"
 
 source $AK_LIBDIR/_ak_logit
 source $AK_LIBDIR/_ak_script_description
+source $AK_LIBDIR/_ak_gpg
 
 ZCOMMENTSDIR="$AK_WORKDIR/comments"
 TEMP="/tmp/aktmp"
@@ -64,7 +65,7 @@ _ak_modules_comments_add(){
         DATETIME="$1"
         FILE_IPFS_HASH=$(ak-ipfs-add $FILE)
         FILE_SIGN_FILE=$FILE".asc"
-        gpg2 --homedir $AK_GPGHOME --detach-sign --sign-with $AK_FINGERPRINT --armor --output $FILE_SIGN_FILE $FILE
+        _ak_gpg_sign_detached $FILE_SIGN_FILE $FILE
         FILE_SIGNATURE=$(ak-ipfs-add $FILE_SIGN_FILE)
         printf '{"datetime":"%s","ipfs":"%s","detach":"%s"}' $DATETIME $FILE_IPFS_HASH $FILE_SIGNATURE > data
     else

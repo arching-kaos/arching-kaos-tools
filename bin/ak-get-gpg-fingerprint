@@ -1,10 +1,11 @@
 #!/bin/bash
+source $AK_LIBDIR/_ak_gpg
+
 if [ -z $1 ]
 then
-    gpg2 --fingerprint $(ak-ipfs-cat $(ak-get-gpg) | gpg2 --import 2>&1 | head -n 1 | cut -d ' ' -f 3 | sed 's/://') | head -n 2 | tail -n 1 | sed 's/ //g'
+    _ak_gpg_key_self_get_fingerprint
 elif [ -n "$1" ]
 then
-    gpg2 --fingerprint $(ak-ipfs-cat "$1" | gpg2 --import 2>&1 | head -n 1 | cut -d ' ' -f 3 | sed 's/://') | head -n 2 | tail -n 1 | sed 's/ //g'
-
+    _ak_gpg_key_get_fingerprint_from_ipfs $1
 fi
 

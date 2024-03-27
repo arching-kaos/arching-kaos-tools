@@ -1,2 +1,3 @@
 #!/bin/bash
-ak-config show | jq -r '.gpg'
+source $AK_LIBDIR/_ak_gpg
+_ak_gpg_key_self_get_fingerprint_from_config

@@ -5,6 +5,7 @@ _ak_modules_transactions_usage(){
 }
 
 source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_gpg
 
 _ak_modules_transactions_main(){
     logit "INFO" "$FROM_ADDRESS to $TO_ADDRESS value sent: $AMOUNT"
@@ -18,7 +19,7 @@ EOF
     FILE_IPFS_HASH=$(ak-ipfs-add $TRANSACTION_FILE)
 
     SIGN_FILE=$TRANSACTION_FILE".asc"
-    gpg2 --homedir $AK_GPGHOME --detach-sign --sign-with $AK_FINGERPRINT --armor --output $SIGN_FILE $TRANSACTION_FILE
+    _ak_gpg_sign_detached $SIGN_FILE $TRANSACTION_FILE
 
     FILE_SIGNATURE=$(ak-ipfs-add $SIGN_FILE)
 

@@ -5,6 +5,7 @@ descriptionString="Articles module for Arching Kaos"
 
 source $AK_LIBDIR/_ak_logit
 source $AK_LIBDIR/_ak_script_description
+source $AK_LIBDIR/_ak_gpg
 
 ZARTICLESDIR="$AK_WORKDIR/articles"
 TEMP="/tmp/aktmp"
@@ -91,7 +92,7 @@ _ak_modules_articles_add(){
         TITLE=$(head -n 1 $FILE)
         FILE_IPFS_HASH=$(ak-ipfs-add $FILE)
         FILE_SIGN_FILE=$FILE".asc"
-        gpg2 --homedir $AK_GPGHOME --detach-sign --sign-with $AK_FINGERPRINT --armor --output $FILE_SIGN_FILE $FILE
+        _ak_gpg_sign_detached $FILE_SIGN_FILE $FILE
         FILE_SIGNATURE=$(ak-ipfs-add $FILE_SIGN_FILE)
         cat > data <<EOF
 {

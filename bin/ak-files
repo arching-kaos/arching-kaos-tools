@@ -4,6 +4,7 @@ ZFILESDIR="$AK_WORKDIR/files"
 TEMP="/tmp/aktmp"
 PROGRAM="$(basename $0)"
 source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_gpg
 
 if [ ! -d $ZFILESDIR ]; then
     mkdir $ZFILESDIR
@@ -62,7 +63,7 @@ main(){
     fi
     logit "INFO" "Signing..."
     SIGN_FILE=$FILENAME".asc"
-    gpg2 --homedir $AK_GPGHOME --detach-sign --sign-with $AK_FINGERPRINT --armor --output $SIGN_FILE $FILE
+    _ak_gpg_sign_detached $SIGN_FILE $FILE
     if [ $? == 0 ]; then
         logit "INFO" "Signed"
     else

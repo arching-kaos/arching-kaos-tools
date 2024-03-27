@@ -17,6 +17,7 @@
 # Below, the usage information
 PROGRAM="$(basename $0)"
 source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_gpg
 
 usage(){
 	echo "Usage:"	
@@ -50,14 +51,14 @@ main(){
 
 	# We create a detached and armor signature of it
 	MESSAGE_SIGN_FILE=$MESSAGE".asc"
-	gpg2 --homedir $AK_GPGHOME --detach-sign --sign-with $AK_FINGERPRINT --armor --output $MESSAGE_SIGN_FILE $MESSAGE
+	_ak_gpg_sign_detached $MESSAGE_SIGN_FILE $MESSAGE
 
 	# We add the signature to IPFS
 	MESSAGE_SIGNATURE=$(ak-ipfs-add $MESSAGE_SIGN_FILE)
 
 	# We will be using our public key also to put it in the block later
 	KEY="gpg.pub"
-	gpg2 --homedir $AK_GPGHOME --armour --output $KEY --export $AK_FINGERPRINT
+    _ak_gpg_key_self_export $KEY
 	GPG_PUB_KEY=$(ak-ipfs-add $KEY)
 
 	# Acquire last block of information, to chain this one with previous posted
@@ -79,7 +80,7 @@ makeZBlock(){
 	BLOCK="block"
 	BLOCK_SIG=$BLOCK".asc"
 	# We have a block now, so we sign it
-	gpg2 --homedir $AK_GPGHOME --detach-sign --sign-with $AK_FINGERPRINT --armor --output $BLOCK_SIG $BLOCK
+	_ak_gpg_sign_detached $BLOCK_SIG $BLOCK
 
 	# We now add the signature to IPFS
 	BLOCK_SIGNATURE=$(ak-ipfs-add $BLOCK_SIG)

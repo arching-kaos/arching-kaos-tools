@@ -5,6 +5,7 @@ TEMP="/tmp/aktmp"
 
 # Outputs to log file in the classic format :)
 source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_gpg
 
 # Whatever the command is, we check if $ZPROFILEDIR is there.
 # If NOT we create it and we change dir there.
@@ -153,7 +154,7 @@ _ak_modules_profile_add(){
         echo "Adding from " $FILE
         FILE_IPFS_HASH=$(ak-ipfs-add $FILE)
         FILE_SIGN_FILE=$(pwd)/$1".asc"
-        gpg2 --homedir $AK_GPGHOME --detach-sign --sign-with $AK_FINGERPRINT --armor --output $FILE_SIGN_FILE $FILE
+        _ak_gpg_sign_detached $FILE_SIGN_FILE $FILE
         FILE_SIGNATURE=$(ak-ipfs-add $FILE_SIGN_FILE)
         cat > data <<EOF
 {

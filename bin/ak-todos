@@ -1,6 +1,7 @@
 #!/bin/bash
 PROGRAM="$(basename $0)"
 source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_gpg
 
 ZTODOSDIR="$AK_WORKDIR/todos"
 TEMP="/tmp/aktmp"
@@ -83,7 +84,7 @@ _ak_modules_todos_add(){
         TITLE=$(head -n 1 $FILE)
         FILE_IPFS_HASH=$(ak-ipfs-add $FILE)
         FILE_SIGN_FILE=$FILE".asc"
-        gpg2 --homedir $AK_GPGHOME --detach-sign --sign-with $AK_FINGERPRINT --armor --output $FILE_SIGN_FILE $FILE
+        _ak_gpg_sign_detached $FILE_SIGN_FILE $FILE
         FILE_SIGNATURE=$(ak-ipfs-add $FILE_SIGN_FILE)
         cat > data <<EOF
 {

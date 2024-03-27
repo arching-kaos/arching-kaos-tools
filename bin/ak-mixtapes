@@ -5,6 +5,7 @@ PROGRAM="$(basename $0)"
 descriptionString="AK mixtape block creator"
 source $AK_LIBDIR/_ak_logit
 source $AK_LIBDIR/_ak_script_description
+source $AK_LIBDIR/_ak_gpg
 
 _ak_modules_mixtapes_usage(){
 	_ak_modules_mixtapes_title
@@ -35,7 +36,7 @@ _ak_modules_mixtapes_main(){
     MIXTAPE_IPFS_HASH=$(ak-ipfs-add $MIXTAPE_FILE)
 
     MIXTAPE_SIGN_FILE=$MIXTAPE_FILE".asc"
-    gpg2 --homedir $AK_GPGHOME --detach-sign --sign-with $AK_FINGERPRINT --armor --output $MIXTAPE_SIGN_FILE $MIXTAPE_FILE
+    _ak_gpg_sign_detached $MIXTAPE_SIGN_FILE $MIXTAPE_FILE
 
     MIXTAPE_SIGNATURE=$(ak-ipfs-add $MIXTAPE_SIGN_FILE)
 

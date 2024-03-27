@@ -21,6 +21,7 @@ PROGRAM="$(basename $0)"
 descriptionString="Crawl an arching kaos chain"
 source $AK_LIBDIR/_ak_logit
 source $AK_LIBDIR/_ak_script_description
+source $AK_LIBDIR/_ak_gpg
 
 _ak_enter_title(){
     description
@@ -236,7 +237,7 @@ do
                     logit "ERROR" "Could not get GPG key: $gpg ."
                     exit 1
                 fi
-                gpg2 --homedir $AK_GPGHOME --import $gpg > /dev/null 2>&1
+                _ak_gpg_key_import_from_file $gpg > /dev/null 2>&1
                 if [ "$?" -ne 0 ]
                 then
                     logit "ERROR" "Could not import GPG key: $gpg ."
@@ -259,7 +260,7 @@ do
                 fi
                 logit "INFO" "Downloaded block $block."
 
-                gpg2 --homedir $AK_GPGHOME --verify $block.asc > /dev/null 2>&1
+                _ak_gpg_verify_signature $block.asc $block > /dev/null 2>&1
                 if [ "$?" -ne 0 ]
                 then
                     logit "ERROR" "Could not verify $block with GPG key $gpg."

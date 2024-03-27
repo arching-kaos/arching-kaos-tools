@@ -6,6 +6,7 @@ CRD=$(cat .pwd)
 PROGRAM="$(basename $0)"
 #set -xe
 source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_gpg
 
 if [ ! -d $ZFILESDIR ]; then
     mkdir $ZFILESDIR
@@ -77,7 +78,7 @@ main(){
 
     logit "INFO" "Signing..."
     SIGN_FILE=$FILENAME".asc"
-    gpg2 --homedir $AK_GPGHOME --detach-sign --sign-with $AK_FINGERPRINT --armor --output $SIGN_FILE $FILENAME
+    _ak_gpg_sign_detached $SIGN_FILE $FILENAME
     if [ $? == 0 ]; then
         logit "INFO" "Signed"
     else

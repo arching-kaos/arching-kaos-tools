@@ -1,6 +1,7 @@
 #!/bin/bash
 PROGRAM="$(basename $0)"
 source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_gpg
 
 if [ ! -d $AK_WORKDIR/ipfs ]
 then
@@ -64,7 +65,7 @@ then
 	logit "ERROR" "Could not get GPG key: $gpg"
 	exit 1
     fi
-    gpg2 --homedir $AK_GPGHOME --import $gpg > /dev/null 2>&1
+    _ak_gpg_key_import_from_file $gpg > /dev/null 2>&1
     if [ "$?" -ne 0 ]
     then
 		logit "ERROR" "Could not import GPG key: $gpg"
@@ -85,7 +86,7 @@ then
 		exit 1
 	fi
 	logit "INFO" "Data downloaded: $DATA"
-	gpg2 --homedir $AK_GPGHOME --verify $DATA.asc $DATA > /dev/null 2>&1
+	_ak_gpg_verify_signature $DATA.asc $DATA > /dev/null 2>&1
 	if [ "$?" -ne 0 ]
 	then
 		logit "ERROR" "Error while verifying signature for $DATA"
