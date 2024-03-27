@@ -5,6 +5,7 @@ _ak_modules_transactions_usage(){
 }
 
 source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_gpg
 
 _ak_modules_transactions_main(){
@@ -16,12 +17,12 @@ $AMOUNT
 $FEE
 EOF
     TRANSACTION_FILE="transaction_file"
-    FILE_IPFS_HASH=$(ak-ipfs-add $TRANSACTION_FILE)
+    FILE_IPFS_HASH=$(_ak_ipfs_add $TRANSACTION_FILE)
 
     SIGN_FILE=$TRANSACTION_FILE".asc"
     _ak_gpg_sign_detached $SIGN_FILE $TRANSACTION_FILE
 
-    FILE_SIGNATURE=$(ak-ipfs-add $SIGN_FILE)
+    FILE_SIGNATURE=$(_ak_ipfs_add $SIGN_FILE)
 
     cat > data <<EOF
 {

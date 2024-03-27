@@ -4,6 +4,7 @@ ZFILESDIR="$AK_WORKDIR/files"
 TEMP="/tmp/aktmp"
 PROGRAM="$(basename $0)"
 source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_gpg
 
 if [ ! -d $ZFILESDIR ]; then
@@ -55,7 +56,7 @@ main(){
     FILE="$TEMPASSIN/$1"
 
     logit "INFO" "Adding $FILE to IPFS..."
-    FILE_IPFS_HASH=$(ak-ipfs-add $FILE)
+    FILE_IPFS_HASH=$(_ak_ipfs_add $FILE)
     if [ $? == 0 ]; then
         logit "INFO" "Added $FILE to IPFS"
     else
@@ -71,7 +72,7 @@ main(){
     fi
 
     logit "INFO" "Adding signature to IPFS"
-    SIGNATURE=$(ak-ipfs-add $TEMPASSIN/$SIGN_FILE)
+    SIGNATURE=$(_ak_ipfs_add $TEMPASSIN/$SIGN_FILE)
     if [ $? == 0 ]; then
         logit "INFO" "Added"
     else

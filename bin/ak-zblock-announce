@@ -1,0 +1,14 @@
+#!/bin/bash
+PROGRAM="$(basename $0)"
+descriptionString="Announce zblock to local API for schain processing"
+source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_script_description
+
+curl http://127.0.0.1:8610/v0/announce/zblock --header 'Content-Type: application/json' --data-raw '{"zblock":"'$(ak-get-zlatest)'"}' 2>/dev/null | jq -M -c > /dev/null
+if [ "$?" == "0" ]
+then
+    logit "INFO" "zblock $zblock announced"
+else
+    logit "ERROR" "zblock $zblock announcement failed"
+fi
+

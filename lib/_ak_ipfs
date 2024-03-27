@@ -1,0 +1,283 @@
+#!/bin/bash
+source $AK_LIBDIR/_ak_logit
+IPFS_REPO="$AK_WORKDIR/ipfsrepo"
+
+_ak_ipfs(){
+    export IPFS_PATH=$IPFS_REPO; ipfs $*
+}
+
+_ak_ipfs_get_peers(){
+    _ak_ipfs swarm peers 1> /dev/null 2>&1
+    if [ $? == 0 ]
+    then
+        _ak_ipfs swarm peers > $AK_WORKDIR/peers.ipfs
+    fi
+}
+
+_ak_ipfs_scanner(){
+    peersIPFSfile="$AK_WORKDIR/peers.ipfs"
+    ak_peersIPFSfile="$AK_WORKDIR/ipfs.peers.akn"
+    if [ ! -f $peersIPFSfile ]
+    then
+        _ak_ipfs_get_peers
+        if [ $? -ne 0 ]
+        then
+            exit 1
+        fi
+    fi
+    counter=0
+
+    printf '[' > walk.aknet
+    cat $peersIPFSfile \
+        | cut -d '/' -f 2,3,7 \
+        | sort \
+        | uniq \
+        | while read -r line || [ -n "$line" ]
+    do
+        protocol="`printf '%s' "$line" | cut -d '/' -f 1`"
+        ip="`printf '%s' "$line" | cut -d '/' -f 2`"
+        ipfsId="`printf '%s' "$line" | cut -d '/' -f 3`"
+        if [ "$protocol" == "ip6" ]
+        then
+            url="http://[$ip]:8610/v0/node_info"
+        else
+            url="http://$ip:8610/v0/node_info"
+        fi
+        node_info="`curl \
+            -A 'akd/0.1.0; https://github.com/arching-kaos' \
+            --connect-timeout 3 \
+            "$url" 2>/dev/null`"
+        if [ $? -eq 0 ]
+        then
+            if [ "$counter" -ne "0" ]
+            then
+                printf ',' >> walk.aknet
+            fi
+            printf '{"ipfsPublicKey":"%s","ip":"%s","node_info":%s}' \
+                "$ipfsId" "$ip" "$node_info" >> walk.aknet
+            counter="`expr $counter + 1`"
+        fi
+    done
+    printf ']' >> walk.aknet
+
+    mv walk.aknet $ak_peersIPFSfile
+}
+
+_ak_ipfs_add(){
+    # Receives a file
+    # Returns a hash
+    _ak_ipfs add -Qr "$1"
+    if [ $? -ne 0 ]
+    then
+        logit "ERROR" "Failed to add $1"
+        exit 1
+    fi
+}
+
+_ak_ipfs_block_stat(){
+    _ak_ipfs block stat "$1"
+    if [ $? -ne 0 ]
+    then
+        logit "ERROR" "Failed to retrieve stat of block $1"
+        exit 1
+    fi
+}
+
+_ak_ipfs_cat(){
+    _ak_ipfs --timeout=10s cat $1
+    if [ "$?" -ne "0" ]
+    then
+        logit "ERROR" "Failed to cat $1"
+        exit 1
+    fi
+
+}
+
+_ak_ipfs_files_cp(){
+    _ak_ipfs files cp "$1" "$2"
+    if [ $? -ne 0 ]
+    then
+        logit "ERROR" "Failed to copy $1 to $2"
+        exit 1
+    fi
+}
+
+_ak_ipfs_files_ls(){
+    _ak_ipfs files ls "$1"
+    if [ $? -ne 0 ]
+    then
+        logit "ERROR" "Failed to list $1"
+        exit 1
+    fi
+}
+
+_ak_ipfs_files_mkdir(){
+    _ak_ipfs files mkdir "$1"
+    if [ $? -ne 0 ]
+    then
+        logit "ERROR" "Failed to mkdir $1"
+        exit 1
+    fi
+}
+
+_ak_ipfs_files_mv(){
+    _ak_ipfs files mv "$1" "$2"
+    if [ $? -ne 0 ]
+    then
+        logit "ERROR" "Failed to move $1 to $2"
+        exit 1
+    fi
+}
+
+_ak_ipfs_files_rm(){
+    _ak_ipfs files rm "$1"
+    if [ $? -ne 0 ]
+    then
+        logit "ERROR" "Failed to remove $1"
+        exit 1
+    fi
+}
+
+_ak_ipfs_files_stat(){
+    _ak_ipfs files stat "$1"
+    if [ $? -ne 0 ]
+    then
+        logit "ERROR" "Failed to get file's stats $1"
+        exit 1
+    fi
+}
+
+_ak_ipfs_get(){
+    _ak_ipfs --timeout=10s get "$1" > /dev/null 2>&1
+    if [ $? -ne 0 ]
+    then
+        logit "ERROR" "Failed to get $1"
+        exit 1
+    fi
+}
+
+_ak_ipfs_key_gen(){
+    _ak_ipfs key gen "$1"
+    if [ $? -ne 0 ]
+    then
+        logit "ERROR" "Failed to generate key $1"
+        exit 1
+    fi
+}
+
+_ak_ipfs_key_list(){
+    _ak_ipfs key list
+    if [ $? -ne 0 ]
+    then
+        logit "ERROR" "Failed to get key list"
+        exit 1
+    fi
+}
+
+_ak_ipfs_key_list_full(){
+    _ak_ipfs key list -l
+    if [ $? -ne 0 ]
+    then
+        logit "ERROR" "Failed to get key list"
+        exit 1
+    fi
+}
+
+_ak_ipfs_name_publish(){
+    _ak_ipfs name publish "$1" "$2"
+    if [ $? -ne 0 ]
+    then
+        logit "ERROR" "Failed to get $1"
+        exit 1
+    fi
+
+}
+
+_ak_ipfs_name_resolve(){
+    _ak_ipfs name resolve "$1"
+    if [ $? -ne 0 ]
+    then
+        logit "ERROR" "Failed to resolve $1"
+        exit 1
+    fi
+
+}
+
+_ak_ipfs_swarm_peers(){
+    _ak_ipfs swarm peers
+    if [ $? -ne 0 ]
+    then
+        logit "ERROR" "Failed to get list of peers"
+        exit 1
+    fi
+}
+
+_ak_ipfs_starter(){
+    _ak_ipfs daemon --routing=dht --migrate
+    if [ $? -ne 0 ]
+    then
+        logit "ERROR" "Failed to start IPFS daemon"
+        exit 1
+    fi
+}
+
+_ak_ipns_resolve(){
+    if [ ! -z $1 ]
+    then
+        rsld=$(ak-ipfs-name-resolve $1)
+        if [ "$?" != 0 ]
+        then
+            logit "ERROR" "Failed to resolve $1"
+            exit 1
+        fi
+        echo -n $rsld | sed -e 's/\/ipfs\///'
+        logit "INFO" "Resolved $1 to $rsld"
+    else
+        exit 69
+    fi
+}
+
+_ak_ipfs_check(){
+
+    _ak_ipfs_files_ls /zarchive > /dev/null
+    if [ $? != 0 ]
+    then
+        logit "ERROR" "/zarchive is missing"
+    else
+        logit "INFO" "/zarchive OK"
+    fi
+
+    _ak_ipfs_files_ls /zlatest > /dev/null
+    if [ $? != 0 ]
+    then
+        logit "ERROR" "/zlatest is missing"
+    else
+        logit "INFO" "/zlatest is OK"
+    fi
+
+    _ak_ipfs_key_list | grep zchain > /dev/null
+    if [ $? != 0 ]; then
+        logit "WARNING" "zchain key is missing"
+        _ak_ipfs_key_gen zchain > $ZCHAIN
+        if [ $? != 0 ]; then
+            logit "ERROR" "zchain fails to create"
+        else
+            logit "INFO" "zchain created"
+        fi
+    else
+        logit "INFO" "zchain is there"
+    fi
+
+    _ak_ipfs_key_list | grep ak-config > /dev/null
+    if [ $? != 0 ]; then
+        logit "WARNING" "ak-config key is missing"
+        _ak_ipfs_key_gen ak-config
+        if [ $? != 0 ]; then
+            logit "ERROR" "ak-config fails to create"
+        else
+            logit "INFO" "ak-config created"
+        fi
+    else
+        logit "INFO" "ak-config is there"
+    fi
+}

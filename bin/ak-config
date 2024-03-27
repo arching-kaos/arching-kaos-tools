@@ -3,6 +3,7 @@ PROGRAM="$(basename $0)"
 descriptionString="Arching Kaos Configuration Tool"
 
 source $AK_LIBDIR/_ak_script_description
+source $AK_LIBDIR/_ak_ipfs
 
 _ak_config_title(){
     description
@@ -25,7 +26,7 @@ _ak_config_show(){
     # We will be using our public key also to put it in the block later
     KEY="tmp-gpg.pub"
     gpg2 --homedir $AK_GPGHOME --armour --output $KEY --export $AK_FINGERPRINT
-    GPG_PUB_KEY=$(ak-ipfs-add $KEY)
+    GPG_PUB_KEY=$(_ak_ipfs_add $KEY)
     rm $KEY
 
     echo '
@@ -45,7 +46,7 @@ _ak_config_publish(){
     then
         ipfs key gen ak-config
     fi
-    ak-ipfs-name-publish --key=ak-config /ipfs/$(ak-ipfs-add tmpfile)
+    _ak_ipfs_name_publish --key=ak-config /ipfs/$(_ak_ipfs_add tmpfile)
     if [ "$?" != 0 ]
     then
         echo -e "\033[0;34mError on publishing\033[0;0m\nYour information:\n"
@@ -56,7 +57,7 @@ _ak_config_publish(){
 }
 
 _ak_config_published(){
-    ak-ipfs-cat $(ak-node-info ipfs) | jq -c
+    _ak_ipfs_cat $(ak-node-info ipfs) | jq -c
 }
 
 if [ ! -z $1 ]; then

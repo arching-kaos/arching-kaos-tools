@@ -5,6 +5,7 @@ TEMP="/tmp/aktmp"
 
 # Outputs to log file in the classic format :)
 source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_gpg
 
 # Whatever the command is, we check if $ZPROFILEDIR is there.
@@ -26,7 +27,7 @@ _ak_modules_profile_show(){
     if [ ! -z $1 ]
     then
         logit "INFO" "Working with $1"
-        ak-ipfs-cat $(echo $(ak-ipfs-cat $1) | jq '.ipfs' -r)
+        _ak_ipfs_cat $(echo $(_ak_ipfs_cat $1) | jq '.ipfs' -r)
     else
         echo "No DATA provided"
         exit 1
@@ -59,7 +60,7 @@ EOF
     if [ $? == 0 ]
     then
         echo "Added successfully... proceeding"
-        IPFS_FILE=$(ak-ipfs-add $ZPROPERTY_FILE)
+        IPFS_FILE=$(_ak_ipfs_add $ZPROPERTY_FILE)
         echo "Prop writting,,, $IPFS_FILE"
         _ak_modules_profile_add $ZPROPERTY_KEY
         cd $ZPROFILEDIR
@@ -152,10 +153,10 @@ _ak_modules_profile_add(){
     if [ -f $ZPROFILEDIR/$1 ]; then
         FILE="$ZPROFILEDIR/$1"
         echo "Adding from " $FILE
-        FILE_IPFS_HASH=$(ak-ipfs-add $FILE)
+        FILE_IPFS_HASH=$(_ak_ipfs_add $FILE)
         FILE_SIGN_FILE=$(pwd)/$1".asc"
         _ak_gpg_sign_detached $FILE_SIGN_FILE $FILE
-        FILE_SIGNATURE=$(ak-ipfs-add $FILE_SIGN_FILE)
+        FILE_SIGNATURE=$(_ak_ipfs_add $FILE_SIGN_FILE)
         cat > data <<EOF
 {
    "datetime":"$(date -u +%s)",

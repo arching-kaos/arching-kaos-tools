@@ -1,5 +1,6 @@
 #!/bin/bash
 PROGRAM="$(basename $0)"
+source $AK_LIBDIR/_ak_ipfs
 
 time_started=$(date -u +%s.%N)
 ss=$(echo $time_started | cut -d '.' -f 1)
@@ -101,7 +102,7 @@ then
     echo "            <td>"
     echo "    <details>"
     echo "        <summary>$zblock</summary>"
-    echo "        <pre>$(ak-ipfs-cat $zblock | jq)</pre>"
+    echo "        <pre>$(_ak_ipfs_cat $zblock | jq)</pre>"
     echo "    </details>"
     echo "            </td>"
     echo "        </tr>"
@@ -112,7 +113,7 @@ then
     echo "            <td>"
     echo "    <details>"
     echo "        <summary>$block</summary>"
-    echo "        <pre>$(ak-ipfs-cat $block | jq)</pre>"
+    echo "        <pre>$(_ak_ipfs_cat $block | jq)</pre>"
     echo "    </details>"
     echo "            </td>"
     echo "        </tr>"
@@ -123,7 +124,7 @@ then
     echo "            <td>"
     echo "    <details>"
     echo "        <summary>$block_signature</summary>"
-    echo "        <pre>$(ak-ipfs-cat $block_signature)</pre>"
+    echo "        <pre>$(_ak_ipfs_cat $block_signature)</pre>"
     echo "    </details>"
     echo "            </td>"
     echo "        </tr>"
@@ -158,7 +159,7 @@ then
     echo "            <td>"
     echo "    <details>"
     echo "        <summary>$gpg</summary>"
-    echo "        <pre>$(ak-ipfs-cat $gpg)</pre>"
+    echo "        <pre>$(_ak_ipfs_cat $gpg)</pre>"
     echo "    </details>"
     echo "            </td>"
     echo "        </tr>"
@@ -188,7 +189,7 @@ then
     echo "            <td>"
     echo "    <details>"
     echo "        <summary>$detach</summary>"
-    echo "        <pre>$(ak-ipfs-cat $detach)</pre>"
+    echo "        <pre>$(_ak_ipfs_cat $detach)</pre>"
     echo "    </details>"
     echo "            </td>"
     echo "        </tr>"
@@ -207,7 +208,7 @@ then
     echo "            <td>"
     echo "    <details>"
     echo "        <summary>$(echo $datablock | jq -r '.detach')</summary>"
-    echo "        <pre>$(ak-ipfs-cat $(echo $datablock | jq -r '.detach'))</pre>"
+    echo "        <pre>$(_ak_ipfs_cat $(echo $datablock | jq -r '.detach'))</pre>"
     echo "    </details>"
     echo "            </td>"
     echo "        </tr>"

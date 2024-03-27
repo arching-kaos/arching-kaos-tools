@@ -5,13 +5,16 @@
 # They also are a part of our swarm.
 # So should we ask for our peers?
 
-ak-ipfs-swarm-peers > tmp_peers
+source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_ipfs
+
+_ak_ipfs_swarm_peers > tmp_peers
 
 while IFS="" read -r p || [ -n "$p" ]
 do
 	peer="$(echo "$p" | sed -e 's/^.*\///')"
-	echo "Peer $peer found! Examining..."
-	ak-ipfs-cat /ipns/$peer/zlatest
+	logit "INFO" "Peer $peer found! Examining..."
+	_ak_ipfs_cat /ipns/$peer/zlatest
 done < tmp_peers
 
 rm tmp_peers

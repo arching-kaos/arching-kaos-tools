@@ -7,6 +7,7 @@ TEMP="/tmp/aktmp"
 
 source $AK_LIBDIR/_ak_logit
 source $AK_LIBDIR/_ak_script_description
+source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_gpg
 
 if [ ! -d $ZNEWSDIR ]; then
@@ -32,7 +33,7 @@ _ak_modules_news_create(){
     echo "Renaming..."
     TITLE="$(head -n 1 $NEWS_FILE)"
     TO_FILE=$NEWS_FILE-$(echo $TITLE | tr '[:upper:]' '[:lower:]' | sed -e 's/ /\_/g' )
-    IPFS_FILE=$(ak-ipfs-add $NEWS_FILE)
+    IPFS_FILE=$(_ak_ipfs_add $NEWS_FILE)
     mv $NEWS_FILE $ZNEWSDIR/$TO_FILE
     sed -i -e 's,Qm.*,'"$IPFS_FILE"',g' $ZNEWSDIR/README
     _ak_modules_news_add $TO_FILE
@@ -99,13 +100,13 @@ _ak_modules_news_add_from_file(){
         cp $FILE $TEMP
         FILE="$(basename $1)"
         cd $TEMP
-        echo "Adding news from " $FILE
+        logit "INFO" "Adding news from " $FILE
         DATETIME=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
         TITLE=$(head -n 1 $FILE)
-        FILE_IPFS_HASH=$(ak-ipfs-add $FILE)
+        FILE_IPFS_HASH=$(_ak_ipfs_add $FILE)
         FILE_SIGN_FILE=$FILE".asc"
         _ak_gpg_sign_detached $FILE_SIGN_FILE $FILE
-        FILE_SIGNATURE=$(ak-ipfs-add $FILE_SIGN_FILE)
+        FILE_SIGNATURE=$(_ak_ipfs_add $FILE_SIGN_FILE)
         cat > data <<EOF
 {
    "datetime":"$DATETIME",
@@ -116,15 +117,15 @@ _ak_modules_news_add_from_file(){
 }
 EOF
     else
-        echo "File $FILE doesn't exist";
+        logit "ERROR" "File $FILE doesn't exist";
         exit 2
     fi
     ak-zblock-pack "news/add" $(pwd)/data
     if [ $? == 0 ]
     then
-        echo "News added successfully"
+        logit "INFO" "News added successfully"
     else
-        echo "error??"
+        logit "ERROR" "Failed to pack zblock"
         exit 1
     fi
     rm -rf $TEMP
@@ -135,13 +136,13 @@ _ak_modules_news_add(){
     cd $TEMP
     if [ -f $ZNEWSDIR/$1 ]; then
         FILE="$1"
-        echo "Adding news from " $FILE
+        logit "INFO" "Adding news from " $FILE
         DATETIME=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
         TITLE=$(head -n 1 $ZNEWSDIR/$FILE)
-        FILE_IPFS_HASH=$(ak-ipfs-add $ZNEWSDIR/$FILE)
+        FILE_IPFS_HASH=$(_ak_ipfs_add $ZNEWSDIR/$FILE)
         FILE_SIGN_FILE=$FILE".asc"
         _ak_gpg_sign_detached $FILE_SIGN_FILE $ZNEWSDIR/$FILE
-        FILE_SIGNATURE=$(ak-ipfs-add $FILE_SIGN_FILE)
+        FILE_SIGNATURE=$(_ak_ipfs_add $FILE_SIGN_FILE)
         cat > data <<EOF
 {
    "datetime":"$DATETIME",
@@ -152,15 +153,15 @@ _ak_modules_news_add(){
 }
 EOF
     else
-        echo "File $FILE doesn't exist";
+        logit "ERROR" "File $1 doesn't exist";
         exit 2
     fi
     ak-zblock-pack "news/add" $(pwd)/data
     if [ $? == 0 ]
     then
-        echo "News added successfully"
+        logit "INFO" "News added successfully"
     else
-        echo "error??"
+        logit "ERROR" "error??"
         exit 1
     fi
 }
@@ -193,7 +194,7 @@ _ak_modules_news_read(){
     if [ "$module" == "news" ] && [ "$action" == "add" ]
     then
 
-        ak-ipfs-cat $linkToText
+        _ak_ipfs_cat $linkToText
     else
         logit "ERROR" "Not a news block."
         echo "ERROR Not a news block."

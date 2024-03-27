@@ -17,6 +17,7 @@
 # Below, the usage information
 PROGRAM="$(basename $0)"
 source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_gpg
 
 usage(){
@@ -47,22 +48,22 @@ main(){
 
 	logit "INFO" "We are doing" $BLOCK_TO_ADD "with content" $PREVIOUS
 	# We add it to IPFS
-	MESSAGE_HASH=$(ak-ipfs-add $MESSAGE)
+	MESSAGE_HASH=$(_ak_ipfs_add $MESSAGE)
 
 	# We create a detached and armor signature of it
 	MESSAGE_SIGN_FILE=$MESSAGE".asc"
 	_ak_gpg_sign_detached $MESSAGE_SIGN_FILE $MESSAGE
 
 	# We add the signature to IPFS
-	MESSAGE_SIGNATURE=$(ak-ipfs-add $MESSAGE_SIGN_FILE)
+	MESSAGE_SIGNATURE=$(_ak_ipfs_add $MESSAGE_SIGN_FILE)
 
 	# We will be using our public key also to put it in the block later
 	KEY="gpg.pub"
     _ak_gpg_key_self_export $KEY
-	GPG_PUB_KEY=$(ak-ipfs-add $KEY)
+	GPG_PUB_KEY=$(_ak_ipfs_add $KEY)
 
 	# Acquire last block of information, to chain this one with previous posted
-	PREVIOUS=$(ak-ipfs-files-stat /zlatest | head -n 1)
+	PREVIOUS=$(_ak_ipfs_files_stat /zlatest | head -n 1)
 
 	# We create a block of json like this:
 	cat > block <<EOF
@@ -83,10 +84,10 @@ makeZBlock(){
 	_ak_gpg_sign_detached $BLOCK_SIG $BLOCK
 
 	# We now add the signature to IPFS
-	BLOCK_SIGNATURE=$(ak-ipfs-add $BLOCK_SIG)
+	BLOCK_SIGNATURE=$(_ak_ipfs_add $BLOCK_SIG)
 
 	# We also add the block!
-	BLOCK=$(ak-ipfs-add $BLOCK)
+	BLOCK=$(_ak_ipfs_add $BLOCK)
 
 	# So we now do the think almost again
 	cat > zblock << EOF
@@ -97,7 +98,7 @@ makeZBlock(){
 EOF
 	ZBL="zblock"
 	# and we add it on IPFS
-	ZBLOCK=$(ak-ipfs-add $ZBL)
+	ZBLOCK=$(_ak_ipfs_add $ZBL)
 	echo $ZBLOCK
 }
 
@@ -110,11 +111,11 @@ then
 	# We ask for a ZBLOCK or GENESIS to put in the BLOCK
 	PREVIOUS="$2"
 
-	ak-ipfs-cat "$BLOCK_TO_ADD"
+	_ak_ipfs_cat "$BLOCK_TO_ADD"
 	if [ "$?" == 0 ];
 	then
 		echo "Nice! We found the block"
-		ak-ipfs-get "$BLOCK_TO_ADD"
+		_ak_ipfs_get "$BLOCK_TO_ADD"
 
 		sed -i.bak -e 's/^.*previous.*$/\"previous\":\"'$PREVIOUS'\"/' $BLOCK_TO_ADD
 		cat $BLOCK_TO_ADD | jq -M
@@ -130,11 +131,11 @@ then
 	# python send_as_ak_tx $ZBLOCK
 	# or for "offline" use
 	echo $ZBLOCK > $ZLATEST
-	ak-ipfs-name-publish --key=zchain $ZBLOCK > /dev/null 2>&1
-	ak-ipfs-files-mkdir /zarchive > /dev/null 2>&1
-	ak-ipfs-files-cp /zlatest /zarchive/$(date -u +%s)-$(ak-ipfs-files-stat /zlatest | head -n 1) > /dev/null 2>&1
-	ak-ipfs-files-rm /zlatest > /dev/null 2>&1
-	ak-ipfs-files-cp /ipfs/$ZBLOCK /zlatest > /dev/null 2>&1
+	_ak_ipfs_name_publish --key=zchain $ZBLOCK > /dev/null 2>&1
+	_ak_ipfs_files_mkdir /zarchive > /dev/null 2>&1
+	_ak_ipfs_files_cp /zlatest /zarchive/$(date -u +%s)-$(_ak_ipfs_files_stat /zlatest | head -n 1) > /dev/null 2>&1
+	_ak_ipfs_files_rm /zlatest > /dev/null 2>&1
+	_ak_ipfs_files_cp /ipfs/$ZBLOCK /zlatest > /dev/null 2>&1
 else
 	usage
 	exit 0

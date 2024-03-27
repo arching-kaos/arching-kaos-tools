@@ -5,6 +5,7 @@ descriptionString="Articles module for Arching Kaos"
 
 source $AK_LIBDIR/_ak_logit
 source $AK_LIBDIR/_ak_script_description
+source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_gpg
 
 ZARTICLESDIR="$AK_WORKDIR/articles"
@@ -35,7 +36,7 @@ _ak_modules_articles_create(){
     logit "INFO" "Renaming..."
     TITLE="$(head -n 1 $ARTICLES_FILE)"
     TO_FILE=$ARTICLES_FILE-$(echo $TITLE | tr '[:upper:]' '[:lower:]' | sed -e 's/ /\_/g' )
-    IPFS_FILE=$(ak-ipfs-add $ARTICLES_FILE)
+    IPFS_FILE=$(_ak_ipfs_add $ARTICLES_FILE)
     mv $ARTICLES_FILE $ZARTICLESDIR/$TO_FILE
     sed -e 's,Qm.*,'"$IPFS_FILE"',g' $ZARTICLESDIR/README
     _ak_modules_articles_add $ZARTICLESDIR/$TO_FILE
@@ -90,10 +91,10 @@ _ak_modules_articles_add(){
         echo "Adding articles from " $FILE
         DATETIME=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
         TITLE=$(head -n 1 $FILE)
-        FILE_IPFS_HASH=$(ak-ipfs-add $FILE)
+        FILE_IPFS_HASH=$(_ak_ipfs_add $FILE)
         FILE_SIGN_FILE=$FILE".asc"
         _ak_gpg_sign_detached $FILE_SIGN_FILE $FILE
-        FILE_SIGNATURE=$(ak-ipfs-add $FILE_SIGN_FILE)
+        FILE_SIGNATURE=$(_ak_ipfs_add $FILE_SIGN_FILE)
         cat > data <<EOF
 {
    "datetime":"$DATETIME",

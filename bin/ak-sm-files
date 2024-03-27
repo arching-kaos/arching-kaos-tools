@@ -6,6 +6,7 @@ CRD=$(cat .pwd)
 PROGRAM="$(basename $0)"
 #set -xe
 source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_gpg
 
 if [ ! -d $ZFILESDIR ]; then
@@ -61,7 +62,7 @@ main(){
     fi
 
     logit "INFO" "Adding $FILENAME to IPFS..."
-    FILE_IPFS_HASH=$(ak-ipfs-add $FILENAME)
+    FILE_IPFS_HASH=$(_ak_ipfs_add $FILENAME)
     if [ $? == 0 ]; then
         logit "INFO" "Added $FILENAME to IPFS"
     else
@@ -86,7 +87,7 @@ main(){
     fi
 
     logit "INFO" "Adding signature to IPFS"
-    SIGNATURE=$(ak-ipfs-add $SIGN_FILE)
+    SIGNATURE=$(_ak_ipfs_add $SIGN_FILE)
     if [ $? == 0 ]; then
         logit "INFO" "Added"
     else

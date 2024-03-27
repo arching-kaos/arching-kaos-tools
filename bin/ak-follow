@@ -2,6 +2,7 @@
 FOLLOWING="$HOME/.arching-kaos/following"
 PROGRAM="$(basename $0)"
 source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_ipfs
 
 if [ ! -z $1 ]
 then
@@ -12,7 +13,7 @@ then
         exit 1
     fi
     echo $1 >> $FOLLOWING
-    IPFS=$(ak-ipfs-add $FOLLOWING)
+    IPFS=$(_ak_ipfs_add $FOLLOWING)
     if [ $? != 0 ]
     then
         logit "ERROR" "Addition failed"

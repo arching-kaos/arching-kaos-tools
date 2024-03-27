@@ -2,6 +2,7 @@
 ZREFERENCESDIR="$AK_WORKDIR/references"
 TEMP="/tmp/aktmp"
 source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_gpg
 echo $ZREFERENCESDIR
 if [ ! -d $ZREFERENCESDIR ]; then
@@ -32,7 +33,7 @@ EOF
     TO_FILE="$REFERENCEFILE-$REFERENCE-$REFER_TO"
     mv $REFERENCEFILE $ZREFERENCESDIR/$TO_FILE
     echo $TO_FILE
-    IPFS_FILE=$(ak-ipfs-add $ZREFERENCESDIR/$TO_FILE)
+    IPFS_FILE=$(_ak_ipfs_add $ZREFERENCESDIR/$TO_FILE)
     sed -e 's,Qm.*,'"$IPFS_FILE"',g' $ZREFERENCESDIR/README
     _ak_modules_reference_add $ZREFERENCESDIR/$TO_FILE
     cd $ZREFERENCESDIR
@@ -85,10 +86,10 @@ _ak_modules_reference_add(){
     FILE="$1"
     echo "Adding references from " $FILE
     DATETIME=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
-    FILE_IPFS_HASH=$(ak-ipfs-add $FILE)
+    FILE_IPFS_HASH=$(_ak_ipfs_add $FILE)
     FILE_SIGN_FILE=$FILE".asc"
     _ak_gpg_sign_detached $FILE_SIGN_FILE $FILE
-    FILE_SIGNATURE=$(ak-ipfs-add $FILE_SIGN_FILE)
+    FILE_SIGNATURE=$(_ak_ipfs_add $FILE_SIGN_FILE)
     cat > data <<EOF
 {
    "datetime":"$(date -u +%s)",

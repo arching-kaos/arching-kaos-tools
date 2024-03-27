@@ -5,6 +5,7 @@ PROGRAM="$(basename $0)"
 descriptionString="AK mixtape block creator"
 source $AK_LIBDIR/_ak_logit
 source $AK_LIBDIR/_ak_script_description
+source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_gpg
 
 _ak_modules_mixtapes_usage(){
@@ -33,12 +34,12 @@ _ak_modules_mixtapes_specs(){
 _ak_modules_mixtapes_main(){
     echo $MIXTAPE_FILE "by" $MIXTAPE_ARTIST "named as" $MIXTAPE_TITLE
 
-    MIXTAPE_IPFS_HASH=$(ak-ipfs-add $MIXTAPE_FILE)
+    MIXTAPE_IPFS_HASH=$(_ak_ipfs_add $MIXTAPE_FILE)
 
     MIXTAPE_SIGN_FILE=$MIXTAPE_FILE".asc"
     _ak_gpg_sign_detached $MIXTAPE_SIGN_FILE $MIXTAPE_FILE
 
-    MIXTAPE_SIGNATURE=$(ak-ipfs-add $MIXTAPE_SIGN_FILE)
+    MIXTAPE_SIGNATURE=$(_ak_ipfs_add $MIXTAPE_SIGN_FILE)
 
     cat > data <<EOF
 {

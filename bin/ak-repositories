@@ -18,9 +18,9 @@ import(){
         then
             cd $PROJECT.git
             git repack -a
-            IPFS="$(ak-ipfs-add .)"
-            ak-ipfs-key-gen "$PROJECT.git"
-            ak-ipfs-name-publish --key="$PROJECT.git" /ipfs/$IPFS
+            IPFS="$(_ak_ipfs_add .)"
+            _ak_ipfs_key_gen "$PROJECT.git"
+            _ak_ipfs_name_publish --key="$PROJECT.git" /ipfs/$IPFS
             cd $HOME/bare
         else
             echo "$PROJECT not a git repo"
@@ -40,8 +40,8 @@ update(){
             cd $BARE
             git pull
             git repack -a
-            IPFS="$(ak-ipfs-add .)"
-            ak-ipfs-name-publish --key="$BARENAME" /ipfs/$IPFS
+            IPFS="$(_ak_ipfs_add .)"
+            _ak_ipfs_name_publish --key="$BARENAME" /ipfs/$IPFS
             echo "DONE"
         else
             echo "NO BARE TO UPDATE"
@@ -55,8 +55,8 @@ update(){
             cd "$PROJECT"
             git pull
             git repack -a
-            IPFS="$(ak-ipfs-add .)"
-            ak-ipfs-name-publish --key="$PROJECT" /ipfs/$IPFS
+            IPFS="$(_ak_ipfs_add .)"
+            _ak_ipfs_name_publish --key="$PROJECT" /ipfs/$IPFS
             cd $BAREDIR
         done
     fi
@@ -100,11 +100,11 @@ add(){
         then
             cd $BAREGITDIR
             git repack -a
-            IPFS="$(ak-ipfs-add .)"
-            try=ak-ipfs-key-gen "$PROJECT.git"
+            IPFS="$(_ak_ipfs_add .)"
+            try=_ak_ipfs_key_gen "$PROJECT.git"
             if [ $? == 0 ]
             then
-                ak-ipfs-name-publish --key="$PROJECT.git" /ipfs/$IPFS
+                _ak_ipfs_name_publish --key="$PROJECT.git" /ipfs/$IPFS
                 printf '{"project":"%s.git","ipns":"%s"}' $PROJECT $try > data
                 ak-zblock-pack "repos/add" $PWD/data 
                 echo "Done"
@@ -116,11 +116,11 @@ add(){
 }
 
 index(){
-    ak-ipfs-key-list-full | grep -e '\.git'
+    _ak_ipfs_key_list_full | grep -e '\.git'
 }
 
 set-as-profile(){
-    IPFS=$(ak-ipfs-add $REPOSTORE)
+    IPFS=$(_ak_ipfs_add $REPOSTORE)
     if [ $? == 0 ]
     then
         profile set repositories $IPFS

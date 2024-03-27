@@ -1,5 +1,6 @@
 #!/bin/bash
 PROGRAM="$(basename $0)"
+source $AK_LIBDIR/_ak_ipfs
 
 temp="$(mktemp -d)"
 
@@ -16,7 +17,7 @@ sum=0 ; while IFS="" read -r p || [ -n "$p" ]
 do
     if [ "$p" != "" ]
     then
-        ak-ipfs-get $p
+        _ak_ipfs_get $p
         num="$(du -bs --apparent-size $p | cut -d $'\t' -f 1)"
     else
         num=0

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+PROGRAM="$(basename $0)"
+
+
+source $AK_LIBDIR/_ak_ipfs
+_ak_ipfs daemon

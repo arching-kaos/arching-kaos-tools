@@ -5,6 +5,7 @@ descriptionString="A module for adding and refering zblocks to categories"
 
 source $AK_LIBDIR/_ak_logit
 source $AK_LIBDIR/_ak_script_description
+source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_gpg
 
 if [ ! -d $AK_CATEGORIES ]; then
@@ -23,7 +24,7 @@ _ak_modules_categories_create(){
     logit "INFO" "Renaming..."
     TITLE="$(head -n 1 $NEWS_FILE)"
     TO_FILE=$NEWS_FILE-$(echo $TITLE | tr '[:upper:]' '[:lower:]' | sed -e 's/ /\_/g' )
-    IPFS_FILE=$(ak-ipfs-add $NEWS_FILE)
+    IPFS_FILE=$(_ak_ipfs_add $NEWS_FILE)
     mv $NEWS_FILE $AK_CATEGORIES/$TO_FILE
     sed -e 's,Qm.*,'"$IPFS_FILE"',g' $AK_CATEGORIES/README
     _ak_modules_categories_add $AK_CATEGORIES/$TO_FILE
@@ -74,10 +75,10 @@ _ak_modules_categories_add(){
         logit "INFO" "Adding news from " $FILE
         DATETIME=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
         TITLE=$(head -n 1 $FILE)
-        FILE_IPFS_HASH=$(ak-ipfs-add $FILE)
+        FILE_IPFS_HASH=$(_ak_ipfs_add $FILE)
         FILE_SIGN_FILE=$FILE".asc"
         _ak_gpg_sign_detached $FILE_SIGN_FILE $FILE
-        FILE_SIGNATURE=$(ak-ipfs-add $FILE_SIGN_FILE)
+        FILE_SIGNATURE=$(_ak_ipfs_add $FILE_SIGN_FILE)
         cat > data <<EOF
 {
    "datetime":"$DATETIME",

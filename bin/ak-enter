@@ -21,6 +21,7 @@ PROGRAM="$(basename $0)"
 descriptionString="Crawl an arching kaos chain"
 source $AK_LIBDIR/_ak_logit
 source $AK_LIBDIR/_ak_script_description
+source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_gpg
 
 _ak_enter_title(){
@@ -143,7 +144,7 @@ do
             isIPFSv0 "$zblock"
 
             # We check if any $zblock at all
-            ak-ipfs-cat $zblock | jq -c -M > $AK_ZBLOCKDIR/$zblock
+            _ak_ipfs_cat $zblock | jq -c -M > $AK_ZBLOCKDIR/$zblock
             if [ "$?" -ne 0 ]
             then
                 logit "ERROR" "ZBLOCK $zblock READ failed"
@@ -188,7 +189,7 @@ do
             # Same as above applies to BLOCK and DATA subparts of each ZBLOCK
             # BLOCKS
             echo -n '"block":"'$block'",'
-            ak-ipfs-cat $block | jq -c -M > $AK_BLOCKDIR/$block
+            _ak_ipfs_cat $block | jq -c -M > $AK_BLOCKDIR/$block
             cat $AK_BLOCKDIR/$block | jq -M > /dev/null 2>&1
             if [ "$?" -ne 0 ]
             then
@@ -231,7 +232,7 @@ do
 
             if [ $verify == 1 ]
             then
-                ak-ipfs-get $gpg > /dev/null 2>&1
+                _ak_ipfs_get $gpg > /dev/null 2>&1
                 if [ "$?" -ne 0 ]
                 then
                     logit "ERROR" "Could not get GPG key: $gpg ."
@@ -243,7 +244,7 @@ do
                     logit "ERROR" "Could not import GPG key: $gpg ."
                     exit 1
                 fi
-                ak-ipfs-get $block_signature > /dev/null 2>&1
+                _ak_ipfs_get $block_signature > /dev/null 2>&1
                 if [ "$?" -ne 0 ]
                 then
                     logit "ERROR" "Error while getting $block_signature for $block"
@@ -252,7 +253,7 @@ do
                 mv $block_signature $block.asc
                 logit "INFO" "Block signature downloaded"
 
-                ak-ipfs-get $block > /dev/null 2>&1
+                _ak_ipfs_get $block > /dev/null 2>&1
                 if [ "$?" -ne 0 ]
                 then
                     logit "ERROR" "Could not get $block block"
@@ -280,7 +281,7 @@ do
 
             # DATA
             # Only print to stdout
-            # ak-ipfs-cat $data
+            # _ak_ipfs_cat $data
             touch $AK_DATADIR/$data
 
             # Now, since we sourced the BLOCK to our terminal, we can search

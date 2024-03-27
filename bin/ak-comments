@@ -4,6 +4,7 @@ descriptionString="Comments module for Arching Kaos"
 
 source $AK_LIBDIR/_ak_logit
 source $AK_LIBDIR/_ak_script_description
+source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_gpg
 
 ZCOMMENTSDIR="$AK_WORKDIR/comments"
@@ -31,7 +32,7 @@ _ak_modules_comments_create(){
     vi $COMMENTS_FILE
     echo "Renaming..."
     TO_FILE=$COMMENTS_FILE
-    IPFS_FILE=$(ak-ipfs-add $COMMENTS_FILE)
+    IPFS_FILE=$(_ak_ipfs_add $COMMENTS_FILE)
     mv $COMMENTS_FILE $ZCOMMENTSDIR/$TO_FILE
     _ak_modules_comments_add $TO_FILE
     logit "INFO" "Adding to git repo..."
@@ -63,10 +64,10 @@ _ak_modules_comments_add(){
         FILE=$ZCOMMENTSDIR/$1
         echo "Adding comments from " $FILE
         DATETIME="$1"
-        FILE_IPFS_HASH=$(ak-ipfs-add $FILE)
+        FILE_IPFS_HASH=$(_ak_ipfs_add $FILE)
         FILE_SIGN_FILE=$FILE".asc"
         _ak_gpg_sign_detached $FILE_SIGN_FILE $FILE
-        FILE_SIGNATURE=$(ak-ipfs-add $FILE_SIGN_FILE)
+        FILE_SIGNATURE=$(_ak_ipfs_add $FILE_SIGN_FILE)
         printf '{"datetime":"%s","ipfs":"%s","detach":"%s"}' $DATETIME $FILE_IPFS_HASH $FILE_SIGNATURE > data
     else
         echo "File $FILE doesn't exist";

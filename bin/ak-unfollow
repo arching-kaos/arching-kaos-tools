@@ -8,13 +8,13 @@ then
     sed -i -e 's,'"$search"',,g' $FOLLOWING
     if [ $? != 0 ]
     then
-        ak-logthis "$PROGRAM" "ERROR" "sed didn't found $search"
+        logit "ERROR" "sed didn't found $search"
         exit 1
     fi
-    IPFS="$(ak-ipfs-add $FOLLOWING)"
+    IPFS="$(_ak_ipfs_add $FOLLOWING)"
     if [ $? != 0 ]
     then
-        ak-logthis "$PROGRAM" "ERROR" "IPFS problem"
+        logit "ERROR" "IPFS problem"
         exit 1
     fi
     ak-profile set repositories "$IPFS"

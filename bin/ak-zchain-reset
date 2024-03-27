@@ -1,5 +1,7 @@
 #!/bin/bash
 PROGRAM=$(basename $0)
+source $AK_LIBDIR/_ak_ipfs
+
 usage(){
 	echo "$PROGRAM - Zchain reset"
 	echo ""
@@ -19,24 +21,24 @@ reset (){
 	if [ $? != 0 ]; then exit 1; fi
 
 	echo "Make sure /zarchive folder exists within IPFS FS"
-	ak-ipfs-files-mkdir /zarchive
+	_ak_ipfs_files_mkdir /zarchive
 	if [ $? != 0 ]; then echo "Folder already there"; fi
 
 	echo "Archive the previous ZLATEST"
-	ak-ipfs-files-cp /zlatest /zarchive/$(date -u +%s)-$(ak-ipfs-files-stat /zlatest | head -n 1)
+	_ak_ipfs_files_cp /zlatest /zarchive/$(date -u +%s)-$(_ak_ipfs_files_stat /zlatest | head -n 1)
 	if [ $? != 0 ]; then exit 1; fi
 
 	echo "Removing previous /zlatest entry"
-	ak-ipfs-files-rm /zlatest
+	_ak_ipfs_files_rm /zlatest
 	if [ $? != 0 ]; then exit 1; fi
 
 	echo "Copying reset ZLATEST"
 	CZLATEST="$(cat $ZLATEST)"
-	ak-ipfs-files-cp /ipfs/$CZLATEST /zlatest
+	_ak_ipfs_files_cp /ipfs/$CZLATEST /zlatest
 	if [ $? != 0 ]; then exit 1; fi
 
 	echo "Publishing new (reset) ZLATEST"
-	ak-ipfs-name-publish --key=zchain /ipfs/$(cat $ZLATEST)
+	_ak_ipfs_name_publish --key=zchain /ipfs/$(cat $ZLATEST)
 	if [ $? != 0 ]; then exit 1; fi
 
     ak-config publish

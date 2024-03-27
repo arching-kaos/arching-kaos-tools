@@ -5,6 +5,7 @@ ZFOLDERSDIR="$AK_WORKDIR/folders"
 TEMP="/tmp/aktmp"
 
 source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_ipfs
 
 if [ ! -d $ZFOLDERSDIR ]; then
     mkdir $ZFOLDERSDIR
@@ -45,7 +46,7 @@ _ak_modules_folders_main(){
     FOLDER="$1"
 
     logit "INFO" "Adding $FOLDER to IPFS..."
-    FOLDER_IPFS_HASH=$(ak-ipfs-add $FOLDER)
+    FOLDER_IPFS_HASH=$(_ak_ipfs_add $FOLDER)
     if [ $? == 0 ]; then
         logit "INFO" "done"
     else
