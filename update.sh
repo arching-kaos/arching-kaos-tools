@@ -13,7 +13,11 @@ done
 binfiles=$(ls -1 $(pwd)/bin)
 for b in $binfiles
 do
-    if [ ! -L $AK_BINDIR/$b ] ; then ln -s $(pwd)/bin/$b $AK_BINDIR/$b ;fi
+    if [ ! -L $AK_BINDIR/$b ]
+    then
+        echo "Non existing link: $(basename $b) creating..."
+        ln -s $(pwd)/bin/$b $AK_BINDIR/$b
+    fi
 done
 
 # Updates lib files
@@ -30,5 +34,9 @@ done
 libfiles=$(ls -1 $(pwd)/lib)
 for l in $libfiles
 do
-    if [ ! -L $AK_LIBDIR/$l ] ; then ln -s $(pwd)/lib/$l $AK_LIBDIR/$l ;fi
+    if [ ! -L $AK_LIBDIR/$l ]
+    then
+        echo "Non existing link: $(basename $l) creating..."
+        ln -s $(pwd)/lib/$l $AK_LIBDIR/$l
+    fi
 done
