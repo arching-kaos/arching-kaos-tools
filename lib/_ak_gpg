@@ -1,0 +1,118 @@
+#!/bin/bash
+source $AK_LIBDIR/_ak_logit
+
+_ak_gpg(){
+    gpg2 --homedir $AK_GPGHOME $*
+}
+
+_ak_gpg_key_import_from_file(){
+    if [ -z $1 ]
+    then
+        logit "[ERROR]" "No argument given"
+        exit 1
+    fi
+    if [ ! -n "$1" ]
+    then
+        logit "[ERROR]" "Empty argument given"
+        exit 1
+    fi
+    if [ ! -f "$1" ]
+    then
+        logit "[ERROR]" "File not found"
+        exit 1
+    fi
+    _ak_gpg --import $1 > /dev/null 2>&1
+}
+
+_ak_gpg_key_self_get_fingerprint_from_config(){
+    ak-config show | jq -r '.gpg'
+}
+
+_ak_gpg_key_self_get_fingerprint(){
+    if [ -z $1 ]
+    then
+        ak-ipfs-cat "$(_ak_gpg_key_self_get_fingerprint_from_config)" | \
+            _ak_gpg --show-keys 2>&1 | \
+            head -n 2 | \
+            tail -n 1 | \
+            sed 's/ //g'
+    else
+        exit 1
+    fi
+}
+
+_ak_gpg_key_get_fingerprint_from_ipfs(){
+    if [ -n "$1" ]
+    then
+        ak-ipfs-cat "$1" | \
+            _ak_gpg --show-keys 2>&1 | \
+            head -n 2 | \
+            tail -n 1 | \
+            sed 's/ //g'
+    else
+        exit 1
+    fi
+}
+
+_ak_gpg_sign_detached(){
+    if [ ! -z $1 ] && [ -n "$1" ] && [ ! -z $2 ] && [ -n "$2" ]
+    then
+        _ak_gpg --detach-sign --sign-with $AK_FINGERPRINT --armor --output $1 $2
+    else
+        exit 1
+    fi
+}
+
+_ak_gpg_encrypt_sign(){
+    if [ ! -z $1 ] && [ -n "$1" ] && [ ! -z $2 ] && [ -n "$2" ] && [ ! -z $3 ] && [ -n "$3" ]
+    then
+        _ak_gpg --sign-with $AK_FINGERPRINT --encypt -r $3 --armor --output $1 $2
+    else
+        exit 1
+    fi
+}
+
+_ak_gpg_encrypt_sign_for_self(){
+    if [ ! -z $1 ] && [ -n "$1" ] && [ ! -z $2 ] && [ -n "$2" ]
+    then
+        _ak_gpg --sign-with $AK_FINGERPRINT --encypt -r $AK_FINGERPRINT --armor --output $1 $2
+    else
+        exit 1
+    fi
+}
+
+_ak_gpg_encrypt(){
+    if [ ! -z $1 ] && [ -n "$1" ] && [ ! -z $2 ] && [ -n "$2" ] && [ ! -z $3 ] && [ -n "$3" ]
+    then
+        _ak_gpg --encypt -r $3 --armor --output $1 $2
+    else
+        exit 1
+    fi
+}
+
+_ak_gpg_encrypt_for_self(){
+    if [ ! -z $1 ] && [ -n "$1" ] && [ ! -z $2 ] && [ -n "$2" ]
+    then
+        _ak_gpg --encypt -r $AK_FINGERPRINT --armor --output $1 $2
+    else
+        exit 1
+    fi
+}
+
+_ak_gpg_verify_signature(){
+    if [ ! -z $1 ] && [ -n "$1" ] && [ -f "$1" ] && [ ! -z $2 ] && [ -n "$2" ] && [ -f "$2" ] 
+    then
+        _ak_gpg --verify $1 $2 > /dev/null 2>&1
+    else
+        exit 1
+    fi
+}
+
+_ak_gpg_key_self_export(){
+    if [ ! -z $1 ] && [ -n "$1" ]
+    then
+        _ak_gpg --armour --output $1 --export $AK_FINGERPRINT
+    else
+        exit 1
+    fi
+}
