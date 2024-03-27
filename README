@@ -261,9 +261,9 @@ ak-todos                    PROTO Adds todo list to the ZCHAIN
 
 Public following (uses ak-profile module)
 -----------------------------------------
-ak-follow       # Follow something
-ak-following    # List your follows
-ak-unfollow     # Unfollow something
+ak-follow               # Follow something
+ak-following            # List your follows
+ak-unfollow             # Unfollow something
 
 Zblock tools
 ------------
@@ -293,8 +293,29 @@ ak-fs-add                   # Adds a file to filesystem tree (returns root hash)
 ak-fs-get                   # Constructs a file from root hash to filename
 ak-fs-cat                   # Constructs a file from root hash to stdout
 
+Libraries
+---------
+lib/_ak_ipfs
+lib/_ak_gpg
+lib/_ak_newline
+lib/_ak_script_description
+lib/_ak_script_exit
+lib/_ak_logit
+
 IPFS Wrappers
 -------------
+ak-ipfs-starter
+ak-ipfs-daemon
+
+Not completed or just odd
+-------------------------
+
+Deprecated
+----------
+ak-json2bash
+
+Obsolete
+--------
 ak-ipfs-add
 ak-ipfs-block-stat
 ak-ipfs-cat
@@ -311,16 +332,8 @@ ak-ipfs-key-list
 ak-ipfs-key-list-full
 ak-ipfs-name-publish
 ak-ipfs-name-resolve
-ak-ipfs-starter
 ak-ipfs-swarm-peers
 ak-ipns-resolve
-
-Not completed or just odd
--------------------------
-
-Deprecated
-----------
-ak-json2bash
 
 
 Debugging
