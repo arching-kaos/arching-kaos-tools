@@ -1,8 +1,10 @@
 #!/bin/bash
 AK_CATEGORIES="$AK_WORKDIR/categories"
 PROGRAM="$(basename $0)"
+descriptionString="A module for adding and refering zblocks to categories"
 
 source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_script_description
 
 if [ ! -d $AK_CATEGORIES ]; then
     mkdir $AK_CATEGORIES
@@ -38,7 +40,7 @@ _ak_modules_categories_index(){
     done
 }
 _ak_modules_categories_title(){
-    echo "$PROGRAM"
+    description
 }
 
 _ak_modules_categories_import(){
@@ -85,19 +87,21 @@ _ak_modules_categories_add(){
 }
 EOF
     else
-        echo "File $FILE doesn't exist";
+        logit "ERROR" "File $FILE doesn't exist";
         exit 2
     fi
     ak-zblock-pack "news/add" $(pwd)/data
     if [ $? == 0 ]
     then
-        echo "News added successfully"
+        logit "INFO" "News added successfully"
     else
-        echo "error??"
+        logit "ERROR" "error??"
         exit 1
     fi
 }
+
 _ak_modules_categories_usage(){
+    _ak_modules_categories_title
     echo "    -h, --help       Prints this help message"
     echo "    index            Prints an indexed table of your news files"
     echo "    import <file>    #TODO"

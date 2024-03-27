@@ -2,6 +2,7 @@
 
 PROGRAM=$(basename $0)
 source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_script_exit
 
 if [ $# -eq 0 ]
 then
@@ -26,7 +27,7 @@ subcmd="$(echo $* | sed -e 's/ /-/g')"
 if [ -f "$AK_BINDIR/ak-$subcmd" ]
 then
     $(echo ak-$subcmd)
-    exit $?
+    exit_program $? "ak-$subcmd command finished";
 else
     argc=$#
     argv="$*"
@@ -39,7 +40,7 @@ else
         then
             logit "INFO" "Running: ak-$subcmd with args: $args"
             $(echo ak-$subcmd) $args
-            exit $?
+            exit_program $? "ak-$subcmd command finished";
         fi
         counter=$(($counter + 1))
     done
