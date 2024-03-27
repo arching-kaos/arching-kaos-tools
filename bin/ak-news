@@ -176,6 +176,7 @@ _ak_modules_news_usage(){
     echo "    -c, --create                Vim is going to pop up, you will write and save your"
     echo "                                newsletter and it's going to be saved"
     echo "    -s, --specs                 Print specs of data block"
+    echo "    -x, --html <zblock>         Returns an appropriate html element from a NEWS zblock"
     exit 0
 }
 
@@ -198,6 +199,64 @@ _ak_modules_news_read(){
     else
         logit "ERROR" "Not a news block."
         echo "ERROR Not a news block."
+        exit 1
+    fi
+    rm temp
+}
+
+_ak_modules_news_html(){
+    ak-enter -l 1 $1 > temp
+    if [ $? -ne 0 ]
+    then
+        logit "ERROR" "Failed to retrieve zblock $1"
+        exit 22
+    fi
+    module="`cat temp | jq -r '.[].module'`"
+    action="`cat temp | jq -r '.[].action'`"
+    data="`cat temp | jq -r '.[].data'`"
+    linkToText="`cat temp | jq -r ".[].$data.ipfs"`"
+    zfilename="`cat temp | jq -r ".[].$data.filename"`"
+    ztitle="`cat temp | jq -r ".[].$data.title"`"
+    zdatetime="`cat temp | jq -r ".[].$data.datetime"`"
+
+    if [ "$module" == "news" ] && [ "$action" == "add" ]
+    then
+        echo "<table>"
+        echo "    <tr>"
+        echo "        <td>"
+        echo "            <pre>⌚ Date/Time</pre>"
+        echo "        </td>"
+        echo "        <td>"
+        echo "             <pre>$zdatetime</pre>"
+        echo "        </td>"
+        echo "    </tr>"
+        echo "    <tr>"
+        echo "        <td>"
+        echo "            <pre> ✍️  Title</pre>"
+        echo "        </td>"
+        echo "        <td>"
+        echo "             <pre>$ztitle</pre>"
+        echo "        </td>"
+        echo "    </tr>"
+        echo "    <tr>"
+        echo "        <td>"
+        echo "            <pre>📄 Filename</pre>"
+        echo "        </td>"
+        echo "        <td>"
+        echo "             <pre>$zfilename</pre>"
+        echo "        </td>"
+        echo "    </tr>"
+        echo "    <tr>"
+        echo "        <td>"
+        echo "            <pre>📄 Content</pre>"
+        echo "        </td>"
+        echo "        <td>"
+        echo "             <pre>$(_ak_ipfs_cat $linkToText)</pre>"
+        echo "        </td>"
+        echo "    </tr>"
+        echo '</table>'
+    else
+        logit "ERROR" "Not a news block."
         exit 1
     fi
     rm temp
@@ -226,6 +285,7 @@ if [ ! -z $1 ]; then
         -c | --create) _ak_modules_news_create; exit;;
         -r | --read) _ak_modules_news_read $2; exit;;
         -s | --specs) _ak_modules_news_specs $2; exit;;
+        -x | --html) _ak_modules_news_html $2; exit;;
         * ) _ak_modules_news_usage;;
     esac
 else _ak_modules_news_usage

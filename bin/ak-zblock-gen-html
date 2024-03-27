@@ -94,6 +94,11 @@ then
     # Output data in HTML format
     echo "    <h1>$PROGRAM</h1>"
     echo "    <h2>🔎 $zblock</h2>"
+    if [ "$module" == "news" ] && [ "$action" == "add" ]
+    then
+        ak-news -x $zblock
+    fi
+    echo "    <h2>ℹ️ $zblock</h2>"
     echo "    <table>"
     echo "        <tr>"
     echo "            <td>"
