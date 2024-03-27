@@ -154,8 +154,8 @@ ignores data object and action ).
 
 ``` console
 $ ak enter -h
- ak-enter - Crawl an arching kaos chain
------------------------------------
+ak-enter - Crawl an arching kaos chain
+======================================
 ak-enter [-N | --no-verify] [-l | --limit <number>] [zblock]
 ak-enter [-N | --no-verify] [-l | --limit <number>] -n <zchain>
 Usage:
