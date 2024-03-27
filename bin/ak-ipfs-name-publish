@@ -1,9 +1,0 @@
-#!/bin/bash
-PROGRAM="$(basename $0)"
-ipfs name publish "$1" "$2"
-if [ "$?" != "0" ]
-then
-    ak-logthis "$PROGRAM" "ERROR" "Failed to get $1"
-    exit 1
-fi
-

@@ -314,27 +314,6 @@ Deprecated
 ----------
 ak-json2bash
 
-Obsolete
---------
-ak-ipfs-add
-ak-ipfs-block-stat
-ak-ipfs-cat
-ak-ipfs-check
-ak-ipfs-files-cp
-ak-ipfs-files-ls
-ak-ipfs-files-mkdir
-ak-ipfs-files-mv
-ak-ipfs-files-rm
-ak-ipfs-files-stat
-ak-ipfs-get
-ak-ipfs-key-gen
-ak-ipfs-key-list
-ak-ipfs-key-list-full
-ak-ipfs-name-publish
-ak-ipfs-name-resolve
-ak-ipfs-swarm-peers
-ak-ipns-resolve
-
 
 Debugging
 ---------

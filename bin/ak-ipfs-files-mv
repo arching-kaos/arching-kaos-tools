@@ -1,8 +1,0 @@
-#!/bin/bash
-PROGRAM="$(basename $0)"
-ipfs files mv "$1" "$2"
-if [ "$?" != "0" ]
-then
-    ak-logthis "$PROGRAM" "ERROR" "Failed to move $1 to $2"
-    exit 1
-fi

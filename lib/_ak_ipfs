@@ -225,7 +225,7 @@ _ak_ipns_resolve(){
     if [ ! -z $1 ]
     then
         rsld=$(ak-ipfs-name-resolve $1)
-        if [ "$?" != 0 ]
+        if [ $? -ne 0 ]
         then
             logit "ERROR" "Failed to resolve $1"
             exit 1
