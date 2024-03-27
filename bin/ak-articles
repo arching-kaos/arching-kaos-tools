@@ -4,6 +4,7 @@ PROGRAM=$(basename $0)
 descriptionString="Articles module for Arching Kaos"
 
 source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_script_description
 
 ZARTICLESDIR="$AK_WORKDIR/articles"
 TEMP="/tmp/aktmp"

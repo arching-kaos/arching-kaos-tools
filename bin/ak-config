@@ -1,19 +1,24 @@
 #!/bin/bash
 PROGRAM="$(basename $0)"
+descriptionString="Arching Kaos Configuration Tool"
+
+source $AK_LIBDIR/_ak_script_description
+
 _ak_config_title(){
-	echo "Arching Kaos Configuration Tool"
-	echo "==============================="
+    description
 }
+
 _ak_config_usage(){
-	_ak_config_title
-	echo ""
-	echo "Usage:	$PROGRAM [ show | publish | get-published ]"
-	echo ""
-	echo "	show		Show current configuration (from FileSystem)"
-	echo "	publish		Publish current configuration"
-	echo "	get-published	Get published ak-config (from IPFS)"
-	echo ""
-	exit 0
+    _ak_config_title
+    echo ""
+    echo "Usage:    $PROGRAM [ -h | --help | show | publish | get-published ]"
+    echo ""
+    echo "    -h, --help       Show this help screen"
+    echo "    show             Show current configuration (from FileSystem)"
+    echo "    publish          Publish current configuration"
+    echo "    get-published    Get published ak-config (from IPFS)"
+    echo ""
+    exit 0
 }
 
 _ak_config_show(){
@@ -23,7 +28,7 @@ _ak_config_show(){
     GPG_PUB_KEY=$(ak-ipfs-add $KEY)
     rm $KEY
 
-	echo '
+    echo '
 {
     "profile":'$(ak-profile index | jq -cM)',
     "genesis":"'$(cat $HOME/.arching-kaos/config/zgenesis)'",
@@ -34,33 +39,34 @@ _ak_config_show(){
 }
 
 _ak_config_publish(){
-	_ak_config_show | jq -c -M > tmpfile
+    _ak_config_show | jq -c -M > tmpfile
     ipfs key list | grep ak-config 2> /dev/null 1>&2
     if [ "$?" -ne 0 ]
     then
         ipfs key gen ak-config
     fi
-	ak-ipfs-name-publish --key=ak-config /ipfs/$(ak-ipfs-add tmpfile)
-	if [ "$?" != 0 ]
-	then
-		echo -e "\033[0;34mError on publishing\033[0;0m\nYour information:\n"
-		cat tmpfile
-		exit 1
-	fi
-	rm tmpfile
+    ak-ipfs-name-publish --key=ak-config /ipfs/$(ak-ipfs-add tmpfile)
+    if [ "$?" != 0 ]
+    then
+        echo -e "\033[0;34mError on publishing\033[0;0m\nYour information:\n"
+        cat tmpfile
+        exit 1
+    fi
+    rm tmpfile
 }
 
 _ak_config_published(){
-	ak-ipfs-cat $(ak-node-info ipfs) | jq -c
+    ak-ipfs-cat $(ak-node-info ipfs) | jq -c
 }
 
 if [ ! -z $1 ]; then
-	case $1 in
-		show) _ak_config_show;exit;;
-		publish) _ak_config_publish;exit;;
-		get-published) _ak_config_published;exit;;
-		*) _ak_config_usage;exit;;
-	esac
+    case $1 in
+        --help| -h) _ak_config_usage;exit;;
+        show) _ak_config_show;exit;;
+        publish) _ak_config_publish;exit;;
+        get-published) _ak_config_published;exit;;
+        *) _ak_config_usage;exit;;
+    esac
 else
     _ak_config_usage
 fi

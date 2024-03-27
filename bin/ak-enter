@@ -18,11 +18,16 @@
 # Logs messages to $LOGSFILE.
 
 PROGRAM="$(basename $0)"
+descriptionString="Crawl an arching kaos chain"
 source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_script_description
 
-usage(){
-    echo "$PROGRAM - Crawl an arching kaos chain"
-    echo "-----------------------------------"
+_ak_enter_title(){
+    description
+}
+
+_ak_enter_usage(){
+    _ak_enter_title
     echo "$PROGRAM [-N | --no-verify] [-l | --limit <number>] [zblock]"
     echo "$PROGRAM [-N | --no-verify] [-l | --limit <number>] -n <zchain>"
     echo "Usage:"
@@ -63,7 +68,7 @@ fromIpns=0
 while [ "$#" ]; do
     case "$1" in
         -h | --help)
-            usage
+            _ak_enter_usage
             ;;
         -l | --limit)
             limit=$2

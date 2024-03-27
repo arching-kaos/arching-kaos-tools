@@ -1,4 +1,5 @@
 #!/bin/bash
+PROGRAM="$(basename $0)"
 # set -xe
 if [ -z $1 ]
 then

@@ -1,10 +1,18 @@
 #!/bin/bash
 # The following creates a mixtape data message
 # We can extend it by calling the ak-zblock-pack.sh mixtape/add data ## ORIGINAL LINE
+PROGRAM="$(basename $0)"
+descriptionString="AK mixtape block creator"
+source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_script_description
 
 _ak_modules_mixtapes_usage(){
 	_ak_modules_mixtapes_title
-	echo "$0 - artist title file"
+	echo "Usage: $0 - artist title file"
+}
+
+_ak_modules_mixtapes_title(){
+    description
 }
 
 _ak_modules_mixtapes_specs(){
@@ -42,12 +50,6 @@ _ak_modules_mixtapes_main(){
 EOF
 
 }
-
-_ak_modules_mixtapes_title(){
-    echo "AK mixtape block creator"
-    echo "========================"
-}
-
 
 if [ ! -z $3 ];
 then

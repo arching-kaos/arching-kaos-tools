@@ -1,13 +1,14 @@
 #!/bin/bash
 ZREFERENCESDIR="$AK_WORKDIR/references"
 TEMP="/tmp/aktmp"
+source $AK_LIBDIR/_ak_logit
 echo $ZREFERENCESDIR
 if [ ! -d $ZREFERENCESDIR ]; then
     mkdir $ZREFERENCESDIR
     cd $ZREFERENCESDIR
     echo "zreferencesdir created"
 else
-    ak-logthis "zreferencesdir found"
+    logthis "zreferencesdir found"
 fi
 
 _ak_modules_reference_create(){

@@ -1,6 +1,9 @@
 #!/bin/bash
 PROGRAM="$(basename $0)"
+descriptionString="Comments module for Arching Kaos"
+
 source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_script_description
 
 ZCOMMENTSDIR="$AK_WORKDIR/comments"
 TEMP="/tmp/aktmp"
