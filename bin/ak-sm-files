@@ -5,9 +5,10 @@ CRD=$(cat .pwd)
 
 PROGRAM="$(basename $0)"
 #set -xe
-source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_log
 source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_gpg
+source $AK_LIBDIR/_ak_zblock
 
 if [ ! -d $ZFILESDIR ]; then
     mkdir $ZFILESDIR
@@ -117,7 +118,7 @@ EOF
     cat data
     echo "Publishing..."
 
-    ak-zblock-pack sha-files/announce $(pwd)/data
+    _ak_zblock_pack sha-files/announce $(pwd)/data
     if [ $? == 0 ]
     then
         echo "cool"

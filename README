@@ -300,7 +300,7 @@ lib/_ak_gpg
 lib/_ak_newline
 lib/_ak_script_description
 lib/_ak_script_exit
-lib/_ak_logit
+lib/_ak_log
 
 IPFS Wrappers
 -------------

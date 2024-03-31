@@ -5,7 +5,7 @@
 # They also are a part of our swarm.
 # So should we ask for our peers?
 
-source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_log
 source $AK_LIBDIR/_ak_ipfs
 
 _ak_ipfs_swarm_peers > tmp_peers

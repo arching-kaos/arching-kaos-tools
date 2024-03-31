@@ -1,10 +1,10 @@
 #!/bin/bash
 PROGRAM="$(basename $0)"
 
-source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_log
 
 screen -dmS akipfsd ak-ipfs-daemon
-if [ "$?" != "0" ]
+if [ $? -ne 0 ]
 then
     logit "ERROR" "Failed to start IPFS daemon"
     exit 1

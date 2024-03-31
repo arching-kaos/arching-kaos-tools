@@ -1,9 +1,9 @@
 #!/bin/bash
-source $AK_LIBDIR/_ak_logit
-IPFS_REPO="$AK_WORKDIR/ipfsrepo"
+source $AK_LIBDIR/_ak_log
+AK_IPFS_REPO="$AK_WORKDIR/ipfsrepo"
 
 _ak_ipfs(){
-    export IPFS_PATH=$IPFS_REPO; ipfs $*
+    export IPFS_PATH=$AK_IPFS_REPO; ipfs $*
 }
 
 _ak_ipfs_get_peers(){
@@ -224,7 +224,7 @@ _ak_ipfs_starter(){
 _ak_ipns_resolve(){
     if [ ! -z $1 ]
     then
-        rsld=$(ak-ipfs-name-resolve $1)
+        rsld=$(_ak_ipfs_name_resolve $1)
         if [ $? -ne 0 ]
         then
             logit "ERROR" "Failed to resolve $1"
@@ -233,12 +233,11 @@ _ak_ipns_resolve(){
         echo -n $rsld | sed -e 's/\/ipfs\///'
         logit "INFO" "Resolved $1 to $rsld"
     else
-        exit 69
+        exit 1
     fi
 }
 
 _ak_ipfs_check(){
-
     _ak_ipfs_files_ls /zarchive > /dev/null
     if [ $? != 0 ]
     then
@@ -279,5 +278,61 @@ _ak_ipfs_check(){
         fi
     else
         logit "INFO" "ak-config is there"
+    fi
+}
+
+_ak_ipfs_init(){
+    if [ ! -d $AK_IPFS_REPO ]
+    then
+        mkdir $AK_IPFS_REPO
+        _ak_ipfs init
+
+    fi
+}
+
+_ak_ipfs_download(){
+    logit "INFO" "Attempting to install IPFS..."
+    IPFS_VERSION="$(curl -s https://dist.ipfs.tech/kubo/versions | tail -1)"
+    IPFS_TARGET_FILE="kubo_"$IPFS_VERSION"_linux-amd64.tar.gz"
+
+    logit "INFO" "Downloading ipfs $IPFS_VERSION"
+    if [ ! -f $AK_ARCHIVESDIR/$IPFS_TARGET_FILE ]
+    then
+        wget -O $AK_ARCHIVESDIR/$IPFS_TARGET_FILE https://dist.ipfs.tech/kubo/$IPFS_VERSION/$IPFS_TARGET_FILE ;
+    else
+        logit "INFO" "Already have the latest version"
+        exit 0
+    fi
+}
+
+_ak_ipfs_cid_v0_check () {
+    if [ -z $1 ] || [ "$1" != "" ]
+    then
+        echo $1 | grep -e 'Qm.\{44\}' > /dev/null
+        if [ "$?" -ne 0 ]
+        then
+            logit "ERROR" "$1 is not an IPFS CIDv0 string"
+            exit 1
+        fi
+        logit "INFO" "$1 provided is an IPFS CIDv0 string"
+    else
+        logit "ERROR" "No argument was provided"
+        exit 1
+    fi
+}
+
+_ak_ipfs_swarm_install() {
+    SWARMSHA512SUM="7001e37412758c43d372a969e977ca11511e034c8c1e233a58dc3ce1c6f3c1aa7d2da8cba9944a5eabaa8885742bfe6cc6794224c146b7129da8f633b53b9cfc"
+
+    if [ ! -f $AK_IPFS_REPO/swarm.key ]
+    then
+        logit "INFO" "Downloading swarm key"
+        wget -O $AK_IPFS_REPO/swarm.key https://arching-kaos.net/files/swarm.key
+    elif [ -f $AK_IPFS_REPO/swarm.key ] && [ "$(sha512sum $AK_IPFS_REPO/swarm.key | awk '{ print $1 }')" == "$SWARMSHA512SUM" ]
+    then
+        logit "INFO" "Congrats! You are already in our swarm"
+    else
+        logit "ERROR" "Found swarm.key but not ours"
+        logit "ERROR" "Visit https://arching-kaos.net/files/swarm.key and copy it to your ipfs folder"
     fi
 }

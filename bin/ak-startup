@@ -2,6 +2,6 @@
 PATH=$PATH:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:$HOME/bin:$HOME/.arching-kaos/bin
 screen -dmS ipfs-daemon ipfs daemon
 source $HOME/.arching-kaos/rc
-ak-logrotate
+ak-log-rotate
 screen -dmS akdaemon ak-daemon > $AK_WORKDIR/akd.log 2> $AK_WORKDIR/akd.err & printf '%s' "$!" > $AK_WORKDIR/akd.pid
 # ak-logfollow

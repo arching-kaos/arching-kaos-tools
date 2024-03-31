@@ -1,9 +1,18 @@
 #!/bin/bash
-MINED_BLOCKS_DIR="/home/$USER/.arching-kaos/mined_blocks"
-cd $MINED_BLOCKS_DIR
+cd $AK_MINEDBLOCKSDIR
 PROGRAM="$(basename $0)"
 declare -A counters
-source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_ipfs
+
+if [ ! -z $1 ] && [ -n "$1" ]
+then
+    if [ "$1" == "-h" ] || [ "$1" == "--help" ]
+    then
+        echo "$PROGRAM - Finds longest schain from the $AK_MINEDBLOCKSDIR dir">&2
+        exit 2
+    fi
+fi
 
 further(){
 	# logit "INFO" "Diving into $1"
@@ -41,31 +50,33 @@ lookfor(){
 	fi
 }
 
-ls -1 > tmplistblock
+templistblock="$(mktemp)"
+find . -type f | sed 's/^\.\/000/000/g' | grep '^000'  | sort > $templistblock
 while IFS="" read -r p || [ -n "$p" ]
 do
 #	if [ ! "$p" = "" ] && [ ! "$p" = "tmplistblock" ]
 	if [ "$(echo $p | tr -d '\n' | wc -c)" = 128 ]
 	then
-		logit "INFO" "Investigating $p..."
-		export CHAIN_PARENT="$p"
+        filename="$(basename $p)"
+		logit "INFO" "Investigating $filename..."
+		export CHAIN_PARENT="$filename"
 		counters[$CHAIN_PARENT]=1
-		lookfor "$p"
+		lookfor "$filename"
 	else
-		logit "WARNING" "Nothing to do with $p"
+		logit "WARNING" "Nothing to do with $filename"
 	fi
-done < tmplistblock
-rm tmplistblock
+done < $templistblock
+rm $templistblock
 max=0
 max_holder=0
 for value in "${!counters[@]}"
 do
-#	echo "${value} : ${counters[${value}]}"
-	if [ ${counters[${value}]} -gt $max  ]
-	then
-		max="${counters[${value}]}"
-		max_holder="${value}"
-		logit "INFO" "New MAX $max on $max_holder"
-	fi	
+    #	echo "${value} : ${counters[${value}]}"
+    if [ ${counters[${value}]} -gt $max  ]
+    then
+        max="${counters[${value}]}"
+        max_holder="${value}"
+        logit "INFO" "New MAX $max on $max_holder"
+    fi
 done
 echo '{"latest_block":"'$max_holder'"}'

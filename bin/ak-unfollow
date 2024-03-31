@@ -1,5 +1,7 @@
 #!/bin/bash
 PROGRAM="$(basename $0)"
+source $AK_LIBDIR/_ak_config
+source $AK_LIBDIR/_ak_ipfs
 FOLLOWING="$HOME/.arching-kaos/following"
 fentries="$(cat $FOLLOWING)"
 if [ ! -z $1 ]

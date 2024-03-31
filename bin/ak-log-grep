@@ -1,0 +1,21 @@
+#!/bin/bash
+PROGRAM="$(basename $0)"
+descriptionString="Shows a menu to grep logfile for selected script"
+source $AK_LIBDIR/_ak_script_description
+if [ ! -z $1 ] && [ -n "$1" ]
+then
+    if [ "$1" == "-h" ] || [ "$1" == "--help" ]
+    then
+        description
+        echo "Launch with no arguments and select from the menu that will appear"
+        exit 1
+    fi
+fi
+
+echo "The following scripts have entries in the log file."
+echo "Select one of those by entering the number of it below and hit enter:"
+select x in $(cat $AK_LOGSFILE | cut -d ' ' -f 2 | sort | uniq)
+do
+    grep $x $AK_LOGSFILE
+    break
+done

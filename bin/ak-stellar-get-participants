@@ -3,7 +3,7 @@ PROGRAM="$(basename $0)"
 tempdir=`mktemp -d`
 tempfile="$tempdir/tmp"
 tempaddr="$tempdir/tmpaddr"
-source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_log
 
 stellarParticipants="$AK_WORKDIR/stellar-network-participants"
 stellarParticipantsOnline="$AK_WORKDIR/stellar-network-participants-online"

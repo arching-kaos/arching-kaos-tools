@@ -1,5 +1,20 @@
 #!/bin/bash
-PROGRAM="$(basename $0)"
+##
+## Brief description
+##
+## Usage:
+##
+##    -h, --help                  Prints this help message
+##
+##    --ipfs
+##
+##    --ipns
+##
+fullprogrampath="$(realpath $0)"
+PROGRAM=$(basename $0)
+descriptionString="Quick description"
+source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_script
 source $AK_LIBDIR/_ak_ipfs
 # Resolves the IPNS key "ak-config" to its current IPFS value
 # Return IPFS CIDv0 without /ipfs/ prefix
@@ -13,23 +28,23 @@ _ak_node_info_ipns_key(){
     _ak_ipfs_key_list_full | grep ak-config | awk '{print $1}'
 }
 
-_ak_node_info_usage(){
-    echo "$PROGRAM ipfs | ipns"
-}
 
 if [ ! -z "$1" ]
 then
     case "$1" in
-        ipfs)
+        -h|--help)
+            _ak_usage
+            ;;
+        --ipfs)
             _ak_node_info_ipfs_hash
             ;;
-        ipns)
+        --ipns)
             _ak_node_info_ipns_key
             ;;
         *)
-            _ak_node_info_usage
+            _ak_usage
             ;;
     esac
 else
-    _ak_node_info_usage
+    _ak_usage
 fi

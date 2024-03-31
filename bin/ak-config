@@ -1,26 +1,21 @@
 #!/bin/bash
+##
+## Usage:    ak-config [ -h | --help | show | publish | get-published ]
+##
+##     -h, --help       Show this help screen
+##
+##     show             Show current configuration (from FileSystem)
+##
+##     publish          Publish current configuration
+##
+##     get-published    Get published ak-config (from IPFS)
+##
+fullprogrampath="$(realpath $0)"
 PROGRAM="$(basename $0)"
 descriptionString="Arching Kaos Configuration Tool"
 
-source $AK_LIBDIR/_ak_script_description
+source $AK_LIBDIR/_ak_script
 source $AK_LIBDIR/_ak_ipfs
-
-_ak_config_title(){
-    description
-}
-
-_ak_config_usage(){
-    _ak_config_title
-    echo ""
-    echo "Usage:    $PROGRAM [ -h | --help | show | publish | get-published ]"
-    echo ""
-    echo "    -h, --help       Show this help screen"
-    echo "    show             Show current configuration (from FileSystem)"
-    echo "    publish          Publish current configuration"
-    echo "    get-published    Get published ak-config (from IPFS)"
-    echo ""
-    exit 0
-}
 
 _ak_config_show(){
     # We will be using our public key also to put it in the block later
@@ -62,12 +57,12 @@ _ak_config_published(){
 
 if [ ! -z $1 ]; then
     case $1 in
-        --help| -h) _ak_config_usage;exit;;
+        --help| -h) _ak_usage;exit;;
         show) _ak_config_show;exit;;
         publish) _ak_config_publish;exit;;
         get-published) _ak_config_published;exit;;
-        *) _ak_config_usage;exit;;
+        *) _ak_usage;exit;;
     esac
 else
-    _ak_config_usage
+    _ak_usage
 fi

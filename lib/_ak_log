@@ -1,0 +1,5 @@
+#!/bin/bash
+
+logit(){
+    ak-log-message "$PROGRAM" "$1" "$2"
+}

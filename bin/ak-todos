@@ -1,19 +1,35 @@
 #!/bin/bash
+##
+## Brief description
+##
+## Usage:
+##
+##    -h, --help        Prints this help message
+##
+##    index             Prints an indexed table of your todos files
+##
+##    import <file>     #TODO
+##
+##    add <file>        Creates a data file from the todos file you point to
+##
+##    create            Vim is going to pop up, you will write and save your
+##                      todosletter and it's going to be saved
+##
+fullprogrampath="$(realpath $0)"
+PROGRAM=$(basename $0)
+descriptionString="Quick description"
 PROGRAM="$(basename $0)"
-source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_script
 source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_gpg
+source $AK_LIBDIR/_ak_zblock
 
 ZTODOSDIR="$AK_WORKDIR/todos"
 TEMP="/tmp/aktmp"
 if [ ! -d $ZTODOSDIR ]; then
     mkdir $ZTODOSDIR
     cd $ZTODOSDIR
-    git init
-    echo "Todos repository" > README
-    echo "Qmetc" >> README
-    git add README
-    git commit -m "Initiated todos repository"
     logit "INFO" "ztodosdir created along with git repo"
 else
     logit "INFO" "ztodosdir found"
@@ -29,15 +45,12 @@ _ak_modules_todos_create(){
     TO_FILE=$TODOS_FILE-$(echo $TITLE | tr '[:upper:]' '[:lower:]' | sed -e 's/ /\_/g' )
     IPFS_FILE=$(_ak_ipfs_add $TODOS_FILE)
     mv $TODOS_FILE $ZTODOSDIR/$TO_FILE
-    sed -e 's,Qm.*,'"$IPFS_FILE"',g' $ZTODOSDIR/README
     _ak_modules_todos_add $ZTODOSDIR/$TO_FILE
     logit "INFO" "Adding to git repo..."
     cd $ZTODOSDIR
-    git add $TO_FILE README
-    git commit -m "Added $TO_FILE with $(head -n 1 $ZTODOSDIR/$TO_FILE)"
-    git clean --force
     # rm -rf $TEMP
 }
+
 _ak_modules_todos_index(){
     FILES="$(ls -1 $ZTODOSDIR)"
     i=0
@@ -49,10 +62,7 @@ _ak_modules_todos_index(){
         let i+=1
     done
 }
-_ak_modules_todos_title(){
-    echo    ak-todos-cli
-    echo "--------------"
-}
+
 _ak_modules_todos_import(){
     echo "#TODO"
     if [ ! -z $1 ]
@@ -75,6 +85,7 @@ _ak_modules_todos_import(){
     fi
     exit 224
 }
+
 _ak_modules_todos_add(){
     TEMP="$(ak-tempassin)"
     cd $TEMP
@@ -97,37 +108,27 @@ _ak_modules_todos_add(){
 }
 EOF
     else
-        echo "File $FILE doesn't exist";
+        logit "ERROR" "File $FILE doesn't exist";
         exit 2
     fi
-    ak-zblock-pack "todos/add" $(pwd)/data
+    _ak_zblock_pack "todos/add" $(pwd)/data
     if [ $? == 0 ]
     then
         logit "INFO" "Todos added successfully"
     else
-        echo "error??"
+        logit "ERROR" "error?? _ak_zblock_pack failed"
         exit 1
     fi
 }
-_ak_modules_todos_usage(){
-    _ak_modules_todos_title
-    echo ""
-    echo "-h, --help        Prints this help message"
-    echo "index             Prints an indexed table of your todos files"
-    echo "import <file>     #TODO"
-    echo "add <file>        Creates a data file from the todos file you point to"
-    echo "create            Vim is going to pop up, you will write and save your"
-    echo "                  todosletter and it's going to be saved"
-    exit 0
-}
+
 if [ ! -z $1 ]; then
     case $1 in
-        -h | --help) _ak_modules_todos_usage; exit;;
+        -h | --help) _ak_usage; exit;;
         index) _ak_modules_todos_index; exit;;
         import) _ak_modules_todos_import $2; exit;;
         add) _ak_modules_todos_add $2; exit;;
         create) _ak_modules_todos_create; exit;;
-        * ) _ak_modules_todos_usage;;
+        * ) _ak_usage;;
     esac
-else _ak_modules_todos_usage
+else _ak_usage
 fi

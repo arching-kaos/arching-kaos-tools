@@ -1,6 +1,9 @@
 #!/bin/bash
+##
+##    -h, --help                  Prints this help message
+##
 PROGRAM="$(basename $0)"
-source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_log
 source $AK_LIBDIR/_ak_ipfs
 
 fix="0"

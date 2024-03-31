@@ -1,0 +1,620 @@
+#!/bin/bash
+source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_script
+source $AK_LIBDIR/_ak_gpg
+
+_ak_zblock_show(){
+# _ak_zblock_show
+# ak-zblock [IPFS CID]
+#
+# Returns a JSON array representing the chain retrieved.
+# Logs messages to $LOGSFILE.
+    verify=1
+    if [ ! -z "$1" ] && [ "$1" == "-h" ] || [ "$1" == "--help" ]
+    then
+        usage
+        exit
+    elif [ ! -z "$1" ]
+    then
+        echo $1 | grep -e 'Qm.\{44\}' >/dev/null
+        if [ $? -ne 0 ]
+        then
+            logit "ERROR" "Argument provided ($1) was not an IPFS CIDv0 string"
+            exit 1
+        fi
+        entrance="$1"
+    else
+        entrance="$(cat $AK_ZLATEST)"
+    fi
+    ak-enter -l 1 "$entrance" > "$AK_CACHEDIR/fzblocks/$entrance"
+}
+# _ak_zblock_manipulator(){
+# #!/bin/bash
+# # This file describe the structure of the ArchingKaos messages in their basis.
+# #
+# # As previously thought, we exchange one IPFS hash through whatever means we can.
+# #
+# # GPG is mentioned as a signing algorithm for encryption, decryption and signing.
+# # Let's say we have a file named as `example`
+# #
+# # We can extend this with calling the encoder and further send the transaction
+# #
+# 
+# #FINGERPRINT="CHANGE THIS TO YOUR DEFAULT FINGERPRINT"
+# # We acquire the GPG fingerprint by email address
+# # The following example finds kaos@kaos.kaos' GPG fingerprint like this
+# # FINGERPRINT="$(gpg2 --homedir $AK_GPGHOME --list-keys | grep kaos@kaos.kaos -1 | head -n1 | awk '{print $1}')"
+# 
+# # Below, the usage information
+# PROGRAM="$(basename $0)"
+# source $AK_LIBDIR/_ak_log
+# source $AK_LIBDIR/_ak_ipfs
+# source $AK_LIBDIR/_ak_gpg
+# 
+# usage(){
+# 	echo "Usage:"	
+# 	echo "$PROGRAM -b block_file | -h block_hash | dunno"
+# 	echo "Creates and publishes a ZBLOCK based on a block and a previous"
+# 	echo "zblock."
+# 	echo ""
+# 	echo "Either -b or -h is needed. If both, -h is used."
+# 	echo ""
+# 	echo "-b block_file		Points to a block file that we want to fix."
+# 	echo "-h block_hash		If we don't have the block as a file, we can"
+# 	echo "				use it's hash to retrieve it and edit it."
+# 	echo "-p previous_hash		We refering to a previous hash for a ZBLOCK."
+# 	echo ""
+# 	echo "#TODO:"
+# 	echo "-t timestamp		Unix UTC timestamp in seconds."
+# 	echo "-a \"module/action\"	Change the action tag. Format: object/verb."
+# 	echo "				In sense, \"Add news -> news/add\"."
+# 	echo "-d data			In case you want to change the data, you 'll"
+# 	echo "				be changing potentially the key of the block"
+# 	echo "				and the data signature, otherwise your block"
+# 	echo "				will be unverified."
+# 	echo ""
+# }
+# 
+# main(){
+# 
+# 	logit "INFO" "We are doing" $BLOCK_TO_ADD "with content" $PREVIOUS
+# 	# We add it to IPFS
+# 	MESSAGE_HASH=$(_ak_ipfs_add $MESSAGE)
+# 
+# 	# We create a detached and armor signature of it
+# 	MESSAGE_SIGN_FILE=$MESSAGE".asc"
+# 	_ak_gpg_sign_detached $MESSAGE_SIGN_FILE $MESSAGE
+# 
+# 	# We add the signature to IPFS
+# 	MESSAGE_SIGNATURE=$(_ak_ipfs_add $MESSAGE_SIGN_FILE)
+# 
+# 	# We will be using our public key also to put it in the block later
+# 	KEY="gpg.pub"
+#     _ak_gpg_key_self_export $KEY
+# 	GPG_PUB_KEY=$(_ak_ipfs_add $KEY)
+# 
+# 	# Acquire last block of information, to chain this one with previous posted
+# 	PREVIOUS=$(_ak_ipfs_files_stat /zlatest | head -n 1)
+# 
+# 	# We create a block of json like this:
+# 	cat > block <<EOF
+# {
+#     "timestamp":"$(date -u +%s)",
+#     "action":"$ACTION",
+#     "data":"$MESSAGE_HASH",
+#     "detach":"$MESSAGE_SIGNATURE",
+#     "gpg":"$GPG_PUB_KEY",
+#     "previous":"$PREVIOUS"
+# }
+# EOF
+# }
+# makeZBlock(){
+# 	BLOCK="block"
+# 	BLOCK_SIG=$BLOCK".asc"
+# 	# We have a block now, so we sign it
+# 	_ak_gpg_sign_detached $BLOCK_SIG $BLOCK
+# 
+# 	# We now add the signature to IPFS
+# 	BLOCK_SIGNATURE=$(_ak_ipfs_add $BLOCK_SIG)
+# 
+# 	# We also add the block!
+# 	BLOCK=$(_ak_ipfs_add $BLOCK)
+# 
+# 	# So we now do the think almost again
+# 	cat > zblock << EOF
+# {
+#     "block":"$BLOCK",
+#     "block_signature":"$BLOCK_SIGNATURE"
+# }
+# EOF
+# 	ZBL="zblock"
+# 	# and we add it on IPFS
+# 	ZBLOCK=$(_ak_ipfs_add $ZBL)
+# 	echo $ZBLOCK
+# }
+# 
+# if [ ! -z $2 ];
+# then
+# 	PWD="$(pwd)"
+# 
+# 	# We ask which BLOCK is goind to be edited
+# 	BLOCK_TO_ADD="$1"
+# 	# We ask for a ZBLOCK or GENESIS to put in the BLOCK
+# 	PREVIOUS="$2"
+# 
+# 	_ak_ipfs_cat "$BLOCK_TO_ADD"
+# 	if [ $? == 0 ];
+# 	then
+# 		echo "Nice! We found the block"
+# 		_ak_ipfs_get "$BLOCK_TO_ADD"
+# 
+# 		sed -i.bak -e 's/^.*previous.*$/\"previous\":\"'$PREVIOUS'\"/' $BLOCK_TO_ADD
+# 		cat $BLOCK_TO_ADD | jq -M
+# 
+# 		exit 2
+# 	else
+# 		echo "Too bad, it seems the block is not there"
+# 		exit 1
+# 	fi
+# 
+# 	# cat $PWD/zblock | jq -M
+# 	# Optional or extending with
+# 	# python send_as_ak_tx $ZBLOCK
+# 	# or for "offline" use
+# 	echo $ZBLOCK > $ZLATEST
+# 	_ak_ipfs_name_publish --key=zchain $ZBLOCK > /dev/null 2>&1
+# 	_ak_ipfs_files_mkdir /zarchive > /dev/null 2>&1
+# 	_ak_ipfs_files_cp /zlatest /zarchive/$(date -u +%s)-$(_ak_ipfs_files_stat /zlatest | head -n 1) > /dev/null 2>&1
+# 	_ak_ipfs_files_rm /zlatest > /dev/null 2>&1
+# 	_ak_ipfs_files_cp /ipfs/$ZBLOCK /zlatest > /dev/null 2>&1
+# else
+# 	usage
+# 	exit 0
+# fi
+#
+# }
+
+_ak_zblock_gen_html(){
+    time_started=$(date -u +%s.%N)
+    ss=$(echo $time_started | cut -d '.' -f 1)
+    nss=$(echo $time_started | cut -d '.' -f 2)
+    # Check if there are enough arguments
+    if [ $# -lt 1 ]
+    then
+        logit "ERROR" "Not enough arguments provided"
+        _ak_help
+        exit 1
+    fi
+
+    if [ -n "$1" ]
+    then
+        TEST="$(echo -n "$1" | grep -v '^Qm[A-Za-z0-9]\{44\}$')"
+        if [ -n "$TEST" ]
+        then
+            echo not ok
+            exit 1
+        fi
+    fi
+
+    arg="$(mktemp)"
+    ak-enter -l 1 "$1" | jq '.[]' > $arg
+
+    ( \
+    # Create HTML document
+    echo "<!DOCTYPE html>"
+    echo "<html>"
+    echo "<head>"
+    echo "    <title>Arching Kaos Chain Data</title>"
+    echo '    <meta charset="UTF-8">'
+    echo '    <meta name="viewport" content="width=device-width, initial-scale=1">'
+    echo '    <style>
+        body {
+            background-color: #000;
+            color: lightgreen;
+            padding: 2%;
+            width: auto;
+            font-family: monospace;
+            font-size: 1rem;
+        }
+        h1, h2, h3, h4 {
+            text-align: left;
+        }
+        td {
+            text-align: initial;
+            background-color: #090909;
+            border: 1px dashed #444;
+            font-size: 1rem;
+            padding: 1vh 1vw;
+            margin: 0;
+        }
+        p, summary {
+            background: #061624;
+            border: 1px solid #827c7c;
+            padding: 1vh 1vw;
+            margin: 0;
+            color: lightgreen;
+            font-style: normal;
+            text-decoration: none;
+        }
+        summary:hover {
+            background: lightgreen;
+            color: #061624;
+        }
+        a {
+            color: #042746;
+            background-color: lightyellow;
+            border: 1px solid #827c7c;
+            padding: 1vh 1vw;
+            margin: 0;
+            font-style: normal;
+            text-decoration: none;
+        }
+        a:hover {
+            background-color: lightgreen;
+            color: #042746;
+        }
+        details {
+            /*! padding: 1vh 1vw; */
+            border: 1px dotted;
+            background-color: #1d4055;
+        }
+        footer {
+            text-align: center;
+        }
+        </style>'
+    echo "</head>"
+    echo "<body>"
+
+    # Iterate through each argument and parse data
+    if [ -f "$arg" ]
+    then
+        # Extract data from argument
+        zblock=$(cat $arg | jq -r '.zblock')
+        block=$(cat $arg | jq -r '.block')
+        timestamp=$(cat $arg | jq -r '.timestamp')
+        block_signature=$(cat $arg | jq -r '.block_signature')
+        detach=$(cat $arg | jq -r '.detach')
+        data=$(cat $arg | jq -r '.data')
+        module=$(cat $arg | jq -r '.module')
+        action=$(cat $arg | jq -r '.action')
+        gpg=$(cat $arg | jq -r '.gpg')
+        previous=$(cat $arg | jq -r '.previous')
+        datablock=$(cat $arg | jq -r ".$data")
+
+        # Output data in HTML format
+        echo "    <h1>$PROGRAM</h1>"
+        echo "    <h2>🔎 $zblock</h2>"
+        if [ "$module" == "news" ] && [ "$action" == "add" ]
+        then
+            ak-news -x $zblock
+        fi
+        echo "    <h2>ℹ️ $zblock</h2>"
+        echo "    <table>"
+        echo "        <tr>"
+        echo "            <td>"
+        echo "    <pre>📦 ZBLOCK</pre>"
+        echo "            </td>"
+        echo "            <td>"
+        echo "    <details>"
+        echo "        <summary>$zblock</summary>"
+        echo "        <pre>$(_ak_ipfs_cat $zblock | jq)</pre>"
+        echo "    </details>"
+        echo "            </td>"
+        echo "        </tr>"
+        echo "        <tr>"
+        echo "            <td>"
+        echo "    <pre>📦 BLOCK</pre>"
+        echo "            </td>"
+        echo "            <td>"
+        echo "    <details>"
+        echo "        <summary>$block</summary>"
+        echo "        <pre>$(_ak_ipfs_cat $block | jq)</pre>"
+        echo "    </details>"
+        echo "            </td>"
+        echo "        </tr>"
+        echo "        <tr>"
+        echo "            <td>"
+        echo "    <pre>🔏 BLOCK SIGNATURE</pre>"
+        echo "            </td>"
+        echo "            <td>"
+        echo "    <details>"
+        echo "        <summary>$block_signature</summary>"
+        echo "        <pre>$(_ak_ipfs_cat $block_signature)</pre>"
+        echo "    </details>"
+        echo "            </td>"
+        echo "        </tr>"
+        echo "        <tr>"
+        echo "            <td>"
+        echo "    <pre>⌚ TIMESTAMP</pre>"
+        echo "            </td>"
+        echo "            <td>"
+        echo "    <p>$timestamp</p>"
+        echo "            </td>"
+        echo "        </tr>"
+        echo "        <tr>"
+        echo "            <td>"
+        echo "    <pre>🔌 MODULE</pre>"
+        echo "            </td>"
+        echo "            <td>"
+        echo "    <p>$module</p>"
+        echo "            </td>"
+        echo "        </tr>"
+        echo "        <tr>"
+        echo "            <td>"
+        echo "    <pre>🪧 ACTION</pre>"
+        echo "            </td>"
+        echo "            <td>"
+        echo "    <p>$action</p>"
+        echo "            </td>"
+        echo "        </tr>"
+        echo "        <tr>"
+        echo "            <td>"
+        echo "    <pre>🔑 GPG</pre>"
+        echo "            </td>"
+        echo "            <td>"
+        echo "    <details>"
+        echo "        <summary>$gpg</summary>"
+        echo "        <pre>$(_ak_ipfs_cat $gpg)</pre>"
+        echo "    </details>"
+        echo "            </td>"
+        echo "        </tr>"
+        echo "        <tr>"
+        echo "            <td>"
+        echo "    <pre>📦 PREVIOUS</pre>"
+        echo "            </td>"
+        echo "            <td>"
+        echo '    <a target="_blank" href="http://z.kaotisk-hund.com/files/zblocks-as-html/zblock-'$previous'.html">🔗 '$previous'</a>'
+        echo "            </td>"
+        echo "        </tr>"
+        echo "        <tr>"
+        echo "            <td>"
+        echo "    <pre>📦 DATA</pre>"
+        echo "            </td>"
+        echo "            <td>"
+        echo "    <details>"
+        echo "        <summary>$data</summary>"
+        echo "        <pre>$datablock</pre>"
+        echo "    </details>"
+        echo "            </td>"
+        echo "        </tr>"
+        echo "        <tr>"
+        echo "            <td>"
+        echo "    <pre>🔏 DATA_SIGNATURE</pre>"
+        echo "            </td>"
+        echo "            <td>"
+        echo "    <details>"
+        echo "        <summary>$detach</summary>"
+        echo "        <pre>$(_ak_ipfs_cat $detach)</pre>"
+        echo "    </details>"
+        echo "            </td>"
+        echo "        </tr>"
+        echo "        <tr>"
+        echo "            <td>"
+        echo "    <pre>📄 ipfs</pre>"
+        echo "            </td>"
+        echo "            <td>"
+        echo '    <a target="_blank" href="http://gw.ipfs.z.kaotisk-hund.com/ipfs/'$(echo $datablock | jq -r '.ipfs')'">'🔗 $(echo $datablock | jq -r '.ipfs')'</a>'
+        echo "            </td>"
+        echo "        </tr>"
+        echo "        <tr>"
+        echo "            <td>"
+        echo "    <pre>🔏 detach</pre>"
+        echo "            </td>"
+        echo "            <td>"
+        echo "    <details>"
+        echo "        <summary>$(echo $datablock | jq -r '.detach')</summary>"
+        echo "        <pre>$(_ak_ipfs_cat $(echo $datablock | jq -r '.detach'))</pre>"
+        echo "    </details>"
+        echo "            </td>"
+        echo "        </tr>"
+        echo "    </table>"
+        echo "    <table>"
+        echo "        <tr>"
+        echo "            <td>"
+        echo "    <pre>📃 Rendered ZBLOCK</pre>"
+        echo "            </td>"
+        echo "        </tr>"
+        echo "        <tr>"
+        echo "            <td>"
+        echo "    <pre>$(cat $arg | jq)</pre>"
+        echo "            </td>"
+        echo "        </tr>"
+        echo "    </table>"
+    fi
+    time_ended=$(date -u +%s.%N)
+    se=$(echo $time_ended | cut -d '.' -f 1)
+    nse=$(echo $time_ended | cut -d '.' -f 2)
+    echo "    <hr>"
+    echo -n "    <footer>Generated by $PROGRAM on $(datehuman) in $(( $se - $ss ))."
+    if [ $nse -lt $nss ]
+    then
+        echo "$(( 1$nse - $nss )) seconds</footer>"
+    else
+        echo "$(( $nse - $(echo -n $nss|sed 's/^0*//') )) seconds</footer>"
+    fi
+
+    echo "</body>"
+    echo "</html>" ) > zblock-$1.html
+
+    rm $arg
+}
+
+_ak_zblock_cache(){
+    if [ ! -d "$AK_CACHEDIR/fzblocks" ]
+    then
+        mkdir $AK_CACHEDIR/fzblocks
+    fi
+
+    if [ ! -z "$1" ] && [ -n "$1" ]
+    then
+        if [ -f "$AK_ZBLOCKDIR/$1" ] && [ "$(du -b $AK_ZBLOCKDIR/$1 | awk '{ print $1 }')" != "0" ]
+        then
+            if [ "$(sha512sum $AK_ZBLOCKDIR/$1 | awk '{ print $1 }')" == "$(_ak_zblock_show $1 | sha512sum | awk '{ print $1 }')" ]
+            then
+                logit "INFO" "Cache already there and updated"
+            else
+                logit "INFO" "Updating cache"
+                _ak_zblock_show "$1" > $AK_CACHEDIR/fzblocks/$1
+            fi
+            logit "INFO" "No cache found. Caching..."
+            _ak_zblock_show "$1"
+            if [ $? -ne "0" ]
+            then
+                logit "ERROR" "_ak_zblock_show failed..."
+                exit 2
+            fi
+            _ak_zblock_show "$1" > $AK_CACHEDIR/fzblocks/$1
+        else
+            _ak_zblock_show "$1" > $AK_CACHEDIR/fzblocks/$1
+            if [ $? -ne "0" ]
+            then
+                logit "ERROR" "_ak_zblock_show failed..."
+                exit 2
+            fi
+            logit "ERROR" "Could not find zblock $1..."
+            exit 1
+        fi
+        exit 0
+    else
+        logit "ERROR" "No arguments..."
+        exit 1
+    fi
+
+}
+
+_ak_zblock_pack(){
+    if [ ! -z $2 ];
+    then
+        MESSAGE="$2"
+        ACTION="$1"
+        if [ -f "$MESSAGE" ]; then
+            # We check firstly if the encapsulated value of the "ipfs" key has already
+            # appeared in the zchain.
+            TO_CHECK="$(cat $MESSAGE | jq | grep ipfs | awk '{print $2}' | sed -e 's/"//g;s/,//g')"
+            ak-enter | jq | grep ipfs | awk '{print $2}' | sed -e 's/"//g;s/,//g' | sort | uniq > tempisalreadythere
+            while IFS="" read -r p || [ -n "$p" ]
+            do
+                if [ "$p" == "$TO_CHECK" ]
+                then
+                    logit "ERROR" "Value $TO_CHECK already mentioned on the zchain"
+                    exit 1
+                fi
+            done < tempisalreadythere
+            rm tempisalreadythere
+
+            logit "INFO" "We are doing $ACTION with content $MESSAGE"
+            # We add it to IPFS
+            MESSAGE_HASH=$(_ak_ipfs_add $MESSAGE)
+
+            # We create a detached and armor signature of it
+            MESSAGE_SIGN_FILE=$MESSAGE".asc"
+            _ak_gpg_sign_detached $MESSAGE_SIGN_FILE $MESSAGE
+
+            # We add the signature to IPFS
+            MESSAGE_SIGNATURE=$(_ak_ipfs_add $MESSAGE_SIGN_FILE)
+
+            # We will be using our public key also to put it in the block later
+            KEY="gpg.pub"
+            _ak_gpg_key_self_export $KEY
+            GPG_PUB_KEY=$(_ak_ipfs_add $KEY)
+
+            # Acquire last block of information, to chain this one with previous posted
+            PREVIOUS=$(_ak_ipfs_files_stat /zlatest | head -n 1)
+
+            # We create a block of json like this:
+            printf '{"timestamp":"%s","action":"%s","data":"%s","detach":"%s","gpg":"%s","previous":"%s"}' $(date -u +%s) $ACTION $MESSAGE_HASH $MESSAGE_SIGNATURE $GPG_PUB_KEY $PREVIOUS > block
+            BLOCK="block"
+            BLOCK_SIG=$BLOCK".asc"
+            # We have a block now, so we sign it
+            _ak_gpg_sign_detached $BLOCK_SIG $BLOCK
+
+            # We now add the signature to IPFS
+            BLOCK_SIGNATURE=$(_ak_ipfs_add $BLOCK_SIG)
+
+            # We also add the block!
+            BLOCK=$(_ak_ipfs_add $BLOCK)
+
+            # So we now do the think almost again
+            printf '{"block":"%s","block_signature":"%s"}' $BLOCK $BLOCK_SIGNATURE > zblock
+            ZBL="zblock"
+            # and we add it on IPFS
+            ZBLOCK=$(_ak_ipfs_add $ZBL)
+            echo $ZBLOCK
+        else
+            logit "ERROR" "File does not exist. Aborting..."
+            exit 1
+        fi
+
+        # cat $PWD/zblock | jq -M
+        # Optional or extending with
+        # python send_as_ak_tx $ZBLOCK
+        # or for "offline" use
+        echo $ZBLOCK > $AK_ZLATEST
+        _ak_ipfs_name_publish --key=zchain $ZBLOCK > /dev/null 2>&1
+        if [ $? -ne 0 ]
+        then
+            logit "ERROR" "Failed publishing ZBLOCK: $ZBLOCK"
+            exit 1
+        fi
+        _ak_ipfs_files_ls /zarchive > /dev/null 2>&1
+        if [ $? -ne 0 ]
+        then
+            logit "WARNING" "/zarchive does not exist"
+            _ak_ipfs_files_mkdir /zarchive > /dev/null 2>&1
+            if [ $? -ne 0 ]
+            then
+                logit "ERROR" "Could not create /zarchive directory. Aborting."
+                exit 1
+            fi
+        fi
+        _ak_ipfs_files_cp /zlatest /zarchive/$(date -u +%s)-$(_ak_ipfs_files_stat /zlatest | head -n 1) > /dev/null 2>&1
+        if [ $? -ne 0 ]
+        then
+            logit "ERROR" "Could not back up previous /zlatest"
+            exit 1
+        fi
+        _ak_ipfs_files_rm /zlatest > /dev/null 2>&1
+        if [ $? -ne 0 ]
+        then
+            logit "ERROR" "Could not remove previous /zlatest"
+            exit 1
+        fi
+        _ak_ipfs_files_cp /ipfs/$ZBLOCK /zlatest > /dev/null 2>&1
+        if [ $? -ne 0 ]
+        then
+            logit "ERROR" "Could not copy $ZBLOCK to /zlatest"
+            exit 1
+        fi
+        ak-config publish
+        if [ $? -ne 0 ]
+        then
+            logit "ERROR" "Could not publish new configuration"
+            exit 1
+        fi
+    else
+        logit "ERROR" "Not enough arguments"
+        exit 1
+    fi
+
+}
+
+_ak_zblock_announce(){
+    if [ ! -z "$1" ] && [ -n "$1" ]
+    then
+        curl http://127.0.0.1:8610/v0/announce/zblock --header 'Content-Type: application/json' --data-raw '{"zblock":"'$1'"}' 2>/dev/null | jq -M -c > /dev/null
+        if [ $? -ne 0 ]
+        then
+            logit "ERROR" "zblock $zblock announcement failed"
+        else
+            logit "INFO" "zblock $zblock announced"
+        fi
+    else
+        curl http://127.0.0.1:8610/v0/announce/zblock --header 'Content-Type: application/json' --data-raw '{"zblock":"'$(ak-get-zlatest)'"}' 2>/dev/null | jq -M -c > /dev/null
+        if [ $? -ne 0 ]
+        then
+            logit "ERROR" "zblock $zblock announcement failed"
+        else
+            logit "INFO" "zblock $zblock announced"
+        fi
+    fi
+}

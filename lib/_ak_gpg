@@ -1,5 +1,5 @@
 #!/bin/bash
-source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_log
 
 _ak_gpg(){
     gpg2 --homedir $AK_GPGHOME $*

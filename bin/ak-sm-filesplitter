@@ -41,7 +41,7 @@ TECHDIR="/tmp/tltmp/chks/"
 CURRENTDIR="$(pwd)/"
 
 # Our snippet for logging debug info
-source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_log
 
 # Checking directories and create them if necessary
 

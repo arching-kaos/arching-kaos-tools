@@ -13,49 +13,29 @@
 # ak-enter -N
 # ak-enter -h
 # ak-enter
+## ak-enter [-N | --no-verify] [-l | --limit <number>] [zblock]
+## ak-enter [-N | --no-verify] [-l | --limit <number>] -n <zchain>
+## Usage:
+##     --help, -h                             Print this help and exit
+##     --chain <ipns-link>, -n <ipns-link>    Crawl specified chain
+##     --no-verify, -N                        Don't verify signatures
+##     <ipfs-link>                            Specify IPFS CID for entrance
+##
+## Note that combined flags don't work for now
+## Running with no flags crawls your chain based on AK_ZLATEST environment
+## variable
 #
 # Returns a JSON array representing the chain retrieved.
 # Logs messages to $LOGSFILE.
 
+fullprogrampath="$(realpath $0)"
 PROGRAM="$(basename $0)"
 descriptionString="Crawl an arching kaos chain"
-source $AK_LIBDIR/_ak_logit
-source $AK_LIBDIR/_ak_script_description
+source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_script
 source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_gpg
 
-_ak_enter_title(){
-    description
-}
-
-_ak_enter_usage(){
-    _ak_enter_title
-    echo "$PROGRAM [-N | --no-verify] [-l | --limit <number>] [zblock]"
-    echo "$PROGRAM [-N | --no-verify] [-l | --limit <number>] -n <zchain>"
-    echo "Usage:"
-    echo "    --help, -h                             Print this help and exit"
-    echo "    --chain <ipns-link>, -n <ipns-link>    Crawl specified chain"
-    echo "    --no-verify, -N                        Don't verify signatures"
-    echo "    <ipfs-link>                            Specify IPFS CID for entrance"
-    echo ""
-    echo "Note that combined flags don't work for now"
-    echo "Running with no flags crawls your chain based on AK_ZLATEST environment variable"
-    exit 2
-}
-
-isIPFSv0 () {
-    if [ -z $1 ] || [ "$1" != "" ]
-    then
-        echo $1 | grep -e 'Qm.\{44\}' > /dev/null
-        if [ "$?" -ne 0 ]
-        then
-            logit "ERROR" "Argument provided was not an IPFS CIDv0 string"
-            exit 1
-        fi
-    else
-        exit 1
-    fi
-}
 # Start of tests
 #entrance="QmW5WVXCJfhb4peHG6cbEdamC24vZzMX2Vz386vpENh38U"
 #entrance="QmNjQq7GkuXGF8kFT1z2Mv3i4JhY7sBXVUmHDiR1zkQjoE"
@@ -70,7 +50,7 @@ fromIpns=0
 while [ "$#" ]; do
     case "$1" in
         -h | --help)
-            _ak_enter_usage
+            _ak_usage
             ;;
         -l | --limit)
             limit=$2
@@ -97,7 +77,7 @@ while [ "$#" ]; do
             test="$1"
             if [ ! -z "$test" ] && [ "$fromIpns" == "0" ]
             then
-                isIPFSv0 "$test"
+                _ak_ipfs_cid_v0_check "$test"
                 entrance="$test"
             elif [ -z "$entrance" ] && [ "$fromIpns" == "1" ]
             then
@@ -141,7 +121,7 @@ do
             # Announce to logs which ZBLOCK is being read at the moment
             logit "INFO" "Examining $zblock"
 
-            isIPFSv0 "$zblock"
+            _ak_ipfs_cid_v0_check "$zblock"
 
             # We check if any $zblock at all
             _ak_ipfs_cat $zblock | jq -c -M > $AK_ZBLOCKDIR/$zblock
@@ -174,7 +154,7 @@ do
                 logit "ERROR" "ZBLOCK $zblock has no block"
                 exit 1
             fi
-            isIPFSv0 "$block"
+            _ak_ipfs_cid_v0_check "$block"
             logit "INFO" "ZBLOCK $zblock has block"
 
             block_signature="$(cat $AK_ZBLOCKDIR/$zblock | jq -M -r .block_signature)"
@@ -183,7 +163,7 @@ do
                 logit "ERROR" "ZBLOCK $zblock doesn't contain a block_signature"
                 exit 1
             fi
-            isIPFSv0 "$block_signature"
+            _ak_ipfs_cid_v0_check "$block_signature"
             logit "INFO" "ZBLOCK $zblock contains a block_signature"
 
             # Same as above applies to BLOCK and DATA subparts of each ZBLOCK
@@ -271,7 +251,7 @@ do
             fi
 
             data="$(cat $AK_BLOCKDIR/$block | jq -M -r .data)"
-            isIPFSv0 "$data"
+            _ak_ipfs_cid_v0_check "$data"
             ak-data-expand $data $gpg
             if [ "$?" -ne 0 ]
             then

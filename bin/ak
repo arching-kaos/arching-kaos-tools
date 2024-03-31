@@ -1,8 +1,14 @@
 #!/bin/bash
-
-PROGRAM=$(basename $0)
-source $AK_LIBDIR/_ak_logit
-source $AK_LIBDIR/_ak_script_exit
+##
+##    -h, --help                  Prints this help message
+##
+## Run with no arguments to see available commands
+##
+fullprogrampath="$(realpath $0)"
+PROGRAM="$(basename $0)"
+descriptionString="Arching Kaos CLI"
+source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_script
 
 if [ $# -eq 0 ]
 then
@@ -16,18 +22,28 @@ then
             if [ -n "$subcmd" ]
             then
                 echo $subcmd | cut -d '-' -f 2 | sort | uniq | sed -e 's/^/ak /g'
-                # $(echo $subcmd) $args
+                #$(echo $subcmd) $args
             fi
         done
     ) | sort | uniq
     exit 1
 fi
 
+if [ $# -eq 1 ]
+then
+    case "$1" in
+        -h|--help)
+            _ak_title_description
+            _ak_help
+            exit 1
+    esac
+fi
+
 subcmd="$(echo $* | sed -e 's/ /-/g')"
 if [ -f "$AK_BINDIR/ak-$subcmd" ]
 then
     $(echo ak-$subcmd)
-    exit_program $? "ak-$subcmd command finished";
+    _ak_exit_program $? "ak-$subcmd command finished";
 else
     argc=$#
     argv="$*"
@@ -40,7 +56,7 @@ else
         then
             logit "INFO" "Running: ak-$subcmd with args: $args"
             $(echo ak-$subcmd) $args
-            exit_program $? "ak-$subcmd command finished";
+            _ak_exit_program $? "ak-$subcmd command finished";
         fi
         counter=$(($counter + 1))
     done

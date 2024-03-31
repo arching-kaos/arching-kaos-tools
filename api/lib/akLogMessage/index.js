@@ -3,7 +3,7 @@ const config = require('../../config')
 
 module.exports = (type, message) => {
     const command = spawn(
-        "ak-logthis",
+        "ak-log-message",
         ["ak-daemon", type, message]
     );
 

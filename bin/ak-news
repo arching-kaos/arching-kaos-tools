@@ -1,14 +1,37 @@
 #!/bin/bash
+##
+##    -h, --help                  Prints this help message
+##
+##    -l, --local-index           Prints an indexed table of your news files
+##
+##    -i, --import <file>         TODO
+##
+##    -a, --add <file>            Creates a data file from the news file you
+##                                point to
+##
+##    -r, --read <zblock>         Reads a zblock as a news data
+##
+##    -c, --create                Vim is going to pop up, you will write and
+##                                save your newsletter and it's going to bei
+##                                saved
+##
+##    -s, --specs                 Print specs of data block
+##
+##    -x, --html <zblock>         Returns an appropriate html element from a
+##                                NEWS zblock
+##
+fullprogrampath="$(realpath $0)"
 PROGRAM=$(basename $0)
 descriptionString="Module to read, create and add zblocks"
 
 ZNEWSDIR="$AK_WORKDIR/news"
 TEMP="/tmp/aktmp"
 
-source $AK_LIBDIR/_ak_logit
-source $AK_LIBDIR/_ak_script_description
+source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_script
 source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_gpg
+source $AK_LIBDIR/_ak_zblock
 
 if [ ! -d $ZNEWSDIR ]; then
     mkdir $ZNEWSDIR
@@ -61,10 +84,6 @@ _ak_modules_news_index(){
         let i+=1
     done
     rm temp
-}
-
-_ak_modules_news_title(){
-    description
 }
 
 _ak_modules_news_import(){
@@ -120,7 +139,7 @@ EOF
         logit "ERROR" "File $FILE doesn't exist";
         exit 2
     fi
-    ak-zblock-pack "news/add" $(pwd)/data
+    _ak_zblock_pack "news/add" $(pwd)/data
     if [ $? == 0 ]
     then
         logit "INFO" "News added successfully"
@@ -156,7 +175,7 @@ EOF
         logit "ERROR" "File $1 doesn't exist";
         exit 2
     fi
-    ak-zblock-pack "news/add" $(pwd)/data
+    _ak_zblock_pack "news/add" $(pwd)/data
     if [ $? == 0 ]
     then
         logit "INFO" "News added successfully"
@@ -164,20 +183,6 @@ EOF
         logit "ERROR" "error??"
         exit 1
     fi
-}
-
-_ak_modules_news_usage(){
-    _ak_modules_news_title
-    echo "    -h, --help                  Prints this help message"
-    echo "    -l, --local-index           Prints an indexed table of your news files"
-    echo "    -i, --import <file>         #TODO"
-    echo "    -a, --add <file>            Creates a data file from the news file you point to"
-    echo "    -r, --read <zblock>         Reads a zblock as a news data"
-    echo "    -c, --create                Vim is going to pop up, you will write and save your"
-    echo "                                newsletter and it's going to be saved"
-    echo "    -s, --specs                 Print specs of data block"
-    echo "    -x, --html <zblock>         Returns an appropriate html element from a NEWS zblock"
-    exit 0
 }
 
 _ak_modules_news_read(){
@@ -232,7 +237,7 @@ _ak_modules_news_html(){
         echo "    </tr>"
         echo "    <tr>"
         echo "        <td>"
-        echo "            <pre> ✍️  Title</pre>"
+        echo "            <pre>✍️ Title</pre>"
         echo "        </td>"
         echo "        <td>"
         echo "             <pre>$ztitle</pre>"
@@ -251,7 +256,26 @@ _ak_modules_news_html(){
         echo "            <pre>📄 Content</pre>"
         echo "        </td>"
         echo "        <td>"
-        echo "             <pre>$(_ak_ipfs_cat $linkToText)</pre>"
+        echo "             <style>"
+        echo "                .body * {"
+        echo "                    border: 0;"
+        echo "                    margin: 0;"
+        echo "                    padding: 0;"
+        echo "                 }"
+        echo "                .body a {"
+        echo "                    color: #042746;"
+        echo "                    background-color: lightyellow;"
+        echo "                    border: 0;"
+        echo "                    margin: 0;"
+        echo "                    padding: 0;"
+        echo "                 }"
+        echo "                .body p {"
+        echo "                    border: 0;"
+        echo "                    margin: 0;"
+        echo "                    padding: 1vh 1vw;"
+        echo "                 }"
+        echo "             </style>"
+        _ak_ipfs_cat $linkToText | txt2tags -t html -H --infile=- --outfile=-
         echo "        </td>"
         echo "    </tr>"
         echo '</table>'
@@ -278,7 +302,7 @@ _ak_modules_news_specs(){
 
 if [ ! -z $1 ]; then
     case $1 in
-        -h | --help) _ak_modules_news_usage; exit;;
+        -h | --help) _ak_usage; exit;;
         -l | --local-index) _ak_modules_news_index; exit;;
         -i | --import) _ak_modules_news_import $2; exit;;
         -a | --add) _ak_modules_news_add_from_file $2; exit;;
@@ -286,7 +310,7 @@ if [ ! -z $1 ]; then
         -r | --read) _ak_modules_news_read $2; exit;;
         -s | --specs) _ak_modules_news_specs $2; exit;;
         -x | --html) _ak_modules_news_html $2; exit;;
-        * ) _ak_modules_news_usage;;
+        * ) _ak_usage;;
     esac
-else _ak_modules_news_usage
+else _ak_usage
 fi

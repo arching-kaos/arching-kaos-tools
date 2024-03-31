@@ -1,12 +1,16 @@
 #!/bin/bash
-PROGRAM="$(basename $0)"
-_ak_modules_transactions_usage(){
-	echo "$PROGRAM from to amount"
-}
+##
+## ak-transactions <from> <to> <amount>
+##
+fullprogrampath="$(realpath $0)"
+PROGRAM=$(basename $0)
+descriptionString="Transactions module"
 
-source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_script
 source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_gpg
+source $AK_LIBDIR/_ak_zblock
 
 _ak_modules_transactions_main(){
     logit "INFO" "$FROM_ADDRESS to $TO_ADDRESS value sent: $AMOUNT"
@@ -45,6 +49,6 @@ then
     AMOUNT="$3"
     _ak_modules_transactions_main
     cat $PWD/data | jq -M
-    ak-zblock-pack transaction/add $PWD/data
-else _ak_modules_transactions_usage
+    _ak_zblock_pack transaction/add $PWD/data
+else _ak_usage
 fi

@@ -1,0 +1,64 @@
+#!/bin/bash
+source $AK_LIBDIR/_ak_log
+
+# Wanna talk about it?
+_ak_new_line(){
+    printf '\n'
+}
+
+_ak_exit_program(){
+# Needs rework:
+#    cd $curdir
+#    if [ "$3" == "save_log" ]
+#    then
+#        tar cvfz $curdir/$(basename $tempdir)-$launch_timestamp.tgz $tempdir
+#    fi
+#    rm -rf $tempdir
+    if [ $1 -ne 0 ]
+    then
+        logit "ERROR" "$2 ($1)"
+    else
+        logit "EXIT" "$2"
+    fi
+    exit $1
+}
+
+_ak_help(){
+    if [ ! -z $fullprogrampath ] && [ -n "$fullprogrampath" ]
+    then
+        cat $fullprogrampath |grep '^##'| sed 's/^##//g;s/^ //g' 1>&2
+        exit 1
+    else
+        logit "ERROR" "fullprogrampath was not set"
+        exit 1
+    fi
+}
+
+_ak_title_description(){
+
+    if [ ! -n "$descriptionString" ]
+    then
+        # Choose to exit with error to enforce standard
+        logit "ERROR" "No description string"
+        exit 1
+        # Alternative solution
+        # full_title="$(printf '%s' "$PROGRAM")"
+    fi
+
+    full_title="$(printf '%s - %s' "$PROGRAM" "$descriptionString")"
+    delimiter_count=`echo -n $full_title | wc -c`
+    (
+    printf '%s' "$full_title"
+    _ak_new_line
+    while [ $delimiter_count -gt 0 ]
+    do
+        printf '='
+        delimiter_count=$(($delimiter_count-1))
+    done
+    _ak_new_line ) 1>&2
+}
+
+_ak_usage(){
+    _ak_title_description
+    _ak_help
+}

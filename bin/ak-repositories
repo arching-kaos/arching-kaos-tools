@@ -1,4 +1,5 @@
 #!/bin/bash
+source $AK_LIBDIR/_ak_zblock
 REPODIR="$HOME/projects"
 BAREDIR="$HOME/bare"
 REPOSTORE="$HOME/.arching-kaos/repostore"
@@ -106,7 +107,7 @@ add(){
             then
                 _ak_ipfs_name_publish --key="$PROJECT.git" /ipfs/$IPFS
                 printf '{"project":"%s.git","ipns":"%s"}' $PROJECT $try > data
-                ak-zblock-pack "repos/add" $PWD/data 
+                _ak_zblock_pack "repos/add" $PWD/data 
                 echo "Done"
             fi
         fi

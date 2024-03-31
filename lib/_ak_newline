@@ -1,5 +1,0 @@
-#!/bin/bash
-
-new_line(){
-  printf '\n'
-}

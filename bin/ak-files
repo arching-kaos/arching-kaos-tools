@@ -1,11 +1,19 @@
 #!/bin/bash
-# The following creates a mixtape data message
+##
+## The following creates a files data message
+##
+##    -h, --help                  Prints this help message
+##
+fullprogrampath="$(realpath $0)"
+PROGRAM=$(basename $0)
+descriptionString="Module for adding files"
 ZFILESDIR="$AK_WORKDIR/files"
 TEMP="/tmp/aktmp"
-PROGRAM="$(basename $0)"
-source $AK_LIBDIR/_ak_logit
+source $AK_LIBDIR/_ak_script
+source $AK_LIBDIR/_ak_log
 source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_gpg
+source $AK_LIBDIR/_ak_zblock
 
 if [ ! -d $ZFILESDIR ]; then
     mkdir $ZFILESDIR
@@ -21,10 +29,6 @@ if [ ! -d $ZFILESDIR ]; then
 else
     logit "INFO" "$ZFILESDIR found!"
 fi
-
-_ak_modules_files_usage(){
-    echo "$PROGRAM - file"
-}
 
 _ak_modules_files_add(){
     CRP="$(pwd)"
@@ -92,7 +96,7 @@ echo "Printing data..."
 cat $TEMPASSIN/data
 echo "Publishing..."
 
-    ak-zblock-pack files/add $PWD/data
+    _ak_zblock_pack files/add $PWD/data
     if [ $? == 0 ]
     then
         echo "cool"
@@ -104,9 +108,9 @@ echo "Publishing..."
 
 if [ ! -z $1 ]; then
     case $1 in
-        -h | --help) _ak_modules_files_usage; exit;;
+        -h | --help) _ak_usage; exit;;
         add) _ak_modules_files_add $2; exit;;
-        *) _ak_modules_files_usage; exit;;
+        *) _ak_usage; exit;;
     esac
-else _ak_modules_files_usage
+else _ak_usage
 fi
