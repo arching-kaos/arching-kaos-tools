@@ -1,5 +1,5 @@
 const { spawn } = require('child_process');
-const akLogThis = require('../../lib/akLogThis');
+const akLogMessage = require('../../lib/akLogMessage');
 /*
  * Gets the local latest zblock
  *
@@ -9,7 +9,7 @@ const akLogThis = require('../../lib/akLogThis');
  *
  */
 module.exports = (req, res) => {
-    akLogThis('INFO', `Incoming from [${req.socket._peername.address}]:${req.socket._peername.port} @ ${req.get('host')}${req._parsedOriginalUrl.pathname}`);
+    akLogMessage('INFO', `Incoming from [${req.socket._peername.address}]:${req.socket._peername.port} @ ${req.get('host')}${req._parsedOriginalUrl.pathname}`);
     const command = spawn("ak-config", ["get-published"]);
     var buffer = "";
     command.stdout.on("data", data => {
