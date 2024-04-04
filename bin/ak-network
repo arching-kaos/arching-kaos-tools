@@ -1,5 +1,5 @@
 #!/bin/bash
 while true
 do
-	cat $ZLATEST | nc -lv 127.0.0.1 5050
+    cat $ZLATEST | nc -lv 127.0.0.1 5050
 done

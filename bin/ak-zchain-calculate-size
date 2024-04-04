@@ -22,7 +22,7 @@ do
     else
         num=0
     fi
-	sum=$(expr $sum + $num )
+    sum=$(expr $sum + $num )
 done < to_stats
 echo "Chain is : $sum bytes"
 

@@ -52,52 +52,52 @@ _ak_zblock_show(){
 # source $AK_LIBDIR/_ak_gpg
 # 
 # usage(){
-# 	echo "Usage:"	
-# 	echo "$PROGRAM -b block_file | -h block_hash | dunno"
-# 	echo "Creates and publishes a ZBLOCK based on a block and a previous"
-# 	echo "zblock."
-# 	echo ""
-# 	echo "Either -b or -h is needed. If both, -h is used."
-# 	echo ""
-# 	echo "-b block_file		Points to a block file that we want to fix."
-# 	echo "-h block_hash		If we don't have the block as a file, we can"
-# 	echo "				use it's hash to retrieve it and edit it."
-# 	echo "-p previous_hash		We refering to a previous hash for a ZBLOCK."
-# 	echo ""
-# 	echo "#TODO:"
-# 	echo "-t timestamp		Unix UTC timestamp in seconds."
-# 	echo "-a \"module/action\"	Change the action tag. Format: object/verb."
-# 	echo "				In sense, \"Add news -> news/add\"."
-# 	echo "-d data			In case you want to change the data, you 'll"
-# 	echo "				be changing potentially the key of the block"
-# 	echo "				and the data signature, otherwise your block"
-# 	echo "				will be unverified."
-# 	echo ""
+#     echo "Usage:"
+#     echo "$PROGRAM -b block_file | -h block_hash | dunno"
+#     echo "Creates and publishes a ZBLOCK based on a block and a previous"
+#     echo "zblock."
+#     echo ""
+#     echo "Either -b or -h is needed. If both, -h is used."
+#     echo ""
+#     echo "-b block_file        Points to a block file that we want to fix."
+#     echo "-h block_hash        If we don't have the block as a file, we can"
+#     echo "                use it's hash to retrieve it and edit it."
+#     echo "-p previous_hash        We refering to a previous hash for a ZBLOCK."
+#     echo ""
+#     echo "#TODO:"
+#     echo "-t timestamp        Unix UTC timestamp in seconds."
+#     echo "-a \"module/action\"    Change the action tag. Format: object/verb."
+#     echo "                In sense, \"Add news -> news/add\"."
+#     echo "-d data            In case you want to change the data, you 'll"
+#     echo "                be changing potentially the key of the block"
+#     echo "                and the data signature, otherwise your block"
+#     echo "                will be unverified."
+#     echo ""
 # }
 # 
 # main(){
 # 
-# 	logit "INFO" "We are doing" $BLOCK_TO_ADD "with content" $PREVIOUS
-# 	# We add it to IPFS
-# 	MESSAGE_HASH=$(_ak_ipfs_add $MESSAGE)
+#     logit "INFO" "We are doing" $BLOCK_TO_ADD "with content" $PREVIOUS
+#     # We add it to IPFS
+#     MESSAGE_HASH=$(_ak_ipfs_add $MESSAGE)
 # 
-# 	# We create a detached and armor signature of it
-# 	MESSAGE_SIGN_FILE=$MESSAGE".asc"
-# 	_ak_gpg_sign_detached $MESSAGE_SIGN_FILE $MESSAGE
+#     # We create a detached and armor signature of it
+#     MESSAGE_SIGN_FILE=$MESSAGE".asc"
+#     _ak_gpg_sign_detached $MESSAGE_SIGN_FILE $MESSAGE
 # 
-# 	# We add the signature to IPFS
-# 	MESSAGE_SIGNATURE=$(_ak_ipfs_add $MESSAGE_SIGN_FILE)
+#     # We add the signature to IPFS
+#     MESSAGE_SIGNATURE=$(_ak_ipfs_add $MESSAGE_SIGN_FILE)
 # 
-# 	# We will be using our public key also to put it in the block later
-# 	KEY="gpg.pub"
+#     # We will be using our public key also to put it in the block later
+#     KEY="gpg.pub"
 #     _ak_gpg_key_self_export $KEY
-# 	GPG_PUB_KEY=$(_ak_ipfs_add $KEY)
+#     GPG_PUB_KEY=$(_ak_ipfs_add $KEY)
 # 
-# 	# Acquire last block of information, to chain this one with previous posted
-# 	PREVIOUS=$(_ak_ipfs_files_stat /zlatest | head -n 1)
+#     # Acquire last block of information, to chain this one with previous posted
+#     PREVIOUS=$(_ak_ipfs_files_stat /zlatest | head -n 1)
 # 
-# 	# We create a block of json like this:
-# 	cat > block <<EOF
+#     # We create a block of json like this:
+#     cat > block <<EOF
 # {
 #     "timestamp":"$(date -u +%s)",
 #     "action":"$ACTION",
@@ -109,67 +109,67 @@ _ak_zblock_show(){
 # EOF
 # }
 # makeZBlock(){
-# 	BLOCK="block"
-# 	BLOCK_SIG=$BLOCK".asc"
-# 	# We have a block now, so we sign it
-# 	_ak_gpg_sign_detached $BLOCK_SIG $BLOCK
+#     BLOCK="block"
+#     BLOCK_SIG=$BLOCK".asc"
+#     # We have a block now, so we sign it
+#     _ak_gpg_sign_detached $BLOCK_SIG $BLOCK
 # 
-# 	# We now add the signature to IPFS
-# 	BLOCK_SIGNATURE=$(_ak_ipfs_add $BLOCK_SIG)
+#     # We now add the signature to IPFS
+#     BLOCK_SIGNATURE=$(_ak_ipfs_add $BLOCK_SIG)
 # 
-# 	# We also add the block!
-# 	BLOCK=$(_ak_ipfs_add $BLOCK)
+#     # We also add the block!
+#     BLOCK=$(_ak_ipfs_add $BLOCK)
 # 
-# 	# So we now do the think almost again
-# 	cat > zblock << EOF
+#     # So we now do the think almost again
+#     cat > zblock << EOF
 # {
 #     "block":"$BLOCK",
 #     "block_signature":"$BLOCK_SIGNATURE"
 # }
 # EOF
-# 	ZBL="zblock"
-# 	# and we add it on IPFS
-# 	ZBLOCK=$(_ak_ipfs_add $ZBL)
-# 	echo $ZBLOCK
+#     ZBL="zblock"
+#     # and we add it on IPFS
+#     ZBLOCK=$(_ak_ipfs_add $ZBL)
+#     echo $ZBLOCK
 # }
 # 
 # if [ ! -z $2 ];
 # then
-# 	PWD="$(pwd)"
+#     PWD="$(pwd)"
 # 
-# 	# We ask which BLOCK is goind to be edited
-# 	BLOCK_TO_ADD="$1"
-# 	# We ask for a ZBLOCK or GENESIS to put in the BLOCK
-# 	PREVIOUS="$2"
+#     # We ask which BLOCK is goind to be edited
+#     BLOCK_TO_ADD="$1"
+#     # We ask for a ZBLOCK or GENESIS to put in the BLOCK
+#     PREVIOUS="$2"
 # 
-# 	_ak_ipfs_cat "$BLOCK_TO_ADD"
-# 	if [ $? == 0 ];
-# 	then
-# 		echo "Nice! We found the block"
-# 		_ak_ipfs_get "$BLOCK_TO_ADD"
+#     _ak_ipfs_cat "$BLOCK_TO_ADD"
+#     if [ $? == 0 ];
+#     then
+#         echo "Nice! We found the block"
+#         _ak_ipfs_get "$BLOCK_TO_ADD"
 # 
-# 		sed -i.bak -e 's/^.*previous.*$/\"previous\":\"'$PREVIOUS'\"/' $BLOCK_TO_ADD
-# 		cat $BLOCK_TO_ADD | jq -M
+#         sed -i.bak -e 's/^.*previous.*$/\"previous\":\"'$PREVIOUS'\"/' $BLOCK_TO_ADD
+#         cat $BLOCK_TO_ADD | jq -M
 # 
-# 		exit 2
-# 	else
-# 		echo "Too bad, it seems the block is not there"
-# 		exit 1
-# 	fi
+#         exit 2
+#     else
+#         echo "Too bad, it seems the block is not there"
+#         exit 1
+#     fi
 # 
-# 	# cat $PWD/zblock | jq -M
-# 	# Optional or extending with
-# 	# python send_as_ak_tx $ZBLOCK
-# 	# or for "offline" use
-# 	echo $ZBLOCK > $ZLATEST
-# 	_ak_ipfs_name_publish --key=zchain $ZBLOCK > /dev/null 2>&1
-# 	_ak_ipfs_files_mkdir /zarchive > /dev/null 2>&1
-# 	_ak_ipfs_files_cp /zlatest /zarchive/$(date -u +%s)-$(_ak_ipfs_files_stat /zlatest | head -n 1) > /dev/null 2>&1
-# 	_ak_ipfs_files_rm /zlatest > /dev/null 2>&1
-# 	_ak_ipfs_files_cp /ipfs/$ZBLOCK /zlatest > /dev/null 2>&1
+#     # cat $PWD/zblock | jq -M
+#     # Optional or extending with
+#     # python send_as_ak_tx $ZBLOCK
+#     # or for "offline" use
+#     echo $ZBLOCK > $ZLATEST
+#     _ak_ipfs_name_publish --key=zchain $ZBLOCK > /dev/null 2>&1
+#     _ak_ipfs_files_mkdir /zarchive > /dev/null 2>&1
+#     _ak_ipfs_files_cp /zlatest /zarchive/$(date -u +%s)-$(_ak_ipfs_files_stat /zlatest | head -n 1) > /dev/null 2>&1
+#     _ak_ipfs_files_rm /zlatest > /dev/null 2>&1
+#     _ak_ipfs_files_cp /ipfs/$ZBLOCK /zlatest > /dev/null 2>&1
 # else
-# 	usage
-# 	exit 0
+#     usage
+#     exit 0
 # fi
 #
 # }

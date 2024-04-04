@@ -15,63 +15,63 @@ then
 fi
 
 further(){
-	# logit "INFO" "Diving into $1"
-	lookfor $1
+    # logit "INFO" "Diving into $1"
+    lookfor $1
 }
 
 lookfor(){
-	echo -n $1 | grep -e '[0-9a-f]\{128\}' > /dev/null
-	if [ ! $? = 0 ]
-	then
-		logit "ERROR" "Oops!!! The argument passed, does not match the regular expression!"
-	else
-		counters[$CHAIN_PARENT]="$(expr ${counters[$CHAIN_PARENT]} + 1)"
-		if [ ! $? = 0 ]
-		then
-			echo "$1, $counters[$1]"
-			exit 1
-		fi
-		logit "INFO" "Accessing file: $1"
-	#	echo "$1 file:"
-	#	cat "$1" | jq
-		NEXT_TARGET="$(cat "$1" | jq | grep previous | tr -d ' ' | sed -e 's/previous//g; s/[",:]//g;')"
-		if [ ! "$NEXT_TARGET" = "" ]
-		then
-			logit "INFO" "Found previous: $NEXT_TARGET"
-			if [ ! -f "$NEXT_TARGET" ]
-			then
-				logit "WARNING" "Could not find $NEXT_TARGET"
-			else
-				further "$NEXT_TARGET"
-			fi
-		else
-			logit "WARNING" "No next target found. So long for $1"
-		fi
-	fi
+    echo -n $1 | grep -e '[0-9a-f]\{128\}' > /dev/null
+    if [ ! $? = 0 ]
+    then
+        logit "ERROR" "Oops!!! The argument passed, does not match the regular expression!"
+    else
+        counters[$CHAIN_PARENT]="$(expr ${counters[$CHAIN_PARENT]} + 1)"
+        if [ ! $? = 0 ]
+        then
+            echo "$1, $counters[$1]"
+            exit 1
+        fi
+        logit "INFO" "Accessing file: $1"
+    #    echo "$1 file:"
+    #    cat "$1" | jq
+        NEXT_TARGET="$(cat "$1" | jq | grep previous | tr -d ' ' | sed -e 's/previous//g; s/[",:]//g;')"
+        if [ ! "$NEXT_TARGET" = "" ]
+        then
+            logit "INFO" "Found previous: $NEXT_TARGET"
+            if [ ! -f "$NEXT_TARGET" ]
+            then
+                logit "WARNING" "Could not find $NEXT_TARGET"
+            else
+                further "$NEXT_TARGET"
+            fi
+        else
+            logit "WARNING" "No next target found. So long for $1"
+        fi
+    fi
 }
 
 templistblock="$(mktemp)"
 find . -type f | sed 's/^\.\/000/000/g' | grep '^000'  | sort > $templistblock
 while IFS="" read -r p || [ -n "$p" ]
 do
-#	if [ ! "$p" = "" ] && [ ! "$p" = "tmplistblock" ]
-	if [ "$(echo $p | tr -d '\n' | wc -c)" = 128 ]
-	then
+#    if [ ! "$p" = "" ] && [ ! "$p" = "tmplistblock" ]
+    if [ "$(echo $p | tr -d '\n' | wc -c)" = 128 ]
+    then
         filename="$(basename $p)"
-		logit "INFO" "Investigating $filename..."
-		export CHAIN_PARENT="$filename"
-		counters[$CHAIN_PARENT]=1
-		lookfor "$filename"
-	else
-		logit "WARNING" "Nothing to do with $filename"
-	fi
+        logit "INFO" "Investigating $filename..."
+        export CHAIN_PARENT="$filename"
+        counters[$CHAIN_PARENT]=1
+        lookfor "$filename"
+    else
+        logit "WARNING" "Nothing to do with $filename"
+    fi
 done < $templistblock
 rm $templistblock
 max=0
 max_holder=0
 for value in "${!counters[@]}"
 do
-    #	echo "${value} : ${counters[${value}]}"
+    #    echo "${value} : ${counters[${value}]}"
     if [ ${counters[${value}]} -gt $max  ]
     then
         max="${counters[${value}]}"

@@ -5,9 +5,9 @@ source $AK_LIBDIR/_ak_log
 FOLLOWING="$HOME/.arching-kaos/following"
 if [ -f $FOLLOWING ]
 then
-	cat $FOLLOWING
+    cat $FOLLOWING
 else
-	logit "INFO" "No following file, creating"
-	touch $FOLLOWING
-	echo "None found"
+    logit "INFO" "No following file, creating"
+    touch $FOLLOWING
+    echo "None found"
 fi

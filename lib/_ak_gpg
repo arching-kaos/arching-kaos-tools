@@ -1,5 +1,6 @@
 #!/bin/bash
 source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_ipfs
 
 _ak_gpg(){
     gpg2 --homedir $AK_GPGHOME $*
@@ -31,7 +32,7 @@ _ak_gpg_key_self_get_fingerprint_from_config(){
 _ak_gpg_key_self_get_fingerprint(){
     if [ -z $1 ]
     then
-        ak-ipfs-cat "$(_ak_gpg_key_self_get_fingerprint_from_config)" | \
+        _ak_ipfs_cat "$(_ak_gpg_key_self_get_fingerprint_from_config)" | \
             _ak_gpg --show-keys 2>&1 | \
             head -n 2 | \
             tail -n 1 | \
@@ -44,7 +45,7 @@ _ak_gpg_key_self_get_fingerprint(){
 _ak_gpg_key_get_fingerprint_from_ipfs(){
     if [ -n "$1" ]
     then
-        ak-ipfs-cat "$1" | \
+        _ak_ipfs_cat "$1" | \
             _ak_gpg --show-keys 2>&1 | \
             head -n 2 | \
             tail -n 1 | \

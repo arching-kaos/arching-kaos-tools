@@ -24,12 +24,20 @@
 # Uncomment next line if you want to debug
 # set -xe
 PROGRAM="$(basename $0)"
+source $AK_LIBDIR/_ak_fs
+source $AK_LIBDIR/_ak_log
 
 if [ ! -f "$1" ]
 then
-    echo "ERROR File not found"
+    logit "ERROR" "File $1 not found"
     exit 1
 else
+    # TODO
+    # Side hustle, save the original hash and original filename
+    # This won't be expected in general
+    # The idea is:
+    # sha256sum as quick pointer to root of the tree
+    #
     base64 $1 > file
     FILE="file"
 fi
@@ -57,12 +65,11 @@ rm -rf $TEMPORARYDIR
 if [ ! -d "$TECHDIR" ]
 then
     mkdir -p "$TECHDIR"
-    if [ "$?" == 0 ]
+    if [ $? == 0 ]
     then
         logit "INFO" "Folder $TECHDIR created!"
     else
         logit "ERROR" "Problem occured while creating $TECHDIR"
-        echo "ERROR Can't create $TECHDIR"
         exit 1
     fi
 else
@@ -73,12 +80,11 @@ fi
 if [ ! -d "$FILEMAPSDIR" ]
 then
     mkdir -p "$FILEMAPSDIR"
-    if [ "$?" == 0 ]
+    if [ $? == 0 ]
     then
         logit "INFO" "Folder $FILEMAPSDIR created!"
     else
         logit "ERROR" "Problem occured while creating $FILEMAPSDIR"
-        echo "ERROR Can't create $FILEMAPSDIR"
         exit 1
     fi
 else
@@ -89,12 +95,11 @@ fi
 if [ ! -d "$CHKDIR" ]
 then
     mkdir -p "$CHKDIR"
-    if [ "$?" == 0 ]
+    if [ $? == 0 ]
     then
         logit "INFO" "Folder $CHKDIR created!"
     else
         logit "ERROR" "Problem occured while creating $CHKDIR"
-        echo "ERROR Can't create $CHKDIR"
         exit 1
     fi
 else
@@ -105,7 +110,7 @@ fi
 if [ ! -d "$MERKLEDIR" ]
 then
     mkdir -p "$MERKLEDIR"
-    if [ "$?" == 0 ]
+    if [ $? == 0 ]
     then
         logit "INFO" "Folder $MERKLEDIR created!"
     else

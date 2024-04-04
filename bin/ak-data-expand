@@ -11,94 +11,94 @@ fi
 
 if [ ! -z "$1" ] && [ ! -z "$2" ]
 then
-	echo -n "$1" | grep -e 'Qm.\{44\}' >/dev/null
-	if [ "$?" -ne 0 ]
-	then
-		logit "ERROR" "Invalid hash format for $1"
-		exit 1
-	fi
-	_ak_ipfs_cat $1 > /dev/null
-	if [ "$?" -ne 0 ]
-	then
-		logit "ERROR" "Error while reading $1"
-		exit 1
-	fi
-	_ak_ipfs_cat $1 | jq -M > /dev/null
-	if [ "$?" -ne 0 ]
-	then
-		logit "ERROR" "Error while parsing JSON for $1"
-		exit 1
-	fi
-	_ak_ipfs_cat $1 | jq | grep ipfs > /dev/null
-	if [ "$?" -ne 0 ]
-	then
-		logit "ERROR" "Error while extracting data from JSON for $1"
-		exit 1
-	fi
-	DATA="$(_ak_ipfs_cat $1 | jq | grep ipfs | sed -e 's/"ipfs": "//g; s/[",]//g; s/ //g')"
-	if [ "$?" -ne 0 ]
-	then
-		logit "ERROR" "Error while extracting data from JSON for $1"
-		exit 1
-	fi
-	_ak_ipfs_cat $1 | jq | grep detach > /dev/null
-	if [ "$?" -ne 0 ]
-	then
-		logit "ERROR" "Error while extracting data from JSON for $1"
-		exit 1
-	fi
-	DETACH="$(_ak_ipfs_cat $1 | jq | grep detach | sed -e 's/"detach": "//g; s/[",]//g; s/ //g')"
-	if [ "$?" -ne 0 ]
-	then
-		logit "ERROR" "Error while extracting data from JSON for $1"
-		exit 1
-	fi
-	echo -n "$2" | grep -e 'Qm.\{44\}' >/dev/null
-	if [ "$?" -ne 0 ]
-	then
-	    logit "ERROR" "Invalid hash format for $2"
-	    exit 1
-	fi
+    echo -n "$1" | grep -e 'Qm.\{44\}' >/dev/null
+    if [ "$?" -ne 0 ]
+    then
+        logit "ERROR" "Invalid hash format for $1"
+        exit 1
+    fi
+    _ak_ipfs_cat $1 > /dev/null
+    if [ "$?" -ne 0 ]
+    then
+        logit "ERROR" "Error while reading $1"
+        exit 1
+    fi
+    _ak_ipfs_cat $1 | jq -M > /dev/null
+    if [ "$?" -ne 0 ]
+    then
+        logit "ERROR" "Error while parsing JSON for $1"
+        exit 1
+    fi
+    _ak_ipfs_cat $1 | jq | grep ipfs > /dev/null
+    if [ "$?" -ne 0 ]
+    then
+        logit "ERROR" "Error while extracting data from JSON for $1"
+        exit 1
+    fi
+    DATA="$(_ak_ipfs_cat $1 | jq | grep ipfs | sed -e 's/"ipfs": "//g; s/[",]//g; s/ //g')"
+    if [ "$?" -ne 0 ]
+    then
+        logit "ERROR" "Error while extracting data from JSON for $1"
+        exit 1
+    fi
+    _ak_ipfs_cat $1 | jq | grep detach > /dev/null
+    if [ "$?" -ne 0 ]
+    then
+        logit "ERROR" "Error while extracting data from JSON for $1"
+        exit 1
+    fi
+    DETACH="$(_ak_ipfs_cat $1 | jq | grep detach | sed -e 's/"detach": "//g; s/[",]//g; s/ //g')"
+    if [ "$?" -ne 0 ]
+    then
+        logit "ERROR" "Error while extracting data from JSON for $1"
+        exit 1
+    fi
+    echo -n "$2" | grep -e 'Qm.\{44\}' >/dev/null
+    if [ "$?" -ne 0 ]
+    then
+        logit "ERROR" "Invalid hash format for $2"
+        exit 1
+    fi
     gpg="$2"
     _ak_ipfs_get $gpg > /dev/null 2>&1
     if [ "$?" -ne 0 ]
     then
-	logit "ERROR" "Could not get GPG key: $gpg"
-	exit 1
+    logit "ERROR" "Could not get GPG key: $gpg"
+    exit 1
     fi
     _ak_gpg_key_import_from_file $gpg > /dev/null 2>&1
     if [ "$?" -ne 0 ]
     then
-		logit "ERROR" "Could not import GPG key: $gpg"
-		exit 1
-	fi
-	_ak_ipfs_get $DETACH > /dev/null 2>&1
-	if [ "$?" -ne 0 ]
-	then
-		logit "ERROR" "Error while getting signature: $DETACH for data: $DATA"
-		exit 1
-	fi
-	mv $DETACH $DATA.asc
-	logit "INFO" "Block signature downloaded"
-	_ak_ipfs_get $DATA > /dev/null 2>&1
-	if [ "$?" -ne 0 ]
-	then
-		logit "ERROR" "Error while getting data: $DATA"
-		exit 1
-	fi
-	logit "INFO" "Data downloaded: $DATA"
-	_ak_gpg_verify_signature $DATA.asc $DATA > /dev/null 2>&1
-	if [ "$?" -ne 0 ]
-	then
-		logit "ERROR" "Error while verifying signature for $DATA"
-		exit 1
-	fi
+        logit "ERROR" "Could not import GPG key: $gpg"
+        exit 1
+    fi
+    _ak_ipfs_get $DETACH > /dev/null 2>&1
+    if [ "$?" -ne 0 ]
+    then
+        logit "ERROR" "Error while getting signature: $DETACH for data: $DATA"
+        exit 1
+    fi
+    mv $DETACH $DATA.asc
+    logit "INFO" "Block signature downloaded"
+    _ak_ipfs_get $DATA > /dev/null 2>&1
+    if [ "$?" -ne 0 ]
+    then
+        logit "ERROR" "Error while getting data: $DATA"
+        exit 1
+    fi
+    logit "INFO" "Data downloaded: $DATA"
+    _ak_gpg_verify_signature $DATA.asc $DATA > /dev/null 2>&1
+    if [ "$?" -ne 0 ]
+    then
+        logit "ERROR" "Error while verifying signature for $DATA"
+        exit 1
+    fi
     mv $DATA $AK_WORKDIR/ipfs
-	logit "INFO" "Block signature verified"
+    logit "INFO" "Block signature verified"
     echo -n '"data":"'$1'","'$1'":'$(_ak_ipfs_cat $1|jq -M -c)','
-	exit 0
+    exit 0
 else
-	echo "Usage: $PROGRAM HASH GPG"
-	exit 1
+    echo "Usage: $PROGRAM HASH GPG"
+    exit 1
 fi
 

@@ -23,10 +23,10 @@ PROGRAM="$(basename $0)"
 
 if [ ! -f "$1" ]
 then
-	echo "ERROR File not found"
-	exit 1
+    echo "ERROR File not found"
+    exit 1
 else
-	FILE="$1"
+    FILE="$1"
 fi
 
 # The directory where the chunked data will be living at
@@ -48,49 +48,49 @@ source $AK_LIBDIR/_ak_log
 # TECHDIR
 if [ ! -d "$TECHDIR" ]
 then
-	mkdir -p "$TECHDIR"
-	if [ "$?" == 0 ]
-	then
-		logit "INFO" "Folder $TECHDIR created!"
-	else
-		logit "ERROR" "Problem occured while creating $TECHDIR"
-		echo "ERROR Can't create $TECHDIR"
-		exit 1
-	fi
+    mkdir -p "$TECHDIR"
+    if [ "$?" == 0 ]
+    then
+        logit "INFO" "Folder $TECHDIR created!"
+    else
+        logit "ERROR" "Problem occured while creating $TECHDIR"
+        echo "ERROR Can't create $TECHDIR"
+        exit 1
+    fi
 else
-	logit "INFO" "Temp dir found"
+    logit "INFO" "Temp dir found"
 fi
 
 # FILEMAPSDIR
 if [ ! -d "$FILEMAPSDIR" ]
 then
-	mkdir -p "$FILEMAPSDIR"
-	if [ "$?" == 0 ]
-	then
-		logit "INFO" "Folder $FILEMAPSDIR created!"
-	else
-		logit "ERROR" "Problem occured while creating $FILEMAPSDIR"
-		echo "ERROR Can't create $FILEMAPSDIR"
-		exit 1
-	fi
+    mkdir -p "$FILEMAPSDIR"
+    if [ "$?" == 0 ]
+    then
+        logit "INFO" "Folder $FILEMAPSDIR created!"
+    else
+        logit "ERROR" "Problem occured while creating $FILEMAPSDIR"
+        echo "ERROR Can't create $FILEMAPSDIR"
+        exit 1
+    fi
 else
-	logit "INFO" "Mapsdir found"
+    logit "INFO" "Mapsdir found"
 fi
 
 # CHKDIR
 if [ ! -d "$CHKDIR" ]
 then
-	mkdir -p "$CHKDIR"
-	if [ "$?" == 0 ]
-	then
-		logit "INFO" "Folder $CHKDIR created!"
-	else
-		logit "ERROR" "Problem occured while creating $CHKDIR"
-		echo "ERROR Can't create $CHKDIR"
-		exit 1
-	fi
+    mkdir -p "$CHKDIR"
+    if [ "$?" == 0 ]
+    then
+        logit "INFO" "Folder $CHKDIR created!"
+    else
+        logit "ERROR" "Problem occured while creating $CHKDIR"
+        echo "ERROR Can't create $CHKDIR"
+        exit 1
+    fi
 else
-	logit "INFO" "Workdir found"
+    logit "INFO" "Workdir found"
 fi
 
 # Uncomment next line in case you want to debug the resulting script as well
@@ -109,7 +109,7 @@ cd $TECHDIR
 # move them to CHKDIR
 sha512sum  * > $TEMPORARYDIR/map; while IFS="" read -r p || [ -n "$p" ]
 do
-	echo $p | awk '{print "mv " $2 " '$CHKDIR'" $1}' >> $TEMPORARYDIR/cmd_queue.sh
+    echo $p | awk '{print "mv " $2 " '$CHKDIR'" $1}' >> $TEMPORARYDIR/cmd_queue.sh
 done < $TEMPORARYDIR/map
 
 # We run the crafted script
