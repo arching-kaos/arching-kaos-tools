@@ -15,12 +15,13 @@ PROGRAM="$(basename $0)"
 descriptionString="Arching Kaos Configuration Tool"
 
 source $AK_LIBDIR/_ak_script
+source $AK_LIBDIR/_ak_gpg
 source $AK_LIBDIR/_ak_ipfs
 
 _ak_config_show(){
     # We will be using our public key also to put it in the block later
     KEY="tmp-gpg.pub"
-    gpg2 --homedir $AK_GPGHOME --armour --output $KEY --export $AK_FINGERPRINT
+    _ak_gpg_key_self_export $KEY
     GPG_PUB_KEY=$(_ak_ipfs_add $KEY)
     rm $KEY
 
@@ -52,7 +53,7 @@ _ak_config_publish(){
 }
 
 _ak_config_published(){
-    _ak_ipfs_cat $(ak-node-info ipfs) | jq -c
+    _ak_ipfs_cat $(ak-node-info --ipfs) | jq -c
 }
 
 if [ ! -z $1 ]; then

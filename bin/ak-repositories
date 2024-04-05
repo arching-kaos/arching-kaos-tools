@@ -107,7 +107,7 @@ add(){
             then
                 _ak_ipfs_name_publish --key="$PROJECT.git" /ipfs/$IPFS
                 printf '{"project":"%s.git","ipns":"%s"}' $PROJECT $try > data
-                _ak_zblock_pack "repos/add" $PWD/data 
+                _ak_zblock_pack "repos/add" $PWD/data
                 echo "Done"
             fi
         fi

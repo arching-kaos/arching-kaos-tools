@@ -13,7 +13,7 @@ const config = require("../../config");
 function fetchZblock(zblock, res){
     regex= /Qm[A-Za-z0-9]{44}/;
     if (regex.test(zblock)){
-        const command = spawn("ak-zblock-cache",[zblock]);
+        const command = spawn("ak-zblock",["--cache",zblock]);
         command.stdout.on("data", data => {
         });
 

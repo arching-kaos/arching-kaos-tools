@@ -5,22 +5,25 @@
 ##
 ## Usage:
 ##
-##     -h, --help                Prints this help message
+##     -h, --help                      Prints this help message
 ##
-##     index                     Show current status
+##     -i, --index                     Show current status
 ##
-##     show <data>               Show profile entry from specified DATA IPFS CIDv0
+##     --show <data IPFS CIDv0>        Show profile entry from specified DATA
+##                                     IPFS CIDv0
 ##
-##     set <property> <value>    Sets a profile value
+##     -s, --set <property> <value>    Sets a profile value
 ##
-##     get <property>            Gets a profile value from the on-disk file.
+##     -g, --get <property>            Gets a profile value from the on-disk
+##                                     file.
 ##
 ## Advanced (use with caution may produce duplicate entries):
 ##
-##     add <file>                 Creates a data file from the profile file you point
-##                                to (file should already be in ZPROFILEDIR.
+##     -a, --add <file>                Creates a data file from the profile file
+##                                     you point (file should already be in
+##                                     ZPROFILEDIR).
 ##
-##     import <folder>            Import a folder to zchain #TODO
+##     -i, --import <folder>           Import a folder to zchain #TODO
 ##
 fullprogrampath="$(realpath $0)"
 PROGRAM=$(basename $0)
@@ -211,12 +214,12 @@ EOF
 if [ ! -z $1 ]; then
     case $1 in
         -h | --help) _ak_usage; exit;;
-        index) _ak_modules_profile_index; exit;;
-        show) _ak_modules_profile_show $2; exit;;
-        import) _ak_modules_profile_import $2; exit;;
-        add) _ak_modules_profile_add $2; exit;;
-        set) _ak_modules_profile_propset $2 "$3"; exit;;
-        get) _ak_modules_profile_propget $2; exit;;
+        -i | --index) _ak_modules_profile_index; exit;;
+        --show) _ak_modules_profile_show $2; exit;;
+        -i | --import) _ak_modules_profile_import $2; exit;;
+        -a | --add) _ak_modules_profile_add $2; exit;;
+        -s | --set) _ak_modules_profile_propset $2 "$3"; exit;;
+        -g | --get) _ak_modules_profile_propget $2; exit;;
         * ) _ak_usage;;
     esac
 else _ak_usage
