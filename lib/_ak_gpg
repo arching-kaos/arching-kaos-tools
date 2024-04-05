@@ -117,3 +117,18 @@ _ak_gpg_key_self_export(){
         exit 1
     fi
 }
+
+_ak_gpg_list_keys(){
+    _ak_gpg --list-keys | grep '^ ' | awk '{print $1}' | tr '\n' ' '
+}
+
+_ak_gpg_select_key(){
+    select x in $(_ak_gpg_list_keys)
+    do
+        echo $x
+        if [ -n "$x" ]
+        then
+            break
+        fi
+    done
+}
