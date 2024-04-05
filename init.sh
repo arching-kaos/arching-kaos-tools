@@ -1,4 +1,5 @@
 #!/bin/bash
+source lib/_ak_ipfs
 
 # TODO GPG/PGP setup:: possibly done
 # eg gpg2 --full-key-generate and/or gpg2 --set-default key
@@ -16,9 +17,9 @@ ak_gpg_check_or_create(){
 
 ipfs_zarchive_check_or_mkdir(){
     printf "Checking for /zarchive in IPFS FS..."
-    ipfs files ls /zarchive > /dev/null 2>&1
+    _ak_ipfs files ls /zarchive > /dev/null 2>&1
     if [ $? != 0 ]; then
-        ipfs files mkdir /zarchive > /dev/null 2>&1
+        _ak_ipfs files mkdir /zarchive > /dev/null 2>&1
         if [ $? != 0 ]; then
             printf "\tError!\n"
             exit 1
@@ -32,9 +33,9 @@ ipfs_zarchive_check_or_mkdir(){
 
 ipfs_zlatest_check_or_create(){
     printf "Looking for /zlatest..."
-    ipfs files stat /zlatest > /dev/null 2>&1
+    _ak_ipfs files stat /zlatest > /dev/null 2>&1
     if [ $? != 0 ]; then
-        ipfs files cp /ipfs/$(cat $AK_ZGENESIS) /zlatest
+        _ak_ipfs files cp /ipfs/$(cat $AK_ZGENESIS) /zlatest
         if [ $? != 0 ]; then
             printf "\tProblem copying %s to /zlatest!\n" "$AK_ZGENESIS"
             exit 1
@@ -53,7 +54,7 @@ ak_gpg_check_or_create
 if [ -f $AK_ZGENESIS ] ; then printf "%s" "$(ipfs add -q $AK_GENESIS)" > $AK_ZGENESIS;fi
 if [ ! -f $AK_ZCHAIN ]
 then
-    ipfs key list | grep zchain
+    _ak_ipfs key list | grep zchain
     if [ "$?" -ne 0 ]
     then
         printf "%s" "$(ipfs key gen zchain)" > $AK_ZCHAIN
