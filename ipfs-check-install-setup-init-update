@@ -8,7 +8,7 @@ if [ ! -d $AK_ARCHIVESDIR ]; then mkdir $AK_ARCHIVESDIR ;fi
 _ak_ipfs_install(){
     logit "INFO" "Making temp files"
     pwd > pwd
-    mktemp > tempassin
+    mktemp -d > tempassin
     ak_curdir=$(cat pwd)
     TEMPASSIN=$(cat tempassin)
     cd $TEMPASSIN
