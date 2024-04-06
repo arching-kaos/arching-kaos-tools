@@ -1,6 +1,6 @@
 #!/bin/bash
-source lib/_ak_ipfs
 source lib/_ak_log
+source lib/_ak_ipfs
 
 if [ ! -d $AK_BINDIR ]; then mkdir $AK_BINDIR ;fi
 if [ ! -d $AK_ARCHIVESDIR ]; then mkdir $AK_ARCHIVESDIR ;fi
