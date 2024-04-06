@@ -196,6 +196,7 @@ else
     logthis "$HAK installed at $HOME and sourced it in $SHELLRC"
     source $HOME/$HAK/rc;
 fi
+sh update.sh
 sh ipfs-check-install-setup-init-update
 source ./config.sh
 source $HOME/$SHELLRC
