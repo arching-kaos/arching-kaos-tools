@@ -154,8 +154,8 @@ if [ ! -d $AK_ARCHIVESDIR ]; then mkdir $AK_ARCHIVESDIR ;fi
 if [ ! -f $AK_LOGSFILE ]; then touch $AK_LOGSFILE ;fi
 if [ ! -f $AK_GENESIS ]; then touch $AK_GENESIS;fi
 if [ ! -d $AK_MINEDBLOCKSDIR ]; then mkdir $AK_MINEDBLOCKSDIR; fi
-if [ ! -f $AK_ZBLOCKSFILE ]; then mkdir $AK_ZBLOCKSFILE; fi
-if [ ! -f $AK_ZPAIRSFILE ]; then mkdir $AK_ZPAIRSFILE; fi
+if [ ! -f $AK_ZBLOCKSFILE ]; then touch $AK_ZBLOCKSFILE; fi
+if [ ! -f $AK_ZPAIRSFILE ]; then touch $AK_ZPAIRSFILE; fi
 if [ ! -d $AK_CACHEDIR ]; then mkdir $AK_CACHEDIR; fi
 if [ ! -d $AK_GPGHOME ]; then mkdir $AK_GPGHOME && chmod 700 -R $AK_GPGHOME; fi
 
