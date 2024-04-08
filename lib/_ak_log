@@ -3,3 +3,94 @@
 logit(){
     ak-log-message "$PROGRAM" "$1" "$2"
 }
+
+_ak_log_follow(){
+    tail -f $AK_LOGSFILE | while read -r p || [ -n "$p" ]
+    do
+        timestamp="$(echo "$p" | awk '{print $1}')"
+        program="$(echo "$p" | awk '{print $2}')"
+        messagetype="$(echo "$p" | awk '{print $3}')"
+        message="$(echo "$p" | cut -d ' ' -f4-)"
+        printf '%s \033[1;32m%s\033[0;00m \033[1;31m%s\033[0;00m %s\n' \
+            "$(date --date=@$timestamp +%Y%m%d_%H%M%S)" \
+            "$program" \
+            "$messagetype" \
+            "$message"
+    done
+}
+
+_ak_log_grep(){
+    if [ ! -z $1 ] && [ -n "$1" ]
+    then
+        if [ "$1" == "-h" ] || [ "$1" == "--help" ]
+        then
+            description
+            echo "Launch with no arguments and select from the menu that will appear"
+            exit 1
+        fi
+    fi
+
+    echo "The following scripts have entries in the log file."
+    echo "Select one of those by entering the number of it below and hit enter:"
+    select x in $(cat $AK_LOGSFILE | cut -d ' ' -f 2 | sort | uniq)
+    do
+        grep $x $AK_LOGSFILE
+        break
+    done
+}
+
+_ak_log_rotate(){
+    tar cvfz $AK_ARCHIVESDIR/logs_$(date -u +%s).tar.gz $AK_WORKDIR/akd.log $AK_WORKDIR/akd.err $AK_WORKDIR/logs
+
+    cat /dev/null > $AK_WORKDIR/akd.log
+    cat /dev/null > $AK_WORKDIR/akd.err
+    cat /dev/null > $AK_WORKDIR/logs
+}
+
+_ak_log_message(){
+    PROGRAM="$(basename $0)"
+    TS="$(date -u +%s)"
+    if [ ! -z $1 ] && [ -n "$1" ]
+    then
+        if [ "$1" == "-h" ] || [ "$1" == "--help" ]
+        then
+            echo "$PROGRAM - Log events"
+            echo "-h, --help                    Prints this message"
+            echo "<program> <type> <message>    Logs this message"
+            exit 0
+        fi
+        if [ ! -z "$2" ] && [ -n "$2" ]
+        then
+            if [ ! -z "$3" ] && [ -n "$3" ]
+            then
+                echo "$TS" "<$1>" "[$2]" "$3" >> $AK_LOGSFILE
+                if [ "$AK_DEBUG" == "yes" ]
+                then
+                    echo "$TS" "<$1>" "[$2]" "$3" >&2
+                fi
+                exit 0
+            else
+                echo "$TS" "<$1>" "[ERROR]" "No message" >> $AK_LOGSFILE
+                if [ "$AK_DEBUG" == "yes" ]
+                then
+                    echo "$TS" "<$1>" "[ERROR]" "No message" >&2
+                fi
+                exit 1
+            fi
+        else
+            echo "$TS" "<$1>" "[ERROR]" "No type and message" >> $AK_LOGSFILE
+            if [ "$AK_DEBUG" == "yes" ]
+            then
+                echo "$TS" "<$1>" "[ERROR]" "No type and message" >&2
+            fi
+            exit 1
+        fi
+    else
+        echo "$TS" "<$(basename $0)>" "[ERROR]" "No arguments given" >> $AK_LOGSFILE
+        if [ "$AK_DEBUG" == "yes" ]
+        then
+            echo "$TS" "<$(basename $0)>" "[ERROR]" "No arguments given" >&2
+        fi
+        exit 1
+    fi
+}

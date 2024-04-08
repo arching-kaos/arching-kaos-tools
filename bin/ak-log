@@ -1,0 +1,43 @@
+#!/bin/bash
+##
+## Used to overview, archive or append to the log file
+##
+## Usage:
+##
+##    -h, --help                  Prints this help message
+##
+##    -f, --follow                Follows the log file as its appended with new
+##                                messages
+##
+##    -m, --message <program> <type> <message>
+##                                Adds a log message to the log
+##
+##    -r, --rotate                Cleans up log files after archiving them
+##
+##    -g, --grep                  Select a script to view only logs from that
+##
+fullprogrampath="$(realpath $0)"
+PROGRAM=$(basename $0)
+descriptionString="Log file handler"
+
+# At least these
+source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_script
+
+# Your stuff here...
+example(){
+    echo "Example"
+}
+
+# Flags to run
+if [ ! -z $1 ]; then
+    case $1 in
+        -h | --help) _ak_usage; exit;;
+        -f | --follow) _ak_log_follow; exit;;
+        -g | --grep) _ak_log_grep; exit;;
+        -m | --message) shift; _ak_log_message $*; exit;;
+        -r | --rotate) _ak_log_rotate; exit;;
+        * ) _ak_usage;;
+    esac
+else _ak_usage
+fi
