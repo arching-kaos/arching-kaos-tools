@@ -1,0 +1,29 @@
+#!/bin/bash
+
+_ak_return_hash_path(){
+    hashpath="$(echo -n "$1" |sed 's/./&\//g;s/\/$//g')"
+    echo -n "$hashpath"
+}
+
+_ak_return_hash_dir(){
+    hashdir="$(echo -n "$1" | sed -e 's/./&\//g' | grep '\(./\)\{128\}' | sed -e 's/..$//')"
+    echo -n "$hashdir"
+}
+
+_ak_verify_input_is_hash(){
+    if [ ! -z "$1" ] && echo "$1" | grep '[0123456789abcdef]\{128\}' > /dev/null 2>&1
+    then
+        return 0
+    else
+        echo "no hash?!" >&2
+        exit 1
+    fi
+}
+
+_ak_create_dir_for_hash(){
+    if [ ! -z $1 ] && [ ! -z $2 ] && [ -n "$1" ] && [ -n "$2" ]
+    then
+        mkdir -p "$1/$(_ak_return_hash_diri $2)"
+    fi
+
+}

@@ -9,4 +9,4 @@ SOURCE=./api/index.js
 CFLAGS=pkg
 
 all:
-    $(CC) $(CFLAGS) $(TARGET) --output $(OUTPUT) $(SOURCE)
+		$(CC) $(CFLAGS) $(TARGET) --output $(OUTPUT) $(SOURCE)
