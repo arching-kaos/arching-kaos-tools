@@ -23,7 +23,6 @@ _ak_verify_input_is_hash(){
 _ak_create_dir_for_hash(){
     if [ ! -z $1 ] && [ ! -z $2 ] && [ -n "$1" ] && [ -n "$2" ]
     then
-        mkdir -p "$1/$(_ak_return_hash_diri $2)"
+        mkdir -p "$1/$(_ak_return_hash_dir $2)"
     fi
-
 }
