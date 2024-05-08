@@ -53,7 +53,7 @@ _ak_config_publish(){
 }
 
 _ak_config_published(){
-    _ak_ipfs_cat $(ak-node-info --ipfs) | jq -c
+    _ak_ipfs_cat $(ak-node-info --ipfs) | jq
 }
 
 if [ ! -z $1 ]; then
