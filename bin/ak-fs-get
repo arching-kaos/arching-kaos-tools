@@ -39,12 +39,13 @@ cd $TEMPASSIN
 
 findDepth(){
     currentNode="$1"
-    if [ -f $fmrk/$currentNode ] && [ "$(du -b $fmrk/$currentNode | awk '{print $1}')" == "258" ]
+    pathToNode="$fmrk/$(ak-sm-hash-to-path --path $currentNode)"
+    if [ -f $pathToNode ] && [ "$(du -b $pathToNode | awk '{print $1}')" == "258" ]
     then
-        fileHead="$(head -n 1 $fmrk/$currentNode)"
+        fileHead="$(head -n 1 $pathToNode)"
         counter="$(expr $counter + 1)"
         findDepth "$fileHead"
-    elif [ ! -f $fmrk/$currentNode ]
+    elif [ ! -f $pathToNode ]
     then
         printf "%s" "$counter" > depth
     else
@@ -83,13 +84,14 @@ do
         then
             echo hi
         else
-            if [ -f $fmrk/$p ]
+            expectedPath="$fmrk/$(ak-sm-hash-to-path --path $p)"
+            if [ -f $expectedPath ]
             then
-                if [ "$(head -n 1 $fmrk/$p)" == "$(tail -n 1 $fmrk/$p)" ]
+                if [ "$(head -n 1 $expectedPath)" == "$(tail -n 1 $expectedPath)" ]
                 then
-                    head -n 1 $fmrk/$p >> workspace.$nextLevel
+                    head -n 1 $expectedPath >> workspace.$nextLevel
                 else
-                    cat $fmrk/$p >> workspace.$nextLevel
+                    cat $expectedPath >> workspace.$nextLevel
                 fi
             elif [ -f $ftr/$p ]
             then

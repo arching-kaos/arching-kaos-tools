@@ -183,14 +183,17 @@ do
         sed -n "$a"p "$workingIndex" | awk '{ print $1 }' >> level.$c.pair.$a-$b
         sed -n "$b"p "$workingIndex" | awk '{ print $1 }' >> level.$c.pair.$a-$b
         shaSum="$(sha512sum level.$c.pair.$a-$b | awk '{ print $1 }')"
-        cp level.$c.pair.$a-$b $MERKLEDIR/$shaSum
+        mkdir -p $MERKLEDIR/$(_ak_return_hash_dir $shaSum)
+        cp level.$c.pair.$a-$b $MERKLEDIR/$(_ak_return_hash_path $shaSum)
         sha512sum level.$c.pair.$a-$b | awk '{ print $1 }' >> level.$c.map
         a=`expr "$a" + 2`
     done
     workingIndex="level.$c.map"
     appendLastIfNotEven "$workingIndex"
     shaSum=`sha512sum $workingIndex | awk '{ print $1 }'`
-    cp $workingIndex $MERKLEDIR/$shaSum
+    mkdir -p $MERKLEDIR/$(_ak_return_hash_dir $shaSum)
+    cp $workingIndex $MERKLEDIR/$(_ak_return_hash_path $shaSum)
+#    cp $workingIndex $MERKLEDIR/$shaSum
     totalChunks=`cat $workingIndex | wc -l`
     c=`expr $c - 1`
 done
@@ -211,7 +214,7 @@ rm $TEMPORARYDIR/map2
 counter=0
 while IFS="" read -r p || [ -n "$p" ]
 do
-    printf "mv %s %s%s\n" "$(echo $p | awk '{ print $2 }')" "$CHKDIR" "$(echo $p | awk '{ print $1 }')" >> $TEMPORARYDIR/cmd_queue.sh
+    printf "mv %s %s/%s\n" "$(echo $p | awk '{ print $2 }')" "$CHKDIR" "$(echo $p | awk '{ print $1 }')" >> $TEMPORARYDIR/cmd_queue.sh
     counter=`expr "$counter" + 1`
 done < $TEMPORARYDIR/map
 
@@ -228,7 +231,7 @@ echo "$CHECKSUM  $(basename "$FILE")" >> $TEMPORARYDIR/map
 MAPFILEHASH="$(sha512sum $TEMPORARYDIR/map | awk '{ print $1 }')"
 
 # and we rename it with it and move it to FILEMAPSDIR
-`sha512sum $TEMPORARYDIR/map | awk '{print "mv " $2 " '$FILEMAPSDIR'" $1}'`
+`sha512sum $TEMPORARYDIR/map | awk '{print "mv " $2 " '$FILEMAPSDIR/'" $1}'`
 
 # We remove the TEMPORARYDIR
 rm -rf $TEMPORARYDIR
