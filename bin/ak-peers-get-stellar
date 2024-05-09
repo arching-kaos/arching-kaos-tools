@@ -1,0 +1,18 @@
+#!/usr/bin/bash
+source $AK_LIBDIR/_ak_ipfs
+stellarParticipants="$AK_WORKDIR/stellar-network-participants"
+stellarParticipantsOnline="$AK_WORKDIR/stellar-network-participants-online"
+(
+printf '['
+counter=0
+cat $stellarParticipantsOnline | while read stellarAddress akConfig
+do
+    if [ $counter -ne 0 ]
+    then
+        printf ','
+    fi
+    counter=$(( $counter + 1 ))
+    printf '{"stellarAddress":"%s","config":"%s","configExpand":%s}' "$stellarAddress" "$akConfig" "$(_ak_ipfs_cat /ipns/$akConfig)"
+done
+printf ']'
+) #| jq
