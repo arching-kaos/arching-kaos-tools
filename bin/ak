@@ -1,5 +1,12 @@
 #!/bin/bash
 ##
+## Arching Kaos CLI tool is the main executable script to use for exploring,
+## creating and distributing local blockchain(s) called zchain(s).
+##
+## It is accompanied with several utilities that help to create new blocks,
+## reference them, export blocks to HTML pages, "roll-back" your zchain to an
+## older block, reset your zchain and more.
+##
 ##    -h, --help                  Prints this help message
 ##
 ## Run with no arguments to see available commands

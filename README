@@ -196,8 +196,8 @@ Next things to come are:
         zblocks.
 - [X] - zchain rebase-like procedure to move the zblocks to another seed or set
         another previous block (e.g. join chains)
-- [ ] - Clean up installation and filesystem usage
-- [ ] - Log rotate to gzip archives
+- [x] - Clean up installation and filesystem usage
+- [x] - Log rotate to gzip archives
 - [ ] - Filters for log searching for IPFS hashes or names
 - [ ] - Use of IPFS file system to store/pin sub chains, previous chains or
         other chains

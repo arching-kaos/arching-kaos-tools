@@ -1,14 +1,25 @@
 #!/bin/bash
 ##
-## Brief description
+## Performs various operations on a zblock. Additionally, it can also pack one
+## from given information, which can be added on top of your zchain.
 ##
 ## Usage:
 ##
 ##    -h, --help                  Prints this help message
 ##
+##    -s, --show                  Shows the zblock provided
+##
+##    -x, --gen-html              Generates an HTML document for a given zblock
+##
+##    -c, --cache                 Caches a zblock
+##
+##    -p, --pack                  Packs a zblock
+##
+##    -a, --announce              Announces a zblock
+##
 fullprogrampath="$(realpath $0)"
 PROGRAM=$(basename $0)
-descriptionString="Quick description"
+descriptionString="Various zblock operations"
 
 # At least these
 source $AK_LIBDIR/_ak_log
