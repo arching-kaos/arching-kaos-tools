@@ -1,0 +1,123 @@
+Tutorial
+--------
+Supposingly, you installed successfully the repository and all somehow worked.
+
+Great job!
+
+Your initial state would be like this:
+1. a `.arching-kaos` directory should be in your $HOME directory,
+2. two keys for IPNS should be set up, one for a brief description of your
+    instance called 'config' or 'ak-config' and one for your latest block of
+    your blockchain, called 'zchain',
+3. an empty file which is used as the genesis block of your blockchain,
+4. of course, an IPFS repository under the `.arching-kaos` directory,
+5. a gpg keyring directory with a new key generated for you and
+6. possibly more defaults that I fail to remember out of the top of my head.
+
+Firstly, you might want to name yourself by setting a nickname for your
+blockchain by using the `profile` module like this:
+
+```console
+$ ak profile set nickname <yournick>
+```
+
+Note that `ak` is the cli tool for calling all the scripts that come with the
+arching-kaos-tools repository.
+
+After setting up your nickname, you can see that addition by crawling your chain
+like this:
+
+```console
+$ ak enter
+```
+
+Most of the commands come with a `-h` and/or `--help` flags that will provide
+you with details on how to use each command. For example, the help message that
+would appear for `ak enter -h` would look like this:
+```
+ak-enter - Crawl an arching kaos chain
+======================================
+ak-enter [-N | --no-verify] [-l | --limit <number>] [zblock]
+ak-enter [-N | --no-verify] [-l | --limit <number>] -n <zchain>
+Usage:
+    --help, -h                             Print this help and exit
+    --chain <ipns-link>, -n <ipns-link>    Crawl specified chain
+    --no-verify, -N                        Don't verify signatures
+    <ipfs-link>                            Specify IPFS CID for entrance
+
+Note that combined flags don't work for now
+Running with no flags crawls your chain based on AK_ZLATEST environment
+variable
+```
+
+So, you made your self "known" with a nickname. How about posting a blog-like
+post using the `news` or `articles` modules?
+```console
+$ ak news -h
+ak-news - Module to read, create and add zblocks
+================================================
+
+   -h, --help                  Prints this help message
+
+   -l, --local-index           Prints an indexed table of your news files
+
+   -i, --import <file>         TODO
+
+   -a, --add <file>            Creates a data file from the news file you
+                               point to
+
+   -r, --read <zblock>         Reads a zblock as a news data
+
+   -c, --create                Vim is going to pop up, you will write and
+                               save your newsletter and it's going to bei
+                               saved
+
+   -s, --specs                 Print specs of data block
+
+   -x, --html <zblock>         Returns an appropriate html element from a
+                               NEWS zblock
+```
+
+As you see, there are plenty of options to use `ak news` with. Let's keep it
+simple and run it like this:
+
+```console
+$ ak news --create
+```
+Note:
+You will need to have a text editor in your EDITOR environment variable for this
+to work.
+
+Your EDITOR will pop up for you to enter some text in your post. After you are
+done, be sure that the first line is the subject of the post, save it in place
+(e.g. "Save" instead of "Save As...") and close your editor.
+
+Supposingly, if you don't see any errors, then your post is saved and appended
+in your chain. You can use `ak enter` again or be more specific by asking it to
+output only the last block by using the `--limit 1` option. You can also pipe it
+to `jq` for easier reading:
+
+```console
+ak enter -l 1 | jq
+```
+
+You can also read the post by using its "zblock" reference using the command
+`ak news -r <zblock>` and replacing '<zblock>' with the value you got from 
+`ak enter -l 1 | jq` we run just before.
+
+Lastly, you can make up an HTML document of that zblock by using `ak zblock` in
+the following way:
+
+```console
+$ ak zblock --gen-html <zblock>
+```
+also replacing '<zblock>' with the desired value. This will output a file in the
+following format in your current directory:
+
+```
+zblock-<zblock>.html
+```
+
+There are more things to cover but it seems enough for a introductive tutorial.
+
+Have fun and enjoy arching your chaos around!
