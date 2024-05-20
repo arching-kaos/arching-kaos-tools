@@ -26,7 +26,7 @@ _ak_gpg_key_import_from_file(){
 }
 
 _ak_gpg_key_self_get_fingerprint_from_config(){
-    ak-config show | jq -r '.gpg'
+    ak-config --show | jq -r '.gpg'
 }
 
 _ak_gpg_key_self_get_fingerprint(){

@@ -42,7 +42,7 @@ rebase (){
     _ak_ipfs_name_publish --key=zchain /ipfs/$(cat $AK_ZLATEST)
     if [ $? != 0 ]; then exit 1; fi
 
-    ak-config publish
+    ak-config --publish
     if [ "$?" -ne 0 ]
     then
         logit "ERROR" "Could not publish new configuration"

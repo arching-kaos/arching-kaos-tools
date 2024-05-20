@@ -585,7 +585,7 @@ _ak_zblock_pack(){
             logit "ERROR" "Could not copy $ZBLOCK to /zlatest"
             exit 1
         fi
-        ak-config publish
+        ak-config --publish
         if [ $? -ne 0 ]
         then
             logit "ERROR" "Could not publish new configuration"
