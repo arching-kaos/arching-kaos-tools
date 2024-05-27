@@ -44,8 +44,8 @@ _ak_ipfs_scanner(){
             url="http://$ip:8610/v0/node_info"
         fi
         node_info="`curl \
-            -A 'akd/0.1.0; https://github.com/arching-kaos' \
             --connect-timeout 3 \
+            -A 'akd/0.1.0; https://github.com/arching-kaos' \
             "$url" 2>/dev/null`"
         if [ $? -eq 0 ]
         then
@@ -64,6 +64,11 @@ _ak_ipfs_scanner(){
 }
 
 _ak_ipfs_add(){
+    if [ -z $1 ] || [ ! -n "$1" ]
+    then
+        logit "error" "no argument given"
+        exit 1
+    fi
     # Receives a file
     # Returns a hash
     _ak_ipfs add -Qr "$1"
@@ -75,6 +80,11 @@ _ak_ipfs_add(){
 }
 
 _ak_ipfs_block_stat(){
+    if [ -z $1 ] || [ ! -n "$1" ]
+    then
+        logit "error" "no argument given"
+        exit 1
+    fi
     _ak_ipfs block stat "$1"
     if [ $? -ne 0 ]
     then
@@ -84,6 +94,11 @@ _ak_ipfs_block_stat(){
 }
 
 _ak_ipfs_cat(){
+    if [ -z $1 ] || [ ! -n "$1" ]
+    then
+        logit "error" "no argument given"
+        exit 1
+    fi
     _ak_ipfs --timeout=10s cat $1
     if [ "$?" -ne "0" ]
     then
@@ -94,6 +109,16 @@ _ak_ipfs_cat(){
 }
 
 _ak_ipfs_files_cp(){
+    if [ -z $1 ] || [ ! -n "$1" ]
+    then
+        logit "ERROR" "No argument given"
+        exit 1
+    fi
+    if [ -z $2 ] || [ ! -n "$2" ]
+    then
+        logit "ERROR" "No argument given"
+        exit 1
+    fi
     _ak_ipfs files cp "$1" "$2"
     if [ $? -ne 0 ]
     then
@@ -112,6 +137,11 @@ _ak_ipfs_files_ls(){
 }
 
 _ak_ipfs_files_mkdir(){
+    if [ -z $1 ] || [ ! -n "$1" ]
+    then
+        logit "ERROR" "No argument given"
+        exit 1
+    fi
     _ak_ipfs files mkdir "$1"
     if [ $? -ne 0 ]
     then
@@ -121,6 +151,16 @@ _ak_ipfs_files_mkdir(){
 }
 
 _ak_ipfs_files_mv(){
+    if [ -z $1 ] || [ ! -n "$1" ]
+    then
+        logit "ERROR" "No argument given"
+        exit 1
+    fi
+    if [ -z $2 ] || [ ! -n "$2" ]
+    then
+        logit "ERROR" "No argument given"
+        exit 1
+    fi
     _ak_ipfs files mv "$1" "$2"
     if [ $? -ne 0 ]
     then
@@ -130,6 +170,11 @@ _ak_ipfs_files_mv(){
 }
 
 _ak_ipfs_files_rm(){
+    if [ -z $1 ] || [ ! -n "$1" ]
+    then
+        logit "ERROR" "No argument given"
+        exit 1
+    fi
     _ak_ipfs files rm "$1"
     if [ $? -ne 0 ]
     then
@@ -139,6 +184,11 @@ _ak_ipfs_files_rm(){
 }
 
 _ak_ipfs_files_stat(){
+    if [ -z $1 ] || [ ! -n "$1" ]
+    then
+        logit "ERROR" "No argument given"
+        exit 1
+    fi
     _ak_ipfs files stat "$1"
     if [ $? -ne 0 ]
     then
@@ -148,6 +198,11 @@ _ak_ipfs_files_stat(){
 }
 
 _ak_ipfs_get(){
+    if [ -z $1 ] || [ ! -n "$1" ]
+    then
+        logit "ERROR" "No argument given"
+        exit 1
+    fi
     _ak_ipfs --timeout=10s get "$1" > /dev/null 2>&1
     if [ $? -ne 0 ]
     then
@@ -157,6 +212,11 @@ _ak_ipfs_get(){
 }
 
 _ak_ipfs_key_gen(){
+    if [ -z $1 ] || [ ! -n "$1" ]
+    then
+        logit "ERROR" "No argument given"
+        exit 1
+    fi
     _ak_ipfs key gen "$1"
     if [ $? -ne 0 ]
     then
@@ -184,6 +244,16 @@ _ak_ipfs_key_list_full(){
 }
 
 _ak_ipfs_name_publish(){
+    if [ -z $1 ] || [ ! -n "$1" ]
+    then
+        logit "ERROR" "No argument given"
+        exit 1
+    fi
+    if [ -z $2 ] || [ ! -n "$2" ]
+    then
+        logit "ERROR" "No argument given"
+        exit 1
+    fi
     _ak_ipfs name publish "$1" "$2"
     if [ $? -ne 0 ]
     then
@@ -194,6 +264,11 @@ _ak_ipfs_name_publish(){
 }
 
 _ak_ipfs_name_resolve(){
+    if [ -z $1 ] || [ ! -n "$1" ]
+    then
+        logit "ERROR" "No argument given"
+        exit 1
+    fi
     _ak_ipfs name resolve "$1"
     if [ $? -ne 0 ]
     then
@@ -292,7 +367,9 @@ _ak_ipfs_init(){
 
 _ak_ipfs_download(){
     logit "INFO" "Attempting to install IPFS..."
-    IPFS_VERSION="$(curl -s https://dist.ipfs.tech/kubo/versions | tail -1)"
+    IPFS_VERSION="$(curl \
+        --connect-timeout 3 \
+        -s https://dist.ipfs.tech/kubo/versions | tail -1)"
     IPFS_TARGET_FILE="kubo_"$IPFS_VERSION"_linux-amd64.tar.gz"
 
     logit "INFO" "Downloading ipfs $IPFS_VERSION"
@@ -306,18 +383,18 @@ _ak_ipfs_download(){
 }
 
 _ak_ipfs_cid_v0_check () {
-    if [ -z $1 ] || [ "$1" != "" ]
+    if [ -z $1 ] || [ ! -n "$1" ]
     then
-        echo $1 | grep -e 'Qm.\{44\}' > /dev/null
-        if [ "$?" -ne 0 ]
-        then
-            logit "ERROR" "$1 is not an IPFS CIDv0 string"
-            exit 1
-        fi
-        logit "INFO" "$1 provided is an IPFS CIDv0 string"
-    else
-        logit "ERROR" "No argument was provided"
+        logit "ERROR" "No argument given"
         exit 1
+    fi
+    echo $1 | grep -e 'Qm.\{44\}' > /dev/null
+    if [ "$?" -ne 0 ]
+    then
+        logit "ERROR" "$1 is not an IPFS CIDv0 string"
+        exit 1
+    fi
+    logit "INFO" "$1 provided is an IPFS CIDv0 string"
     fi
 }
 
