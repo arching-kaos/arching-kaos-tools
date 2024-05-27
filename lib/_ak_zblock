@@ -601,7 +601,12 @@ _ak_zblock_pack(){
 _ak_zblock_announce(){
     if [ ! -z "$1" ] && [ -n "$1" ]
     then
-        curl http://127.0.0.1:8610/v0/announce/zblock --header 'Content-Type: application/json' --data-raw '{"zblock":"'$1'"}' 2>/dev/null | jq -M -c > /dev/null
+        curl \
+            --connect-timeout 3 \
+            --header 'Content-Type: application/json' \
+            --data-raw '{"zblock":"'$1'"}' \
+            "http://127.0.0.1:8610/v0/announce/zblock" \
+            2>/dev/null | jq -M -c > /dev/null
         if [ $? -ne 0 ]
         then
             logit "ERROR" "zblock $zblock announcement failed"
@@ -609,7 +614,12 @@ _ak_zblock_announce(){
             logit "INFO" "zblock $zblock announced"
         fi
     else
-        curl http://127.0.0.1:8610/v0/announce/zblock --header 'Content-Type: application/json' --data-raw '{"zblock":"'$(ak-get-zlatest)'"}' 2>/dev/null | jq -M -c > /dev/null
+        curl \
+            --connect-timeout 3 \
+            --header 'Content-Type: application/json' \
+            --data-raw '{"zblock":"'$(ak-get-zlatest)'"}' \
+            "http://127.0.0.1:8610/v0/announce/zblock" \
+            2>/dev/null | jq -M -c > /dev/null
         if [ $? -ne 0 ]
         then
             logit "ERROR" "zblock $zblock announcement failed"
