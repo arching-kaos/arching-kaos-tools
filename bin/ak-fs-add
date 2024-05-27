@@ -183,16 +183,16 @@ do
         sed -n "$a"p "$workingIndex" | awk '{ print $1 }' >> level.$c.pair.$a-$b
         sed -n "$b"p "$workingIndex" | awk '{ print $1 }' >> level.$c.pair.$a-$b
         shaSum="$(sha512sum level.$c.pair.$a-$b | awk '{ print $1 }')"
-        mkdir -p $MERKLEDIR/$(_ak_return_hash_dir $shaSum)
-        cp level.$c.pair.$a-$b $MERKLEDIR/$(_ak_return_hash_path $shaSum)
+        mkdir -p $MERKLEDIR/$(_ak_fs_return_hash_dir $shaSum)
+        cp level.$c.pair.$a-$b $MERKLEDIR/$(_ak_fs_return_hash_path $shaSum)
         sha512sum level.$c.pair.$a-$b | awk '{ print $1 }' >> level.$c.map
         a=`expr "$a" + 2`
     done
     workingIndex="level.$c.map"
     appendLastIfNotEven "$workingIndex"
     shaSum=`sha512sum $workingIndex | awk '{ print $1 }'`
-    mkdir -p $MERKLEDIR/$(_ak_return_hash_dir $shaSum)
-    cp $workingIndex $MERKLEDIR/$(_ak_return_hash_path $shaSum)
+    mkdir -p $MERKLEDIR/$(_ak_fs_return_hash_dir $shaSum)
+    cp $workingIndex $MERKLEDIR/$(_ak_fs_return_hash_path $shaSum)
 #    cp $workingIndex $MERKLEDIR/$shaSum
     totalChunks=`cat $workingIndex | wc -l`
     c=`expr $c - 1`

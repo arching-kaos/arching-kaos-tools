@@ -23,13 +23,13 @@ case "$1" in
         exit 1
         ;;
     -d | --dir)
-        _ak_verify_input_is_hash $2
-        _ak_return_hash_dir $2
+        _ak_fs_verify_input_is_hash $2
+        _ak_fs_return_hash_dir $2
         exit 0
         ;;
     -p | --path)
-        _ak_verify_input_is_hash $2
-        _ak_return_hash_path $2
+        _ak_fs_verify_input_is_hash $2
+        _ak_fs_return_hash_path $2
         exit 0
         ;;
     *)
