@@ -1,0 +1,60 @@
+#!/bin/bash
+##
+## Tools for zchains
+##
+## Usage:
+##
+##    -h, --help                  Prints this help message
+##
+##    -r, --reset                 Reset zchain
+##                                Backs up your latest block into IPFS
+##                                filesystem, replaces it with an empty file
+##                                (GENESIS hardcode) and pushes its IPFS link
+##                                as your zchain's latest zblock.
+##                                Disclaimer:
+##                                This program, does NOT delete anything from
+##                                your IPFS repository, neither denies access to
+##                                previously created blocks.
+##
+##    --rebase <zblock>           Rebase zchain to a zblock
+##                                Backs up your latest block into IPFS
+##                                filesystem, replaces it with a zblock and
+##                                pushes its IPFS link as your zchain's latest
+##                                zblock.
+##                                Disclaimer:
+##                                This program, does NOT delete anything from
+##                                your IPFS repository, neither denies access to
+##                                previously created blocks.
+##
+##    --rebase-back-one           Rebase zchain one zblock back
+##
+##    --extract-cids              Extracts IPFS CIDv0 links of a zchain
+##
+##    --extract-data-cids         Extracts data IPFS CIDv0 links from a zchain
+##
+##    --calculate-size            Calculates the size of a zchain
+##
+##
+fullprogrampath="$(realpath $0)"
+PROGRAM=$(basename $0)
+descriptionString="Zchain tools"
+
+# At least these
+source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_script
+source $AK_LIBDIR/_ak_zchain
+
+# Flags to run
+if [ ! -z $1 ]; then
+    case $1 in
+        -h | --help) _ak_usage; exit;;
+        -r | --reset) _ak_zchain_reset; exit;;
+        --rebase) if [ ! -z $2 ]; then _ak_zchain_rebase $2; else exit 1; fi; exit;;
+        --rebase-back-one) _ak_zchain_rebase "`ak-enter -l 2 | jq -r '.[1].zblock'`" ; exit ;;
+        --extract-cids) _ak_zchain_extract_cids $2; exit;;
+        --extract-data-cids) _ak_zchain_extract_data_cids $2; exit;;
+        --calculate-size) _ak_zchain_calculate_size $2; exit;;
+        * ) _ak_usage;;
+    esac
+else _ak_usage
+fi

@@ -1,0 +1,121 @@
+#!/bin/bash
+source $AK_LIBDIR/_ak_ipfs
+source $AK_LIBDIR/_ak_log
+
+_ak_zchain_reset (){
+    echo "Reseting ZLATEST to ZGENESIS"
+    cp $ZGENESIS $ZLATEST
+    if [ $? != 0 ]; then exit 1; fi
+
+    echo "Make sure /zarchive folder exists within IPFS FS"
+    _ak_ipfs_files_mkdir /zarchive
+    if [ $? != 0 ]; then echo "Folder already there"; fi
+
+    echo "Archive the previous ZLATEST"
+    _ak_ipfs_files_cp /zlatest /zarchive/$(date -u +%s)-$(_ak_ipfs_files_stat /zlatest | head -n 1)
+    if [ $? != 0 ]; then exit 1; fi
+
+    echo "Removing previous /zlatest entry"
+    _ak_ipfs_files_rm /zlatest
+    if [ $? != 0 ]; then exit 1; fi
+
+    echo "Copying reset ZLATEST"
+    CZLATEST="$(cat $ZLATEST)"
+    _ak_ipfs_files_cp /ipfs/$CZLATEST /zlatest
+    if [ $? != 0 ]; then exit 1; fi
+
+    echo "Publishing new (reset) ZLATEST"
+    _ak_ipfs_name_publish --key=zchain /ipfs/$(cat $ZLATEST)
+    if [ $? != 0 ]; then exit 1; fi
+
+    ak-config --publish
+    if [ "$?" -ne 0 ]
+    then
+        logit "ERROR" "Could not publish new configuration"
+        exit 1
+    fi
+
+    echo "Reset was successful"
+    exit 0
+}
+
+_ak_zchain_rebase (){
+    if [ ! -n "$1" ]; then exit 1; fi
+    ZTARGET="$1"
+    echo "Reseting ZLATEST to ZTARGET"
+    echo $ZTARGET > $AK_ZLATEST
+    if [ $? != 0 ]; then exit 1; fi
+
+    echo "Make sure /zarchive folder exists within IPFS FS"
+    _ak_ipfs_files_mkdir /zarchive
+    if [ $? != 0 ]; then echo "Folder already there"; fi
+
+    echo "Archive the previous ZLATEST"
+    _ak_ipfs_files_cp /zlatest /zarchive/$(date -u +%s)-$(_ak_ipfs_files_stat /zlatest | head -n 1)
+    if [ $? != 0 ]; then exit 1; fi
+
+    echo "Removing previous /zlatest entry"
+    _ak_ipfs_files_rm /zlatest
+    if [ $? != 0 ]; then exit 1; fi
+
+    echo "Copying rebased ZLATEST"
+    CZLATEST="$(cat $AK_ZLATEST)"
+    _ak_ipfs_files_cp /ipfs/$CZLATEST /zlatest
+    if [ $? != 0 ]; then exit 1; fi
+
+    echo "Publishing new (rebased) ZLATEST"
+    _ak_ipfs_name_publish --key=zchain /ipfs/$(cat $AK_ZLATEST)
+    if [ $? != 0 ]; then exit 1; fi
+
+    ak-config --publish
+    if [ "$?" -ne 0 ]
+    then
+        logit "ERROR" "Could not publish new configuration"
+        exit 1
+    fi
+    echo "Rebase was successful"
+    exit 0
+}
+
+_ak_zchain_extract_cids(){
+    if [ ! -z $1 ] && [ -n "$1" ]
+    then
+        ak-enter $1 | jq  -M | grep Qm | sed -e 's/".*"://g; s/ //g; s/[{,"]//g' | sort | uniq
+    else
+        ak-enter | jq -M | grep Qm | sed -e 's/".*"://g; s/ //g; s/[{,"]//g' | sort | uniq
+    fi
+}
+
+_ak_zchain_extract_data_cids(){
+    if [ ! -z $1 ]
+    then
+        ak-enter $1 | jq | grep ipfs | awk '{print $2}' | sed -e 's/"//g;s/,//g'
+    else
+        ak-enter | jq | grep ipfs | awk '{print $2}' | sed -e 's/"//g;s/,//g'
+    fi
+}
+
+_ak_zchain_calculate_size(){
+    temp="$(mktemp -d)"
+    cd $temp
+    if [ ! -z $1 ] && [ -n "$1" ]
+    then
+        _ak_zchain_extract_cids $1 > to_stats
+    else
+        _ak_zchain_extract_cids > to_stats
+    fi
+    sum=0 ; while IFS="" read -r p || [ -n "$p" ]
+    do
+        if [ "$p" != "" ]
+        then
+            _ak_ipfs_get $p
+            num="$(du -bs --apparent-size $p | cut -d $'\t' -f 1)"
+        else
+            num=0
+        fi
+        sum=$(expr $sum + $num )
+    done < to_stats
+    echo "Chain is : $sum bytes"
+    cd ~
+    rm -rf $temp
+}
