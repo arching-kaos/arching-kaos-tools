@@ -4,6 +4,22 @@ logit(){
     ak-log-message "$PROGRAM" "$1" "$2"
 }
 
+_ak_log_warning(){
+    ak-log-message "$PROGRAM" "WARNING" "$1"
+}
+
+_ak_log_debug(){
+    ak-log-message "$PROGRAM" "DEBUG" "$1"
+}
+
+_ak_log_error(){
+    ak-log-message "$PROGRAM" "ERROR" "$1"
+}
+
+_ak_log_info(){
+    ak-log-message "$PROGRAM" "INFO" "$1"
+}
+
 _ak_log_follow(){
     tail -f $AK_LOGSFILE | while read -r p || [ -n "$p" ]
     do
