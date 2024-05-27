@@ -61,13 +61,16 @@ get_next_page(){
 }
 
 proceed_to_next_page(){
-
     nextURL="$(get_next_page)"
-    curl "$nextURL" > $tempfile 2>/dev/null
+    curl \
+        --connect-timeout 3 \
+        "$nextURL" > $tempfile 2>/dev/null
 }
 
 get_asset_holders(){
-    curl https://horizon.stellar.org/accounts\?asset\=ARCHINGKAOS:GB4QVKD6NW3CSNO5TNPARAWNPPXOPSSTKB35XCWB7PUNBIQTK3DVELB2\&limit\=$limit > $tempfile 2>/dev/null
+    curl \
+        --connect-timeout 3 \
+        https://horizon.stellar.org/accounts\?asset\=ARCHINGKAOS:GB4QVKD6NW3CSNO5TNPARAWNPPXOPSSTKB35XCWB7PUNBIQTK3DVELB2\&limit\=$limit > $tempfile 2>/dev/null
 }
 
 get_asset_holders
@@ -83,7 +86,9 @@ rm $tempfile $tempaddr
 while IFS="" read -r p || [ -n "$p" ]
 do
     flag=0
-    test="$(curl https://horizon.stellar.org/accounts/$p/data/config 2>/dev/null | grep value)"
+    test="$(curl \
+        --connect-timeout 3 \
+        https://horizon.stellar.org/accounts/$p/data/config 2>/dev/null | grep value)"
     if [ "$?" == 0 ]
     then
         addressValuePair="$(printf '%s %s\n' "$p" "$(echo $test | sed -e 's/^.*: "//g; s/"//g' | base64 -d)")"
