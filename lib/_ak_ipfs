@@ -395,7 +395,6 @@ _ak_ipfs_cid_v0_check () {
         exit 1
     fi
     logit "INFO" "$1 provided is an IPFS CIDv0 string"
-    fi
 }
 
 _ak_ipfs_swarm_install() {
