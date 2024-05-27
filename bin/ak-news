@@ -73,11 +73,11 @@ _ak_modules_news_index(){
         DATE="$(echo $FILE | cut -d - -f 1 | awk '{print $1}')"
         TITLE="$(head -n 1 $ZNEWSDIR/$FILE)"
         IPFS_HASH="$(ipfs add -nQ $ZNEWSDIR/$FILE)"
-        ONLINE="Not in zchain"
+        ONLINE="offzchain"
         grep "$IPFS_HASH" temp > /dev/null 2>&1
         if [ $? -eq 0 ]
         then
-            ONLINE="On zchain"
+            ONLINE="on-zchain"
         fi
         printf "%3d | %5s | %52s | %10s | %56s \n"\
             "$i" "$ONLINE" "$IPFS_HASH" "$DATE" "$TITLE"

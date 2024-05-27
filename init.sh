@@ -75,9 +75,6 @@ ipfs_zarchive_check_or_mkdir
 
 ipfs_zlatest_check_or_create
 
-# TODO The thing is done, we are sitting on a genesis.
-# We also have an IPNS name to use.
-
 # Find scripts and create symlinks
 
 binfiles=$(ls -1 $(pwd)/bin)

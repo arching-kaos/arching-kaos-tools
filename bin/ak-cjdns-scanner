@@ -24,8 +24,8 @@ dumpLinks \
     | while read -r ip || [ -n "$ip" ]
 do
     node_info="`curl \
-        -A 'akd/0.1.0; https://github.com/arching-kaos' \
         --connect-timeout 3 \
+        -A 'akd/0.1.0; https://github.com/arching-kaos' \
         "http://[$(publictoip6 $ip)]:8610/v0/node_info" 2>/dev/null`"
     if [ "$?" == "0" ]
     then
