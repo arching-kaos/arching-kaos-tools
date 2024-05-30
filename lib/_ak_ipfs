@@ -66,7 +66,7 @@ _ak_ipfs_scanner(){
 _ak_ipfs_add(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
-        logit "error" "no argument given"
+        logit "ERROR" "no argument given"
         exit 1
     fi
     # Receives a file
@@ -82,7 +82,7 @@ _ak_ipfs_add(){
 _ak_ipfs_block_stat(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
-        logit "error" "no argument given"
+        logit "ERROR" "no argument given"
         exit 1
     fi
     _ak_ipfs block stat "$1"
@@ -96,7 +96,7 @@ _ak_ipfs_block_stat(){
 _ak_ipfs_cat(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
-        logit "error" "no argument given"
+        logit "ERROR" "no argument given"
         exit 1
     fi
     _ak_ipfs --timeout=10s cat $1
