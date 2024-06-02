@@ -271,7 +271,7 @@ do
             if [ -v $previous ]
             then
                 logit "WARNING" "Block $block has no previous zblock, appending pseudo genesis to exit with 2."
-                echo -n '"previous":"genesis"},{"genesis":"genesis"}]'
+                echo -n '"previous":"'$seed'"},{"genesis":"genesis"}]'
                 logit "INFO" "Reached pseudo-genesis, counted $counter zblocks."
                 exit 2
 
