@@ -17,6 +17,7 @@ descriptionString="Arching Kaos CLI"
 
 source $AK_LIBDIR/_ak_log
 source $AK_LIBDIR/_ak_script
+source $AK_WORKDIR/rc
 
 if [ $# -eq 0 ]
 then
@@ -49,6 +50,17 @@ then
 fi
 
 subcmd="$(echo $* | sed -e 's/ /-/g')"
+
+# Add functionality for separate modules directory
+# case "$1" in
+#     -m|--module)
+#         shift
+#         subcmd="modules/$(echo $* | sed -e 's/ /-/g')"
+#         ;;
+# esac
+#
+# echo $subcmd
+
 if [ -f "$AK_BINDIR/ak-$subcmd" ]
 then
     $(echo ak-$subcmd)

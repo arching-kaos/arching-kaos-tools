@@ -1,5 +1,17 @@
 #!/bin/bash
 PROGRAM="$(basename $0)"
+gather_zblocks(){
+    cat $AK_ZBLOCKSFILE | \
+        jq | \
+        grep -e 'Qm.\{44\}' | \
+        sed -e 's/\"zblock\"://g; s/ //g;' | \
+        tr -d '\n'| \
+        sed -e 's/""/","/g;
+            s/^/[&/g; s/$/&]/g;
+            s/^/{"zblocks":&/;
+            s/$/&,/g'
+}
+
 proofofwork(){
     TEST="$1"
     PRE="$2"
