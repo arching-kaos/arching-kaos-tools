@@ -49,10 +49,11 @@ module.exports = (req, res) => {
     if ( (req.params.mrk) && req.params.mrk.length === 128 ){
         regex= /[a-f0-9]{128}/;
         if (regex.test(req.params.mrk)){
-            if (req.params.mrk === "QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH" ){
+            let mrk = req.params.mrk;
+            if (mrk === "QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH" ){
                 res.send({error:"Genesis block"});
             } else {
-                fetchFmrk(req.params.mrk,res);
+                fetchFmrk(mrk,res);
             }
         } else {
             res.send({error:"Invalid data: regexp failed to pass"});
