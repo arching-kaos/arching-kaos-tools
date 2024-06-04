@@ -1,4 +1,3 @@
-const { spawn } = require('child_process');
 const fs = require("fs");
 const config = require("../../config");
 
@@ -10,39 +9,18 @@ const config = require("../../config");
  *
  */
 function fetchFmrk(mrk, res){
-    const command = spawn("cat",[config.workDir+"/fmrk/"+mrk]);
     res.set('Content-Type', 'application/json');
-    command.stdout.on("data", data => {
-    });
-
-    command.stderr.on("data", data => {
-            console.log(`stderr: ${data}`);
-    });
-
-    command.on('error', (error) => {
-            console.log(`error: ${error.message}`);
-    });
-
-    command.on("close", code => {
-        console.log(`child process exited with code ${code}`);
-
-        if ( code === 0 ) {
-            const path = config.workDir+"/fmrk/"+mrk;
-            console.log(path)
-            try {
-                if(fs.existsSync(path)){
-                    res.send(fs.readFileSync(path));
-                }
-            } catch (error) {
-                res.send({"error":error.message});
-            }
-        } else if ( code === 2){
-            res.send({"error":"The roof is on fire"});
-        } else {
-            res.send({"error":"invalid or unreachable"});
+    const path = config.workDir+"/fmrk/"+mrk;
+    // console.log(path)
+    try {
+        if(fs.existsSync(path)){
+            res.send(fs.readFileSync(path));
         }
-    });
+    } catch (error) {
+        res.send({"error":error.message});
+    }
 };
+
 module.exports = (req, res) => {
     console.log(req.params)
     res.set('Content-Type', 'application/json');
@@ -50,11 +28,7 @@ module.exports = (req, res) => {
         regex= /[a-f0-9]{128}/;
         if (regex.test(req.params.mrk)){
             let mrk = req.params.mrk;
-            if (mrk === "QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH" ){
-                res.send({error:"Genesis block"});
-            } else {
-                fetchFmrk(mrk,res);
-            }
+            fetchFmrk(mrk,res);
         } else {
             res.send({error:"Invalid data: regexp failed to pass"});
         }
