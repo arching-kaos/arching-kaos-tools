@@ -43,6 +43,7 @@ const cookieParser = require('cookie-parser');
 
 // We start our server ... 
 const app = express();
+app.disable('x-powered-by');
 
 // Set logger format output
 app.use(logger('combined'));
