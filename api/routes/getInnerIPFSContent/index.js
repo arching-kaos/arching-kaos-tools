@@ -15,13 +15,14 @@ function fetchZblock(zblock, res){
 };
 module.exports = (req, res) => {
     console.log(req.query)
-    if ( (req.query.ipfs) && req.query.ipfs.length === 46 ){
+    if ( (req.query.ipfs) && typeof req.query.ipfs === "string" && req.query.ipfs.length === 46 ){
+        let ipfs = req.query.ipfs;
         regex= /Qm[A-Za-z0-9]{44}/;
-        if (regex.test(req.query.ipfs)){
-            if (req.query.ipfs === "QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH" ){
+        if (regex.test(ipfs)){
+            if (ipfs === "QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH" ){
                 res.send({error:"Genesis block"});
             } else {
-                fetchZblock(req.query.ipfs,res);
+                fetchZblock(ipfs,res);
             }
         } else {
             res.send({error:"Invalid data: regexp failed to pass"});

@@ -36,10 +36,11 @@ const getNSvalidity = require('../../validators/ZchainValidator')
 
 module.exports = (req, res) => {
     console.log(req);
-    if ( (req.body.zchain) && req.body.zchain.length === 62 ){//&& req.body.block_signature.length === 46){
+    if ( (req.body.zchain) && typeof req.body.zchain === "string" && req.body.zchain.length === 62 ){
+        let zchain = req.body.zchain;
         regex= /k51qzi5uqu5d[A-Za-z0-9]{50}/
-        if (regex.test(req.body.zchain)){ // && regex.test(req.body.block_signature)){
-            getNSvalidity(req.body.zchain,res);
+        if (regex.test(zchain)){
+            getNSvalidity(zchain,res);
         } else {
             res.send({error:"Invalid data"});
         }

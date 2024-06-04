@@ -15,11 +15,11 @@
 const getvalidity = require('../../validators/ZblockValidator')
 module.exports = (req, res) => {
     console.log(req);
-    console.log("okay we got called");
-    if ( (req.body.zblock) && req.body.zblock.length === 46 ){
+    if ( (req.body.zblock) && typeof req.body.zblock === "string" && req.body.zblock.length === 46 ){
+        let zblock = req.body.zblock;
         regex= /Qm[A-Za-z0-9]{44}/;
-        if (regex.test(req.body.zblock)){
-            getvalidity(req.body.zblock,res);
+        if (regex.test(zblock)){
+            getvalidity(zblock,res);
         } else {
             res.send({error:"Invalid data"});
         }
