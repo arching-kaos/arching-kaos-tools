@@ -52,14 +52,16 @@ fi
 subcmd="$(echo $* | sed -e 's/ /-/g')"
 
 # Add functionality for separate modules directory
-# case "$1" in
-#     -m|--module)
-#         shift
-#         subcmd="modules/$(echo $* | sed -e 's/ /-/g')"
-#         ;;
-# esac
-#
-# echo $subcmd
+case "$1" in
+    -m|--module)
+        shift
+        subcmd="$AK_MODULESDIR/$(echo $1 | sed -e 's/ /-/g')"
+        shift
+        subargs="$*"
+        $subcmd $subargs
+        _ak_exit_program $? "$subcmd module finished";
+        ;;
+esac
 
 if [ -f "$AK_BINDIR/ak-$subcmd" ]
 then

@@ -147,6 +147,7 @@ fi
 if [ ! -d $AK_CONFIGDIR ] ; then mkdir $AK_CONFIGDIR ;fi
 if [ ! -d $AK_BINDIR ]; then mkdir $AK_BINDIR ;fi
 if [ ! -d $AK_LIBDIR ]; then mkdir $AK_LIBDIR ;fi
+if [ ! -d $AK_MODULESDIR ]; then mkdir $AK_MODULESDIR ;fi
 if [ ! -d $AK_ZBLOCKDIR ]; then mkdir $AK_ZBLOCKDIR ;fi
 if [ ! -d $AK_BLOCKDIR ]; then mkdir $AK_BLOCKDIR ;fi
 if [ ! -d $AK_DATADIR ]; then mkdir $AK_DATADIR ;fi

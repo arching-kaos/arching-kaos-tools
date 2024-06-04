@@ -97,6 +97,7 @@ do
         printf "\tOK!\n"
     fi
 done
+
 # Find libs and create symlinks
 libfiles=$(ls -1 $(pwd)/lib)
 for b in $libfiles
@@ -108,6 +109,28 @@ do
         if [ $? -ne 0 ]
         then
             if [ -L $AK_LIBDIR/$b ]
+            then
+                printf "\tAlready exists!\n"
+                exit 1
+            fi
+            printf "\tFailed!\n"
+            exit 1
+        fi
+        printf "\tOK!\n"
+    fi
+done
+#
+# Find modules and create symlinks
+modfiles=$(ls -1 $(pwd)/modules)
+for m in $modfiles
+do
+    if [ ! -L $AK_MODULESDIR/$m ]
+    then
+        printf "Creating symlink to %s..." "$m"
+        ln -s $(pwd)/modules/$b $AK_MODULESDIR/$m
+        if [ $? -ne 0 ]
+        then
+            if [ -L $AK_MODULESDIR/$m ]
             then
                 printf "\tAlready exists!\n"
                 exit 1

@@ -40,3 +40,14 @@ do
         ln -s $(pwd)/lib/$l $AK_LIBDIR/$l
     fi
 done
+
+# Find modules and create symlinks
+modfiles=$(ls -1 $(pwd)/modules)
+for m in $modfiles
+do
+    if [ ! -L $AK_MODULESDIR/$m ]
+    then
+        echo "Non existing link: $(basename $m) creating..."
+        ln -s $(pwd)/modules/$m $AK_MODULESDIR/$m
+    fi
+done

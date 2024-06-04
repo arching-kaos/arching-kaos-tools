@@ -32,6 +32,7 @@ source $AK_LIBDIR/_ak_script
 source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_gpg
 source $AK_LIBDIR/_ak_zblock
+source $AK_LIBDIR/_ak_zchain
 
 if [ ! -d $ZNEWSDIR ]; then
     mkdir $ZNEWSDIR
@@ -67,7 +68,7 @@ _ak_modules_news_create(){
 _ak_modules_news_index(){
     FILES="$(ls -1 $ZNEWSDIR)"
     i=0
-    ak-zchain-extract-cids | sort | uniq > temp
+    _ak_zchain_extract_cids | sort | uniq > temp
     for FILE in $FILES
     do
         DATE="$(echo $FILE | cut -d - -f 1 | awk '{print $1}')"
