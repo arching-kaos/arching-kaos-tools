@@ -11,6 +11,7 @@ const config = require("../../config");
  */
 function fetchFmrk(mrk, res){
     const command = spawn("cat",[config.workDir+"/fmrk/"+mrk]);
+    res.set('Content-Type', 'application/json');
     command.stdout.on("data", data => {
     });
 
@@ -44,6 +45,7 @@ function fetchFmrk(mrk, res){
 };
 module.exports = (req, res) => {
     console.log(req.params)
+    res.set('Content-Type', 'application/json');
     if ( (req.params.mrk) && req.params.mrk.length === 128 ){
         regex= /[a-f0-9]{128}/;
         if (regex.test(req.params.mrk)){

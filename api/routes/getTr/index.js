@@ -24,6 +24,7 @@ function fetchFtr(tr, res){
 
     command.on("close", code => {
         console.log(`child process exited with code ${code}`);
+        res.set('Content-Type', 'application/json');
 
         if ( code === 0 ) {
             const path = config.workDir+"/ftr/"+tr;
@@ -44,6 +45,7 @@ function fetchFtr(tr, res){
 };
 module.exports = (req, res) => {
     console.log(req.params)
+    res.set('Content-Type', 'application/json');
     if ( (req.params.tr) && req.params.tr.length === 128 ){
         regex= /[a-f0-9]{128}/;
         if (regex.test(req.params.tr)){

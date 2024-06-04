@@ -77,6 +77,7 @@ app.use(session({
 function genericaddtest(req,res){
     console.table(req.body)
     var myobj = req.body;
+    res.set('Content-Type', 'application/json');
     res.send(myobj);
 }
 // POST data
