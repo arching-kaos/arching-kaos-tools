@@ -46,13 +46,14 @@ function fetchFtr(tr, res){
 module.exports = (req, res) => {
     console.log(req.params)
     res.set('Content-Type', 'application/json');
-    if ( (req.params.tr) && req.params.tr.length === 128 ){
+    if ( (req.params.tr) && typeof req.params.tr === "string" && req.params.tr.length === 128 ){
         regex= /[a-f0-9]{128}/;
         if (regex.test(req.params.tr)){
-            if (req.params.tr === "QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH" ){
+            let tr = req.params.tr;
+            if (tr === "QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH" ){
                 res.send({error:"Genesis block"});
             } else {
-                fetchFtr(req.params.tr,res);
+                fetchFtr(tr,res);
             }
         } else {
             res.send({error:"Invalid data: regexp failed to pass"});

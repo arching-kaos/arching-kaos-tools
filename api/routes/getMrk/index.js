@@ -46,7 +46,7 @@ function fetchFmrk(mrk, res){
 module.exports = (req, res) => {
     console.log(req.params)
     res.set('Content-Type', 'application/json');
-    if ( (req.params.mrk) && req.params.mrk.length === 128 ){
+    if ( (req.params.mrk) && typeof req.params.mrk === "string" && req.params.mrk.length === 128 ){
         regex= /[a-f0-9]{128}/;
         if (regex.test(req.params.mrk)){
             let mrk = req.params.mrk;
