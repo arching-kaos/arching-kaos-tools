@@ -51,7 +51,7 @@ function fetchZblock(zblock, res){
 
 module.exports = (req, res) => {
     console.log(req.params)
-    if ( (req.params.zblock) && req.params.zblock.length === 46 ){
+    if ( (req.params.zblock) && typeof req.params.zblock === "string" && req.params.zblock.length === 46 ){
         regex= /Qm[A-Za-z0-9]{44}/;
         if (regex.test(req.params.zblock)){
             if (req.params.zblock === "QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH" ){
