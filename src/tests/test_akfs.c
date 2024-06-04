@@ -152,12 +152,18 @@ void hash_save_to_file()
     if ( fd == NULL )
     {
         printf("Some error occured");
+        exit(1);
     }
     fwrite(&resulted_hash, sizeof(sha512sum),1,fd);
     fclose(fd);
 
     sha512sum readone = {0};
     fd = fopen("tmpfile", "rb");
+    if ( fd == NULL )
+    {
+        printf("Some error occured");
+        exit(1);
+    }
     fread (&readone, sizeof(sha512sum),1,fd);
     char* resulted_string = ak_fs_sha512sum_struct_to_string(readone);
 
