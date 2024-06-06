@@ -1,6 +1,7 @@
 FROM alpine:latest
 RUN apk update -q
 RUN apk upgrade -q && apk add bash which git screen pinentry -q 
+RUN bash
 COPY . /root/arching-kaos-tools
 RUN bash -c 'cd /root/arching-kaos-tools && /root/arching-kaos-tools/install.sh'
 RUN git config --global user.email "kaos@kaos.kaos"

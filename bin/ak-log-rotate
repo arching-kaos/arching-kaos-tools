@@ -1,6 +1,6 @@
 #!/bin/bash
 
-tar cvfz $AK_ARCHIVESDIR/logs_$(date -u +%s).tar.gz $AK_WORKDIR/akd.log $AK_WORKDIR/akd.err $AK_WORKDIR/logs
+tar cvfz $AK_ARCHIVESDIR/logs_$(date -u +%s).tar.gz $AK_WORKDIR/logs
 
 cat /dev/null > $AK_WORKDIR/akd.log
 cat /dev/null > $AK_WORKDIR/akd.err

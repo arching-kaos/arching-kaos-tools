@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 source lib/_ak_ipfs
 
 # TODO GPG/PGP setup:: possibly done
@@ -6,11 +7,11 @@ source lib/_ak_ipfs
 # or just question the user if they are going to use their
 # existing one if any.
 ak_gpg_check_or_create(){
-    gpg2 --homedir $AK_GPGHOME --list-keys | grep kaos@kaos.kaos -1
+    gpg2 --homedir $AK_GPGHOME --list-keys | grep kaos@kaos.kaos -B 1
     if [ "$?" -ne "0" ]
     then
         gpg2 --homedir $AK_GPGHOME --batch --passphrase '' --quick-gen-key kaos@kaos.kaos rsa3072 sign 0
-        AK_FINGERPRINT="$(gpg2 --homedir $AK_GPGHOME --list-keys | grep kaos@kaos.kaos -1 | head -n 1 | awk '{print $1}')"
+        AK_FINGERPRINT="$(gpg2 --homedir $AK_GPGHOME --list-keys | grep kaos@kaos.kaos -B 1 | head -n 1 | awk '{print $1}')"
         gpg2 --homedir $AK_GPGHOME --batch --passphrase '' --quick-add-key $AK_FINGERPRINT rsa3072 encrypt 0
     fi
 }
@@ -51,22 +52,22 @@ printf "Initialization started... \n"
 
 ak_gpg_check_or_create
 
-if [ -f $AK_ZGENESIS ] ; then printf "%s" "$(ipfs add -q $AK_GENESIS)" > $AK_ZGENESIS;fi
+if [ -f $AK_ZGENESIS ] ; then printf "%s" "$(_ak_ipfs add -q $AK_GENESIS)" > $AK_ZGENESIS;fi
 if [ ! -f $AK_ZCHAIN ]
 then
     _ak_ipfs key list | grep zchain
     if [ "$?" -ne 0 ]
     then
-        printf "%s" "$(ipfs key gen zchain)" > $AK_ZCHAIN
+        printf "%s" "$(_ak_ipfs key gen zchain)" > $AK_ZCHAIN
     else
-        printf "%s" "$(ipfs key list -l | grep zchain | awk '{ print $1 }')" > $AK_ZCHAIN
+        printf "%s" "$(_ak_ipfs key list -l | grep zchain | awk '{ print $1 }')" > $AK_ZCHAIN
     fi
 fi
 if [ ! -f $AK_ZLATEST ] ; then cp $AK_ZGENESIS $AK_ZLATEST;fi
 if [ ! -f $AK_ZCHAINASC ] ; then gpg2 --homedir $AK_GPGHOME -bao $AK_ZCHAINASC $AK_ZCHAIN;fi
-if [ ! -f $AK_ZZCHAIN ] ; then printf "%s" "$(ipfs add -q $AK_ZCHAINASC)" > $AK_ZZCHAIN;fi
+if [ ! -f $AK_ZZCHAIN ] ; then printf "%s" "$(_ak_ipfs add -q $AK_ZCHAINASC)" > $AK_ZZCHAIN;fi
 if [ ! -f $AK_GENESISASC ] ; then gpg2 --homedir $AK_GPGHOME -bao $AK_GENESISASC $AK_GENESIS;fi
-if [ ! -f $AK_ZGENESISASC ] ; then printf "%s" "$(ipfs add -q $AK_GENESISASC)" > $AK_ZGENESISASC;fi
+if [ ! -f $AK_ZGENESISASC ] ; then printf "%s" "$(_ak_ipfs add -q $AK_GENESISASC)" > $AK_ZGENESISASC;fi
 if [ ! -f $AK_ZBLOCKSFILE ] ; then printf "[]" > $AK_ZBLOCKSFILE;fi
 if [ ! -f $AK_ZPAIRSFILE ] ; then printf "[]" > $AK_ZPAIRSFILE;fi
 if [ ! -f $AK_ZPEERSFILE ] ; then printf "[]" > $AK_ZPEERSFILE;fi
@@ -119,7 +120,7 @@ do
         printf "\tOK!\n"
     fi
 done
-#
+
 # Find modules and create symlinks
 modfiles=$(ls -1 $(pwd)/modules)
 for m in $modfiles

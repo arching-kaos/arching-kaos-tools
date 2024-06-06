@@ -20,7 +20,8 @@ _ak_ipfs_install(){
 }
 
 which ipfs > /dev/null 2>&1
-if [ $? -ne 0 ]; then
+if [ $? -ne 0 ]
+then
     _ak_ipfs_download
     _ak_ipfs_install
     _ak_ipfs init
@@ -29,7 +30,8 @@ else
     logit "INFO" "Found IPFS! Skipping downloading..."
     _ak_ipfs_swarm_install
 fi
-if [ ! -d $HOME/.ipfs ]; then
+if [ ! -d $AK_IPFS_REPO ]
+then
     _ak_ipfs init
     _ak_ipfs_swarm_install
 fi

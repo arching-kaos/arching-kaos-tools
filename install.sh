@@ -93,7 +93,7 @@ checkIfSudoAvailable(){
 checkIfSudoAvailable
 
 # Depedencies check and install
-declare -a depedencies=("curl" "wget" "bash" "jq" "npm" "gpg" "git" "make" "screen")
+declare -a depedencies=("curl" "wget" "bash" "jq" "npm" "gpg" "git" "make" "screen" "gpg-agent")
 for dep in "${depedencies[@]}"
 do
     printf "Checking for %s..." "$dep"
@@ -171,37 +171,44 @@ if [ ! -d $HOME/$HAK ]; then
     mkdir $HOME/$HAK
     logthis "$HAK created in $HOME";
 fi
+
 logthis "Searching for rc"
 if [ ! -f $HOME/$HAK/rc ]; then
     echo export PATH=$PATH:$HOME/$HAK/bin > $HOME/$HAK/rc
     cat config.sh >> $HOME/$HAK/rc
     logthis "New rc export to file";
 fi
+
 logthis "Searching for shell"
-if [ $SHELL == "/usr/bin/zsh" ]; then
+if [ $SHELL == "/usr/bin/zsh" ]
+then
     SHELLRC=".zshrc"
     logthis "ZSH found";
-elif [ $SHELL == "/usr/bin/bash" ]; then
+elif [ $SHELL == "/usr/bin/bash" ]
+then
     SHELLRC='.bashrc'
     logthis "BASH found";
 else
     logthis "Unknown shell... defaulting to bash"
     SHELLRC='.bashrc'
 fi
+
 logthis "Searching if rc is already there"
 grep "source $HOME/$HAK/rc" $HOME/$SHELLRC > /dev/null 2>&1
-if [ $? == 0 ]; then
+if [ $? -eq 0 ]
+then
     logthis "Already installed";
 else
     echo "source $HOME/$HAK/rc" >> $HOME/$SHELLRC
     logthis "$HAK installed at $HOME and sourced it in $SHELLRC"
     source $HOME/$HAK/rc;
 fi
-sh update.sh
-sh ipfs-check-install-setup-init-update
+
+bash update.sh
+bash ipfs-check-install-setup-init-update
 source ./config.sh
 source $HOME/$SHELLRC
-sh init.sh
+bash init.sh
 cd api
 npm i
 cd ..
