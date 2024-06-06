@@ -370,6 +370,16 @@ _ak_ipfs_download(){
     IPFS_VERSION="$(curl \
         --connect-timeout 3 \
         -s https://dist.ipfs.tech/kubo/versions | tail -1)"
+    if [ "$(uname --machine)" == "x86_64" ]
+    then
+        ARCH="amd64"
+    elif [ "$(uname --machine)" == "x86_64" ]
+    then
+        ARCH="arm64"
+    else
+        echo "ERROR UNKNOWN ARCHITECTURE $(uname --machine)"
+        exit 1
+    fi
     IPFS_TARGET_FILE="kubo_"$IPFS_VERSION"_linux-amd64.tar.gz"
 
     logit "INFO" "Downloading ipfs $IPFS_VERSION"
