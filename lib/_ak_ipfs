@@ -375,7 +375,7 @@ _ak_ipfs_download(){
         ARCH="amd64"
     elif [ "$(uname --machine)" == "armv7l" ]
     then
-        ARCH="arm64"
+        ARCH="arm"
     else
         echo "ERROR UNKNOWN ARCHITECTURE $(uname --machine)"
         exit 1
