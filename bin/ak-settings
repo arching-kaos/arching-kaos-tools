@@ -1,0 +1,45 @@
+#!/bin/bash
+##
+## Set or get settings for your instance
+##
+## Usage:
+##
+##    -h, --help                  Prints this help message
+##
+fullprogrampath="$(realpath $0)"
+PROGRAM=$(basename $0)
+descriptionString="Settings helper program"
+
+source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_script
+source $AK_LIBDIR/_ak_settings
+
+if [ ! -z "$AK_SETTINGS" ] && [ -n "$AK_SETTINGS" ]
+then
+    _ak_log_info "AK_SETTINGS = $AK_SETTINGS"
+else
+    _ak_log_error "No settings variable is set"
+    exit 1
+fi
+
+if [ ! -d "$AK_SETTINGS" ]
+then
+    mkdir $AK_SETTINGS
+    if [ $? -ne 0 ]
+    then
+        _ak_log_error "Failed to create settings directory"
+        exit 1
+    fi
+    _ak_log_info "Created settings directory"
+fi
+
+# Flags to run
+if [ ! -z $1 ]; then
+    case $1 in
+        -h | --help) _ak_usage; exit;;
+        -g | --get) _ak_settings_get "$2" ; exit;;
+        -s | --set) _ak_settings_set "$2" "$3" ; exit;;
+        * ) _ak_usage;;
+    esac
+else _ak_usage
+fi

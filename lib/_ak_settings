@@ -1,0 +1,95 @@
+#!/bin/bash
+
+source $AK_LIBDIR/_ak_script
+
+_ak_settings_get(){
+    if [ ! -z "$1" ] && [ -n "$1" ]
+    then
+        cd $AK_SETTINGS
+        echo $1 | grep '\.' > /dev/null 2>&1
+        if [ $? -ne 0 ]
+        then
+            _ak_log_error "No ungrouped settings allowed"
+            exit 1
+        fi
+        subset="$(echo $1 | cut -d '.' -f 1)"
+        echo "$subset" | grep '[.\-\*/~!@#$%^&*()_=\-\>\<,{}[]]' > /dev/null 2>&1
+        if [ $? -eq 0 ]
+        then
+            _ak_log_error "Names containing symbols are not allowed"
+            exit 1
+        fi
+        if [ ! -d $subset ]
+        then
+            _ak_log_error "Subsetting $subset not found"
+            exit 1
+        fi
+        cd $subset
+        label="$(echo $1 | cut -d '.' -f 2-)"
+        echo "$label" | grep '[.\-\*/~!@#$%^&*()_=\-\>\<,{}[]]' > /dev/null 2>&1
+        if [ $? -eq 0 ]
+        then
+            _ak_log_error "Names containing symbols are not allowed"
+            exit 1
+        fi
+        cat $AK_SETTINGS/$subset/$label
+    else
+        cd $AK_SETTINGS
+        find . -type f | while read setting
+        do
+            printf '%s:%s\n' "$(echo $setting| sed -e 's/^\.\///;s/\//./g')" "$(cat $setting)"
+        done
+    fi
+}
+
+_ak_settings_set(){
+    if [ ! -z "$1" ] && [ -n "$1" ]
+    then
+        if [ ! -z "$2" ] && [ -n "$2" ]
+        then
+            cd $AK_SETTINGS
+            echo $1 | grep '\.' > /dev/null 2>&1
+            if [ $? -ne 0 ]
+            then
+                _ak_log_error "No ungrouped settings allowed"
+                exit 1
+            fi
+            subset="$(echo $1 | cut -d '.' -f 1)"
+            echo "$subset" | grep '[.\-\*/~!@#$%^&*()_=\-\>\<,{}[]]' > /dev/null 2>&1
+            if [ $? -eq 0 ]
+            then
+                _ak_log_error "Names containing symbols are not allowed"
+                exit 1
+            fi
+            if [ ! -d $subset ]
+            then
+                mkdir $subset
+                if [ $? -ne 0 ]
+                then
+                    _ak_log_error "Could not create $AK_SETTINGS/$subset"
+                    exit 1
+                fi
+            fi
+            label="$(echo $1 | cut -d '.' -f 2-)"
+            echo "$label" | grep '[.\-\*/~!@#$%^&*()_=\-\>\<,{}[]]' > /dev/null 2>&1
+            if [ $? -eq 0 ]
+            then
+                _ak_log_error "Names containing symbols are not allowed"
+                exit 1
+            fi
+            printf '%s' "$2" > $AK_SETTINGS/$subset/$label
+        else
+            _ak_log_error "No value provided for $1"
+        fi
+    else
+        _ak_log_error "No value provided to set"
+    fi
+}
+
+_ak_settings_get_sub(){
+    _ak_not_implemented
+}
+
+_ak_settings_get_all(){
+    _ak_not_implemented
+}
