@@ -37,10 +37,10 @@ _ak_config_show(){
 
 _ak_config_publish(){
     _ak_config_show | jq -c -M > tmpfile
-    ipfs key list | grep ak-config 2> /dev/null 1>&2
+    _ak_ipfs key list | grep ak-config 2> /dev/null 1>&2
     if [ "$?" -ne 0 ]
     then
-        ipfs key gen ak-config
+        _ak_ipfs key gen ak-config
     fi
     _ak_ipfs_name_publish --key=ak-config /ipfs/$(_ak_ipfs_add tmpfile)
     if [ "$?" != 0 ]
