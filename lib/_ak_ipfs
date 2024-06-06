@@ -373,7 +373,7 @@ _ak_ipfs_download(){
     if [ "$(uname --machine)" == "x86_64" ]
     then
         ARCH="amd64"
-    elif [ "$(uname --machine)" == "x86_64" ]
+    elif [ "$(uname --machine)" == "armv7l" ]
     then
         ARCH="arm64"
     else
