@@ -1,7 +1,4 @@
 #!/bin/bash
+source $AK_LIBDIR/_ak_log
 
-tar cvfz $AK_ARCHIVESDIR/logs_$(date -u +%s).tar.gz $AK_WORKDIR/logs
-
-cat /dev/null > $AK_WORKDIR/akd.log
-cat /dev/null > $AK_WORKDIR/akd.err
-cat /dev/null > $AK_WORKDIR/logs
+_ak_log_rotate

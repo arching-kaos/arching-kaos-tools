@@ -5,5 +5,5 @@ source $HOME/.arching-kaos/rc
 ak-ipfs-starter
 ak-log-rotate
 # screen -dmS akdaemon
-ak-daemon > $AK_WORKDIR/akd.log 2> $AK_WORKDIR/akd.err & printf '%s' "$!" > $AK_WORKDIR/akd.pid
+ak-daemon > $AK_WORKDIR/akd.log 2>&1 & printf '%s' "$!" > $AK_WORKDIR/akd.pid
 # ak-logfollow
