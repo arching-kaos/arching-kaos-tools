@@ -24,7 +24,7 @@ _ak_config_show(){
     _ak_gpg_key_self_export $KEY
     GPG_PUB_KEY=$(_ak_ipfs_add $KEY)
     rm $KEY
-    profile="$(ak-profile --index)",
+    profile="$(ak-profile --index)"
 
     echo '
 {
