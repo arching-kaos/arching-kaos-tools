@@ -1,0 +1,10 @@
+build
+.todo
+*-build_log
+pwd
+tempassin
+wam
+api/node_modules
+api/package-lock.json
+src/lib
+src/bin
