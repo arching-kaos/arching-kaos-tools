@@ -24,10 +24,11 @@ _ak_config_show(){
     _ak_gpg_key_self_export $KEY
     GPG_PUB_KEY=$(_ak_ipfs_add $KEY)
     rm $KEY
+    profile="$(ak-profile --index)",
 
     echo '
 {
-    "profile":'$(ak-profile --index | jq -cM)',
+    "profile":'$profile',
     "genesis":"'$(cat $HOME/.arching-kaos/config/zgenesis)'",
     "gpg":"'$GPG_PUB_KEY'",
     "zchain":"'$(cat $HOME/.arching-kaos/config/zchain)'",
