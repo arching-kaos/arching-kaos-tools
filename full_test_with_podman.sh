@@ -7,6 +7,7 @@ then
     container="akt-test-$name"
     podman run --name $container -d $tag
     podman exec -it $container bash
+    podman container stop $container
     podman container rm $container
 else
     echo "Provide one of the following distros as an argument to work with"

@@ -6,4 +6,7 @@ ak-ipfs-starter
 ak-log-rotate
 # screen -dmS akdaemon
 ak-daemon > $AK_WORKDIR/akd.log 2>&1 & printf '%s' "$!" > $AK_WORKDIR/akd.pid
-# ak-logfollow
+if [ ! -z $1 ] && [ -n "$1" ] && [ "$1" == "--podman" ]
+then
+    ak log follow
+fi
