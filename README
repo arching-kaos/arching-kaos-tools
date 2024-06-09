@@ -36,11 +36,18 @@ This is an installable repository which provides various tools for running
 Arching Kaos and using it.
 
 Generic tools:
-`ak-enter` - Can be used to crawl zchains.
-`ak-zchain-rebase` - Can be used to rebase your zchain to a previous zblock.
-`ak-zchain-reset` - Can be used to reset your zchain to zgenesis.
+`ak enter` - Can be used to crawl zchains.
+`ak zchain --rebase` - Can be used to rebase your zchain to a previous zblock.
+`ak zchain --reset` - Can be used to reset your zchain to zgenesis.
 
-ACTION tools (modules):
+Modules:
+You can use previously known modules or make new ones and put them into your
+`modules/` directory. The tree has to be the bare minimum of:
+```
+modules/
+└─ <module name>
+    └─ main.sh
+```
 `ak-mixtapes` and `news` - Can be used to add content to your zchain.
 `ak-profile` - Can be used to build up a profile of the contributor.
 
@@ -220,103 +227,94 @@ Script usage
 
 Utilities
 ---------
-ak-clean                # Cleans up temporary folders created by these tools
-ak-config               # Publish your configuration to IPNS
-ak-data-expand          # Expands and verifies DATA blocks
-ak-enter                # Crawls ZCHAINS
-ak-node-info            # Returns IPFS CID or IPNS key for your online config
-ak-get-gpg              # Return your GPG key as IPFS CID
-ak-get-zlatest          # Returns zlatest ZBLOCK according to IPFS FS
-ak-tempassin            # Creates temporary directories
-
-Logging
--------
-ak-logfollow    # Tails the log file
-ak-logthis      # Logs a message to the log file
+ - ak-log                  # Logging tools
+ - ak-clean                # Cleans up temporary folders created by these tools
+ - ak-config               # Publish your configuration to IPNS
+ - ak-zblock               # zblock tools
+ - ak-zchain               # zchain tools
+ - ak-data-expand          # Expands and verifies DATA blocks
+ - ak-enter                # Crawls ZCHAINS
+ - ak-node-info            # Returns IPFS CID or IPNS key for your online config
+ - ak-get-gpg              # Return your GPG key as IPFS CID
+ - ak-get-zlatest          # Returns zlatest ZBLOCK according to IPFS FS
+ - ak-tempassin            # Creates temporary directories
 
 Schain tools
 ------------
-ak-mempool                      # TODO
-ak-miner-script             PROTO Prototype miner
-ak-network                      # TODO
-ak-sblock-show                  # Returns a mined SBLOCK
-ak-find-latest-mined-sblock     # In a hay of SBLOCKS finds the latest
+ - ak-mempool                      # TODO
+ - ak-miner-script             PROTO Prototype miner
+ - ak-network                      # TODO
+ - ak-sblock-show                  # Returns a mined SBLOCK
+ - ak-find-latest-mined-sblock     # In a hay of SBLOCKS finds the latest
 
 Network scouting
 ----------------
-ak-stellar-get-participants     # Returns a list of stellar address trusting ARCHINGKAOS
+ - ak-stellar-get-participants     # Returns a list of stellar address trusting ARCHINGKAOS
 
 Modules
 -------
-ak-articles                 PROTO Adds an article to your ZCHAIN
-ak-categories               PROTO Adds or references categories to the ZCHAIN
-ak-comments                     # References a comment to a ZBLOCK
-ak-files                        # Adds a file to the ZCHAIN
-ak-folders                  PROTO Adds a folder to the ZCHAIN
-ak-mixtapes                     # Adds a mixtape to the ZCHAIN
-ak-news                         # Adds a news article to the ZCHAIN
-ak-profile                      # Adds key-value pairs to the ZCHAIN
-ak-reference                    # Adds references to the ZCHAIN
-ak-repositories                 # Adds repositories to the ZCHAIN
-ak-roadmap                  PROTO Adds a roadmap to the ZCHAIN
-ak-transactions                 # Prototype of transactions in the ZCHAIN
-ak-sm-files                     # Adds a split file's map to the ZCHAIN
-ak-todos                    PROTO Adds todo list to the ZCHAIN
+ - articles                 PROTO Adds an article to your ZCHAIN
+ - categories               PROTO Adds or references categories to the ZCHAIN
+ - comments                     # References a comment to a ZBLOCK
+ - files                        # Adds a file to the ZCHAIN
+ - folders                  PROTO Adds a folder to the ZCHAIN
+ - mixtapes                     # Adds a mixtape to the ZCHAIN
+ - news                         # Adds a news article to the ZCHAIN
+ - profile                      # Adds key-value pairs to the ZCHAIN
+ - reference                    # Adds references to the ZCHAIN
+ - repositories                 # Adds repositories to the ZCHAIN
+ - roadmap                  PROTO Adds a roadmap to the ZCHAIN
+ - transactions                 # Prototype of transactions in the ZCHAIN
+ - sm-files                     # Adds a split file's map to the ZCHAIN
+ - todos                    PROTO Adds todo list to the ZCHAIN
 
 Public following (uses ak-profile module)
 -----------------------------------------
-ak-follow               # Follow something
-ak-following            # List your follows
-ak-unfollow             # Unfollow something
-
-Zblock tools
-------------
-ak-zblock-cache         # Caches a whole zblock as it would be done by ak-enter
-ak-zblock-manipulator   # TODO
-ak-zblock-show          # Shows a specified ZBLOCK
-ak-zblock-pack          # Creates and publishes a ZBLOCK (used by modules)
-ak-zblock-gen-html      # Generates a HTML file for a given zblock
+ - ak-follow               # Follow something
+ - ak-following            # List your follows
+ - ak-unfollow             # Unfollow something
 
 Zchain tools
 ------------
-ak-zchain-chk                   # TODO
-ak-zchain-rebase                # Rebases ZCHAIN to specified ZBLOCK
-ak-zchain-reset                 # Resets ZCHAIN to GENESIS
-ak-zchain-extract-cids          # Retuns CIDs from a zchain
-ak-zchain-extract-data-cids     # Retuns CIDs of "ipfs" DATA
-ak-zchain-calculate-size        # Calculates the overall size of your ZCHAIN
+ - ak-zchain-chk                   # TODO
+ - ak-zchain-rebase                # Rebases ZCHAIN to specified ZBLOCK
+ - ak-zchain-reset                 # Resets ZCHAIN to GENESIS
+ - ak-zchain-extract-cids          # Retuns CIDs from a zchain
+ - ak-zchain-extract-data-cids     # Retuns CIDs of "ipfs" DATA
+ - ak-zchain-calculate-size        # Calculates the overall size of your ZCHAIN
 
 File splitters
 --------------
-ak-sm-filejoiner            # Joins a file from a map
-ak-sm-filesplitter          # Splits a file to chunks and creates a map
+ - ak-sm-filejoiner            # Joins a file from a map
+ - ak-sm-filesplitter          # Splits a file to chunks and creates a map
 
 File system
 -----------
-ak-fs-add                   # Adds a file to filesystem tree (returns root hash)
-ak-fs-get                   # Constructs a file from root hash to filename
-ak-fs-cat                   # Constructs a file from root hash to stdout
+ - ak-fs-add                   # Adds a file to filesystem tree (returns root hash)
+ - ak-fs-get                   # Constructs a file from root hash to filename
+ - ak-fs-cat                   # Constructs a file from root hash to stdout
 
 Libraries
 ---------
-lib/_ak_ipfs
-lib/_ak_gpg
-lib/_ak_newline
-lib/_ak_script_description
-lib/_ak_script_exit
-lib/_ak_log
+ - lib/_ak_ipfs
+ - lib/_ak_fs
+ - lib/_ak_gpg
+ - lib/_ak_newline
+ - lib/_ak_script_description
+ - lib/_ak_script_exit
+ - lib/_ak_log
 
 IPFS Wrappers
 -------------
-ak-ipfs-starter
-ak-ipfs-daemon
+ - ak-ipfs-starter
+ - ak-ipfs-daemon
 
 Not completed or just odd
 -------------------------
 
 Deprecated
 ----------
-ak-json2bash
+ - ak-json2bash
 
 
 Debugging
@@ -328,8 +326,6 @@ tools you want.
 
 Example:
 ``` console
-
-AK_DEBUG="yes"; ak-enter -l 1
-
+AK_DEBUG="yes"; ak enter -l 1
 ```
 
