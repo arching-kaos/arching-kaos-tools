@@ -108,11 +108,11 @@ It will NOT remove your IPFS repository, neither is going to clean it.
 Examples
 --------
 
-### Add a news article ( `ak-news add` )
+### Add a news article ( `ak -m news --add` )
 
 You could use ZCHAIN with NEWS model. Or MIXTAPE model, or make your own.
 ``` bash
-$ ak-news create
+$ ak -m news --create
 ```
 
 This would pop up a vim editor for you to write a news article or whatever is
@@ -128,7 +128,7 @@ and pack a *ZBLOCK*. The ZBLOCK is then published over our IPNS zchain key.
 Other options... let's try help!
 
 ``` console
-$ ak news -h
+$ ak -m news -h
 ak-news - Module to read, create and add zblocks
 ================================================
     -h, --help                  Prints this help message
@@ -187,6 +187,10 @@ distributions:
  - debian
  - fedora
  - opensuse
+
+More over there are two scripts for testing with podman:
+1. `./test_with_podman.sh` - build one or all images
+2. `./full_test_with_podman.sh` - build one image and bash in it
 
 TODO
 ----
