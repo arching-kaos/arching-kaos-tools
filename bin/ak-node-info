@@ -15,19 +15,7 @@ PROGRAM=$(basename $0)
 descriptionString="Quick description"
 source $AK_LIBDIR/_ak_log
 source $AK_LIBDIR/_ak_script
-source $AK_LIBDIR/_ak_ipfs
-# Resolves the IPNS key "ak-config" to its current IPFS value
-# Return IPFS CIDv0 without /ipfs/ prefix
-_ak_node_info_ipfs_hash(){
-    _ak_ipfs_name_resolve /ipns/$(_ak_node_info_ipns_key) | sed -e 's/\/ipfs\///'
-}
-
-# Finds ak-config ipns key
-# Returns IPNS key
-_ak_node_info_ipns_key(){
-    _ak_ipfs_key_list_full | grep ak-config | awk '{print $1}'
-}
-
+source $AK_LIBDIR/_ak_node
 
 if [ ! -z "$1" ]
 then

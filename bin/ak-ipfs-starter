@@ -2,8 +2,9 @@
 PROGRAM="$(basename $0)"
 
 source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_ipfs
 
-screen -dmS akipfsd ak-ipfs-daemon
+screen -dmS akipfsd _ak_ipfs_daemon
 if [ $? -ne 0 ]
 then
     logit "ERROR" "Failed to start IPFS daemon"

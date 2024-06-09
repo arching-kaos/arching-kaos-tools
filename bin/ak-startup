@@ -1,12 +1,14 @@
 #!/bin/bash
-PATH=$PATH:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:$HOME/bin:$HOME/.arching-kaos/bin
-#screen -dmS ipfs-daemon ipfs daemon
 source $HOME/.arching-kaos/rc
-ak-ipfs-starter
-ak-log-rotate
-# screen -dmS akdaemon
+PATH=$PATH:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:$HOME/bin:$AK_WORKDIR/bin
+
+source $AK_LIBDIR/_ak_ipfs
+source $AK_LIBDIR/_ak_log
+_ak_ipfs_starter
+_ak_log_rotate
+
 ak-daemon > $AK_WORKDIR/akd.log 2>&1 & printf '%s' "$!" > $AK_WORKDIR/akd.pid
 if [ ! -z $1 ] && [ -n "$1" ] && [ "$1" == "--podman" ]
 then
-    ak log follow
+    _ak_log_follow
 fi

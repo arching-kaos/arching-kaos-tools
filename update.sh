@@ -30,6 +30,15 @@ do
     fi
 done
 
+find $AK_MODULESDIR -type l | while read link
+do
+    if [ ! -f $link ]
+    then
+        echo "Non working link: $(basename $link) removing..."
+        rm $link
+    fi
+done
+
 # Find scripts and create symlinks
 libfiles=$(ls -1 $(pwd)/lib)
 for l in $libfiles

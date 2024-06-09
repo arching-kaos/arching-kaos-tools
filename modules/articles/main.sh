@@ -22,11 +22,6 @@ TEMP="/tmp/aktmp"
 if [ ! -d $ZARTICLESDIR ]; then
     mkdir $ZARTICLESDIR
     cd $ZARTICLESDIR
-    #git init
-    echo "Articles repository" > README
-    echo "Qmetc" >> README
-    #git add README
-    #git commit -m "Initiated articles repository"
     logit "INFO" "zarticlesdir created"
 else
     logit "INFO" "zarticlesdir found"
@@ -51,11 +46,9 @@ _ak_modules_articles_create(){
     _ak_modules_articles_add $ZARTICLESDIR/$TO_FILE
     logit "INFO" "Adding to git repo..."
     cd $ZARTICLESDIR
-    # git add $TO_FILE README
-    # git commit -m "Added $TO_FILE with $(head -n 1 $ZARTICLESDIR/$TO_FILE)"
-    # git clean --force
     rm -rf $TEMP
 }
+
 _ak_modules_articles_index(){
     FILES="$(ls -1 $ZARTICLESDIR)"
     i=0
@@ -67,9 +60,7 @@ _ak_modules_articles_index(){
         let i+=1
     done
 }
-_ak_modules_articles_title(){
-    description
-}
+
 _ak_modules_articles_import(){
     echo "#TODO"
     if [ ! -z $1 ]
@@ -92,6 +83,7 @@ _ak_modules_articles_import(){
     fi
     exit 224
 }
+
 _ak_modules_articles_add(){
     TEMP="$(ak-tempassin)"
     cd $TEMP
@@ -126,6 +118,7 @@ EOF
         exit 1
     fi
 }
+
 if [ ! -z $1 ]; then
     case $1 in
         -h | --help) _ak_usage; exit;;

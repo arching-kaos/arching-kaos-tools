@@ -17,6 +17,7 @@ descriptionString="Arching Kaos Configuration Tool"
 source $AK_LIBDIR/_ak_script
 source $AK_LIBDIR/_ak_gpg
 source $AK_LIBDIR/_ak_ipfs
+source $AK_LIBDIR/_ak_node
 
 _ak_config_show(){
     # We will be using our public key also to put it in the block later
@@ -29,9 +30,9 @@ _ak_config_show(){
     echo '
 {
     "profile":'$profile',
-    "genesis":"'$(cat $HOME/.arching-kaos/config/zgenesis)'",
+    "genesis":"'$(cat $AK_WORKDIR/config/zgenesis)'",
     "gpg":"'$GPG_PUB_KEY'",
-    "zchain":"'$(cat $HOME/.arching-kaos/config/zchain)'",
+    "zchain":"'$(cat $AK_WORKDIR/config/zchain)'",
     "zlatest":"'$(ak-get-zlatest)'"
 }'| jq;
 }
@@ -39,12 +40,12 @@ _ak_config_show(){
 _ak_config_publish(){
     _ak_config_show | jq -c -M > tmpfile
     _ak_ipfs key list | grep ak-config 2> /dev/null 1>&2
-    if [ "$?" -ne 0 ]
+    if [ $? -ne 0 ]
     then
-        _ak_ipfs key gen ak-config
+        _ak_ipfs_key_gen ak-config
     fi
     _ak_ipfs_name_publish --key=ak-config /ipfs/$(_ak_ipfs_add tmpfile)
-    if [ "$?" != 0 ]
+    if [ $? != 0 ]
     then
         echo -e "\033[0;34mError on publishing\033[0;0m\nYour information:\n"
         cat tmpfile
@@ -54,10 +55,11 @@ _ak_config_publish(){
 }
 
 _ak_config_published(){
-    _ak_ipfs_cat $(ak-node-info --ipfs) | jq
+    _ak_ipfs_cat $(_ak_node_info_ipfs_hash) | jq
 }
 
-if [ ! -z $1 ]; then
+if [ ! -z $1 ] && [ -n "$1" ]
+then
     case $1 in
         --help| -h) _ak_usage;exit;;
         --show) _ak_config_show;exit;;

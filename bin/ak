@@ -64,7 +64,7 @@ case "$1" in
             exit 1
         fi
         subargs="$*"
-        $subcmd $subargs
+        $subcmd/main.sh $subargs
         _ak_exit_program $? "$subcmd module finished";
         ;;
 esac

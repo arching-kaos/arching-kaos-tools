@@ -6,6 +6,11 @@ _ak_ipfs(){
     export IPFS_PATH=$AK_IPFS_REPO; ipfs $*
 }
 
+_ak_ipfs_daemon(){
+    _ak_ipfs daemon --routing=dht --migrate &
+    printf '%s' "$!" > $AK_WORKDIR/akipfsd.pid
+}
+
 _ak_ipfs_get_peers(){
     _ak_ipfs swarm peers 1> /dev/null 2>&1
     if [ $? == 0 ]
@@ -288,7 +293,7 @@ _ak_ipfs_swarm_peers(){
 }
 
 _ak_ipfs_starter(){
-    _ak_ipfs daemon --routing=dht --migrate
+    _ak_ipfs_daemon
     if [ $? -ne 0 ]
     then
         logit "ERROR" "Failed to start IPFS daemon"

@@ -81,7 +81,7 @@ _ak_modules_profile_propget(){
     fi
 }
 
-propwrite(){
+_ak_modules_profile_propwrite(){
     cat > $ZPROPERTY_FILE << EOF
 {
     "$ZPROPERTY_KEY":"${ZPROPERTY_VALUE}"
@@ -113,7 +113,7 @@ _ak_modules_profile_propset(){
             then
                 touch $ZPROPERTY_FILE
                 echo "$ZPROPERTY_KEY = $ZPROPERTY_VALUE in file $ZPROPERTY_FILE"
-                propwrite #"$ZPROPERTY_FILE" "${ZPROPERTY_VALUE}"
+                _ak_modules_profile_propwrite #"$ZPROPERTY_FILE" "${ZPROPERTY_VALUE}"
             else
                 echo "No value for $1"
             fi
@@ -123,7 +123,7 @@ _ak_modules_profile_propset(){
             ZPROPERTY_VALUE="$2"
             read -p "Overwrite $1 with ${ZPROPERTY_VALUE} ? " yn
             case $yn in
-                [Yy]* ) propwrite;;# "$ZPROPERTY_" "${ZPROPERTY_VALUE}";;
+                [Yy]* ) _ak_modules_profile_propwrite;;# "$ZPROPERTY_" "${ZPROPERTY_VALUE}";;
                 [Nn]* ) exit 130;;
                 * ) echo "Answer please";;
             esac
