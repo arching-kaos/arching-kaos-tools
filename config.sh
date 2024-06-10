@@ -1,9 +1,10 @@
-export AK_IPFS="$(which ipfs)"
 export AK_ROOT=$HOME
 export AK_WORKDIR="$AK_ROOT/.arching-kaos"
 export AK_CONFIGDIR="$AK_WORKDIR/config"
 export AK_BINDIR="$AK_WORKDIR/bin"
 export AK_LIBDIR="$AK_WORKDIR/lib"
+export PATH=$PATH:$AK_BINDIR
+export AK_IPFS="$(which ipfs)"
 export AK_MODULESDIR="$AK_WORKDIR/modules"
 export AK_ZBLOCKDIR="$AK_WORKDIR/zblocks"
 export AK_BLOCKDIR="$AK_WORKDIR/blocks"
