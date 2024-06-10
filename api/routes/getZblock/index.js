@@ -3,27 +3,16 @@ const fs = require("fs");
 const config = require("../../config");
 
 /*
- * Gets the local latest zblock
+ * Returns a cached zblock
  *
  * Returns:
  *     - JSON object
- *     { zlatest: "Qm..." }
  *
  */
 function fetchZblock(zblock, res){
     regex= /Qm[A-Za-z0-9]{44}/;
     if (regex.test(zblock)){
         const command = spawn("ak-zblock",["--cache",zblock]);
-        command.stdout.on("data", data => {
-        });
-
-        command.stderr.on("data", data => {
-                console.log(`stderr: ${data}`);
-        });
-
-        command.on('error', (error) => {
-                console.log(`error: ${error.message}`);
-        });
 
         command.on("close", code => {
             console.warn(`child process exited with code ${code}`);
@@ -33,36 +22,45 @@ function fetchZblock(zblock, res){
                 console.log(path)
                 try {
                     if(fs.existsSync(path)){
-                        res.send(JSON.parse(fs.readFileSync(path)));
+                        var buffer = fs.readFileSync(path);
+                        res.writeHead(200, {'Content-Type': 'application/json'});
+                        res.end(JSON.stringify(JSON.parse(buffer)));
                     }
                 } catch (error) {
-                    res.send({"error":error.message});
+                    res.writeHead(404, {'Content-Type': 'application/json'});
+                    res.end({"error":error.message});
                 }
             } else if ( code === 2){
-                res.send({"error":"The roof is on fire"});
+                res.writeHead(404, {'Content-Type': 'application/json'});
+                res.end({"error":"The roof is on fire"});
             } else {
-                res.send({"error":"invalid or unreachable"});
+                res.writeHead(404, {'Content-Type': 'application/json'});
+                res.end({"error":"invalid or unreachable"});
             }
         });
     } else {
-        res.send({error:"Invalid data: regexp failed to pass"});
+        res.writeHead(404, {'Content-Type': 'application/json'});
+        res.end(JSON.stringify({error:"Invalid data: regexp failed to pass"}));
     }
 };
 
 module.exports = (req, res) => {
-    console.log(req.params)
-    if ( (req.params.zblock) && typeof req.params.zblock === "string" && req.params.zblock.length === 46 ){
+    var args = req.url.split("/");
+    if ( (args[2] === 'zblock') && args[3] && typeof args[3] === "string" && args[3].length === 46 ){
         regex= /Qm[A-Za-z0-9]{44}/;
-        if (regex.test(req.params.zblock)){
-            if (req.params.zblock === "QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH" ){
-                res.send({error:"Genesis block"});
+        if (regex.test(args[3])){
+            if (args[3] === "QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH" ){
+                res.writeHead(404, {'Content-Type': 'application/json'});
+                res.end(JSON.stringify({error:"Genesis block"}));
             } else {
-                fetchZblock(req.params.zblock,res);
+                fetchZblock(args[3],res);
             }
         } else {
-            res.send({error:"Invalid data: regexp failed to pass"});
+            res.writeHead(404, {'Content-Type': 'application/json'});
+            res.end(JSON.stringify({error:"Invalid data: regexp failed to pass"}));
         }
     } else {
-        res.send({error:"Invalid data: no valid zblock was provided"});
+        res.writeHead(404, {'Content-Type': 'application/json'});
+        res.end(JSON.stringify({error:"Invalid data: no valid zblock was provided"}));
     }
 }

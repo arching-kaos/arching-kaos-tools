@@ -1,6 +1,7 @@
 const settings = require('../../settings');
 module.exports = (req, res) => {
-    res.send({
+    res.writeHead(404, { 'Content-Type': 'application/json'});
+    res.end(JSON.stringify({
         message:"Hello! Welcome to Arching Kaos API! See available routes below!",
         routes:{
             GET:[
@@ -21,6 +22,6 @@ module.exports = (req, res) => {
                 {send_me_a_zblock:settings.DEF_PROTO+"["+settings.LOCAL_IP+"]:"+settings.PORT+settings.URL_PREFIX+"/announce/zblock"},
             ]
         }
-    });
+    }));
 }
 
