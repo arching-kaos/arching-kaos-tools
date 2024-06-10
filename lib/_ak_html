@@ -10,7 +10,7 @@ _ak_generate_html_header(){
     printf '    body {\n'
     printf '        background-color: #000;\n'
     printf '        color: lightgreen;\n'
-    printf '        padding: 2%;\n'
+    printf '        padding: 2%%;\n'
     printf '        width: auto;\n'
     printf '        font-family: monospace;\n'
     printf '        font-size: 1rem;\n'
@@ -162,7 +162,7 @@ _ak_generate_html_zblock(){
         printf '            </td>\n'
         printf '            <td>\n'
         printf '    <details>\n'
-        printf '        <summary>$zblock</summary>\n'
+        printf '        <summary>%s</summary>\n' "$zblock"
         printf '        <pre>%s</pre>' "$(_ak_ipfs_cat $zblock | jq)"
         printf '    </details>\n'
         printf '            </td>\n'

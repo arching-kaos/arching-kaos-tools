@@ -57,7 +57,7 @@ case "$1" in
         shift
         subcmd="$AK_MODULESDIR/$(echo $1 | sed -e 's/ /-/g')"
         shift
-        if [ -z $* ] || [ ! -n "$*" ]
+        if [ -z $1 ] || [ ! -n "$*" ]
         then
             logit "ERROR" "No module selected"
             ls -1 $AK_MODULESDIR
