@@ -67,7 +67,7 @@ while [ "$#" ]; do
             shift
             ol=$1
             entrance="$(_ak_ipns_resolve $1)"
-            if [ "$?" -ne 0 ]
+            if [ $? -ne 0 ]
             then
                 logit "ERROR" "Could not resolve IPNS name"
                 exit 1
@@ -76,11 +76,11 @@ while [ "$#" ]; do
             ;;
         *)
             test="$1"
-            if [ ! -z "$test" ] && [ "$fromIpns" == "0" ]
+            if [ ! -z "$test" ] && [ $fromIpns -eq 0 ]
             then
                 _ak_ipfs_cid_v0_check "$test"
                 entrance="$test"
-            elif [ -z "$entrance" ] && [ "$fromIpns" == "1" ]
+            elif [ -z "$entrance" ] && [ $fromIpns -eq 1 ]
             then
                 entrance="$(cat $AK_ZLATEST)"
             fi
@@ -106,13 +106,13 @@ counter=0
 # We break the loop from inside the loop
 while true && [ $limit="0" ]
 do
-    if [ $counter == 0 ]
+    if [ $counter -eq 0 ]
     then
         echo -n '['
     fi
-    counter=$(expr $counter + 1)
+    counter=$(($counter + 1))
     _ak_zblock_show "$zblock"
-    if [ "$limit" != "0" ] && [ "$limit" == "$counter" ]
+    if [ $limit -ne 0 ] && [ $limit -eq $counter ]
     then
         echo -n ']'
         exit 0
