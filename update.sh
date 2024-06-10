@@ -32,7 +32,7 @@ done
 
 find $AK_MODULESDIR -type l | while read link
 do
-    if [ ! -f $link ]
+    if [ ! -d $link ]
     then
         echo "Non working link: $(basename $link) removing..."
         rm $link
