@@ -44,7 +44,7 @@ if [ ! -z $1 ]; then
             exit
             ;;
         -c | --cache)
-            _ak_zblock_gen_html $2
+            _ak_zblock_cache $2
             exit
             ;;
         -p | --pack)
