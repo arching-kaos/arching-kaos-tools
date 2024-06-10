@@ -34,6 +34,11 @@
 ##
 ##    --calculate-size            Calculates the size of a zchain
 ##
+##    --crawl-self                Crawls the local zchain
+##
+##    --crawl-remote-ipfs         Crawls a remote zchain
+##
+##    --crawl-remote-ipns         Crawls a remote zchain from ipns key
 ##
 fullprogrampath="$(realpath $0)"
 PROGRAM=$(basename $0)
@@ -54,6 +59,9 @@ if [ ! -z $1 ]; then
         --extract-cids) _ak_zchain_extract_cids $2; exit;;
         --extract-data-cids) _ak_zchain_extract_data_cids $2; exit;;
         --calculate-size) _ak_zchain_calculate_size $2; exit;;
+        --crawl-self) _ak_zchain_crawl_self; exit;;
+        --crawl-remote-ipfs) _ak_zchain_crawl_remote_ipfs $2; exit;;
+        --crawl-remote-ipns) _ak_zchain_crawl_remote_ipns $2; exit;;
         * ) _ak_usage;;
     esac
 else _ak_usage
