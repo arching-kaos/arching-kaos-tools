@@ -2,7 +2,7 @@
 source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_log
 
-_ak_zchain_reset (){
+_ak_zchain_reset(){
     echo "Reseting ZLATEST to ZGENESIS"
     cp $ZGENESIS $ZLATEST
     if [ $? != 0 ]; then exit 1; fi
@@ -39,7 +39,7 @@ _ak_zchain_reset (){
     exit 0
 }
 
-_ak_zchain_rebase (){
+_ak_zchain_rebase(){
     if [ ! -n "$1" ]; then exit 1; fi
     ZTARGET="$1"
     echo "Reseting ZLATEST to ZTARGET"
