@@ -26,6 +26,7 @@ _ak_zblock_show(){
     else
         entrance="$(cat $AK_ZLATEST)"
     fi
+    zblock=$entrance
     # ak-enter -l 1 "$entrance" > "$AK_CACHEDIR/fzblocks/$entrance"
     # Check if $zblock exists as variable
     if [ ! -v $zblock ]
@@ -630,28 +631,26 @@ _ak_zblock_cache(){
     then
         mkdir $AK_CACHEDIR/fzblocks
     fi
+    FZBLOCKSDIR="$AK_CACHEDIR/fzblocks"
 
     if [ ! -z "$1" ] && [ -n "$1" ]
     then
         if [ -f "$AK_ZBLOCKDIR/$1" ] && [ "$(du -b $AK_ZBLOCKDIR/$1 | awk '{ print $1 }')" != "0" ]
         then
-            if [ "$(sha512sum $AK_ZBLOCKDIR/$1 | awk '{ print $1 }')" == "$(_ak_zblock_show $1 | sha512sum | awk '{ print $1 }')" ]
+            # if [ "$(sha512sum $AK_ZBLOCKDIR/$1 | awk '{ print $1 }')" == "$(_ak_zblock_show $1 | sha512sum | awk '{ print $1 }')" ]
+            if [ ! -f $FZBLOCKSDIR/$1 ]
             then
-                logit "INFO" "Cache already there and updated"
-            else
-                logit "INFO" "Updating cache"
-                _ak_zblock_show "$1" > $AK_CACHEDIR/fzblocks/$1
+                logit "INFO" "No cache found. Caching..."
+                _ak_zblock_show "$1" > $FZBLOCKSDIR/$1
             fi
-            logit "INFO" "No cache found. Caching..."
-            _ak_zblock_show "$1"
-            if [ $? -ne "0" ]
+            if [ ! -f $FZBLOCKSDIR/$1 ]
             then
-                logit "ERROR" "_ak_zblock_show failed..."
-                exit 2
+                logit "INFO" "Caching failed..."
+                exit 1
             fi
-            _ak_zblock_show "$1" > $AK_CACHEDIR/fzblocks/$1
+            cat $FZBLOCKSDIR/$1
         else
-            _ak_zblock_show "$1" > $AK_CACHEDIR/fzblocks/$1
+            _ak_zblock_show "$1" > $FZBLOCKSDIR/$1
             if [ $? -ne "0" ]
             then
                 logit "ERROR" "_ak_zblock_show failed..."
