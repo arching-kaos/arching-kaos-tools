@@ -104,7 +104,7 @@ counter=0
 
 # The loop
 # We break the loop from inside the loop
-while true && [ $limit="0" ]
+while true
 do
     if [ $counter -eq 0 ]
     then
