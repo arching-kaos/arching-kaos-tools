@@ -45,7 +45,7 @@ Before we publish anything, we need to know what we need to publish and where.
 
 Issuing the command
 ```
-ipfs key list -l | grep ak-config | cut -d ' ' -f 1
+ak config --get-ipns-key
 ```
 will return to us the IPNS key that points to our current AKID.
 
