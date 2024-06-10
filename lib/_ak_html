@@ -1,0 +1,290 @@
+#!/bin/bash
+source $AK_LIBDIR/_ak_log
+
+_ak_generate_html_header(){   
+    printf '<!DOCTYPE html>\n<html>\n<head>\n'
+    printf '<title>Arching Kaos Chain Data</title>\n'
+    printf '    <meta charset="UTF-8">\n'
+    printf '    <meta name="viewport" content="width=device-width, initial-scale=1">\n'
+    printf '    <style>\n'
+    printf '    body {\n'
+    printf '        background-color: #000;\n'
+    printf '        color: lightgreen;\n'
+    printf '        padding: 2%;\n'
+    printf '        width: auto;\n'
+    printf '        font-family: monospace;\n'
+    printf '        font-size: 1rem;\n'
+    printf '    }\n'
+    printf '    h1, h2, h3, h4 {\n'
+    printf '        text-align: left;\n'
+    printf '    }\n'
+    printf '    td {\n'
+    printf '        text-align: initial;\n'
+    printf '        background-color: #090909;\n'
+    printf '        border: 1px dashed #444;\n'
+    printf '        font-size: 1rem;\n'
+    printf '        padding: 1vh 1vw;\n'
+    printf '        margin: 0;\n'
+    printf '    }\n'
+    printf '    p, summary {\n'
+    printf '        background: #061624;\n'
+    printf '        border: 1px solid #827c7c;\n'
+    printf '        padding: 1vh 1vw;\n'
+    printf '        margin: 0;\n'
+    printf '        color: lightgreen;\n'
+    printf '        font-style: normal;\n'
+    printf '        text-decoration: none;\n'
+    printf '    }\n'
+    printf '    summary:hover {\n'
+    printf '        background: lightgreen;\n'
+    printf '        color: #061624;\n'
+    printf '    }\n'
+    printf '    a {\n'
+    printf '        color: #042746;\n'
+    printf '        background-color: lightyellow;\n'
+    printf '        border: 1px solid #827c7c;\n'
+    printf '        padding: 1vh 1vw;\n'
+    printf '        margin: 0;\n'
+    printf '        font-style: normal;\n'
+    printf '        text-decoration: none;\n'
+    printf '    }\n'
+    printf '    a:hover {\n'
+    printf '        background-color: lightgreen;\n'
+    printf '        color: #042746;\n'
+    printf '    }\n'
+    printf '    details {\n'
+    printf '        border: 1px dotted;\n'
+    printf '        background-color: #1d4055;\n'
+    printf '    }\n'
+    printf '    footer {\n'
+    printf '        text-align: center;\n'
+    printf '    }\n'
+    printf '    </style>\n'
+    printf '</head>\n'
+    printf '<body>\n'
+}
+
+_ak_generate_html_zblock(){
+    if [ ! -z $1 ] && [ -n "$1" ]
+    then
+        arg="$1"
+    else
+        _ak_log_error "No argument given"
+        exit 1
+    fi
+    # Iterate through each argument and parse data
+    if [ -f "$arg" ]
+    then
+        # Extract data from argument
+        zblock=$(cat $arg | jq -r '.zblock')
+        if [ ! -n "$zblock" ]
+        then
+            _ak_log_error "Empty zblock value"
+            exit 1
+        fi
+        block=$(cat $arg | jq -r '.block')
+        if [ ! -n "$block" ]
+        then
+            _ak_log_error "Empty block value"
+            exit 1
+        fi
+        timestamp=$(cat $arg | jq -r '.timestamp')
+        if [ ! -n "$timestamp" ]
+        then
+            _ak_log_error "Empty timestamp value"
+            exit 1
+        fi
+        block_signature=$(cat $arg | jq -r '.block_signature')
+        if [ ! -n "$block_signature" ]
+        then
+            _ak_log_error "Empty block_signature value"
+            exit 1
+        fi
+        detach=$(cat $arg | jq -r '.detach')
+        if [ ! -n "$detach" ]
+        then
+            _ak_log_error "Empty detach value"
+            exit 1
+        fi
+        data=$(cat $arg | jq -r '.data')
+        if [ ! -n "$data" ]
+        then
+            _ak_log_error "Empty data value"
+            exit 1
+        fi
+        module=$(cat $arg | jq -r '.module')
+        if [ ! -n "$module" ]
+        then
+            _ak_log_error "Empty module value"
+            exit 1
+        fi
+        action=$(cat $arg | jq -r '.action')
+        if [ ! -n "$action" ]
+        then
+            _ak_log_error "Empty action value"
+            exit 1
+        fi
+        gpg=$(cat $arg | jq -r '.gpg')
+        if [ ! -n "$gpg" ]
+        then
+            _ak_log_error "Empty gpg value"
+            exit 1
+        fi
+        previous=$(cat $arg | jq -r '.previous')
+        if [ ! -n "$previous" ]
+        then
+            _ak_log_error "Empty previous value"
+            exit 1
+        fi
+        datablock=$(cat $arg | jq -r ".$data")
+        if [ ! -n "$datablock" ]
+        then
+            _ak_log_error "Empty datablock value"
+            exit 1
+        fi
+
+        # Output data in HTML format
+        printf '    <h1>%s</h1>\n' "$PROGRAM"
+        printf '    <h2>🔎 %szblock</h2>\n' "$zblock"
+        if [ -f $AK_MODULESDIR/$module/main.sh ] && [ "$action" == "add" ]
+        then
+            ak -m $module -x $zblock > /dev/null 2>&1
+            if [ $? -eq 0 ]
+            then
+                ak -m $module -x $zblock
+            fi
+        fi
+        printf '    <h2>ℹ️ %s</h2>\n' "$zblock"
+        printf '    <table>\n'
+        printf '        <tr>\n'
+        printf '            <td>\n'
+        printf '    <pre>📦 ZBLOCK</pre>\n'
+        printf '            </td>\n'
+        printf '            <td>\n'
+        printf '    <details>\n'
+        printf '        <summary>$zblock</summary>\n'
+        printf '        <pre>%s</pre>' "$(_ak_ipfs_cat $zblock | jq)"
+        printf '    </details>\n'
+        printf '            </td>\n'
+        printf '        </tr>\n'
+        printf '        <tr>\n'
+        printf '            <td>\n'
+        printf '    <pre>📦 BLOCK</pre>\n'
+        printf '            </td>\n'
+        printf '            <td>\n'
+        printf '    <details>\n'
+        printf '        <summary>%s</summary>\n' "$block"
+        printf '        <pre>%s</pre>\n' "$(_ak_ipfs_cat $block | jq)"
+        printf '    </details>\n'
+        printf '            </td>\n'
+        printf '        </tr>\n'
+        printf '        <tr>\n'
+        printf '            <td>\n'
+        printf '    <pre>🔏 BLOCK SIGNATURE</pre>\n'
+        printf '            </td>\n'
+        printf '            <td>\n'
+        printf '    <details>\n'
+        printf '        <summary>%s</summary>\n' "$block_signature"
+        printf '        <pre>%s</pre>\n' "$(_ak_ipfs_cat $block_signature)"
+        printf '    </details>\n'
+        printf '            </td>\n'
+        printf '        </tr>\n'
+        printf '        <tr>\n'
+        printf '            <td>\n'
+        printf '    <pre>⌚ TIMESTAMP</pre>\n'
+        printf '            </td>\n'
+        printf '            <td>\n'
+        printf '    <p>%s</p>\n' "$timestamp"
+        printf '            </td>\n'
+        printf '        </tr>\n'
+        printf '        <tr>\n'
+        printf '            <td>\n'
+        printf '    <pre>🔌 MODULE</pre>\n'
+        printf '            </td>\n'
+        printf '            <td>\n'
+        printf '    <p>%s</p>\n' "$module"
+        printf '            </td>\n'
+        printf '        </tr>\n'
+        printf '        <tr>\n'
+        printf '            <td>\n'
+        printf '    <pre>🪧 ACTION</pre>\n'
+        printf '            </td>\n'
+        printf '            <td>\n'
+        printf '    <p>%s</p>\n' "$action"
+        printf '            </td>\n'
+        printf '        </tr>\n'
+        printf '        <tr>\n'
+        printf '            <td>\n'
+        printf '    <pre>🔑 GPG</pre>\n'
+        printf '            </td>\n'
+        printf '            <td>\n'
+        printf '    <details>\n'
+        printf '        <summary>%s</summary>\n' "$gpg"
+        printf '        <pre>%s</pre>\n' "$(_ak_ipfs_cat $gpg)"
+        printf '    </details>\n'
+        printf '            </td>\n'
+        printf '        </tr>\n'
+        printf '        <tr>\n'
+        printf '            <td>\n'
+        printf '    <pre>📦 PREVIOUS</pre>\n'
+        printf '            </td>\n'
+        printf '            <td>\n'
+        printf '    <a target="_blank" href="./zblock-%s.html">🔗 %s</a>\n' "$previous" "$previous"
+        printf '            </td>\n'
+        printf '        </tr>\n'
+        printf '        <tr>\n'
+        printf '            <td>\n'
+        printf '    <pre>📦 DATA</pre>\n'
+        printf '            </td>\n'
+        printf '            <td>\n'
+        printf '    <details>\n'
+        printf '        <summary>%s</summary>\n' "$data"
+        printf '        <pre>%s</pre>\n' "$datablock"
+        printf '    </details>\n'
+        printf '            </td>\n'
+        printf '        </tr>\n'
+        printf '        <tr>\n'
+        printf '            <td>\n'
+        printf '    <pre>🔏 DATA_SIGNATURE</pre>\n'
+        printf '            </td>\n'
+        printf '            <td>\n'
+        printf '    <details>\n'
+        printf '        <summary>%s</summary>\n' "$detach"
+        printf '        <pre>%s</pre>\n' "$(_ak_ipfs_cat $detach)"
+        printf '    </details>\n'
+        printf '            </td>\n'
+        printf '        </tr>\n'
+        printf '        <tr>\n'
+        printf '            <td>\n'
+        printf '    <pre>📄 ipfs</pre>\n'
+        printf '            </td>\n'
+        printf '            <td>\n'
+        printf '    <a target="_blank" href="http://gw.ipfs.z.kaotisk-hund.com/ipfs/%s">🔗 %s</a>\n' "$(echo $datablock | jq -r '.ipfs')" "$(echo $datablock | jq -r '.ipfs')"
+        printf '            </td>\n'
+        printf '        </tr>\n'
+        printf '        <tr>\n'
+        printf '            <td>\n'
+        printf '    <pre>🔏 detach</pre>\n'
+        printf '            </td>\n'
+        printf '            <td>\n'
+        printf '    <details>\n'
+        printf '        <summary>%s</summary>\n' "$(echo $datablock | jq -r '.detach')"
+        printf '        <pre>%s</pre>\n' "$(_ak_ipfs_cat $(echo $datablock | jq -r '.detach'))"
+        printf '    </details>\n'
+        printf '            </td>\n'
+        printf '        </tr>\n'
+        printf '    </table>\n'
+        printf '    <table>\n'
+        printf '        <tr>\n'
+        printf '            <td>\n'
+        printf '    <pre>📃 Rendered ZBLOCK</pre>\n'
+        printf '            </td>\n'
+        printf '        </tr>\n'
+        printf '        <tr>\n'
+        printf '            <td>\n'
+        printf '    <pre>%s</pre>\n' "$(cat $arg | jq)"
+        printf '            </td>\n'
+        printf '        </tr>\n'
+        printf '    </table>\n'
+    fi
+}
