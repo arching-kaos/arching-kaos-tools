@@ -2,6 +2,7 @@
 source $AK_LIBDIR/_ak_log
 source $AK_LIBDIR/_ak_script
 source $AK_LIBDIR/_ak_gpg
+source $AK_LIBDIR/_ak_html
 
 _ak_zblock_show(){
 # _ak_zblock_show
