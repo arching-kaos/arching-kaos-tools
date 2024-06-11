@@ -12,7 +12,7 @@ do
         printf ','
     fi
     counter=$(( $counter + 1 ))
-    printf '{"stellarAddress":"%s","config":"%s","configExpand":%s}' "$stellarAddress" "$akConfig" "$(_ak_ipfs_cat /ipns/$akConfig)"
+    printf '{"stellar":{"address":"%s","config":"%s"},"node_info":%s}' "$stellarAddress" "$akConfig" "$(_ak_ipfs_cat /ipns/$akConfig)"
 done
 printf ']'
 ) #| jq
