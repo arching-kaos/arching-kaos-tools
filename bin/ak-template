@@ -1,0 +1,30 @@
+#!/bin/bash
+##
+## Brief description
+##
+## Usage:
+##
+##    -h, --help                  Prints this help message
+##
+fullprogrampath="$(realpath $0)"
+PROGRAM=$(basename $0)
+descriptionString="Quick description"
+
+# At least these
+source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_script
+
+# Your stuff here...
+example(){
+    echo "Example"
+}
+
+# Flags to run
+if [ ! -z $1 ]; then
+    case $1 in
+        -h | --help) _ak_usage; exit;;
+        --example) example; exit;;
+        * ) _ak_usage;;
+    esac
+else _ak_usage
+fi
