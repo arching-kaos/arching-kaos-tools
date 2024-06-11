@@ -1,0 +1,32 @@
+#!/bin/bash
+
+_ak_fm_remove_line_from_file(){
+    tempfile="$(mktemp)"
+    if [ ! -f "$2" ]
+    then
+        logit "ERROR" "$2 does not exist"
+        exit 1
+    fi
+    grep "$1" "$2" > /dev/null 2>&1
+    if [ $? -ne 0 ]
+        logit "ERROR" "Could not find line: $1 in $2"
+        exit 1
+    fi
+    grep -v "$1" "$2" > $tempfile
+    cat $tempfile > $2
+    rm $tempfile
+}
+
+_ak_fm_sort_uniq_file(){
+    if [ ! -f "$1" ]
+    then
+        logit "INFO" "No file to process"
+    else
+        logit "INFO" "Sorting $1..."
+        tempfile="$(mktemp)"
+        cat "$1" | sort | uniq > $tempfile
+        cat $tempfile > $1
+        rm $tempfile
+        logit "INFO" "Sorting $1... Done!"
+    fi
+}
