@@ -1,2 +1,36 @@
 #!/bin/bash
-rm -rf /tmp/aktmp*
+##
+## Cleans up temporary directories and files
+##
+## USE WITH CAUTION:
+##     Running while there are other arching-kaos-tools running might result
+##     breaking these. Use it after all your previously issued ak commands
+##     finish.
+##
+## Usage:
+##
+##    -h, --help                  Prints this help message
+##
+##    -c, --clean                 Removes all /tmp/aktmp* directories
+##
+
+fullprogrampath="$(realpath $0)"
+PROGRAM="$(basename $0)"
+descriptionString="Cleans ak temp files"
+
+source $AK_LIBDIR/_ak_script
+
+_ak_tmp_cleanup(){
+    rm -rf /tmp/aktmp*
+}
+
+if [ ! -z $1 ] # && [ -n "$1" ]
+then
+    case $1 in
+        -h | --help) _ak_usage; exit;;
+        -c | --clean) _ak_tmp_cleanup; exit;;
+        *) _ak_usage;
+    esac
+else
+    _ak_usage
+fi
