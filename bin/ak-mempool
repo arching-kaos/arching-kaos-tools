@@ -13,7 +13,7 @@ _ak_ipfs_swarm_peers > tmp_peers
 while IFS="" read -r p || [ -n "$p" ]
 do
     peer="$(echo "$p" | sed -e 's/^.*\///')"
-    logit "INFO" "Peer $peer found! Examining..."
+    _ak_log_info "Peer $peer found! Examining..."
     _ak_ipfs_cat /ipns/$peer/zlatest
 done < tmp_peers
 

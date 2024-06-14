@@ -7,7 +7,7 @@ if [ -f $FOLLOWING ]
 then
     cat $FOLLOWING
 else
-    logit "INFO" "No following file, creating"
+    _ak_log_info "No following file, creating"
     touch $FOLLOWING
     echo "None found"
 fi

@@ -30,9 +30,9 @@ TEMP="/tmp/aktmp"
 if [ ! -d $ZTODOSDIR ]; then
     mkdir $ZTODOSDIR
     cd $ZTODOSDIR
-    logit "INFO" "ztodosdir created along with git repo"
+    _ak_log_info "ztodosdir created along with git repo"
 else
-    logit "INFO" "ztodosdir found"
+    _ak_log_info "ztodosdir found"
 fi
 
 _ak_modules_todos_create(){
@@ -40,13 +40,13 @@ _ak_modules_todos_create(){
     cd $TEMP
     export TODOS_FILE="$(date -u +%s)"
     vi $TODOS_FILE
-    logit "INFO" "Renaming..."
+    _ak_log_info "Renaming..."
     TITLE="$(head -n 1 $TODOS_FILE)"
     TO_FILE=$TODOS_FILE-$(echo $TITLE | tr '[:upper:]' '[:lower:]' | sed -e 's/ /\_/g' )
     IPFS_FILE=$(_ak_ipfs_add $TODOS_FILE)
     mv $TODOS_FILE $ZTODOSDIR/$TO_FILE
     _ak_modules_todos_add $ZTODOSDIR/$TO_FILE
-    logit "INFO" "Adding to git repo..."
+    _ak_log_info "Adding to git repo..."
     cd $ZTODOSDIR
     # rm -rf $TEMP
 }
@@ -91,7 +91,7 @@ _ak_modules_todos_add(){
     cd $TEMP
     if [ -f $1 ]; then
         FILE="$1"
-        logit "INFO" "Adding todos from $FILE"
+        _ak_log_info "Adding todos from $FILE"
         DATETIME=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
         TITLE=$(head -n 1 $FILE)
         FILE_IPFS_HASH=$(_ak_ipfs_add $FILE)
@@ -108,15 +108,15 @@ _ak_modules_todos_add(){
 }
 EOF
     else
-        logit "ERROR" "File $FILE doesn't exist";
+        _ak_log_error "File $FILE doesn't exist";
         exit 2
     fi
     _ak_zblock_pack "todos/add" $(pwd)/data
     if [ $? == 0 ]
     then
-        logit "INFO" "Todos added successfully"
+        _ak_log_info "Todos added successfully"
     else
-        logit "ERROR" "error?? _ak_zblock_pack failed"
+        _ak_log_error "error?? _ak_zblock_pack failed"
         exit 1
     fi
 }

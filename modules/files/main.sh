@@ -19,15 +19,15 @@ if [ ! -d $ZFILESDIR ]; then
     mkdir $ZFILESDIR
     if [ $? == 0 ]
     then
-        logit "INFO" "Folder $ZFILESDIR created!"
+        _ak_log_info "Folder $ZFILESDIR created!"
     else
-        logit "ERROR" "Failed to create $ZFILESDIR folder"
+        _ak_log_error "Failed to create $ZFILESDIR folder"
         exit 1
     fi
     cd $ZFILESDIR
     git init
 else
-    logit "INFO" "$ZFILESDIR found!"
+    _ak_log_info "$ZFILESDIR found!"
 fi
 
 _ak_modules_files_add(){
@@ -40,47 +40,47 @@ main(){
     FILENAME="$1"
     CRP="$2"
     echo "Adding $FILENAME"
-    logit "INFO" "Switching to tmp folder..."
+    _ak_log_info "Switching to tmp folder..."
     TEMPASSIN="$(ak-tempassin)"
     cd $TEMPASSIN
     if [ $? == 0 ]; then
-        logit "INFO" "Success"
+        _ak_log_info "Success"
     else
-        logit "ERROR" "Error with tmp folder"
+        _ak_log_error "Error with tmp folder"
         exit 5
     fi
-    logit "INFO" "Copying $1 to $TEMPASSIN"
+    _ak_log_info "Copying $1 to $TEMPASSIN"
     cp $2/$1 $TEMPASSIN/$1
     if [ $? == 0 ]; then
-        logit "INFO" "Copied successfully"
+        _ak_log_info "Copied successfully"
     else
-        logit "ERROR" "Error copying..."
+        _ak_log_error "Error copying..."
     fi
 
     FILE="$TEMPASSIN/$1"
 
-    logit "INFO" "Adding $FILE to IPFS..."
+    _ak_log_info "Adding $FILE to IPFS..."
     FILE_IPFS_HASH=$(_ak_ipfs_add $FILE)
     if [ $? == 0 ]; then
-        logit "INFO" "Added $FILE to IPFS"
+        _ak_log_info "Added $FILE to IPFS"
     else
-        logit "ERROR" "Error in adding the $FILE to IPFS"
+        _ak_log_error "Error in adding the $FILE to IPFS"
     fi
-    logit "INFO" "Signing..."
+    _ak_log_info "Signing..."
     SIGN_FILE=$FILENAME".asc"
     _ak_gpg_sign_detached $SIGN_FILE $FILE
     if [ $? == 0 ]; then
-        logit "INFO" "Signed"
+        _ak_log_info "Signed"
     else
-        logit "ERROR" "Error while signing"
+        _ak_log_error "Error while signing"
     fi
 
-    logit "INFO" "Adding signature to IPFS"
+    _ak_log_info "Adding signature to IPFS"
     SIGNATURE=$(_ak_ipfs_add $TEMPASSIN/$SIGN_FILE)
     if [ $? == 0 ]; then
-        logit "INFO" "Added"
+        _ak_log_info "Added"
     else
-        logit "ERROR" "Error while adding"
+        _ak_log_error "Error while adding"
     fi
 
     cat > $TEMPASSIN/data <<EOF

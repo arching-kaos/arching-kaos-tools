@@ -48,9 +48,9 @@ show_ids(){
         if [ "$flag" == "0" ]
         then
             echo $test >> $stellarParticipants
-            logit "INFO" "Added $test"
+            _ak_log_info "Added $test"
         else
-            logit "INFO" "$test already there. Skipping..."
+            _ak_log_info "$test already there. Skipping..."
         fi
         i="$(expr $i + 1)"
     done
@@ -103,9 +103,9 @@ do
         if [ "$flag" == "0" ]
         then
             echo $addressValuePair >> $stellarParticipantsOnline
-            logit "INFO" "$p is configured with  $(echo $addressValuePair | awk '{ print $2 }'). Added to online participants."
+            _ak_log_info "$p is configured with  $(echo $addressValuePair | awk '{ print $2 }'). Added to online participants."
         else
-            logit "INFO" "$(echo $addressValuePair | awk '{ print $2 }') is already in $stellarParticipantsOnline. Skipping..."
+            _ak_log_info "$(echo $addressValuePair | awk '{ print $2 }') is already in $stellarParticipantsOnline. Skipping..."
         fi
     fi
 done < $stellarParticipants

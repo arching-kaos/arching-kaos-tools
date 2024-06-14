@@ -14,14 +14,14 @@ if [ ! -d $ZFILESDIR ]; then
     mkdir $ZFILESDIR
     if [ $? == 0 ]
     then
-        logit "INFO" "Folder $ZFILESDIR created!"
+        _ak_log_info "Folder $ZFILESDIR created!"
     else
-        logit "ERROR" "Failed to create $ZFILESDIR folder"
+        _ak_log_error "Failed to create $ZFILESDIR folder"
         exit 1
     fi
     cd $ZFILESDIR
 else
-    logit "INFO" "$ZFILESDIR found!"
+    _ak_log_info "$ZFILESDIR found!"
 fi
 
 usage(){
@@ -46,61 +46,61 @@ main(){
     cd $TEMPASSIN
 
     echo "Adding $FILENAME"
-    logit "INFO" "Switching to tmp folder..."
+    _ak_log_info "Switching to tmp folder..."
     if [ $? == 0 ]; then
-        logit "INFO" "Success"
+        _ak_log_info "Success"
     else
-        logit "ERROR" "Error with tmp folder"
+        _ak_log_error "Error with tmp folder"
         exit 5
     fi
-    logit "INFO" "Copying $1 to $TEMPASSIN"
+    _ak_log_info "Copying $1 to $TEMPASSIN"
 
     cp $CRP/$FILENAME $FILENAME
     if [ $? == 0 ]; then
-        logit "INFO" "Copied successfully"
+        _ak_log_info "Copied successfully"
     else
-        logit "ERROR" "Error copying..."
+        _ak_log_error "Error copying..."
     fi
 
-    logit "INFO" "Adding $FILENAME to IPFS..."
+    _ak_log_info "Adding $FILENAME to IPFS..."
     FILE_IPFS_HASH=$(_ak_ipfs_add $FILENAME)
     if [ $? == 0 ]; then
-        logit "INFO" "Added $FILENAME to IPFS"
+        _ak_log_info "Added $FILENAME to IPFS"
     else
-        logit "ERROR" "Error in adding the $FILENAME to IPFS"
+        _ak_log_error "Error in adding the $FILENAME to IPFS"
     fi
 
-    logit "INFO" "Adding $FILE to SHAMAPSYS..."
+    _ak_log_info "Adding $FILE to SHAMAPSYS..."
     FILEMAP_SHA512_HASH=$(ak-sm-filesplitter $FILENAME)
     if [ $? == 0 ]; then
-        logit "INFO" "Added $FILENAME to SHAMAPSYS"
+        _ak_log_info "Added $FILENAME to SHAMAPSYS"
     else
-        logit "ERROR" "Error in adding the $FILENAME to SHAMAPSYS"
+        _ak_log_error "Error in adding the $FILENAME to SHAMAPSYS"
     fi
 
-    logit "INFO" "Signing..."
+    _ak_log_info "Signing..."
     SIGN_FILE=$FILENAME".asc"
     _ak_gpg_sign_detached $SIGN_FILE $FILENAME
     if [ $? == 0 ]; then
-        logit "INFO" "Signed"
+        _ak_log_info "Signed"
     else
-        logit "ERROR" "Error while signing"
+        _ak_log_error "Error while signing"
     fi
 
-    logit "INFO" "Adding signature to IPFS"
+    _ak_log_info "Adding signature to IPFS"
     SIGNATURE=$(_ak_ipfs_add $SIGN_FILE)
     if [ $? == 0 ]; then
-        logit "INFO" "Added"
+        _ak_log_info "Added"
     else
-        logit "ERROR" "Error while adding"
+        _ak_log_error "Error while adding"
     fi
 
-    logit "INFO" "Adding signature to SHAMAPSYS"
+    _ak_log_info "Adding signature to SHAMAPSYS"
     SHAMAPSIGMAP=$(ak-sm-filesplitter $SIGN_FILE)
     if [ $? == 0 ]; then
-        logit "INFO" "Added"
+        _ak_log_info "Added"
     else
-        logit "ERROR" "Error while adding"
+        _ak_log_error "Error while adding"
     fi
 
     cat > data <<EOF

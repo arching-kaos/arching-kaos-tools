@@ -9,17 +9,17 @@ _ak_gpg(){
 _ak_gpg_key_import_from_file(){
     if [ -z $1 ]
     then
-        logit "[ERROR]" "No argument given"
+        _ak_log_error "No argument given"
         exit 1
     fi
     if [ ! -n "$1" ]
     then
-        logit "[ERROR]" "Empty argument given"
+        _ak_log_error "Empty argument given"
         exit 1
     fi
     if [ ! -f "$1" ]
     then
-        logit "[ERROR]" "File not found"
+        _ak_log_error "File not found"
         exit 1
     fi
     _ak_gpg --import $1 > /dev/null 2>&1

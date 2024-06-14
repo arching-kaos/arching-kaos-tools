@@ -13,7 +13,7 @@ source $AK_LIBDIR/_ak_gpg
 source $AK_LIBDIR/_ak_zblock
 
 _ak_modules_transactions_main(){
-    logit "INFO" "$FROM_ADDRESS to $TO_ADDRESS value sent: $AMOUNT"
+    _ak_log_info "$FROM_ADDRESS to $TO_ADDRESS value sent: $AMOUNT"
     cat > transaction_file <<EOF
 $FROM_ADDRESS
 $TO_ADDRESS

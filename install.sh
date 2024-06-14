@@ -34,50 +34,25 @@ packageManager=""
 installCommand=""
 dontAskFlag=""
 checkPkgManager(){
-    printf "Searching for package manager..."
-    which dnf 2> /dev/null 1>&2
-    if [ $? == 0 ]
-    then
-        printf "\tFound DNF\n"
-        packageManager="$(which dnf)"
-        installCommand="install"
-        dontAskFlag="-y"
-    fi
-    which apt 2> /dev/null 1>&2
-    if [ $? == 0 ]
-    then
-        printf "\tFound APT\n"
-        packageManager="$(which apt)"
-        installCommand="install"
-        dontAskFlag="-y"
-    fi
-    which zypper 2> /dev/null 1>&2
-    if [ $? == 0 ]
-    then
-        printf "\tFound ZYPPER\n"
-        packageManager="$(which zypper)"
-        installCommand="install"
-        dontAskFlag="-y"
-    fi
-    which pacman 2> /dev/null 1>&2
-    if [ $? == 0 ]
-    then
-        printf "\tFound PACMAN\n"
-        packageManager="$(which pacman)"
-        installCommand="-S"
-        dontAskFlag="--noconfirm"
-    fi
-    which apk 2> /dev/null 1>&2
-    if [ $? == 0 ]
-    then
-        printf "\tFound APK\n"
-        packageManager="$(which apk)"
-        installCommand="add"
-        dontAskFlag="-q"
-    fi
+    declare -a pkgmanagers=("dnf" "apt" "zypper" "pacman" "apk")
+    for pkgm in "${pkgmanagers[@]}"
+    do
+        printf "Searching for package manager..."
+        which $pkgm 2> /dev/null 1>&2
+        if [ $? -eq 0 ]
+        then
+            printf '\tFound %s\n' "$pkgm"
+            packageManager="$(which $pkgm)"
+            installCommand="install"
+            dontAskFlag="-y"
+            break
+        fi
+    done
     if [ "$packageManager" == "" ]
     then
         printf "Could not find package manager\n"
+        printf "In case you missing a package, you will be informed to install \
+            it manually.\n"
     fi
 }
 checkPkgManager
@@ -104,7 +79,7 @@ do
         if [ "$packageManager" != "" ]
         then
             printf "\t Attempting installation..."
-            $sudoBin $packageManager $installCommand $dontAskFlag $dep 1> /dev/null 2>&1
+            $sudoBin $packageManager $installCommand $dontAskFlag $dep > /dev/null 2>&1
             if [ $? -ne 0 ]
             then
                 printf "\t Failed to install!\n"
@@ -112,7 +87,7 @@ do
             fi
             printf "\t installed!\n"
         else
-            printf "\t Don't know how to install!\n"
+            printf "\t Don't know how to install!\n\nInstall $dep manually!\n"
             exit 1
         fi
     else
@@ -125,7 +100,7 @@ which gpg2
 if [ $? -ne 0 ]
 then
     which gpg
-    if [ $? == 0 ]
+    if [ $? -eq 0 ]
     then
         $sudoBin ln -s `which gpg` /usr/bin/gpg2
     fi

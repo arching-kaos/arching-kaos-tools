@@ -21,7 +21,7 @@ source $AK_WORKDIR/rc
 
 if [ $# -eq 0 ]
 then
-    logit "WARNING" "No command given"
+    _ak_log_warning "No command given"
     (
         find $AK_BINDIR | grep 'ak-' | while read available
         do
@@ -59,7 +59,7 @@ case "$1" in
         shift
         if [ -z $1 ] || [ ! -n "$*" ]
         then
-            logit "ERROR" "No module selected"
+            _ak_log_error "No module selected"
             ls -1 $AK_MODULESDIR
             exit 1
         fi
@@ -83,7 +83,7 @@ else
         args="$(echo "$argv"| cut -d ' ' -f $(($counter + 1))-)"
         if [ -n "$subcmd" ] && [ -f "$AK_BINDIR/ak-$subcmd" ]
         then
-            logit "INFO" "Running: ak-$subcmd with args: $args"
+            _ak_log_info "Running: ak-$subcmd with args: $args"
             $(echo ak-$subcmd) $args
             _ak_exit_program $? "ak-$subcmd command finished";
         fi
@@ -95,6 +95,6 @@ else
             grep ak-$(echo $argv | cut -d ' ' -f 1) |\
             sed -e 's/-/ /g'
     done
-    logit "ERROR" "Unknown subcommand: $*"
+    _ak_log_error "Unknown subcommand: $*"
     exit 1
 fi

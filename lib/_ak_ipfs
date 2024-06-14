@@ -71,7 +71,7 @@ _ak_ipfs_scanner(){
 _ak_ipfs_add(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
-        logit "ERROR" "no argument given"
+        _ak_log_error "no argument given"
         exit 1
     fi
     # Receives a file
@@ -79,7 +79,7 @@ _ak_ipfs_add(){
     _ak_ipfs add -Qr "$1"
     if [ $? -ne 0 ]
     then
-        logit "ERROR" "Failed to add $1"
+        _ak_log_error "Failed to add $1"
         exit 1
     fi
 }
@@ -87,13 +87,13 @@ _ak_ipfs_add(){
 _ak_ipfs_block_stat(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
-        logit "ERROR" "no argument given"
+        _ak_log_error "no argument given"
         exit 1
     fi
     _ak_ipfs block stat "$1"
     if [ $? -ne 0 ]
     then
-        logit "ERROR" "Failed to retrieve stat of block $1"
+        _ak_log_error "Failed to retrieve stat of block $1"
         exit 1
     fi
 }
@@ -101,13 +101,13 @@ _ak_ipfs_block_stat(){
 _ak_ipfs_cat(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
-        logit "ERROR" "no argument given"
+        _ak_log_error "no argument given"
         exit 1
     fi
     _ak_ipfs --timeout=10s cat $1
     if [ "$?" -ne "0" ]
     then
-        logit "ERROR" "Failed to cat $1"
+        _ak_log_error "Failed to cat $1"
         exit 1
     fi
 
@@ -116,18 +116,18 @@ _ak_ipfs_cat(){
 _ak_ipfs_files_cp(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
-        logit "ERROR" "No argument given"
+        _ak_log_error "No argument given"
         exit 1
     fi
     if [ -z $2 ] || [ ! -n "$2" ]
     then
-        logit "ERROR" "No argument given"
+        _ak_log_error "No argument given"
         exit 1
     fi
     _ak_ipfs files cp "$1" "$2"
     if [ $? -ne 0 ]
     then
-        logit "ERROR" "Failed to copy $1 to $2"
+        _ak_log_error "Failed to copy $1 to $2"
         exit 1
     fi
 }
@@ -136,7 +136,7 @@ _ak_ipfs_files_ls(){
     _ak_ipfs files ls "$1"
     if [ $? -ne 0 ]
     then
-        logit "ERROR" "Failed to list $1"
+        _ak_log_error "Failed to list $1"
         exit 1
     fi
 }
@@ -144,13 +144,13 @@ _ak_ipfs_files_ls(){
 _ak_ipfs_files_mkdir(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
-        logit "ERROR" "No argument given"
+        _ak_log_error "No argument given"
         exit 1
     fi
     _ak_ipfs files mkdir "$1"
     if [ $? -ne 0 ]
     then
-        logit "ERROR" "Failed to mkdir $1"
+        _ak_log_error "Failed to mkdir $1"
         exit 1
     fi
 }
@@ -158,18 +158,18 @@ _ak_ipfs_files_mkdir(){
 _ak_ipfs_files_mv(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
-        logit "ERROR" "No argument given"
+        _ak_log_error "No argument given"
         exit 1
     fi
     if [ -z $2 ] || [ ! -n "$2" ]
     then
-        logit "ERROR" "No argument given"
+        _ak_log_error "No argument given"
         exit 1
     fi
     _ak_ipfs files mv "$1" "$2"
     if [ $? -ne 0 ]
     then
-        logit "ERROR" "Failed to move $1 to $2"
+        _ak_log_error "Failed to move $1 to $2"
         exit 1
     fi
 }
@@ -177,13 +177,13 @@ _ak_ipfs_files_mv(){
 _ak_ipfs_files_rm(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
-        logit "ERROR" "No argument given"
+        _ak_log_error "No argument given"
         exit 1
     fi
     _ak_ipfs files rm "$1"
     if [ $? -ne 0 ]
     then
-        logit "ERROR" "Failed to remove $1"
+        _ak_log_error "Failed to remove $1"
         exit 1
     fi
 }
@@ -191,13 +191,13 @@ _ak_ipfs_files_rm(){
 _ak_ipfs_files_stat(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
-        logit "ERROR" "No argument given"
+        _ak_log_error "No argument given"
         exit 1
     fi
     _ak_ipfs files stat "$1"
     if [ $? -ne 0 ]
     then
-        logit "ERROR" "Failed to get file's stats $1"
+        _ak_log_error "Failed to get file's stats $1"
         exit 1
     fi
 }
@@ -205,13 +205,13 @@ _ak_ipfs_files_stat(){
 _ak_ipfs_get(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
-        logit "ERROR" "No argument given"
+        _ak_log_error "No argument given"
         exit 1
     fi
     _ak_ipfs --timeout=10s get "$1" > /dev/null 2>&1
     if [ $? -ne 0 ]
     then
-        logit "ERROR" "Failed to get $1"
+        _ak_log_error "Failed to get $1"
         exit 1
     fi
 }
@@ -219,13 +219,13 @@ _ak_ipfs_get(){
 _ak_ipfs_key_gen(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
-        logit "ERROR" "No argument given"
+        _ak_log_error "No argument given"
         exit 1
     fi
     _ak_ipfs key gen "$1"
     if [ $? -ne 0 ]
     then
-        logit "ERROR" "Failed to generate key $1"
+        _ak_log_error "Failed to generate key $1"
         exit 1
     fi
 }
@@ -234,7 +234,7 @@ _ak_ipfs_key_list(){
     _ak_ipfs key list
     if [ $? -ne 0 ]
     then
-        logit "ERROR" "Failed to get key list"
+        _ak_log_error "Failed to get key list"
         exit 1
     fi
 }
@@ -243,7 +243,7 @@ _ak_ipfs_key_list_full(){
     _ak_ipfs key list -l
     if [ $? -ne 0 ]
     then
-        logit "ERROR" "Failed to get key list"
+        _ak_log_error "Failed to get key list"
         exit 1
     fi
 }
@@ -251,18 +251,18 @@ _ak_ipfs_key_list_full(){
 _ak_ipfs_name_publish(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
-        logit "ERROR" "No argument given"
+        _ak_log_error "No argument given"
         exit 1
     fi
     if [ -z $2 ] || [ ! -n "$2" ]
     then
-        logit "ERROR" "No argument given"
+        _ak_log_error "No argument given"
         exit 1
     fi
     _ak_ipfs name publish "$1" "$2"
     if [ $? -ne 0 ]
     then
-        logit "ERROR" "Failed to get $1"
+        _ak_log_error "Failed to get $1"
         exit 1
     fi
 
@@ -271,13 +271,13 @@ _ak_ipfs_name_publish(){
 _ak_ipfs_name_resolve(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
-        logit "ERROR" "No argument given"
+        _ak_log_error "No argument given"
         exit 1
     fi
     _ak_ipfs name resolve "$1"
     if [ $? -ne 0 ]
     then
-        logit "ERROR" "Failed to resolve $1"
+        _ak_log_error "Failed to resolve $1"
         exit 1
     fi
 
@@ -287,7 +287,7 @@ _ak_ipfs_swarm_peers(){
     _ak_ipfs swarm peers
     if [ $? -ne 0 ]
     then
-        logit "ERROR" "Failed to get list of peers"
+        _ak_log_error "Failed to get list of peers"
         exit 1
     fi
 }
@@ -296,7 +296,7 @@ _ak_ipfs_starter(){
     _ak_ipfs_daemon
     if [ $? -ne 0 ]
     then
-        logit "ERROR" "Failed to start IPFS daemon"
+        _ak_log_error "Failed to start IPFS daemon"
         exit 1
     fi
 }
@@ -307,11 +307,11 @@ _ak_ipns_resolve(){
         rsld=$(_ak_ipfs_name_resolve $1)
         if [ $? -ne 0 ]
         then
-            logit "ERROR" "Failed to resolve $1"
+            _ak_log_error "Failed to resolve $1"
             exit 1
         fi
         echo -n $rsld | sed -e 's/\/ipfs\///'
-        logit "INFO" "Resolved $1 to $rsld"
+        _ak_log_info "Resolved $1 to $rsld"
     else
         exit 1
     fi
@@ -321,43 +321,43 @@ _ak_ipfs_check(){
     _ak_ipfs_files_ls /zarchive > /dev/null
     if [ $? != 0 ]
     then
-        logit "ERROR" "/zarchive is missing"
+        _ak_log_error "/zarchive is missing"
     else
-        logit "INFO" "/zarchive OK"
+        _ak_log_info "/zarchive OK"
     fi
 
     _ak_ipfs_files_ls /zlatest > /dev/null
     if [ $? != 0 ]
     then
-        logit "ERROR" "/zlatest is missing"
+        _ak_log_error "/zlatest is missing"
     else
-        logit "INFO" "/zlatest is OK"
+        _ak_log_info "/zlatest is OK"
     fi
 
     _ak_ipfs_key_list | grep zchain > /dev/null
     if [ $? != 0 ]; then
-        logit "WARNING" "zchain key is missing"
+        _ak_log_warning "zchain key is missing"
         _ak_ipfs_key_gen zchain > $ZCHAIN
         if [ $? != 0 ]; then
-            logit "ERROR" "zchain fails to create"
+            _ak_log_error "zchain fails to create"
         else
-            logit "INFO" "zchain created"
+            _ak_log_info "zchain created"
         fi
     else
-        logit "INFO" "zchain is there"
+        _ak_log_info "zchain is there"
     fi
 
     _ak_ipfs_key_list | grep ak-config > /dev/null
     if [ $? != 0 ]; then
-        logit "WARNING" "ak-config key is missing"
+        _ak_log_warning "ak-config key is missing"
         _ak_ipfs_key_gen ak-config
         if [ $? != 0 ]; then
-            logit "ERROR" "ak-config fails to create"
+            _ak_log_error "ak-config fails to create"
         else
-            logit "INFO" "ak-config created"
+            _ak_log_info "ak-config created"
         fi
     else
-        logit "INFO" "ak-config is there"
+        _ak_log_info "ak-config is there"
     fi
 }
 
@@ -371,7 +371,7 @@ _ak_ipfs_init(){
 }
 
 _ak_ipfs_download(){
-    logit "INFO" "Attempting to install IPFS..."
+    _ak_log_info "Attempting to install IPFS..."
     IPFS_VERSION="$(curl \
         --connect-timeout 3 \
         -s https://dist.ipfs.tech/kubo/versions | tail -1)"
@@ -387,12 +387,12 @@ _ak_ipfs_download(){
     fi
     IPFS_TARGET_FILE="kubo_"$IPFS_VERSION"_linux-$ARCH.tar.gz"
 
-    logit "INFO" "Downloading ipfs $IPFS_VERSION"
+    _ak_log_info "Downloading ipfs $IPFS_VERSION"
     if [ ! -f $AK_ARCHIVESDIR/$IPFS_TARGET_FILE ]
     then
         wget -O $AK_ARCHIVESDIR/$IPFS_TARGET_FILE https://dist.ipfs.tech/kubo/$IPFS_VERSION/$IPFS_TARGET_FILE ;
     else
-        logit "INFO" "Already have the latest version"
+        _ak_log_info "Already have the latest version"
         exit 0
     fi
 }
@@ -400,16 +400,16 @@ _ak_ipfs_download(){
 _ak_ipfs_cid_v0_check () {
     if [ -z $1 ] || [ ! -n "$1" ]
     then
-        logit "ERROR" "No argument given"
+        _ak_log_error "No argument given"
         exit 1
     fi
     echo $1 | grep -e 'Qm.\{44\}' > /dev/null
     if [ "$?" -ne 0 ]
     then
-        logit "ERROR" "$1 is not an IPFS CIDv0 string"
+        _ak_log_error "$1 is not an IPFS CIDv0 string"
         exit 1
     fi
-    logit "INFO" "$1 provided is an IPFS CIDv0 string"
+    _ak_log_info "$1 provided is an IPFS CIDv0 string"
 }
 
 _ak_ipfs_swarm_install() {
@@ -417,13 +417,13 @@ _ak_ipfs_swarm_install() {
 
     if [ ! -f $AK_IPFS_REPO/swarm.key ]
     then
-        logit "INFO" "Downloading swarm key"
+        _ak_log_info "Downloading swarm key"
         wget -O $AK_IPFS_REPO/swarm.key https://arching-kaos.net/files/swarm.key
     elif [ -f $AK_IPFS_REPO/swarm.key ] && [ "$(sha512sum $AK_IPFS_REPO/swarm.key | awk '{ print $1 }')" == "$SWARMSHA512SUM" ]
     then
-        logit "INFO" "Congrats! You are already in our swarm"
+        _ak_log_info "Congrats! You are already in our swarm"
     else
-        logit "ERROR" "Found swarm.key but not ours"
-        logit "ERROR" "Visit https://arching-kaos.net/files/swarm.key and copy it to your ipfs folder"
+        _ak_log_error "Found swarm.key but not ours"
+        _ak_log_error "Visit https://arching-kaos.net/files/swarm.key and copy it to your ipfs folder"
     fi
 }

@@ -16,9 +16,9 @@ _ak_exit_program(){
 #    rm -rf $tempdir
     if [ $1 -ne 0 ]
     then
-        logit "ERROR" "$2 ($1)"
+        _ak_log_error "$2 ($1)"
     else
-        logit "EXIT" "$2"
+        _ak_log_message "EXIT" "$2"
     fi
     exit $1
 }
@@ -29,7 +29,7 @@ _ak_help(){
         cat $fullprogrampath |grep '^##'| sed 's/^##//g;s/^ //g' 1>&2
         exit 1
     else
-        logit "ERROR" "fullprogrampath was not set"
+        _ak_log_error "fullprogrampath was not set"
         exit 1
     fi
 }
@@ -39,7 +39,7 @@ _ak_title_description(){
     if [ ! -n "$descriptionString" ]
     then
         # Choose to exit with error to enforce standard
-        logit "ERROR" "No description string"
+        _ak_log_error "No description string"
         exit 1
         # Alternative solution
         # full_title="$(printf '%s' "$PROGRAM")"

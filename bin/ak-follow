@@ -9,14 +9,14 @@ then
     grep $1 $FOLLOWING
     if [ $? == 0 ]
     then
-        logit "ERROR" "Already exists"
+        _ak_log_error "Already exists"
         exit 1
     fi
     echo $1 >> $FOLLOWING
     IPFS=$(_ak_ipfs_add $FOLLOWING)
     if [ $? != 0 ]
     then
-        logit "ERROR" "Addition failed"
+        _ak_log_error "Addition failed"
         exit 1
     fi
     ak-profile set following $IPFS

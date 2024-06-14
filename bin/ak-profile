@@ -43,9 +43,9 @@ source $AK_LIBDIR/_ak_zblock
 if [ ! -d $ZPROFILEDIR ]; then
     mkdir $ZPROFILEDIR
     cd $ZPROFILEDIR
-    logit "INFO" "zprofiledir created"
+    _ak_log_info "zprofiledir created"
 else
-    logit "INFO" "zprofiledir found"
+    _ak_log_info "zprofiledir found"
 fi
 
 # This is working with DATA blocks. DATA that matched profile/add ACTION
@@ -56,7 +56,7 @@ fi
 _ak_modules_profile_show(){
     if [ ! -z $1 ]
     then
-        logit "INFO" "Working with $1"
+        _ak_log_info "Working with $1"
         _ak_ipfs_cat $(echo $(_ak_ipfs_cat $1) | jq '.ipfs' -r)
     else
         echo "No DATA provided"

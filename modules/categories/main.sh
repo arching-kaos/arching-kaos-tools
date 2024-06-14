@@ -24,9 +24,9 @@ source $AK_LIBDIR/_ak_zblock
 if [ ! -d $AK_CATEGORIES ]; then
     mkdir $AK_CATEGORIES
     cd $AK_CATEGORIES
-    logit "INFO" "AK_CATEGORIES created"
+    _ak_log_info "AK_CATEGORIES created"
 else
-    logit "INFO" "AK_CATEGORIES found"
+    _ak_log_info "AK_CATEGORIES found"
 fi
 
 _ak_modules_categories_create(){
@@ -34,7 +34,7 @@ _ak_modules_categories_create(){
     cd $TEMP
     export NEWS_FILE="$(date +%Y%m%d_%H%M%S)"
     vi $NEWS_FILE
-    logit "INFO" "Renaming..."
+    _ak_log_info "Renaming..."
     TITLE="$(head -n 1 $NEWS_FILE)"
     TO_FILE=$NEWS_FILE-$(echo $TITLE | tr '[:upper:]' '[:lower:]' | sed -e 's/ /\_/g' )
     IPFS_FILE=$(_ak_ipfs_add $NEWS_FILE)
@@ -61,10 +61,10 @@ _ak_modules_categories_import(){
     then
         if [ ! -d $1 ]
         then
-            logit "ERROR" "Folder does not exists"
+            _ak_log_error "Folder does not exists"
             exit 4
         else
-            logit "INFO" "Folder $1 exists"
+            _ak_log_info "Folder $1 exists"
             fl="$(ls -1 $1)"
             for f in $fl
             do
@@ -72,7 +72,7 @@ _ak_modules_categories_import(){
             done
         fi
     else
-        logit "ERROR" "No value"
+        _ak_log_error "No value"
         exit 6
     fi
     exit 224
@@ -82,7 +82,7 @@ _ak_modules_categories_add(){
     cd $TEMP
     if [ -f $1 ]; then
         FILE="$1"
-        logit "INFO" "Adding news from " $FILE
+        _ak_log_info "Adding news from " $FILE
         DATETIME=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
         TITLE=$(head -n 1 $FILE)
         FILE_IPFS_HASH=$(_ak_ipfs_add $FILE)
@@ -99,15 +99,15 @@ _ak_modules_categories_add(){
 }
 EOF
     else
-        logit "ERROR" "File $FILE doesn't exist";
+        _ak_log_error "File $FILE doesn't exist";
         exit 2
     fi
     _ak_zblock_pack "news/add" $(pwd)/data
     if [ $? == 0 ]
     then
-        logit "INFO" "News added successfully"
+        _ak_log_info "News added successfully"
     else
-        logit "ERROR" "error??"
+        _ak_log_error "error??"
         exit 1
     fi
 }

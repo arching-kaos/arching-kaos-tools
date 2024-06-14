@@ -73,36 +73,36 @@ do
             # Reset timestamp since it's introduced later
             timestamp=''
             # Announce to stdout which ZBLOCK is being read at the moment
-            logit "INFO" "Examining $zblock"
+            _ak_log_info "Examining $zblock"
 
             # We create files named after each ZBLOCK IPFS CID for later
             # reference. Files are empty.
             touch $AK_ZBLOCKDIR/$zblock
-            logit "INFO" "Created reference"
+            _ak_log_info "Created reference"
 
             # We concatenate the zblock's contents, pipe them through filter
             # ak-json2bash and output them to tmp-file
             _ak_ipfs_cat $zblock | ak-json2bash > tmp-zblock
-            logit "INFO" "ZBLOCK $zblock READ"
+            _ak_log_info "ZBLOCK $zblock READ"
 
             # Supposingly you are on a safe environment and you only have
             # access to your chain, I would consider mild secure to source
             # the files into your bash.
             # File an issue/pull request if you think it can be done better!!
             source tmp-zblock
-            logit "INFO" "ZBLOCK SOURCED"
+            _ak_log_info "ZBLOCK SOURCED"
 
             # Same as above applies to BLOCK and DATA subparts of each ZBLOCK
             # BLOCKS
             _ak_ipfs_cat $block | ak-json2bash > tmp-block
             source tmp-block
-            logit "INFO" "BLOCK $block SOURCED"
+            _ak_log_info "BLOCK $block SOURCED"
             touch $AK_BLOCKDIR/$block
-            logit "INFO" "BLOCK REFERENCED"
+            _ak_log_info "BLOCK REFERENCED"
             module="$(echo $action | sed -e 's/\// /g' | awk '{ print $1 }')"
-            logit "INFO" "DATA is $module module."
+            _ak_log_info "DATA is $module module."
             command="$(echo $action | sed -e 's/\// /g' | awk '{ print $2 }')"
-            logit "INFO" "COMMAND is $command"
+            _ak_log_info "COMMAND is $command"
             if [ ! -v $timestamp ]
             then
                 echo "$timestamp : $zblock -> $block -> $previous"
@@ -115,7 +115,7 @@ do
             # code 0
             if [ -v $previous ]
             then
-                logit "ERROR" "Block $block has no previous zblock"
+                _ak_log_error "Block $block has no previous zblock"
                 echo "Chain with no genesis"
                 if [ "$fix" == "1" ]
                 then
@@ -138,12 +138,12 @@ do
         elif [ "$zblock" == "$seed" ]
         then
             echo "Chain is OK with GENESIS block = $seed"
-            logit "INFO" "Counter $counter"
+            _ak_log_info "Counter $counter"
             exit 0
         fi
     # And finally, if nothing is there exit with error
     else
-        logit "ERROR" "Check not passed... No previous IPFS CID"
+        _ak_log_error "Check not passed... No previous IPFS CID"
         exit 1
     fi
 done

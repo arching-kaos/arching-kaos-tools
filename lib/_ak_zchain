@@ -31,7 +31,7 @@ _ak_zchain_reset(){
     ak-config --publish
     if [ "$?" -ne 0 ]
     then
-        logit "ERROR" "Could not publish new configuration"
+        _ak_log_error "Could not publish new configuration"
         exit 1
     fi
 
@@ -70,7 +70,7 @@ _ak_zchain_rebase(){
     ak-config --publish
     if [ "$?" -ne 0 ]
     then
-        logit "ERROR" "Could not publish new configuration"
+        _ak_log_error "Could not publish new configuration"
         exit 1
     fi
     echo "Rebase was successful"

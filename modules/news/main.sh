@@ -37,12 +37,12 @@ source $AK_LIBDIR/_ak_zchain
 if [ ! -d $ZNEWSDIR ]; then
     mkdir $ZNEWSDIR
     if [ $? -ne 0 ]; then
-        logit "ERROR" "$ZNEWSDIR couldn't be created"
+        _ak_log_error "$ZNEWSDIR couldn't be created"
         exit 1
     fi
-    logit "INFO" "$ZNEWSDIR created"
+    _ak_log_info "$ZNEWSDIR created"
 else
-    logit "INFO" "$ZNEWSDIR found"
+    _ak_log_info "$ZNEWSDIR found"
 fi
 
 cd $ZNEWSDIR
@@ -120,7 +120,7 @@ _ak_modules_news_add_from_file(){
         cp $FILE $TEMP
         FILE="$(basename $1)"
         cd $TEMP
-        logit "INFO" "Adding news from " $FILE
+        _ak_log_info "Adding news from " $FILE
         DATETIME=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
         TITLE=$(head -n 1 $FILE)
         FILE_IPFS_HASH=$(_ak_ipfs_add $FILE)
@@ -137,15 +137,15 @@ _ak_modules_news_add_from_file(){
 }
 EOF
     else
-        logit "ERROR" "File $FILE doesn't exist";
+        _ak_log_error "File $FILE doesn't exist";
         exit 2
     fi
     _ak_zblock_pack "news/add" $(pwd)/data
     if [ $? == 0 ]
     then
-        logit "INFO" "News added successfully"
+        _ak_log_info "News added successfully"
     else
-        logit "ERROR" "Failed to pack zblock"
+        _ak_log_error "Failed to pack zblock"
         exit 1
     fi
     rm -rf $TEMP
@@ -156,7 +156,7 @@ _ak_modules_news_add(){
     cd $TEMP
     if [ -f $ZNEWSDIR/$1 ]; then
         FILE="$1"
-        logit "INFO" "Adding news from " $FILE
+        _ak_log_info "Adding news from " $FILE
         DATETIME=$(echo $FILE | cut -d - -f 1 | awk '{print $1}')
         TITLE=$(head -n 1 $ZNEWSDIR/$FILE)
         FILE_IPFS_HASH=$(_ak_ipfs_add $ZNEWSDIR/$FILE)
@@ -173,15 +173,15 @@ _ak_modules_news_add(){
 }
 EOF
     else
-        logit "ERROR" "File $1 doesn't exist";
+        _ak_log_error "File $1 doesn't exist";
         exit 2
     fi
     _ak_zblock_pack "news/add" $(pwd)/data
     if [ $? == 0 ]
     then
-        logit "INFO" "News added successfully"
+        _ak_log_info "News added successfully"
     else
-        logit "ERROR" "error??"
+        _ak_log_error "error??"
         exit 1
     fi
 }
@@ -203,7 +203,7 @@ _ak_modules_news_read(){
 
         _ak_ipfs_cat $linkToText
     else
-        logit "ERROR" "Not a news block."
+        _ak_log_error "Not a news block."
         echo "ERROR Not a news block."
         exit 1
     fi
@@ -214,7 +214,7 @@ _ak_modules_news_html(){
     ak-enter -l 1 $1 > temp
     if [ $? -ne 0 ]
     then
-        logit "ERROR" "Failed to retrieve zblock $1"
+        _ak_log_error "Failed to retrieve zblock $1"
         exit 22
     fi
     module="`cat temp | jq -r '.[].module'`"
@@ -281,7 +281,7 @@ _ak_modules_news_html(){
         echo "    </tr>"
         echo '</table>'
     else
-        logit "ERROR" "Not a news block."
+        _ak_log_error "Not a news block."
         exit 1
     fi
     rm temp

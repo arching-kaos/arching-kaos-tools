@@ -24,9 +24,9 @@ source $AK_LIBDIR/_ak_zblock
 if [ ! -d $ZREFERENCESDIR ]; then
     mkdir $ZREFERENCESDIR
     cd $ZREFERENCESDIR
-    logit "INFO" "zreferencesdir created"
+    _ak_log_info "zreferencesdir created"
 else
-    logit "INFO" "zreferencesdir found"
+    _ak_log_info "zreferencesdir found"
 fi
 
 _ak_modules_reference_create(){

@@ -15,7 +15,7 @@ then
 fi
 
 further(){
-    # logit "INFO" "Diving into $1"
+    # _ak_log_info "Diving into $1"
     lookfor $1
 }
 
@@ -23,7 +23,7 @@ lookfor(){
     echo -n $1 | grep -e '[0-9a-f]\{128\}' > /dev/null
     if [ ! $? = 0 ]
     then
-        logit "ERROR" "Oops!!! The argument passed, does not match the regular expression!"
+        _ak_log_error "Oops!!! The argument passed, does not match the regular expression!"
     else
         counters[$CHAIN_PARENT]="$(expr ${counters[$CHAIN_PARENT]} + 1)"
         if [ ! $? = 0 ]
@@ -31,21 +31,21 @@ lookfor(){
             echo "$1, $counters[$1]"
             exit 1
         fi
-        logit "INFO" "Accessing file: $1"
+        _ak_log_info "Accessing file: $1"
     #    echo "$1 file:"
     #    cat "$1" | jq
         NEXT_TARGET="$(cat "$1" | jq | grep previous | tr -d ' ' | sed -e 's/previous//g; s/[",:]//g;')"
         if [ ! "$NEXT_TARGET" = "" ]
         then
-            logit "INFO" "Found previous: $NEXT_TARGET"
+            _ak_log_info "Found previous: $NEXT_TARGET"
             if [ ! -f "$NEXT_TARGET" ]
             then
-                logit "WARNING" "Could not find $NEXT_TARGET"
+                _ak_log_warning "Could not find $NEXT_TARGET"
             else
                 further "$NEXT_TARGET"
             fi
         else
-            logit "WARNING" "No next target found. So long for $1"
+            _ak_log_warning "No next target found. So long for $1"
         fi
     fi
 }
@@ -58,12 +58,12 @@ do
     if [ "$(echo $p | tr -d '\n' | wc -c)" = 128 ]
     then
         filename="$(basename $p)"
-        logit "INFO" "Investigating $filename..."
+        _ak_log_info "Investigating $filename..."
         export CHAIN_PARENT="$filename"
         counters[$CHAIN_PARENT]=1
         lookfor "$filename"
     else
-        logit "WARNING" "Nothing to do with $filename"
+        _ak_log_warning "Nothing to do with $filename"
     fi
 done < $templistblock
 rm $templistblock
@@ -76,7 +76,7 @@ do
     then
         max="${counters[${value}]}"
         max_holder="${value}"
-        logit "INFO" "New MAX $max on $max_holder"
+        _ak_log_info "New MAX $max on $max_holder"
     fi
 done
 echo '{"latest_block":"'$max_holder'"}'

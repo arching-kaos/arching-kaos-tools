@@ -29,7 +29,7 @@ source $AK_LIBDIR/_ak_log
 
 if [ ! -f "$1" ]
 then
-    logit "ERROR" "File $1 not found"
+    _ak_log_error "File $1 not found"
     exit 1
 else
     # TODO
@@ -67,13 +67,13 @@ then
     mkdir -p "$TECHDIR"
     if [ $? -eq 0 ]
     then
-        logit "INFO" "Folder $TECHDIR created!"
+        _ak_log_info "Folder $TECHDIR created!"
     else
-        logit "ERROR" "Problem occured while creating $TECHDIR"
+        _ak_log_error "Problem occured while creating $TECHDIR"
         exit 1
     fi
 else
-    logit "INFO" "Temp dir found"
+    _ak_log_info "Temp dir found"
 fi
 
 # FILEMAPSDIR
@@ -82,13 +82,13 @@ then
     mkdir -p "$FILEMAPSDIR"
     if [ $? -eq 0 ]
     then
-        logit "INFO" "Folder $FILEMAPSDIR created!"
+        _ak_log_info "Folder $FILEMAPSDIR created!"
     else
-        logit "ERROR" "Problem occured while creating $FILEMAPSDIR"
+        _ak_log_error "Problem occured while creating $FILEMAPSDIR"
         exit 1
     fi
 else
-    logit "INFO" "Mapsdir found"
+    _ak_log_info "Mapsdir found"
 fi
 
 # CHKDIR
@@ -97,13 +97,13 @@ then
     mkdir -p "$CHKDIR"
     if [ $? -eq 0 ]
     then
-        logit "INFO" "Folder $CHKDIR created!"
+        _ak_log_info "Folder $CHKDIR created!"
     else
-        logit "ERROR" "Problem occured while creating $CHKDIR"
+        _ak_log_error "Problem occured while creating $CHKDIR"
         exit 1
     fi
 else
-    logit "INFO" "Workdir found"
+    _ak_log_info "Workdir found"
 fi
 
 # MERKLEDIR
@@ -112,14 +112,14 @@ then
     mkdir -p "$MERKLEDIR"
     if [ $? -eq 0 ]
     then
-        logit "INFO" "Folder $MERKLEDIR created!"
+        _ak_log_info "Folder $MERKLEDIR created!"
     else
-        logit "ERROR" "Problem occured while creating $MERKLEDIR"
+        _ak_log_error "Problem occured while creating $MERKLEDIR"
         echo "ERROR Can't create $MERKLEDIR"
         exit 1
     fi
 else
-    logit "INFO" "Workdir found"
+    _ak_log_info "Workdir found"
 fi
 # Uncomment next line in case you want to debug the resulting script as well
 # echo 'set -xe' > $TEMPORARYDIR/cmd_queue.sh
@@ -136,7 +136,7 @@ else
     do
         FACTOR=$(( $FACTOR * 2 ))
     done
-    logit "INFO" "Gonna split in $FACTOR size"
+    _ak_log_info "Gonna split in $FACTOR size"
     sleep 30
     # We split the file into 4*1024 bytes and output the chunks into TECHDIR
     split -a 50 -b $FACTOR --additional-suffix ".chk" -d "$FILE" "$TECHDIR/$(basename "$FILE")-"

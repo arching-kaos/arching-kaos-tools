@@ -69,7 +69,7 @@ while [ "$#" ]; do
             entrance="$(_ak_ipns_resolve $1)"
             if [ $? -ne 0 ]
             then
-                logit "ERROR" "Could not resolve IPNS name"
+                _ak_log_error "Could not resolve IPNS name"
                 exit 1
             fi
             shift

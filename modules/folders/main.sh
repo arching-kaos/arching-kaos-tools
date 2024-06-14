@@ -20,9 +20,9 @@ source $AK_LIBDIR/_ak_zblock
 
 if [ ! -d $ZFOLDERSDIR ]; then
     mkdir $ZFOLDERSDIR
-    logit "ERROR" "error $ZFOLDERSDIR not found or/and could not be created"
+    _ak_log_error "error $ZFOLDERSDIR not found or/and could not be created"
 else
-    logit "INFO" "Found $ZFOLDERSDIR"
+    _ak_log_info "Found $ZFOLDERSDIR"
     exit 1
 fi
 TEMPASSIN="$(ak-tempassin)"
@@ -40,24 +40,24 @@ _ak_modules_folders_main(){
     FOLDERNAME="$1"
     CRP="$2"
     echo "Adding $FOLDERNAME"
-    logit "INFO" "Copying $1 to temporary folder"
+    _ak_log_info "Copying $1 to temporary folder"
     cp -r $2/$1 $1
     if [ $? == 0 ]; then
-        logit "INFO" "Copied successfully"
+        _ak_log_info "Copied successfully"
     else
-        logit "ERROR" "Error copying..."
+        _ak_log_error "Error copying..."
     fi
 
     FOLDER="$1"
 
-    logit "INFO" "Adding $FOLDER to IPFS..."
+    _ak_log_info "Adding $FOLDER to IPFS..."
     FOLDER_IPFS_HASH=$(_ak_ipfs_add $FOLDER)
     if [ $? == 0 ]; then
-        logit "INFO" "done"
+        _ak_log_info "done"
     else
-        logit "ERROR" "error"
+        _ak_log_error "error"
     fi
-    logit "WARNING" "Folders are not signing..."
+    _ak_log_warning "Folders are not signing..."
 
     printf '{"timestamp":"%s","foldername":"%s","ipfs":"%s"}' $(date -u +%s) $FOLDERNAME $FOLDER_IPFS_HASH
 

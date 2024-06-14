@@ -22,9 +22,9 @@ TEMP="/tmp/aktmp"
 if [ ! -d $ZARTICLESDIR ]; then
     mkdir $ZARTICLESDIR
     cd $ZARTICLESDIR
-    logit "INFO" "zarticlesdir created"
+    _ak_log_info "zarticlesdir created"
 else
-    logit "INFO" "zarticlesdir found"
+    _ak_log_info "zarticlesdir found"
 fi
 
 _ak_modules_articles_create(){
@@ -33,18 +33,18 @@ _ak_modules_articles_create(){
     export ARTICLES_FILE="$(date +%Y%m%d_%H%M%S)"
     if [ -z $EDITOR ]
     then
-        logit "ERROR" "No $EDITOR found. Exiting..."
+        _ak_log_error "No $EDITOR found. Exiting..."
         exit 1
     fi
     $EDITOR $ARTICLES_FILE
-    logit "INFO" "Renaming..."
+    _ak_log_info "Renaming..."
     TITLE="$(head -n 1 $ARTICLES_FILE)"
     TO_FILE=$ARTICLES_FILE-$(echo $TITLE | tr '[:upper:]' '[:lower:]' | sed -e 's/ /\_/g' )
     IPFS_FILE=$(_ak_ipfs_add $ARTICLES_FILE)
     mv $ARTICLES_FILE $ZARTICLESDIR/$TO_FILE
     sed -e 's,Qm.*,'"$IPFS_FILE"',g' $ZARTICLESDIR/README
     _ak_modules_articles_add $ZARTICLESDIR/$TO_FILE
-    logit "INFO" "Adding to git repo..."
+    _ak_log_info "Adding to git repo..."
     cd $ZARTICLESDIR
     rm -rf $TEMP
 }

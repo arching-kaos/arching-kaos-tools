@@ -24,9 +24,9 @@ TEMP="/tmp/aktmp"
 if [ ! -d $ZCOMMENTSDIR ]; then
     mkdir $ZCOMMENTSDIR
     cd $ZCOMMENTSDIR
-    logit "INFO" "zcommentsdir created"
+    _ak_log_info "zcommentsdir created"
 else
-    logit "INFO" "zcommentsdir found"
+    _ak_log_info "zcommentsdir found"
 fi
 
 _ak_modules_comments_create(){
@@ -34,7 +34,7 @@ _ak_modules_comments_create(){
     then
         REFER_TO="$1"
     else
-        logit "ERROR" "No reference given"
+        _ak_log_error "No reference given"
         echo "ERROR" "No reference given"
         exit 1
     fi
@@ -47,7 +47,7 @@ _ak_modules_comments_create(){
     IPFS_FILE=$(_ak_ipfs_add $COMMENTS_FILE)
     mv $COMMENTS_FILE $ZCOMMENTSDIR/$TO_FILE
     _ak_modules_comments_add $TO_FILE
-    logit "INFO" "Adding to git repo..."
+    _ak_log_info "Adding to git repo..."
     cd $ZCOMMENTSDIR
     if [ ! -z $REFER_TO ]
     then
