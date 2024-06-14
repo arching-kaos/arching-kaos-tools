@@ -22,9 +22,11 @@ module.exports = (req, res) => {
         if (regex.test(zchain)){
             getNSvalidity(zchain,res);
         } else {
-            res.send({error:"Invalid data"});
+            res.writeHead(404, { 'Content-Type': 'application/json'});
+            res.end(JSON.stringify({error:"Invalid data"}));
         }
     } else {
-        res.send({error:"Invalid data"});
+        res.writeHead(404, { 'Content-Type': 'application/json'});
+        res.end(JSON.stringify({error:"Invalid data"}));
     }
 }

@@ -1,4 +1,3 @@
-const { spawn } = require('child_process');
 const fs = require("fs");
 const config = require("../../config");
 
@@ -11,8 +10,11 @@ const config = require("../../config");
  *
  */
 function fetchZblock(zblock, res){
-    res.send(fs.readFileSync(config.workDir+"/ipfs/"+zblock));
+    res.writeHead(200, { 'Content-Type': 'application/json'});
+    var path = config.workDir+"/ipfs/"+zblock;
+    res.end(JSON.stringify(JSON.parse(fs.readFileSync(path))));
 };
+
 module.exports = (req, res) => {
     console.log(req.query)
     if ( (req.query.ipfs) && typeof req.query.ipfs === "string" && req.query.ipfs.length === 46 ){
@@ -20,14 +22,17 @@ module.exports = (req, res) => {
         regex= /Qm[A-Za-z0-9]{44}/;
         if (regex.test(ipfs)){
             if (ipfs === "QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH" ){
-                res.send({error:"Genesis block"});
+                res.writeHead(200, { 'Content-Type': 'application/json'});
+                res.end(JSON.stringify({error:"Genesis block"}));
             } else {
                 fetchZblock(ipfs,res);
             }
         } else {
-            res.send({error:"Invalid data: regexp failed to pass"});
+            res.writeHead(404, { 'Content-Type': 'application/json'});
+            res.end(JSON.stringify({error:"Invalid data: regexp failed to pass"}));
         }
     } else {
-        res.send({error:"Invalid data: no valid zblock was provided"});
+        res.writeHead(404, { 'Content-Type': 'application/json'});
+        res.end(JSON.stringify({error:"Invalid data: no valid zblock was provided"}));
     }
 }
