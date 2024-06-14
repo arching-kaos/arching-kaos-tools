@@ -24,7 +24,7 @@ proofofwork(){
 
         # Static difficulty for securing the sblock
         echo $SHA | grep -e '^000'
-        if [ "$?" == 0 ] ;
+        if [ $? -eq 0 ]
         then
             echo "SHA512 is $SHA"
             echo "Mined block:"
