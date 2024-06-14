@@ -1,0 +1,141 @@
+AKFS - Arching Kaos File System
+===============================
+
+> (previously named SMFS - Sha(512) Merkle File System)
+
+1. Introduction
+---------------
+This filesystem follows the merkle tree architecture. Given a SHA512 hash root,
+we can climb the branches, towards the leafs of the tree, keeping the order of
+the leaves, intact.
+
+In our case, leaves represent chunks of a splitted file.
+
+2. Analysis
+-----------
+Each file is encoded in base64, splitted in chunks of 4KB-4MB (chunk size will
+vary depending on the size of the original file) and then for each chunk, the
+SHA512 hash of it calculated.
+
+Then, starting from the first's chunk hash, we store it with the next's chunk
+hash in a text file. We move to the third and we repeat the process. The figure
+next, will help -hopefully- in understanding this process.
+
+
+                                 ___   
+                                |   |\ 
+                    .---------->|RUT'-|<---------.
+                    |           |HASH |          |
+                    |           |_____|          |
+                    |                            |
+                    |                            |
+                    |                            |
+                  ___                          ___   
+                 |   |\                       |   |\ 
+          .----->|BR0'-|                      |BR1'-|<-------.
+          |      |HASH |                      |HASH |        |
+          |      |_____|                      |_____|        |
+          |         ^                            ^           |
+          |         |                            |           |
+          |         |                            |           |
+        ___         |    ___         ___         |         ___   
+       |   |\       |   |   |\      |   |\       |        |   |\ 
+       |CH1'-|      '---|CH2'-|     |CH3'-|      |        |CH4'-|
+       |HASH |          |HASH |     |HASH |------'        |HASH |
+       |_____|          |_____|     |_____|               |_____|
+
+Each "packet" of chunk hashes is called a "branch". Effectively, we repeat the
+process above for the branches as well, matching the pattern 1-2,3-4,..,(N-1)-N.
+
+We repeat this process until we have one branch as a result. This is called the
+"root" (depicted as RUT in the figure). The only note we take, is that if N is
+an odd number, we simply duplicate the last hash, for example, 1-2,3-3 and we
+ignore them when reconstructing the original file.
+
+To "merge" the leaves back to a file, we follow the process in reverse order.
+
+3. Benefits
+-----------
+Although storage nowadays is not a big concern, connectivity issues still are.
+Having small pieces of information about the file to get small and verifiable
+pieces of that file, helps with low-bandwidth connectivity and frequent
+disconnects.
+
+4. Influence
+------------
+The structure is heavily influenced by torrents and bitcoin.
+
+5. Implementation
+-----------------
+Currently, there are two bash scripts in the `bin` directory doing the file to
+hash and the hash to file operations, respectively:
+- `ak-sm-merkle-tree` -> `ak fs --add`
+- `ak-sm-merkle-tree-to-file` -> `ak fs --get`
+
+6. Specifications
+-----------------
+As part of arching-kaos, the tree is stored under the `~/.arching-kaos`
+directory.
+
+The initial file is converted to base64.
+The file is splitted depending on its size in chunks under the `ftr` directory.
+Branches are consisting of 2 hashes as strings, separated with a '\n'. The same
+applies for the root.
+
+7. Networking
+-------------
+Although networking capabilities are not part of the current implementation of
+the system, it's fairly easy to exchange branches and root hashes as 'metadata'
+and chunks/leaves as 'data'. A DHT-like implementation is under the works so
+nodes requesting whichever hash can discover nodes that have those.
+
+8. Bouquets of leaves (maps)
+----------------------------
+Based on the structure of the merkle trees we are producing here, another way is
+possible to share information about the leaves (chunks) of a file. Instead of
+packing those as two hashes of leaves in one branch, we would get all the leaves
+hashes ordered as leaf01,leaf02,...,leafN.
+
+For this kind of work see the following bash scripts:
+./bin/ak-sm-filejoiner
+./bin/ak-sm-filesplitter
+
+9. Storage
+----------
+In current implementations storage is as follows:
+- $AK_WORKDIR/fmrk branches,
+- $AK_WORKDIR/ftr leaves and
+- $AK_WORKDIR/fmp maps
+
+The files are NOT organized for now.
+
+To update this non structured into something more handy, we can use each digit
+of a given SHA512 hash as a directory name.
+
+For example given the hash:
+0d1e5cd136e004be8c9625b1037e2e908304f03998b94cd201f6ca8a125bab03385f3c9c11b3c7cb280fb6b6f1fcbf9b2877e48dad09c81fa0ff6e5e7412ad0e
+
+We should search or store or read in the following file:
+0/d/1/e/5/c/d/1/3/6/e/0/0/4/b/e/8/c/9/6/2/5/b/1/0/3/7/e/2/e/9/0/8/3/0/4/f/0/3/9/9/8/b/9/4/c/d/2/0/1/f/6/c/a/8/a/1/2/5/b/a/b/0/3/3/8/5/f/3/c/9/c/1/1/b/3/c/7/c/b/2/8/0/f/b/6/b/6/f/1/f/c/b/f/9/b/2/8/7/7/e/4/8/d/a/d/0/9/c/8/1/f/a/0/f/f/6/e/5/e/7/4/1/2/a/d/0/e
+
+In this way we would be storing up to 16 files per directory.
+
+Now, doubling the digits would get us 256 files per directory:
+0d/1e/5c/d1/36/e0/04/be/8c/96/25/b1/03/7e/2e/90/83/04/f0/39/98/b9/4c/d2/01/f6/ca/8a/12/5b/ab/03/38/5f/3c/9c/11/b3/c7/cb/28/0f/b6/b6/f1/fc/bf/9b/28/77/e4/8d/ad/09/c8/1f/a0/ff/6e/5e/74/12/ad/0e
+
+Finally, a 65536 files per directory approach would be with 3 digits per
+directory, like:
+0d1e/5cd1/36e0/04be/8c96/25b1/037e/2e90/8304/f039/98b9/4cd2/01f6/ca8a/125b/ab03/385f/3c9c/11b3/c7cb/280f/b6b6/f1fc/bf9b/2877/e48d/ad09/c81f/a0ff/6e5e/7412/ad0e
+
+But that is too much files/directory ratio.
+
+We can also reuse the original hash like:
+0d/1e/5c/d1/36/e0/04/be/8c/96/25/b1/03/7e/2e/90/83/04/f0/39/98/b9/4c/d2/01/f6/ca/8a/12/5b/ab/03/38/5f/3c/9c/11/b3/c7/cb/28/0f/b6/b6/f1/fc/bf/9b/28/77/e4/8d/ad/09/c8/1f/a0/ff/6e/5e/74/12/ad/0d1e5cd136e004be8c9625b1037e2e908304f03998b94cd201f6ca8a125bab03385f3c9c11b3c7cb280fb6b6f1fcbf9b2877e48dad09c81fa0ff6e5e7412ad0e
+
+But, on the other hand, we already know the hash from the path we walked into
+and we can recalculate the hash of the file we found, in case we want to verify
+the correctness of the path/file.
+
+To take care of all the above, a "driver" should be implemented, that it would
+be given a hash and it would return the location of the file. We can go for the
+2digit per directory approach.
