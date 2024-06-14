@@ -18,7 +18,7 @@ _ak_exit_program(){
     then
         _ak_log_error "$2 ($1)"
     else
-        _ak_log_message "EXIT" "$2"
+        _ak_log_exit "$2"
     fi
     exit $1
 }

@@ -87,8 +87,8 @@ _ak_log_message(){
     fi
 }
 
-logit(){
-    _ak_log_message "$PROGRAM" "$1" "$2"
+_ak_log_exit(){
+    _ak_log_message "$PROGRAM" "EXIT" "$1"
 }
 
 _ak_log_warning(){
