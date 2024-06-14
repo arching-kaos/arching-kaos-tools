@@ -11,6 +11,13 @@ then
     exit 1
 fi
 
+which publictoip6 > /dev/null 2>&1
+if [ $? -ne 0 ]
+then
+    echo "You need to install cjdns and cjdns-tools"
+    exit 1
+fi
+
 TEMPDIR="$(mktemp -d)"
 AK_ZPEERSFILE="$HOME/.arching-kaos/peersFile"
 cd $TEMPDIR
@@ -23,11 +30,11 @@ dumpLinks \
     | uniq \
     | while read -r ip || [ -n "$ip" ]
 do
-    node_info="`curl \
+    node_info="$(curl \
         --connect-timeout 3 \
         -A 'akd/0.1.0; https://github.com/arching-kaos' \
-        "http://[$(publictoip6 $ip)]:8610/v0/node_info" 2>/dev/null`"
-    if [ "$?" == "0" ]
+        "http://[$(publictoip6 $ip)]:8610/v0/node_info" 2>/dev/null | jq -c -M)"
+    if [ $? -eq 0 ] && [ $(echo -n "$node_info" | wc -c) -gt 0 ]
     then
         if [ "$counter" -ne "0" ]
         then
