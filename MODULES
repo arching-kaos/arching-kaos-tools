@@ -1,0 +1,306 @@
+Modules
+-------
+
+This is a more descriptive text file regarding the previously mentioned modules
+in the README file. While refactoring might be changing or work on its modules'
+code, the most significant product of them is packing the actual data and
+optionally other info or metadata about the data.
+
+As also mentioned already in the README file, a block holds the "action", "data"
+and "data_signature"[1] fields. Apart from the "data_signature" which is the
+cryptographic signature of the publisher upon the "data" field, the "action"
+field is a "reminder" to figure out which module produced the "data" field found
+in the same block.
+
+While the first grasping of the implementation was thought like "action" a not
+implied but surely needed field was also the name of the module. To do that,
+a divider of '/' was used to separate the value into two. The general rule is
+that the "action" field should actually be formatted as "module/action". Also,
+`ak enter` output makes that into two separate values. Grammatically speaking
+the form of an action is like "subject/verb" where the implied object is the
+"data" field.
+
+Moreover, the "data" field will be a hash pointing to some object which should
+be consisting of two fields at least: "ipfs" and "detach". The "ipfs" field is
+containing a hash pointing to file while "detach" holds the detached signature
+of the publisher against the file mentioned in the "ipfs" field.
+
+Finally, modules are stored at your $AK_MODULESDIR directory which by default is
+set to your $AK_WORKDIR/modules directory during install and can be executed as
+command line tools like this:
+```bash
+ak -m <module> [arguments]
+```
+
+I think that all to it, so with no further delay let's move to the modules
+coming with this repository!
+
+## articles
+
+Prototype - Adds an article to your ZCHAIN
+
+It's supposed to be doing that, however the code is copied from the `news`
+module which is stable in some extend but it has incorporated some shortcomings
+and previously put thoughts into the module that are not considered to be at all
+checked lately as for if it's working or not. In other words, use the `news`
+module instead or make a PR if you happened to fix it.
+
+## categories
+
+Prototype - Adds or references categories to the ZCHAIN
+
+It is also supposed to be doing that, haven't checked lately though. The idea to
+create a category, a tag if you may or a label either in general to use later in
+your ZCHAIN, or directly reference it to some other ZBLOCK. It is NOT thoroughly
+tested.
+
+## comments
+
+References a comment to a ZBLOCK
+
+That is indeed working! Commenting on ZBLOCKS with this module is using the 
+`references` module to combine the ZBLOCK containing the comment and the ZBLOCK
+hash that we comment upon.
+
+## files
+
+Adds a file to the ZCHAIN
+
+It really does! Or did! Anyhow, the focus was then moved to `sm-files` and the
+whole AKFS story which might be interesting to read.[2]
+
+## folders
+
+Prototype - Adds a folder to the ZCHAIN
+
+This is a script serving as a note to implement this. The hard part is how you
+can verify with a detached signature a whole folder. Also, "folder" should be
+"directory" instead but all hyped about the `files` module, I just made a copy
+of it to make the same but different. Only I don't remember doing that much
+about it. Also also, see the `sm-files` and AKFS stories as well.
+
+## mixtapes
+
+Adds a mixtape to the ZCHAIN
+
+That's the first module developed. Remember, arching kaos is about a radio
+station. The point of this module is that whichever turn I turn to, this module
+is the bare minimum of working. So good news, everyone! A fully functional
+module. Below, the help message as seen when issuing the command:
+```
+$ ak -m mixtapes --help
+main.sh - AK mixtape block creator
+==================================
+
+The following creates a mixtape data message
+
+Usage:
+
+ -a <artist> <title> <file>            Adds a file with tags artist and title
+
+ -h , --help
+
+ -s , --specs
+```
+
+As you can see the bare minimum for a module is indeed to add something to the
+ZCHAIN. According to the arching-kaos-v1 non existing specification, the file
+has to be an Ogg Vorbis file encoded around 128-192kbits. The file should be
+around 1 hour with an upper limit to possibly 2 hours (which I propose now).
+
+As we can not enforce mixtapes being exactly 1 hour or 2 hours, we could measure
+the "hourly-limit" as ±15minues or even ±30minutes to loosen a check on duration
+on further developing the module.
+
+Note that such limits and/or checks do not happen. We blindly believe that the
+mixtape in the ZBLOCK will indeed be an audio mix which is kinda hard to guard.
+Also, in good faith, the module will be used by people that want to make this
+kind of publications. If bad people were to publish something outside the
+subject of the module, they would easily forge their own ZBLOCKS and spam[3]
+them.
+
+## news
+
+Adds a news article to the ZCHAIN
+
+As mentioned already, unless you are skipping stuff, `news` is the second module
+created. No, I didn't say that before. Anyhow, the `news` module was initially
+a way to post news about the developments of the project. That happens from
+times to times, but of course arching kaos wouldn't be that if everything was
+kept together in a centralized manner. Long story, short, there are various
+places to get your arching kaos related news. Second anyhow, that paragraph got
+big.
+
+```
+$ ak -m news --help
+main.sh - Module to read, create and add zblocks
+================================================
+
+   -h, --help                  Prints this help message
+
+   -l, --local-index           Prints an indexed table of your news files
+
+   -i, --import <file>         TODO
+
+   -a, --add <file>            Creates a data file from the news file you
+                               point to
+
+   -r, --read <zblock>         Reads a zblock as a news data
+
+   -c, --create                Vim is going to pop up, you will write and
+                               save your newsletter and it's going to bei
+                               saved
+
+   -s, --specs                 Print specs of data block
+
+   -x, --html <zblock>         Returns an appropriate html element from a
+                               NEWS zblock
+
+```
+
+So what you see here is that with text the thing got a bit more interesting.
+Still `--import` is a TODO which I also wonder if it's the same with `--add`.
+
+Good flags for sure are:
+ - `--create`,
+ - `--html`,
+ - `--read`,
+ - `--specs` and
+ - `--local-index`
+
+## profile
+
+Adds key-value pairs to the ZCHAIN
+
+Does what is says.
+```
+$ ak -m profile --help
+ak-profile - Profile module
+===========================
+
+Indexes, shows, imports, adds, sets and gets values from and to the
+zchain and files.
+
+Usage:
+
+    -h, --help                      Prints this help message
+
+    -i, --index                     Show current status
+
+    --show <data IPFS CIDv0>        Show profile entry from specified DATA
+                                    IPFS CIDv0
+
+    -s, --set <property> <value>    Sets a profile value
+
+    -g, --get <property>            Gets a profile value from the on-disk
+                                    file.
+
+Advanced (use with caution may produce duplicate entries):
+
+    -a, --add <file>                Creates a data file from the profile file
+                                    you point (file should already be in
+                                    ZPROFILEDIR).
+
+    -i, --import <folder>           Import a folder to zchain #TODO
+```
+
+Good flags:
+ - `--set`,
+ - `--get` and
+ - `--index`
+
+## reference
+
+Adds references to the ZCHAIN
+```
+$ ak -m reference --help
+main.sh - Quick description
+===========================
+#TODO
+All you need to know is that there are two options available:
+-h, --help               Prints this help message
+index                    Prints an indexed table of your references files
+import <file>            #TODO
+add <file>               Creates a data file from the references file you point to
+create [ref] [to]        Vim is going to pop up, you will write and save your
+                         referencesletter and it's going to be saved
+```
+
+Good flags:
+ - `create`
+
+## repositories
+
+Adds repositories to the ZCHAIN
+
+The way we handle repositories (git repositories to be clear) is with making a
+bare clone of it and make an IPNS key for each of those. Since the first thought
+several occured so, spoiler alert, at some point a `patch` module will happen.
+
+```
+$ ak -m repositories --help
+-h, --help
+index | add | publish | update
+```
+
+Far minimal approach on the usage screen hard to remember by heart.
+
+TODO Research this code to figure out what I am actually doing
+TODO Possibly it doesn't use `$AK_LIBDIR/_ak_script`
+
+## roadmap
+
+Prototype - Adds a roadmap to the ZCHAIN
+
+The drive for that was trac, that enhanced wiki and issue tracker for software
+development projects.
+
+## transactions
+
+Prototype of transactions in the ZCHAIN
+
+No checks no nothings, it is like saying I give you 30. No unit, no check for
+validity, nothing. This will be useful when SCHAIN is further developed.
+
+## sm-files
+
+Adds a split file's map to the ZCHAIN
+
+So after the great success on `files` module, I started thinking about how files
+are moving around into pieces all over the networks and media which are then
+reconstructed into one single file.
+
+```
+$ ak-sm-files --help
+ak-sm-files - file
+  -h, --help              Prints this help message
+  add <file>              Adds file to zchain as a zblock
+  index                   List files
+  full-index              List all files
+  ls-map-files            List map files
+```
+
+As we can see, still...
+
+TODO Possibly it doesn't use `$AK_LIBDIR/_ak_script`
+
+Other than that, we see the 3 indexing options and the one `add` that would be
+a prototype of the idea leading to AKFS. Really, go ahead and read that at some
+point if you haven't already done so.
+
+In other words, this module is in unknown state.
+
+TODO Figure out maps for the AKFS files
+
+## todos
+
+Prototype - Adds todo list to the ZCHAIN
+
+As you have already witnessed, prototype is another way of telling "will do" or
+"here is an idea".
+
+
+## Notes
+ - [1] "data_signature" is labeled as "detach" inside the block.
+ - [2] README file mentions that the whole project is in experimental state, btw
+ - [3] Read more at the NETWORKING file to understand how discoverability works

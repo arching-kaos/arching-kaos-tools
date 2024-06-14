@@ -269,6 +269,8 @@ Modules
  - sm-files                     # Adds a split file's map to the ZCHAIN
  - todos                    PROTO Adds todo list to the ZCHAIN
 
+ Read more at the `./MODULES` file
+
 Public following (uses ak-profile module)
 -----------------------------------------
  - ak-follow               # Follow something
