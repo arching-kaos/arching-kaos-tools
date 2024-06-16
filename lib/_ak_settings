@@ -32,6 +32,11 @@ _ak_settings_get(){
             _ak_log_error "Names containing symbols are not allowed"
             exit 1
         fi
+        if [ ! -f $AK_SETTINGS/$subset/$label ]
+        then
+            _ak_log_error "Key: $subset.$label was not found"
+            exit 1
+        fi
         cat $AK_SETTINGS/$subset/$label
     else
         cd $AK_SETTINGS
@@ -76,6 +81,10 @@ _ak_settings_set(){
             then
                 _ak_log_error "Names containing symbols are not allowed"
                 exit 1
+            fi
+            if [ -f $AK_SETTINGS/$subset/$label ]
+            then
+                _ak_log_warning "Overwritting $subset.$label:$(cat $AK_SETTINGS/$subset/$label) with $2"
             fi
             printf '%s' "$2" > $AK_SETTINGS/$subset/$label
         else

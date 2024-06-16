@@ -6,6 +6,11 @@
 ##
 ##    -h, --help                  Prints this help message
 ##
+##    -g, --get [key]             Gets all the settings or, in case key is set,
+##                                returns only the key-value specified
+##
+##    -s, --set <key> <value>     Sets the settings.key to value
+##
 fullprogrampath="$(realpath $0)"
 PROGRAM=$(basename $0)
 descriptionString="Settings helper program"
