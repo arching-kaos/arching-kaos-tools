@@ -8,15 +8,17 @@ const fs = require('fs');
 const config = require("../../config.js");
 
 module.exports = (req, res) => {
+    var args = req.url.split("/");
+    var sblock = args[3];
     regex= /[a-f0-9]{128}/
-    if (regex.test(req.params.sblock)){
+    if (regex.test(sblock)){
         genesisreg = /0{128}/
-        if (!genesisreg.test(req.params.sblock)){
-            var path = config.minedBlocksDir+"/"+req.params.sblock;
-            const command = spawn("cat",[config.minedBlocksDir+"/"+req.params.sblock]);
+        if (!genesisreg.test(sblock)){
+            var path = config.minedBlocksDir+"/"+sblock;
+            const command = spawn("cat",[config.minedBlocksDir+"/"+sblock]);
             response_string = "";
             command.stdout.on("data", data => {
-                response_string = response_string+data;
+                response_string += data;
             });
 
             command.stderr.on("data", data => {
@@ -30,17 +32,21 @@ module.exports = (req, res) => {
 
             command.on("close", code => {
                 if ( code === 0 ) {
-                    res.send(JSON.parse(fs.readFileSync(path)));
+                    res.writeHead(200, {'Content-Type': 'application/json'});
+                    res.end(JSON.stringify(JSON.parse(fs.readFileSync(path))));
                 } else {
-                    res.send({"error":"Sblock not found"})
+                    res.writeHead(404, {'Content-Type': 'application/json'});
+                    res.end(JSON.stringify({error:"Sblock not found"}));
                 }
                 console.log(`child process exited with code ${code}`);
             });
         } else {
-            res.send({sblock:"Genesis Block - Arching Kaos Net"});
+            res.writeHead(200, {'Content-Type': 'application/json'});
+            res.end(JSON.stringify({sblock:"Genesis Block - Arching Kaos Net"}));
         }
     } else {
-        res.send({"error":"No hash"})
+        res.writeHead(404, {'Content-Type': 'application/json'});
+        res.end(JSON.stringify({error:"No hash"}));
     }
 }
 
