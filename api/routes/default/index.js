@@ -1,4 +1,6 @@
-const settings = require('../../settings');
+const rsettings = require('../../settings');
+const settings = rsettings();
+
 module.exports = (req, res) => {
     res.writeHead(404, { 'Content-Type': 'application/json'});
     res.end(JSON.stringify({
