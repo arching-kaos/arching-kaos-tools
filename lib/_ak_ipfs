@@ -11,6 +11,15 @@ _ak_ipfs_daemon(){
     printf '%s' "$!" > $AK_WORKDIR/akipfsd.pid
 }
 
+_ak_ipfs_swarm_connect(){
+    if [ ! -z $1 ] && [ -n "$1" ]
+    then
+        _ak_ipfs swarm connect "$1"
+    else
+        ak_log_error "No peer address provided"
+    fi
+}
+
 _ak_ipfs_get_peers(){
     _ak_ipfs swarm peers 1> /dev/null 2>&1
     if [ $? == 0 ]
