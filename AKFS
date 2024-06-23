@@ -139,3 +139,14 @@ the correctness of the path/file.
 To take care of all the above, a "driver" should be implemented, that it would
 be given a hash and it would return the location of the file. We can go for the
 2digit per directory approach.
+
+Update
+------
+
+Driver was made but grouped for 1digit per directory per hash.
+
+- `lib/_ak_fs` is introduced
+- `src/akfs.c` is introduced
+
+The C file is for future development and usage while `lib/_ak_fs` is the one
+actively being used in the project.
