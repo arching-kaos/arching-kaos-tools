@@ -64,6 +64,6 @@ _ak_usage(){
 }
 
 _ak_not_implemented(){
-    _ak_title_description
-    printf 'Not implemented: %s\n' "$*"
+    #_ak_title_description
+    _ak_log_error "Not implemented: $*"
 }

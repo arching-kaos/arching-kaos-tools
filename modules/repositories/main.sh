@@ -6,7 +6,7 @@ REPOSTORE="$HOME/.arching-kaos/repostore"
 if [ ! -d $BAREDIR ]; then mkdir $BAREDIR; fi
 if [ ! -d $REPODIR ]; then echo "no $REPODIR" && exit; fi
 if [ ! -f $REPOSTORE ]; then touch $REPOSTORE; fi
-import(){
+_ak_modules_repositories_import(){
     REPOS="$(ls -1 $REPODIR)"
     for PROJECT in $REPOS
     do
@@ -29,7 +29,7 @@ import(){
     done
 }
 
-update(){
+_ak_modules_repositories_update(){
     if [ ! -z $1 ]
     then
         USING="$1"
@@ -89,7 +89,7 @@ append-if-needed(){
     fi
 }
 
-add(){
+_ak_modules_repositories_add(){
     PROJECT="$1"
     PROJECTDIR="$REPODIR/$PROJECT"
     BAREGITDIR="$BAREDIR/$PROJECT.git"
@@ -116,7 +116,7 @@ add(){
     fi
 }
 
-index(){
+_ak_modules_repositories_index(){
     _ak_ipfs_key_list_full | grep -e '\.git'
 }
 
@@ -130,7 +130,7 @@ set-as-profile(){
     fi
 }
 
-publish(){
+_ak_modules_repositories_publish(){
     if [ ! -z $1 ]
     then
         echo "Filtering for $1..."
@@ -153,10 +153,10 @@ if [ ! -z $1 ]
 then
     case $1 in
         -h | --help) usage; exit;;
-        index) index; exit;;
-        add) add "$2"; exit;;
-        publish) publish "$2"; exit;;
-        update) update "$2"; exit;;
+        index) _ak_modules_repositories_index; exit;;
+        add) _ak_modules_repositories_add "$2"; exit;;
+        publish) _ak_modules_repositories_publish "$2"; exit;;
+        update) _ak_modules_repositories_update "$2"; exit;;
         *) echo "No command $1";usage; exit;;
     esac
 else
