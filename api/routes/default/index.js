@@ -17,7 +17,6 @@ module.exports = (req, res) => {
                 {latest_known_mined_block:settings.DEF_PROTO+"["+settings.LOCAL_IP+"]:"+settings.PORT+settings.URL_PREFIX+"/slatest"},
                 {show_mined_block:settings.DEF_PROTO+"["+settings.LOCAL_IP+"]:"+settings.PORT+settings.URL_PREFIX+"/sblock"},
                 {getMerkleTree:settings.DEF_PROTO+"["+settings.LOCAL_IP+"]:"+settings.PORT+settings.URL_PREFIX+"/mrk/:mkr"},
-                {show_mined_block:settings.DEF_PROTO+"["+settings.LOCAL_IP+"]:"+settings.PORT+settings.URL_PREFIX+"/sblock"}
             ],
             POST:[
                 {send_me_a_zchain_link:settings.DEF_PROTO+"["+settings.LOCAL_IP+"]:"+settings.PORT+settings.URL_PREFIX+"/announce/zchain"},
