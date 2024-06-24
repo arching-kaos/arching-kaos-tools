@@ -6,7 +6,7 @@ if [ ! -d $AK_BINDIR ]; then mkdir $AK_BINDIR ;fi
 if [ ! -d $AK_ARCHIVESDIR ]; then mkdir $AK_ARCHIVESDIR ;fi
 
 _ak_ipfs_install(){
-    logit "INFO" "Making temp files"
+    _ak_log_info "Making temp files"
     pwd > pwd
     mktemp -d > tempassin
     ak_curdir=$(cat pwd)
@@ -16,7 +16,7 @@ _ak_ipfs_install(){
     cp kubo/ipfs $AK_BINDIR/ipfs
     cd $ak_curdir
     rm -rf $TEMPASSIN
-    logit "INFO" "ipfs installed on $AK_BINDIR"
+    _ak_log_info "ipfs installed on $AK_BINDIR"
 }
 
 which ipfs > /dev/null 2>&1
@@ -27,7 +27,7 @@ then
     _ak_ipfs init
     _ak_ipfs_swarm_install
 else
-    logit "INFO" "Found IPFS! Skipping downloading..."
+    _ak_log_info "Found IPFS! Skipping downloading..."
     _ak_ipfs_swarm_install
 fi
 if [ ! -d $AK_IPFS_REPO ]
