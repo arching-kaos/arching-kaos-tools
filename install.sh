@@ -12,7 +12,7 @@ printf "\n"
 printf "We discourage running the installer with sudo.\n"
 printf "\n"
 printf "Installation starts in..."
-countdown=15
+countdown=5
 printf " %s" "$countdown"
 countdown="$(expr $countdown - 1)"
 sleep 1

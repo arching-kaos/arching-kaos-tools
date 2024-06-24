@@ -15,9 +15,9 @@ fullprogrampath="$(realpath $0)"
 PROGRAM="$(basename $0)"
 descriptionString="Arching Kaos CLI"
 
+source $HOME/.arching-kaos/rc
 source $AK_LIBDIR/_ak_log
 source $AK_LIBDIR/_ak_script
-source $AK_WORKDIR/rc
 
 if [ $# -eq 0 ]
 then
