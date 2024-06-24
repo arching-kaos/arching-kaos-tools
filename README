@@ -244,7 +244,7 @@ Schain tools
 ------------
  - ak-mempool                      # TODO
  - ak-miner-script             PROTO Prototype miner
- - ak-network                      # TODO
+ - ak-network                      # Network Tools (connect to, scan for, dump peers)
  - ak-sblock-show                  # Returns a mined SBLOCK
  - ak-find-latest-mined-sblock     # In a hay of SBLOCKS finds the latest
 
@@ -291,11 +291,25 @@ File splitters
  - ak-sm-filejoiner            # Joins a file from a map
  - ak-sm-filesplitter          # Splits a file to chunks and creates a map
 
-File system
------------
- - ak-fs-add                   # Adds a file to filesystem tree (returns root hash)
- - ak-fs-get                   # Constructs a file from root hash to filename
- - ak-fs-cat                   # Constructs a file from root hash to stdout
+FS tools
+--------
+ - ak-fs
+
+```bash
+$ ak fs --help
+
+Tools to add, get and cat files to/from the Arching Kaos File System
+
+Usage:
+
+   -h, --help                                Prints this help message
+
+   --add, --import <file>                    Adds/Imports a file to the AKFS system
+
+   --get, --export <hash> <output file>      Exports a file from the AKFS system
+
+   --cat <hash>                              Concatenates from given hash
+```
 
 Libraries
 ---------
@@ -303,8 +317,8 @@ Libraries
  - lib/_ak_fs
  - lib/_ak_gpg
  - lib/_ak_newline
- - lib/_ak_script_description
- - lib/_ak_script_exit
+ - lib/_ak_network
+ - lib/_ak_script
  - lib/_ak_log
 
 IPFS Wrappers

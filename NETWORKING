@@ -92,7 +92,7 @@ the machine you want to network with/from. Furthermore, you will also need the
 cjdns-tools, laying under the tools folder in the cjdns repository to be in your
 PATH.
 
-You then can use the `ak-cjdns-scanner` to find other akdaemon(s) running around
+You then can use the `ak network -s cjdns` to find other akdaemon(s) running in
 your relative neighbourhood. `dumpLinks` is used to retrieve the nodes in this
 area. You can find more intense scanning scripts around like `walk.sh` by ircerr
 which is able to reach the whole public network of cjdns.

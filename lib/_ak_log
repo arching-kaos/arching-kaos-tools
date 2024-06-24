@@ -106,3 +106,5 @@ _ak_log_error(){
 _ak_log_info(){
     _ak_log_message "$PROGRAM" "INFO" "$1"
 }
+
+# vim: set syntax=bash
