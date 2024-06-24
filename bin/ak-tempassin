@@ -4,12 +4,11 @@
 ##
 ## Usage:
 ##
-##    -h, --help                  Prints this help message
+##    -h, --help            Prints this help message
 ##
-##    -f, --file                  Creates a temporary file and output fullpath
+##    -f, --file            Creates a temporary file and output fullpath
 ##
-##    -d, --dir                   Makes a temporary directory and returns its
-##                                fullpath
+##    -d, --dir             Makes a temporary directory and returns its fullpath
 ##
 fullprogrampath="$(realpath $0)"
 PROGRAM=$(basename $0)
