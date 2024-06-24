@@ -3,6 +3,7 @@ cd $AK_MINEDBLOCKSDIR
 PROGRAM="$(basename $0)"
 declare -A counters
 source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_script
 source $AK_LIBDIR/_ak_ipfs
 
 if [ ! -z $1 ] && [ -n "$1" ]
@@ -50,7 +51,7 @@ lookfor(){
     fi
 }
 
-templistblock="$(mktemp)"
+templistblock="$(_ak_make_temp_file)"
 find . -type f | sed 's/^\.\/000/000/g' | grep '^000'  | sort > $templistblock
 while IFS="" read -r p || [ -n "$p" ]
 do

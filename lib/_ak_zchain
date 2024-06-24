@@ -96,7 +96,7 @@ _ak_zchain_extract_data_cids(){
 }
 
 _ak_zchain_calculate_size(){
-    temp="$(mktemp -d)"
+    temp="$(_ak_make_temp_directory)"
     cd $temp
     if [ ! -z $1 ] && [ -n "$1" ]
     then

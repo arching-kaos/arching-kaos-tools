@@ -24,7 +24,7 @@ _ak_network_cjdns_scanner(){
         exit 1
     fi
 
-    TEMPDIR="$(mktemp -d)"
+    TEMPDIR="$(_ak_make_temp_directory)"
     AK_ZPEERSFILE="$HOME/.arching-kaos/peersFile"
     cd $TEMPDIR
     counter=0
@@ -112,7 +112,7 @@ _ak_network_stellar_get_asset_holders(){
 }
 
 _ak_network_scan_stellar(){
-    tempdir=`mktemp -d`
+    tempdir=`_ak_make_temp_directory`
     tempfile="$tempdir/tmp"
     tempaddr="$tempdir/tmpaddr"
 
@@ -265,7 +265,7 @@ _ak_network_cjdns_connect(){
     then
         peersfile="$1"
     else
-        peersfile="$(mktemp)"
+        peersfile="$(_ak_make_temp_file)"
         tmpon="yes"
         curl -s "https://arching-kaos.net/files/ak_cjdns_bootstrap_peers" > $peersfile
     fi

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 _ak_fm_remove_line_from_file(){
-    tempfile="$(mktemp)"
+    tempfile="$(_ak_make_temp_file)"
     if [ ! -f "$2" ]
     then
         _ak_log_error "$2 does not exist"
@@ -23,7 +23,7 @@ _ak_fm_sort_uniq_file(){
         _ak_log_info "No file to process"
     else
         _ak_log_info "Sorting $1..."
-        tempfile="$(mktemp)"
+        tempfile="$(_ak_make_temp_file)"
         cat "$1" | sort | uniq > $tempfile
         cat $tempfile > $1
         rm $tempfile

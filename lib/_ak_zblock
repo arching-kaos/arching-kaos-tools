@@ -384,7 +384,7 @@ _ak_zblock_gen_html(){
         fi
     fi
 
-    arg="$(mktemp)"
+    arg="$(_ak_make_temp_file)"
     _ak_zblock_show "$1" | jq > $arg
 
     _ak_generate_html_header > zblock-$1.html
