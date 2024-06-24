@@ -178,7 +178,7 @@ _ak_modules_profile_import(){
 
 # Adds a file as a profile/add ACTION on the zchain.
 _ak_modules_profile_add(){
-    TEMP="$(ak-tempassin)"
+    TEMP="$(_ak_make_temp_directory)"
     cd $TEMP
     if [ -f $ZPROFILEDIR/$1 ]; then
         FILE="$ZPROFILEDIR/$1"

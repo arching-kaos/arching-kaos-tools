@@ -48,7 +48,7 @@ fi
 cd $ZNEWSDIR
 
 _ak_modules_news_create(){
-    TEMP="$(ak-tempassin)"
+    TEMP="$(_ak_make_temp_directory)"
     cd $TEMP
     cd
     curpath="$(pwd)"
@@ -113,7 +113,7 @@ _ak_modules_news_import(){
 }
 
 _ak_modules_news_add_from_file(){
-    TEMP="$(ak-tempassin)"
+    TEMP="$(_ak_make_temp_directory)"
     if [ -f "$1" ]; then
         FILE="$(realpath $1)"
         cp $FILE $ZNEWSDIR
@@ -152,7 +152,7 @@ EOF
 }
 
 _ak_modules_news_add(){
-    TEMP="$(ak-tempassin)"
+    TEMP="$(_ak_make_temp_directory)"
     cd $TEMP
     if [ -f $ZNEWSDIR/$1 ]; then
         FILE="$1"

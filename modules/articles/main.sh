@@ -28,7 +28,7 @@ else
 fi
 
 _ak_modules_articles_create(){
-    TEMP="$(ak-tempassin)"
+    TEMP="$(_ak_make_temp_directory)"
     cd $TEMP
     export ARTICLES_FILE="$(date +%Y%m%d_%H%M%S)"
     if [ -z $EDITOR ]
@@ -85,7 +85,7 @@ _ak_modules_articles_import(){
 }
 
 _ak_modules_articles_add(){
-    TEMP="$(ak-tempassin)"
+    TEMP="$(_ak_make_temp_directory)"
     cd $TEMP
     if [ -f $1 ]; then
         FILE="$1"

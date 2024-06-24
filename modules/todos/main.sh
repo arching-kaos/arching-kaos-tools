@@ -36,7 +36,7 @@ else
 fi
 
 _ak_modules_todos_create(){
-    TEMP="$(ak-tempassin)"
+    TEMP="$(_ak_make_temp_directory)"
     cd $TEMP
     export TODOS_FILE="$(date -u +%s)"
     vi $TODOS_FILE
@@ -87,7 +87,7 @@ _ak_modules_todos_import(){
 }
 
 _ak_modules_todos_add(){
-    TEMP="$(ak-tempassin)"
+    TEMP="$(_ak_make_temp_directory)"
     cd $TEMP
     if [ -f $1 ]; then
         FILE="$1"

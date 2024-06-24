@@ -41,7 +41,7 @@ main(){
     CRP="$2"
     echo "Adding $FILENAME"
     _ak_log_info "Switching to tmp folder..."
-    TEMPASSIN="$(ak-tempassin)"
+    TEMPASSIN="$(_ak_make_temp_directory)"
     cd $TEMPASSIN
     if [ $? == 0 ]; then
         _ak_log_info "Success"

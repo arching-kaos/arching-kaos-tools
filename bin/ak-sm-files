@@ -42,7 +42,7 @@ main(){
     FILENAME="$1"
     CRP="$2"
 
-    TEMPASSIN="$(ak-tempassin)"
+    TEMPASSIN="$(_ak_make_temp_directory)"
     cd $TEMPASSIN
 
     echo "Adding $FILENAME"

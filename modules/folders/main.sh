@@ -25,7 +25,7 @@ else
     _ak_log_info "Found $ZFOLDERSDIR"
     exit 1
 fi
-TEMPASSIN="$(ak-tempassin)"
+TEMPASSIN="$(_ak_make_temp_directory)"
 cd $TEMPASSIN
 
 

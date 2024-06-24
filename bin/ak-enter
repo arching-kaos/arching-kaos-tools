@@ -98,7 +98,7 @@ seed="$(cat $AK_ZGENESIS)"
 zblock="$entrance"
 
 # Enter temp folder
-TEMPASSIN="$(ak-tempassin)"
+TEMPASSIN="$(_ak_make_temp_directory)"
 cd $TEMPASSIN
 counter=0
 

@@ -30,7 +30,7 @@ else
 fi
 
 _ak_modules_categories_create(){
-    TEMP="$(ak-tempassin)"
+    TEMP="$(_ak_make_temp_directory)"
     cd $TEMP
     export NEWS_FILE="$(date +%Y%m%d_%H%M%S)"
     vi $NEWS_FILE
@@ -78,7 +78,7 @@ _ak_modules_categories_import(){
     exit 224
 }
 _ak_modules_categories_add(){
-    TEMP="$(ak-tempassin)"
+    TEMP="$(_ak_make_temp_directory)"
     cd $TEMP
     if [ -f $1 ]; then
         FILE="$1"

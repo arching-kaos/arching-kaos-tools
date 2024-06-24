@@ -1,14 +1,33 @@
 #!/bin/bash
-AK_TEMP="$(mktemp -d /tmp/aktmp-XXXXXXX)"
-PROGRAM="$(basename $0)"
-source $AK_LIBDIR/_ak_log
+##
+## ak-tempassin: a `mktemp` interface
+##
+## Usage:
+##
+##    -h, --help                  Prints this help message
+##
+##    -f, --file                  Creates a temporary file and output fullpath
+##
+##    -d, --dir                   Makes a temporary directory and returns its
+##                                fullpath
+##
+fullprogrampath="$(realpath $0)"
+PROGRAM=$(basename $0)
+descriptionString="Temp file/dir creator"
 
-if [ ! -d "$AK_TEMP" ]
+# At least these
+source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_script
+
+# Flags to run
+if [ ! -z $1 ]
 then
-    _ak_log_error "Could not make $AK_TEMP directory to work in"
-    echo "Could not make $AK_TEMP directory to work in"
-    exit 1
+    case $1 in
+        -h | --help) _ak_usage; exit;;
+        -d | --dir) _ak_make_temp_directory; exit;;
+        -f | --file) _ak_make_temp_file; exit;;
+        * ) _ak_usage;;
+    esac
+else _ak_usage
 fi
 
-_ak_log_info "$AK_TEMP created successfully"
-echo "$AK_TEMP"

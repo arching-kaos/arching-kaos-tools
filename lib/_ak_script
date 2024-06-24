@@ -67,3 +67,25 @@ _ak_not_implemented(){
     #_ak_title_description
     _ak_log_error "Not implemented: $*"
 }
+
+_ak_make_temp_directory(){
+    AK_TEMP="$(mktemp -d /tmp/aktmp-XXXXXXX)"
+    if [ ! -d "$AK_TEMP" ]
+    then
+        _ak_log_error "Could not make $AK_TEMP directory to work in"
+        exit 1
+    fi
+    _ak_log_info "$AK_TEMP created successfully"
+    echo "$AK_TEMP"
+}
+
+_ak_make_temp_file(){
+    AK_TEMP="$(mktemp /tmp/aktmp-XXXXXXX)"
+    if [ ! -f "$AK_TEMP" ]
+    then
+        _ak_log_error "Could not make $AK_TEMP directory to work in"
+        exit 1
+    fi
+    _ak_log_info "$AK_TEMP created successfully"
+    echo "$AK_TEMP"
+}

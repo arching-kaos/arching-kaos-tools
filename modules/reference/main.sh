@@ -30,7 +30,7 @@ else
 fi
 
 _ak_modules_reference_create(){
-    TEMP="$(ak-tempassin)"
+    TEMP="$(_ak_make_temp_directory)"
     cd $TEMP
     export REFERENCEFILE="$(date -u +%s)"
     if [ ! -z $1 ] && [ ! -z $2 ]
@@ -92,7 +92,7 @@ _ak_modules_reference_import(){
 }
 
 _ak_modules_reference_add(){
-    TEMP="$(ak-tempassin)"
+    TEMP="$(_ak_make_temp_directory)"
     cd $TEMP
     if [ ! -f $1 ]; then
         echo "File $FILE doesn't exist";

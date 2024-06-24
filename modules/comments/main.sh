@@ -38,7 +38,7 @@ _ak_modules_comments_create(){
         echo "ERROR" "No reference given"
         exit 1
     fi
-    TEMP="$(ak-tempassin)"
+    TEMP="$(_ak_make_temp_directory)"
     cd $TEMP
     export COMMENTS_FILE="$(date -u +%s)"
     vi $COMMENTS_FILE
@@ -68,7 +68,7 @@ _ak_modules_comments_index(){
 }
 
 _ak_modules_comments_add(){
-    TEMP="$(ak-tempassin)"
+    TEMP="$(_ak_make_temp_directory)"
     cd $TEMP
     if [ -f "$ZCOMMENTSDIR/$1" ]; then
         FILE=$ZCOMMENTSDIR/$1
