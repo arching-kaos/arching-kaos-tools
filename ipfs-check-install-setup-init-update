@@ -1,4 +1,6 @@
 #!/bin/bash
+PROGRAM="$(basename $0)"
+source lib/_ak_script
 source lib/_ak_log
 source lib/_ak_ipfs
 
