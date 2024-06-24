@@ -152,11 +152,11 @@ _ak_network_scan_cjdns(){
     counter=0
     printf '[' > walk.aknet
     dumpLinks \
-        | grep -v '0000\.0000\.0000\.0001 ' \
         | cut -d ' ' -f 2,4 \
         | sed 's/ /\n/g' \
         | sort \
         | uniq \
+        | grep -v `dumpLinks | grep '0000\.0000\.0000\.0001' | cut -d ' ' -f 2` \
         | while read -r ip || [ -n "$ip" ]
     do
         _ak_log_debug "Scanning $(publictoip6 $ip)..."
