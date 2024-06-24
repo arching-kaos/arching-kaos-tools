@@ -1,177 +1,109 @@
-#!/usr/bin/env node
-/*
- * Quick API
- * Author: Kaotisk Hund <kaotisk@arching-kaos.com>
- * Description: Provides a quick API implementation.
- * License: MIT
- */
+const http = require("node:http");
 
-const config = require('./config');
+const welcomeMessage = require("./routes/default/index.js");
+const getNodeInfo = require('./routes/getNodeInfo/index.js');
+const getPeers = require('./routes/getPeers/index.js');
+const getZblock = require('./routes/getZblock/index.js');
+const getZlatest = require('./routes/getZLatest/index.js');
+const getSblock = require('./routes/getSBlock/index.js');
+const getSlatest = require('./routes/getSLatest/index.js');
+
 const akLogMessage = require('./lib/akLogMessage');
 
-const DEFAULT_PORT = 8610;
-const PORT = config.port || DEFAULT_PORT;
+const serverOptions = { keepAliveTimeout: 60000 };
 
-akLogMessage("INFO", "Daemon started")
-/*
- * Split the prefix of each API call in segments for better management
- *
- * To add a new route, use URL_PREFIX and start your route with '/'
- *
- * LOCAL_IP and DEF_PROTO as well as PORT and URL_PREFIX are used to generate
- * visitable links.
- *
- */
-const API_VERSION = "v0";
-const URL_PREFIX = "/"+API_VERSION;
-const DEF_PROTO="http://";
-const LOCAL_IP="127.0.0.1";
-
-/* Requiring packages */
-const { spawn } = require('child_process');
-const logger = require('morgan');
-const express = require('express');
-const cors = require('cors');
-const fs = require('fs');
-const path = require('path');
-const bodyParser = require('body-parser');
-const multer = require('multer');
-const upload = multer();
-const session = require('express-session');
-// Delete this (maybe)
-const cookieParser = require('cookie-parser');
-
-// We start our server ... 
-const app = express();
-app.disable('x-powered-by');
-
-// Set logger format output
-app.use(logger('combined'));
-
-// Port number to listen to
-const server = app.listen(PORT);
-
-// Use CORS
-app.use(cors());
-
-// Whitelist of IPs
-// var iplist = fs.readFileSync(config.ipList)
-
-// Parsers
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended:true}));
-
-// for parsing multipart/form-data
-app.use(upload.array()); 
-
-// Cookie!
-app.use(cookieParser());
-
-app.use(session({
-    secret: config.session.secret,
-    resave: false,
-    saveUninitialized: true
-}));
-
-// Function for adding stuff...
-function genericaddtest(req,res){
-    console.table(req.body)
-    var myobj = req.body;
-    res.set('Content-Type', 'application/json');
-    res.send(myobj);
+function printRequest(req)
+{
+    console.log(req.connection.remoteAddress);
+    console.log(req.headers);
+    console.log(req.method, req.url);
+    console.log('HTTP/' + req.httpVersion);
 }
-// POST data
-app.post('/test', cors(corsOptions), genericaddtest);
 
-const routes = require('./routes');
+function respondError(res, errorMessage)
+{
+    res.writeHead(404, { 'Content-Type': 'application/json'});
+    res.end(JSON.stringify({
+        error: errorMessage
+    }));
+}
 
-//Routes.provideTheAppHere(app);
-app.use('/', routes);
+function testRootRoute(req, res)
+{
+    notImplemented(req, res);
+}
 
+function testRoute(req, res)
+{
+    respondError(res, "Mpla mpla");
+}
 
-
-/*
- * Adds a latest resolved IPFS path for a given IPNS link
- * to a file.
- *
- * Returns:
- *     - error if error
- *     - success:
- *         - adds the entry to the file
- *         - returns the whole file to the client
- *
- */
-function addNSEntriesToFile(entry,res){
-    var data = JSON.parse(fs.readFileSync(config.pairsFile));
-    var duplicate_entry = 0;
-    data.forEach(a=>{
-        if ( a.zchain === entry.zchain && a.latest=== entry.latest ){
-            duplicate_entry = 1;
-            res.send({error:"already there"});
+function getRoutes(req, res)
+{
+    var args = req.url.split('/');
+    if (args[1] === 'v0' && args.length > 2 && args[2] !== ""){
+        switch(args[2])
+        {
+            case 'test': testRoute(req, res); break;
+            case 'root': testRootRoute(req, res); break;
+            case 'peers': getPeers(req, res); break;
+            case 'node_info': getNodeInfo(req, res); break;
+            case 'zblock': getZblock(req, res); break;
+            case 'zlatest': getZlatest(req, res); break;
+            case 'sblock': getSblock(req, res); break;
+            case 'slatest': getSlatest(req, res); break;
+            default: notImplemented(req, res);
         }
-    });
-
-    if ( duplicate_entry === 0 ) {
-        // Store it as the first array element of our new list
-        var all = [entry];
-
-        // Append the previous entries
-        for (var i = 0; i < data.length; i++){
-            all[i+1] = data[i];
-        }
-
-        // Turn additional back into text
-        var json = JSON.stringify(all);
-
-        // Write out the file
-        fs.writeFile(config.pairsFile, json, 'utf8', finished);
-
-        // Callback for when file is finished
-        function finished(err) {
-            console.log('finished writing file');
-        }
-        res.send(json);
+    }
+    else {
+        welcomeMessage(req, res);
     }
 }
 
-/*
- * Adds a latest given zblock to a file.
- *
- * Returns:
- *     - error if error
- *     - success:
- *         - adds the entry to the file
- *         - returns the whole file to the client
- *
- */
-function addEntriesToFile(entry,res){
-    var data = JSON.parse(fs.readFileSync(config.blocksFile));
-
-    var duplicate_entry = 0;
-    data.forEach(a=>{
-        if ( a.zblock === entry.zblock ){
-            duplicate_entry = 1;
-            res.send({error:"already there"});
-        }
-    });
-
-    if ( duplicate_entry === 0 ) {
-        var all = [entry];
-        for (var i = 0; i < data.length; i++){
-            all[i+1] = data[i];
-        }
-        var json = JSON.stringify(all);
-        fs.writeFile(config.blocksFile, json, 'utf8', finished);
-        // wtf is dis?
-        function finished(err) {
-            console.log('finished writing file');
-        }
-        res.send(json);
+function postRoutes(req, res)
+{
+    switch(req.url)
+    {
+        default: notImplemented(req, res);
     }
 }
 
-app.use(cors);
-var corsOptions = {
-    origin: '*',
-    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+function notImplemented(req, res)
+{
+    res.writeHead(404, { 'Content-Type': 'application/json'});
+    res.end(JSON.stringify({
+        url: req.url,
+        error: 'not implemented'
+    }));
 }
+
+function processMethod(req, res)
+{
+    switch(req.method)
+    {
+        case 'GET': getRoutes(req, res); break;
+        case 'POST': postRoutes(req, res); break;
+        default: notImplemented(req, res);
+    }
+}
+
+function checkIfAllowedIP(address)
+{
+    return address.startsWith('fc') ? true : false;
+}
+
+function requestParser(req, res)
+{
+    printRequest(req);
+    akLogMessage('INFO', `Incoming from [${req.connection.remoteAddress}]:${req.socket._peername.port} @ ${req.headers.host}${req.url}`);
+    if (checkIfAllowedIP(req.connection.remoteAddress)){
+        processMethod(req, res);
+    }
+    else {
+        res.end();
+    }
+}
+
+const server = http.createServer(serverOptions, requestParser);
+
+server.listen(8610);
