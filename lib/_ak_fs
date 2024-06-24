@@ -27,3 +27,348 @@ _ak_fs_create_dir_for_hash(){
         mkdir -p "$1/$(_ak_fs_return_hash_dir $2)"
     fi
 }
+
+# Append last chk if not even number
+_ak_fs_appendLastIfNotEven(){
+    if [ "$(( $(wc -l "$1" | awk '{ print $1 }') % 2))" -ne 0 ]
+    then
+        tail -n 1 "$1" >> "$1"
+    fi
+}
+
+_ak_fs_import(){
+    #
+    # The concept is bit more complicated now
+    #
+    # 1. For a given file we split in 4KB files inside a temporary directory
+    #
+    # 2. We then create a map file and a merkle tree containing the resulted files
+    # and their sha512sum.
+    #
+    # 3. We move the splitted files to our $CHKDIR named after their checksums
+    #
+    # 4. We move the merkle tree pairs to $MERKLEDIR
+    #
+    # We ultimately want to be seeding the file so
+    #
+    # 4. We append the checksum of the original file with its name into the map file
+    #
+    # 5. We rename the map file after its checksum and move it to maps directory
+    #
+    # 6. We are done!
+    #
+
+    # The directory where the chunked data will be living at
+    CHKDIR="$AK_WORKDIR/ftr"
+    # The directory for the map files so we can reconstruct the file
+    FILEMAPSDIR="$AK_WORKDIR/fmp"
+    # Merkle tree file/references
+    MERKLEDIR="$AK_WORKDIR/fmrk"
+    # A temporary root dir to work on
+    TEMPORARYDIR="$(ak-tempassin)"
+    # A subdir to split the files there
+    TECHDIR="$TEMPORARYDIR/chks"
+    # A pin point to return from where we came from
+    CURRENTDIR="$(pwd)"
+
+    # Checking directories and create them if necessary
+    # rm -rf $TEMPORARYDIR
+
+    # TECHDIR
+    if [ ! -d "$TECHDIR" ]
+    then
+        mkdir -p "$TECHDIR"
+        if [ $? -eq 0 ]
+        then
+            _ak_log_info "Folder $TECHDIR created!"
+        else
+            _ak_log_error "Problem occured while creating $TECHDIR"
+            exit 1
+        fi
+    else
+        _ak_log_info "Temp dir found"
+    fi
+
+    # FILEMAPSDIR
+    if [ ! -d "$FILEMAPSDIR" ]
+    then
+        mkdir -p "$FILEMAPSDIR"
+        if [ $? -eq 0 ]
+        then
+            _ak_log_info "Folder $FILEMAPSDIR created!"
+        else
+            _ak_log_error "Problem occured while creating $FILEMAPSDIR"
+            exit 1
+        fi
+    else
+        _ak_log_info "Mapsdir found"
+    fi
+
+    # CHKDIR
+    if [ ! -d "$CHKDIR" ]
+    then
+        mkdir -p "$CHKDIR"
+        if [ $? -eq 0 ]
+        then
+            _ak_log_info "Folder $CHKDIR created!"
+        else
+            _ak_log_error "Problem occured while creating $CHKDIR"
+            exit 1
+        fi
+    else
+        _ak_log_info "Workdir found"
+    fi
+
+    # MERKLEDIR
+    if [ ! -d "$MERKLEDIR" ]
+    then
+        mkdir -p "$MERKLEDIR"
+        if [ $? -eq 0 ]
+        then
+            _ak_log_info "Folder $MERKLEDIR created!"
+        else
+            _ak_log_error "Problem occured while creating $MERKLEDIR"
+            echo "ERROR Can't create $MERKLEDIR"
+            exit 1
+        fi
+    else
+        _ak_log_info "Workdir found"
+    fi
+    if [ ! -f "$1" ]
+    then
+        _ak_log_error "File $1 not found"
+        exit 1
+    else
+        # TODO
+        # Side hustle, save the original hash and original filename
+        # This won't be expected in general
+        # The idea is:
+        # sha256sum as quick pointer to root of the tree
+        #
+        sha512sum "$1" > $TEMPORARYDIR/3rd_gen_map
+        base64 $1 > file
+        FILE="file"
+    fi
+
+    # Uncomment next line in case you want to debug the resulting script as well
+    # echo 'set -xe' > $TEMPORARYDIR/cmd_queue.sh
+
+    # We get the SHA512 hash for the $FILE given
+    CHECKSUM=$(sha512sum "$FILE"|awk '{print $1}')
+    FILE_SIZE="$(du -b $FILE | awk '{ print $1 }')"
+    if [ $FILE_SIZE -lt 4097 ]
+    then
+        cp $FILE "$TECHDIR/$(basename "$FILE")-00000000000000000000000000000000000000000000000000.chk"
+    else
+        FACTOR=1024
+        while [ $(( $FILE_SIZE / $FACTOR )) -gt 250 ]
+        do
+            FACTOR=$(( $FACTOR * 2 ))
+        done
+        _ak_log_info "Gonna split in $FACTOR size"
+        sleep 30
+        # We split the file into 4*1024 bytes and output the chunks into TECHDIR
+        split -a 50 -b $FACTOR --additional-suffix ".chk" -d "$FILE" "$TECHDIR/$(basename "$FILE")-"
+    fi
+
+    # We go over there...
+    cd $TECHDIR
+    #set -xe
+    # We get every chunks' SHA512 and we craft a script to rename the chunks and
+    # move them to CHKDIR
+    for file in $TEMPORARYDIR/chks/*
+    do
+        sha512sum $file >> $TEMPORARYDIR/map
+    done
+    _ak_fs_appendLastIfNotEven "$TEMPORARYDIR/map"
+    # Figure out how many times we need to pack
+    totalChunks=`grep 'chk' $TEMPORARYDIR/map | wc -l`
+    temp="$totalChunks"
+    timesRan=0
+    while [ $temp -ne 1 ]
+    do
+        temp=`expr $temp / 2`
+        timesRan=`expr $timesRan + 1`
+    done
+    printf "Ran %s times \n" "$timesRan"
+    printf "Total chunks %s \n" "$totalChunks"
+
+    workingIndex="$TEMPORARYDIR/map"
+    c=$timesRan
+    while [ $c -ne 0 ]
+    do
+        a=1
+        printf "Level: %s, will work on %s chunks\n" "$c" "$totalChunks"
+        while [[ "$a" -lt "$totalChunks" ]]
+        do
+            b=`expr "$a" + 1`
+            sed -n "$a"p "$workingIndex" | awk '{ print $1 }' >> level.$c.pair.$a-$b
+            sed -n "$b"p "$workingIndex" | awk '{ print $1 }' >> level.$c.pair.$a-$b
+            shaSum="$(sha512sum level.$c.pair.$a-$b | awk '{ print $1 }')"
+            mkdir -p $MERKLEDIR/$(_ak_fs_return_hash_dir $shaSum)
+            cp level.$c.pair.$a-$b $MERKLEDIR/$(_ak_fs_return_hash_path $shaSum)
+            sha512sum level.$c.pair.$a-$b | awk '{ print $1 }' >> level.$c.map
+            a=`expr "$a" + 2`
+        done
+        workingIndex="level.$c.map"
+        _ak_fs_appendLastIfNotEven "$workingIndex"
+        shaSum=`sha512sum $workingIndex | awk '{ print $1 }'`
+        mkdir -p $MERKLEDIR/$(_ak_fs_return_hash_dir $shaSum)
+        cp $workingIndex $MERKLEDIR/$(_ak_fs_return_hash_path $shaSum)
+    #    cp $workingIndex $MERKLEDIR/$shaSum
+        totalChunks=`cat $workingIndex | wc -l`
+        c=`expr $c - 1`
+    done
+
+    if [ -f level.1.map ]
+    then
+        sha512sum level.1.map
+        sha512sum level.1.map >> $TEMPORARYDIR/3rd_gen_map
+    else
+        echo error
+        exit 1
+    fi
+
+    # Reset file with uniq
+    cat $TEMPORARYDIR/map | uniq > $TEMPORARYDIR/map2
+    cat $TEMPORARYDIR/map2 > $TEMPORARYDIR/map
+    rm $TEMPORARYDIR/map2
+
+    counter=0
+    while IFS="" read -r p || [ -n "$p" ]
+    do
+        printf "mv %s %s/%s\n" "$(echo $p | awk '{ print $2 }')" "$CHKDIR" "$(echo $p | awk '{ print $1 }')" >> $TEMPORARYDIR/cmd_queue.sh
+        counter=`expr "$counter" + 1`
+    done < $TEMPORARYDIR/map
+
+    # We run the crafted script
+    sh $TEMPORARYDIR/cmd_queue.sh
+
+    # and we delete it
+    rm $TEMPORARYDIR/cmd_queue.sh
+
+    # We inform the map about the original $FILE name and SHA512
+    echo "$CHECKSUM  $(basename "$FILE")" >> $TEMPORARYDIR/map
+
+    # We get the SHA512 hash of the resulted map file
+    MAPFILEHASH="$(sha512sum $TEMPORARYDIR/map | awk '{ print $1 }')"
+
+    # and we rename it with it and move it to FILEMAPSDIR
+    `sha512sum $TEMPORARYDIR/map | awk '{print "mv " $2 " '$FILEMAPSDIR/'" $1}'`
+
+    mp512p="$(sha512sum $TEMPORARYDIR/3rd_gen_map | awk '{print $1}')"
+    mv $TEMPORARYDIR/3rd_gen_map $FILEMAPSDIR/$mp512p
+
+    # We remove the TEMPORARYDIR
+    rm -rf $TEMPORARYDIR
+
+    # and print the MAPFILEHASH
+    echo "$MAPFILEHASH"
+
+}
+
+_ak_fs_find_depth(){
+    currentNode="$1"
+    pathToNode="$fmrk/$(_ak_fs_return_hash_path $currentNode)"
+    if [ -f $pathToNode ] && [ "$(du -b $pathToNode | awk '{print $1}')" == "258" ]
+    then
+        fileHead="$(head -n 1 $pathToNode)"
+        counter="$(expr $counter + 1)"
+        _ak_fs_find_depth "$fileHead"
+    elif [ ! -f $pathToNode ]
+    then
+        printf "%s" "$counter" > depth
+    else
+        exit 111
+        # Try to download stuff
+        #        wget -s $remoteMrk/$currentNode -O $fmrk/$currentNode
+        #        if [ "$?" -ne 0 ]
+        #        then
+        #            exit 111
+        #        fi
+        #        _ak_fs_find_depth "$currentNode"
+    fi
+}
+
+_ak_fs_cat(){
+    if [ -z $1 ]
+    then
+        echo "Please provide a SHA512 hash"
+        exit 1
+    fi
+    echo $1 | grep "[0123456789abcdef]\{128\}"
+    if [ $? -ne 0 ]
+    then
+        echo "Look, I asked for a SHA512 hash, please try again"
+        exit 1
+    fi
+    treeRootHash="$1"
+    fmrk="$AK_WORKDIR/fmrk"
+    ftr="$AK_WORKDIR/ftr"
+    # Enter temp folder
+    TEMPASSIN="$(ak-tempassin)"
+    cd $TEMPASSIN
+    currentNode="$treeRootHash"
+    counter=0
+    printf "%s" "$currentNode" > workspace.0
+    _ak_fs_find_depth "$currentNode"
+    depth="$(expr `cat depth` + 1)"
+    counter="0"
+    printf "%s" "$depth"
+    if [ -f output ]
+    then
+        rm output
+    fi
+    touch output
+    while [ "$counter" != "$depth" ]
+    do
+        _ak_log_debug "Entering loop... $counter $depth"
+        while IFS="" read -r p || [ -n "$p" ]
+        do
+            nextLevel="$(expr $counter + 1)"
+            if [ "$p" == "" ]
+            then
+                echo hi
+            else
+                expectedPath="$fmrk/$(_ak_fs_return_hash_path $p)"
+                if [ -f $expectedPath ]
+                then
+                    if [ "$(head -n 1 $expectedPath)" == "$(tail -n 1 $expectedPath)" ]
+                    then
+                        head -n 1 $expectedPath >> workspace.$nextLevel
+                    else
+                        cat $expectedPath >> workspace.$nextLevel
+                    fi
+                elif [ -f $ftr/$p ]
+                then
+                    cat $ftr/$p >> output
+                fi
+            fi
+        done < workspace.$counter
+        counter="$(expr $counter + 1)"
+    done
+
+    base64 -d output
+    _ak_log_info "Recreation of $treeRootHash succeeded!"
+}
+
+_ak_fs_export(){
+    if [ -z $1 ]
+    then
+        _ak_log_error "Please provide a SHA512 hash"
+        exit 1
+    fi
+    if [ -z $2 ]
+    then
+        _ak_log_error "Please an output filename"
+        exit 2
+    fi
+    outputFilename="$2"
+    echo $1 | grep "[0123456789abcdef]\{128\}"
+    if [ $? -ne 0 ]
+    then
+        _ak_log_error "Look, I asked for a SHA512 hash, please try again"
+        exit 1
+    fi
+    _ak_fs_export "$1" > $outputFilename
+}
