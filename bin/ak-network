@@ -1,5 +1,34 @@
 #!/bin/bash
-while true
-do
-    cat $ZLATEST | nc -lv 127.0.0.1 5050
-done
+##
+## Network tools
+##
+## Usage:
+##
+##    -h, --help                           Prints this help message
+##
+##    -s, --scan [ipfs|cjdns|stellar]      Scan network(s) for peers
+##
+##    -c, --connect [ipfs|cjdns]           Connect to network(s)
+##
+##    -p, --peers [ipfs|cjdns|stellar]     Outputs peers found
+##
+fullprogrampath="$(realpath $0)"
+PROGRAM=$(basename $0)
+descriptionString="AK Nettool"
+
+# At least these
+source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_script
+source $AK_LIBDIR/_ak_network
+
+# Flags to run
+if [ ! -z $1 ]; then
+    case $1 in
+        -h | --help) _ak_usage; exit;;
+        -s | --scan) _ak_network_scan $2; exit;;
+        -c | --connect) _ak_network_connect $2; exit;;
+        -p | --peers) _ak_network_show_peers $2; exit;;
+        * ) _ak_usage;;
+    esac
+else _ak_usage
+fi

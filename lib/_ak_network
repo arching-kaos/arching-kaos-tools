@@ -1,0 +1,315 @@
+#!/bin/bash
+source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_ipfs
+
+cjdnstoolspath="$HOME/cjdns/tools"
+
+_ak_network_cjdns_scanner(){
+    #
+    # Needs CJDNS tools in your PATH
+    #
+    # Ref: https://github.com/cjdelisle/cjdns
+    #
+    which dumpLinks > /dev/null 2>&1
+    if [ $? -ne 0 ]
+    then
+        echo "You need to install cjdns and cjdns-tools"
+        exit 1
+    fi
+
+    which publictoip6 > /dev/null 2>&1
+    if [ $? -ne 0 ]
+    then
+        echo "You need to install cjdns and cjdns-tools"
+        exit 1
+    fi
+
+    TEMPDIR="$(mktemp -d)"
+    AK_ZPEERSFILE="$HOME/.arching-kaos/peersFile"
+    cd $TEMPDIR
+    counter=0
+    printf '[' > walk.aknet
+    dumpLinks \
+        | cut -d ' ' -f 2,4 \
+        | sed 's/ /\n/g' \
+        | sort \
+        | uniq \
+        | while read -r ip || [ -n "$ip" ]
+    do
+        node_info="$(curl \
+            --connect-timeout 3 \
+            -A 'akd/0.1.0; https://github.com/arching-kaos' \
+            "http://[$(publictoip6 $ip)]:8610/v0/node_info" 2>/dev/null | jq -c -M)"
+        if [ $? -eq 0 ] && [ $(echo -n "$node_info" | wc -c) -gt 0 ]
+        then
+            if [ "$counter" -ne "0" ]
+            then
+                printf ',' >> walk.aknet
+            fi
+            if [ ! -n "$node_info" ]
+            then
+                node_info="null"
+            fi
+            printf '{"cjdns":{"public_key":"%s","ip":"%s"},"node_info":%s}' \
+                "$ip" "`publictoip6 $ip`" "$node_info" >> walk.aknet
+            counter="`expr $counter + 1`"
+        fi
+    done
+    printf ']' >> walk.aknet
+
+    mv walk.aknet $AK_ZPEERSFILE
+
+    rm -rf $TEMPDIR
+}
+
+_ak_network_stellar_show_ids(){
+    i=0
+    flag=0
+    while [ "$i" -lt "$limit" ]
+    do
+        test="$(cat $tempfile | jq '.["_embedded"]' | jq .'["records"]' | jq '.['$i']' | jq '.["id"]' | sed -e 's/\"//g')"
+        while IFS="" read -r p || [ -n "$p" ]
+        do
+            if [ "$p" == "$test" ]
+            then
+                flag=1
+                break
+            fi
+        done < $stellarParticipants
+        if [ "$flag" == "0" ]
+        then
+            echo $test >> $stellarParticipants
+            _ak_log_info "Added $test"
+        else
+            _ak_log_info "$test already there. Skipping..."
+        fi
+        i="$(expr $i + 1)"
+    done
+}
+
+_ak_network_stellar_get_next_page(){
+    cat $tempfile | jq -r '._links.next.href'
+    # cat $tempfile | grep -1 next | grep https | sed -e 's/^.*https/https/' | sed -e 's/\u0026/\&/g; s/"//g; s/\\//g'
+}
+
+_ak_network_stellar_proceed_to_next_page(){
+    nextURL="$(_ak_network_stellar_get_next_page)"
+    curl \
+        --connect-timeout 3 \
+        "$nextURL" > $tempfile 2>/dev/null
+}
+
+_ak_network_stellar_get_asset_holders(){
+    if [ ! -z $1 ] && [ $1 -gt 0 ] && [ -n "$1" ]
+    then
+        limit=$1
+    else
+        limit=3
+    fi
+    curl \
+        --connect-timeout 3 \
+        https://horizon.stellar.org/accounts\?asset\=ARCHINGKAOS:GB4QVKD6NW3CSNO5TNPARAWNPPXOPSSTKB35XCWB7PUNBIQTK3DVELB2\&limit\=$limit > $tempfile 2>/dev/null
+}
+
+_ak_network_scan_stellar(){
+    tempdir=`mktemp -d`
+    tempfile="$tempdir/tmp"
+    tempaddr="$tempdir/tmpaddr"
+
+    stellarParticipants="$AK_WORKDIR/stellar-network-participants"
+    stellarParticipantsOnline="$AK_WORKDIR/stellar-network-participants-online"
+    if [ ! -f "$stellarParticipants" ]
+    then
+        touch $stellarParticipants
+    fi
+    if [ ! -f "$stellarParticipantsOnline" ]
+    then
+        touch $stellarParticipantsOnline
+    fi
+    if [ ! -f "$tempdir" ]
+    then
+        touch $tempdir
+    fi
+    if [ ! -f "$tempaddr" ]
+    then
+        touch $tempaddr
+    fi
+
+    if [ ! -z $1 ] && [ "$1" == "-l" ] && [ ! -z $2 ]
+    then
+        limit=$2
+    else
+        limit=3
+    fi
+
+    _ak_network_stellar_get_asset_holders $limit
+    while [ "$(tail -1 $stellarParticipants)" != "null" ]
+    do
+        _ak_network_stellar_show_ids
+        _ak_network_stellar_proceed_to_next_page
+    done
+
+    grep G $stellarParticipants > $tempaddr
+    cat $tempaddr > $stellarParticipants
+    rm $tempfile $tempaddr
+    while IFS="" read -r p || [ -n "$p" ]
+    do
+        flag=0
+        test="$(curl \
+            --connect-timeout 3 \
+            https://horizon.stellar.org/accounts/$p/data/config 2>/dev/null | grep value)"
+        if [ "$?" == 0 ]
+        then
+            addressValuePair="$(printf '%s %s\n' "$p" "$(echo $test | sed -e 's/^.*: "//g; s/"//g' | base64 -d)")"
+            while IFS="" read -r x || [ -n "$x" ]
+            do
+                if [ "$x" == "$addressValuePair" ]
+                then
+                    flag=1
+                    break
+                fi
+            done < $stellarParticipantsOnline
+            if [ "$flag" == "0" ]
+            then
+                echo $addressValuePair >> $stellarParticipantsOnline
+                _ak_log_info "$p is configured with  $(echo $addressValuePair | awk '{ print $2 }'). Added to online participants."
+            else
+                _ak_log_info "$(echo $addressValuePair | awk '{ print $2 }') is already in $stellarParticipantsOnline. Skipping..."
+            fi
+        fi
+    done < $stellarParticipants
+}
+
+_ak_network_scan_ipfs(){
+    _ak_not_implemented _ak_network_scan_ipfs
+}
+
+_ak_network_scan_cjdns(){
+    _ak_network_cjdns_scanner
+}
+
+_ak_network_scan(){
+    if [ ! -z $1 ] && [ -n "$1" ]
+    then
+        case $1 in
+            stellar) _ak_network_scan_stellar; exit;;
+            ipfs) _ak_network_scan_ipfs; exit;;
+            cjdns) _ak_network_scan_cjdns; exit;;
+            * ) _ak_log_error "Unknown network $1";exit 1;;
+        esac
+    else
+        _ak_network_scan_stellar
+        _ak_network_scan_ipfs
+        _ak_network_scan_cjdns
+    fi
+}
+_ak_network_show_peers_stellar(){
+    stellarParticipants="$AK_WORKDIR/stellar-network-participants"
+    stellarParticipantsOnline="$AK_WORKDIR/stellar-network-participants-online"
+    (
+    printf '['
+    counter=0
+    cat $stellarParticipantsOnline | while read stellarAddress akConfig
+    do
+        if [ $counter -ne 0 ]
+        then
+            printf ','
+        fi
+        counter=$(( $counter + 1 ))
+        printf '{"stellar":{"address":"%s","config":"%s"},"node_info":%s}' \
+            "$stellarAddress" \
+            "$akConfig" \
+            "$(_ak_ipfs_cat /ipns/$akConfig)"
+    done
+    printf ']'
+    ) #| jq
+}
+
+_ak_network_show_peers_cjdns(){
+    cat $AK_ZPEERSFILE | jq
+}
+
+_ak_network_show_peers_ipfs(){
+    _ak_not_implemented _ak_network_show_peers_ipfs
+}
+
+
+_ak_network_show_peers(){
+    if [ ! -z $1 ] && [ -n "$1" ]
+    then
+        case $1 in
+            stellar) _ak_network_show_peers_stellar; exit;;
+            cjdns) _ak_network_show_peers_cjdns; exit;;
+            ipfs) _ak_network_show_peers_ipfs; exit;;
+            * ) _ak_log_error "Unknown network $1";exit 1;;
+        esac
+    else
+        (_ak_network_show_peers_stellar; _ak_network_show_peers_cjdns; _ak_network_show_peers_ipfs) | \
+            jq -j | \
+            sed -e 's/]\[/,/g' | \
+            jq
+
+    fi
+
+}
+
+_ak_network_ipfs_connect_bootstrap(){
+    curl -s "https://arching-kaos.net/files/ak_ipfs_bootstrap_peers" | while read peer
+    do
+        _ak_ipfs_swarm_connect "$peer"
+    done
+}
+
+_ak_network_cjdns_connect(){
+    if [ ! -z $1 ] && [ -n "$1" ] && [ -f $1 ]
+    then
+        peersfile="$1"
+    else
+        peersfile="$(mktemp)"
+        tmpon="yes"
+        curl -s "https://arching-kaos.net/files/ak_cjdns_bootstrap_peers" > $peersfile
+    fi
+
+    totalpeers="$(jq '. | length' < $peersfile)"
+    number="0"
+    interface="0"
+
+    while [ $number -lt $totalpeers ]
+    do
+        address="$(jq -r '.['$number'].address' < $peersfile)"
+        login="$(jq -r '.['$number'].login' < $peersfile)"
+        password="$(jq -r '.['$number'].password' < $peersfile)"
+        publicKey="$(jq -r '.['$number'].publicKey' < $peersfile)"
+        peerName="$(jq -r '.['$number'].peerName' < $peersfile)"
+        if [ $(echo $address | grep '\[') ]
+        then
+            interface="1"
+        else
+            interface="0"
+        fi
+        $cjdnstoolspath/cexec 'UDPInterface_beginConnection("'$publicKey'", "'$address'", "'$peerName'", "'$password'", "'$login'", '$interface')'
+        number="$(( $number + 1 ))"
+    done
+    if [ "$tmpon" == "yes" ]
+    then
+        rm $peersfile
+    fi
+}
+
+_ak_network_cjdns_connect_bootstrap(){
+    _ak_network_cjdns_connect
+}
+
+_ak_network_connect(){
+    if [ ! -z $1 ] && [ -n "$1" ]
+    then
+        case $1 in
+            cjdns) _ak_network_cjdns_connect_bootstrap; exit;;
+            ipfs) _ak_network_ipfs_connect_bootstrap; exit;;
+            * ) _ak_log_error "Unknown network $1";exit 1;;
+        esac
+    else
+        _ak_network_cjdns_connect_bootstrap
+        _ak_network_ipfs_connect_bootstrap
+    fi
+}
