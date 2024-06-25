@@ -172,7 +172,7 @@ _ak_zblock_show(){
             data="$(cat $AK_BLOCKDIR/$block | jq -M -r .data)"
             _ak_ipfs_cid_v0_check "$data"
             ak-data-expand $data $gpg
-            if [ "$?" -ne 0 ]
+            if [ $? -ne 0 ]
             then
                 _ak_log_error "Failed on data signature verification [data: $data, gpg: $gpg, zblock: $zblock]"
                 exit 1
