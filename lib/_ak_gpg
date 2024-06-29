@@ -119,11 +119,11 @@ _ak_gpg_key_self_export(){
 }
 
 _ak_gpg_list_keys(){
-    _ak_gpg --list-keys | grep '^ ' | awk '{print $1}' | tr '\n' ' '
+    _ak_gpg --list-keys | grep '^ ' | awk '{print $1}'
 }
 
 _ak_gpg_select_key(){
-    select x in $(_ak_gpg_list_keys)
+    select x in $(_ak_gpg_list_keys | tr '\n' ' ')
     do
         echo $x
         if [ -n "$x" ]

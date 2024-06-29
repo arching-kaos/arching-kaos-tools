@@ -10,7 +10,9 @@
 ##
 ##    --get-key-self-as-fingerprint       Returns the fingerprint of your key
 ##
-##    --get-key-fingerprint-from-ipfs Returns the fingerprint of a given key
+##    --get-key-fingerprint-from-ipfs     Returns the fingerprint of a given key
+##
+##    --list-keys                         Returns a list of known GPG keys
 ##
 fullprogrampath="$(realpath $0)"
 PROGRAM=$(basename $0)
@@ -31,6 +33,7 @@ if [ ! -z $1 ]; then
         --get-key-self-as-ipfs) _ak_gpg_key_self_get_fingerprint_from_config; exit;;
         --get-key-self-as-fingerprint) _ak_gpg_key_self_get_fingerprint; exit;;
         --get-key-fingerprint-from-ipfs) _ak_gpg_key_get_fingerprint_from_ipfs $1; exit;;
+        --list-keys) _ak_gpg_list_keys; exit;;
         * ) _ak_usage;;
     esac
 else _ak_usage
