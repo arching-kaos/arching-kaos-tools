@@ -239,7 +239,6 @@ Utilities
  - ak-node-info            # Returns IPFS CID or IPNS key for your online config
  - ak-get-gpg              # Return your GPG key as IPFS CID
  - ak-get-zlatest          # Returns zlatest ZBLOCK according to IPFS FS
- - ak-tempassin            # Creates temporary directories
 
 Schain tools
 ------------
