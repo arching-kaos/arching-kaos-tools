@@ -22,7 +22,7 @@ _ak_ipfs_swarm_connect(){
 
 _ak_ipfs_get_peers(){
     _ak_ipfs swarm peers 1> /dev/null 2>&1
-    if [ $? == 0 ]
+    if [ $? -eq 0 ]
     then
         _ak_ipfs swarm peers > $AK_WORKDIR/peers.ipfs
     fi
@@ -40,7 +40,6 @@ _ak_ipfs_scanner(){
         fi
     fi
     counter=0
-
     printf '[' > walk.aknet
     cat $peersIPFSfile \
         | cut -d '/' -f 2,3,7 \
@@ -73,7 +72,6 @@ _ak_ipfs_scanner(){
         fi
     done
     printf ']' >> walk.aknet
-
     mv walk.aknet $ak_peersIPFSfile
 }
 
@@ -114,12 +112,11 @@ _ak_ipfs_cat(){
         exit 1
     fi
     _ak_ipfs --timeout=10s cat $1
-    if [ "$?" -ne "0" ]
+    if [ $? -ne 0 ]
     then
         _ak_log_error "Failed to cat $1"
         exit 1
     fi
-
 }
 
 _ak_ipfs_files_cp(){
@@ -274,7 +271,6 @@ _ak_ipfs_name_publish(){
         _ak_log_error "Failed to get $1"
         exit 1
     fi
-
 }
 
 _ak_ipfs_name_resolve(){
@@ -289,7 +285,6 @@ _ak_ipfs_name_resolve(){
         _ak_log_error "Failed to resolve $1"
         exit 1
     fi
-
 }
 
 _ak_ipfs_swarm_peers(){
@@ -328,26 +323,26 @@ _ak_ipns_resolve(){
 
 _ak_ipfs_check(){
     _ak_ipfs_files_ls /zarchive > /dev/null
-    if [ $? != 0 ]
+    if [ $? -ne 0 ]
     then
         _ak_log_error "/zarchive is missing"
     else
         _ak_log_info "/zarchive OK"
     fi
-
     _ak_ipfs_files_ls /zlatest > /dev/null
-    if [ $? != 0 ]
+    if [ $? -ne 0 ]
     then
         _ak_log_error "/zlatest is missing"
     else
         _ak_log_info "/zlatest is OK"
     fi
-
     _ak_ipfs_key_list | grep zchain > /dev/null
-    if [ $? != 0 ]; then
+    if [ $? -ne 0 ]
+    then
         _ak_log_warning "zchain key is missing"
         _ak_ipfs_key_gen zchain > $ZCHAIN
-        if [ $? != 0 ]; then
+        if [ $? -ne 0 ]
+        then
             _ak_log_error "zchain fails to create"
         else
             _ak_log_info "zchain created"
@@ -355,12 +350,13 @@ _ak_ipfs_check(){
     else
         _ak_log_info "zchain is there"
     fi
-
     _ak_ipfs_key_list | grep ak-config > /dev/null
-    if [ $? != 0 ]; then
+    if [ $? -ne 0 ]
+    then
         _ak_log_warning "ak-config key is missing"
         _ak_ipfs_key_gen ak-config
-        if [ $? != 0 ]; then
+        if [ $? -ne 0 ]
+        then
             _ak_log_error "ak-config fails to create"
         else
             _ak_log_info "ak-config created"
@@ -375,7 +371,6 @@ _ak_ipfs_init(){
     then
         mkdir $AK_IPFS_REPO
         _ak_ipfs init
-
     fi
 }
 
@@ -395,7 +390,6 @@ _ak_ipfs_download(){
         exit 1
     fi
     IPFS_TARGET_FILE="kubo_"$IPFS_VERSION"_linux-$ARCH.tar.gz"
-
     _ak_log_info "Downloading ipfs $IPFS_VERSION"
     if [ ! -f $AK_ARCHIVESDIR/$IPFS_TARGET_FILE ]
     then
@@ -423,7 +417,6 @@ _ak_ipfs_cid_v0_check () {
 
 _ak_ipfs_swarm_install() {
     SWARMSHA512SUM="7001e37412758c43d372a969e977ca11511e034c8c1e233a58dc3ce1c6f3c1aa7d2da8cba9944a5eabaa8885742bfe6cc6794224c146b7129da8f633b53b9cfc"
-
     if [ ! -f $AK_IPFS_REPO/swarm.key ]
     then
         _ak_log_info "Downloading swarm key"
