@@ -47,6 +47,7 @@ You can use previously known modules or make new ones and put them into your
 ```
 modules/
 └─ <module name>
+    ├─ lib.sh
     └─ main.sh
 ```
 - `mixtapes` and `news` - Can be used to add content to your zchain.
