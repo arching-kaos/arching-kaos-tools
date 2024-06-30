@@ -1,0 +1,93 @@
+#!/bin/bash
+AK_SCHAINSDIR=$AK_WORKDIR/schains
+GENESIS="00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+
+_ak_schain_latest_cached(){
+    if [ ! -f $AK_WORKDIR/schain.latest ]
+    then
+        ak-find-latest-mined-sblock > $AK_WORKDIR/schain.latest
+    fi
+    cat $AK_WORKDIR/schain.latest
+}
+
+_ak_schain_tidy(){
+    SLATEST=$(ak-find-latest-mined-sblock | jq -r '.latest_block')
+    if [ ! -d $AK_SCHAINSDIR ]
+    then
+        mkdir $AK_SCHAINSDIR
+    fi
+}
+
+_ak_schain_block_latest_block_hash(){
+    ak-find-latest-mined-sblock | jq -r '.latest_block'
+}
+
+_ak_schain_crawl(){
+    if [ ! -z $1 ] && [ -n "$1" ]
+    then
+        CUR_TARGET="$1"
+    else
+        _ak_log_warning "No next target found. So long for $1"
+        exit 1
+    fi
+
+    if [ $counter -eq 0 ]
+    then
+        echo '['
+        counter=$(($counter + 1))
+    else
+        _ak_log_info "Counter: $counter, LIMIT_ENABLED: $LIMIT_ENABLED, LIMIT: $LIMIT"
+        if [ "$LIMIT_ENABLED" == "yes" ]
+        then
+            if [ $counter -eq $LIMIT ]
+            then
+                echo ']'
+                exit 0
+            fi
+        fi
+        echo ','
+        counter=$(($counter + 1))
+    fi
+
+    if [ "$1" == "$GENESIS" ]
+    then
+        echo '{"genesis":"genesis"}' | jq
+        echo ']'
+        _ak_log_warning "Looks like genesis. Exiting with 0"
+        exit 0
+    fi
+
+    if [ ! -f "$AK_MINEDBLOCKSDIR/$CUR_TARGET" ]
+    then
+        _ak_log_warning "Could not find $CUR_TARGET"
+    else
+        ( echo -n '{"sblock":"'$1'",' &&
+        ak-sblock-show $CUR_TARGET | sed -e 's/^{//g') | jq
+        NEXT_TARGET="$(ak-sblock-show $CUR_TARGET | jq -r '.previous')"
+        _ak_log_info "Found previous: $NEXT_TARGET"
+        _ak_schain_crawl "$NEXT_TARGET"
+    fi
+}
+
+_ak_schain_crawl_interface(){
+    LIMIT_ENABLED="no"
+    LIMIT=0
+    counter=0
+    if [ -z $1 ] || [ ! -n "$1" ]
+    then
+        _ak_schain_crawl `_ak_schain_block_latest_block_hash`
+    else
+        while [ "$#" ]; do
+            case "$1" in
+                -l)
+                    LIMIT_ENABLED="yes"
+                    LIMIT=$2
+                    shift 2
+                    ;;
+                *)
+                    _ak_schain_crawl "$1"
+                    ;;
+            esac
+        done
+    fi
+}

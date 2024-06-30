@@ -65,7 +65,7 @@ function continuethings(exitcode,sh,res){
  *
  */
 module.exports = (ch, res) => {
-    const command = spawn("ak-enter",["-n",ch]);
+    const command = spawn("ak",["zchain", "--crawl", "-n", ch]);
     response_string = "";
     command.stdout.on("data", data => {
         response_string = response_string + data;

@@ -168,7 +168,7 @@ _ak_modules_news_read(){
         exit 0
     fi
 
-    ak-enter -l 1 $1 > temp
+    ak zchain --crawl -l 1 $1 > temp
     if [ $? -ne 0 ]
     then
         echo error
@@ -192,7 +192,7 @@ _ak_modules_news_read(){
 }
 
 _ak_modules_news_html(){
-    ak-enter -l 1 $1 > temp
+    ak zchain --crawl -l 1 $1 > temp
     if [ $? -ne 0 ]
     then
         _ak_log_error "Failed to retrieve zblock $1"
@@ -287,9 +287,9 @@ _ak_modules_news_read_latest_local_news(){
     cd $TEMP
     if [ -z "$1" ]
     then
-        ak-enter -l 1 | jq > aktempzblock
+        ak zchain --crawl -l 1 | jq > aktempzblock
     else
-        ak-enter -l 1 $1 | jq > aktempzblock
+        ak zchain --crawl -l 1 $1 | jq > aktempzblock
     fi
 
     curzblock="`cat aktempzblock | jq -r '.[].zblock'`"

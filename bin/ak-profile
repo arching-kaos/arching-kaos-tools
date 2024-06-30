@@ -7,7 +7,7 @@
 ##
 ##     -h, --help                      Prints this help message
 ##
-##     -i, --index                     Show current status
+##     -l, --local-index               Show current status
 ##
 ##     --show <data IPFS CIDv0>        Show profile entry from specified DATA
 ##                                     IPFS CIDv0
@@ -29,9 +29,7 @@ fullprogrampath="$(realpath $0)"
 PROGRAM=$(basename $0)
 descriptionString="Profile module"
 ZPROFILEDIR="$AK_WORKDIR/profile"
-TEMP="/tmp/aktmp"
 
-# Outputs to log file in the classic format :)
 source $AK_LIBDIR/_ak_log
 source $AK_LIBDIR/_ak_script
 source $AK_LIBDIR/_ak_ipfs
@@ -40,13 +38,15 @@ source $AK_LIBDIR/_ak_zblock
 
 # Whatever the command is, we check if $ZPROFILEDIR is there.
 # If NOT we create it and we change dir there.
-if [ ! -d $ZPROFILEDIR ]; then
+if [ ! -d $ZPROFILEDIR ]
+then
     mkdir $ZPROFILEDIR
-    cd $ZPROFILEDIR
     _ak_log_info "zprofiledir created"
 else
     _ak_log_info "zprofiledir found"
 fi
+
+cd $ZPROFILEDIR
 
 # This is working with DATA blocks. DATA that matched profile/add ACTION
 #
@@ -59,7 +59,7 @@ _ak_modules_profile_show(){
         _ak_log_info "Working with $1"
         _ak_ipfs_cat $(echo $(_ak_ipfs_cat $1) | jq '.ipfs' -r)
     else
-        echo "No DATA provided"
+        _ak_log_error "No DATA provided"
         exit 1
     fi
 }
@@ -71,12 +71,12 @@ _ak_modules_profile_propget(){
     then
         if [ ! -f $ZPROFILEDIR/$1 ]
         then
-            echo "property not found"
+            _ak_log_error "property not found $1"
         else
             cat $ZPROFILEDIR/$1
         fi
     else
-        echo "No particular property... indexing"
+        _ak_log_error "No particular property... indexing"
         _ak_modules_profile_index
     fi
 }
@@ -89,13 +89,13 @@ _ak_modules_profile_propwrite(){
 EOF
     if [ $? == 0 ]
     then
-        echo "Added successfully... proceeding"
+        _ak_log_info "Added successfully... proceeding"
         IPFS_FILE=$(_ak_ipfs_add $ZPROPERTY_FILE)
-        echo "Prop writting,,, $IPFS_FILE"
+        _ak_log_info "Prop writting,,, $IPFS_FILE"
         _ak_modules_profile_add $ZPROPERTY_KEY
         cd $ZPROFILEDIR
     else
-        echo "Couldn't write to file $ZPROFILEDIR/$TO_FILE"
+        _ak_log_error "Couldn't write to file $ZPROFILEDIR/$TO_FILE"
         exit 1
     fi
 }
@@ -107,19 +107,19 @@ _ak_modules_profile_propset(){
         ZPROPERTY_KEY="$1"
         if [ ! -f $ZPROPERTY_FILE ]
         then
-            echo "No such property: $ZPROPERTY_KEY ... creating"
+            _ak_log_warning "No such property: $ZPROPERTY_KEY ... creating"
             ZPROPERTY_VALUE="$2"
             if [ ! -z "$ZPROPERTY_VALUE" ]
             then
                 touch $ZPROPERTY_FILE
-                echo "$ZPROPERTY_KEY = $ZPROPERTY_VALUE in file $ZPROPERTY_FILE"
+                _ak_log_debug "$ZPROPERTY_KEY = $ZPROPERTY_VALUE in file $ZPROPERTY_FILE"
                 _ak_modules_profile_propwrite #"$ZPROPERTY_FILE" "${ZPROPERTY_VALUE}"
             else
-                echo "No value for $1"
+                _ak_log_error "No value for $1"
             fi
         else
-            echo found $ZPROPERTY_FILE
-            echo "$ZPROPERTY_KEY = $ZPROPERTY_VALUE in file $ZPROPERTY_FILE"
+            _ak_log_info "found $ZPROPERTY_FILE"
+            _ak_log_debug "$ZPROPERTY_KEY = $ZPROPERTY_VALUE in file $ZPROPERTY_FILE"
             ZPROPERTY_VALUE="$2"
             read -p "Overwrite $1 with ${ZPROPERTY_VALUE} ? " yn
             case $yn in
@@ -127,11 +127,11 @@ _ak_modules_profile_propset(){
                 [Nn]* ) exit 130;;
                 * ) echo "Answer please";;
             esac
-            echo $IPFS_FILE
+            _ak_log_debug $IPFS_FILE
             _ak_modules_profile_show $IPFS_FILE
         fi
     else
-        echo "conditions unmet"
+        _ak_log_error "conditions unmet"
         exit 244
     fi
 }
@@ -159,10 +159,10 @@ _ak_modules_profile_import(){
     then
         if [ ! -d $1 ]
         then
-            echo "Profile folder check: Folder $1 does not exist. Stopping..."
+            _ak_log_error "Profile folder check: Folder $1 does not exist. Stopping..."
             exit 4
         else
-            echo "Profile folder check: Folder $1 exists."
+            _ak_log_info "Profile folder check: Folder $1 exists."
             fl="$(ls -1 $1)"
             for f in $fl
             do
@@ -170,7 +170,7 @@ _ak_modules_profile_import(){
             done
         fi
     else
-        echo "No value"
+        _ak_log_error "No value"
         exit 6
     fi
     exit 224
@@ -178,11 +178,11 @@ _ak_modules_profile_import(){
 
 # Adds a file as a profile/add ACTION on the zchain.
 _ak_modules_profile_add(){
-    TEMP="$(_ak_make_temp_directory)"
-    cd $TEMP
+    TEMPASSIN="$(_ak_make_temp_directory)"
+    cd $TEMPASSIN
     if [ -f $ZPROFILEDIR/$1 ]; then
         FILE="$ZPROFILEDIR/$1"
-        echo "Adding from " $FILE
+        _ak_log_info "Adding from " $FILE
         FILE_IPFS_HASH=$(_ak_ipfs_add $FILE)
         FILE_SIGN_FILE=$(pwd)/$1".asc"
         _ak_gpg_sign_detached $FILE_SIGN_FILE $FILE
@@ -195,26 +195,26 @@ _ak_modules_profile_add(){
 }
 EOF
     else
-        echo "File $FILE doesn't exist";
+        _ak_log_error "File $FILE doesn't exist"
         exit 2
     fi
 
     _ak_zblock_pack "profile/add" $(pwd)/data
     if [ $? -ne 0 ]
     then
-        echo "error??"
+        _ak_log_error "Error while packing"
         exit 1
     fi
-    echo "Profile added successfully"
+    _ak_log_info "Profile zblock added successfully"
     cd $ZPROFILEDIR
-    rm -rf "$TEMPASSIN"
+    rm -rf $TEMPASSIN
 }
 
 
 if [ ! -z $1 ]; then
     case $1 in
         -h | --help) _ak_usage; exit;;
-        -i | --index) _ak_modules_profile_index; exit;;
+        -l | --local-index) _ak_modules_profile_index; exit;;
         --show) _ak_modules_profile_show $2; exit;;
         -i | --import) _ak_modules_profile_import $2; exit;;
         -a | --add) _ak_modules_profile_add $2; exit;;

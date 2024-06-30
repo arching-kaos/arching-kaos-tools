@@ -457,7 +457,7 @@ _ak_zblock_pack(){
             # We check firstly if the encapsulated value of the "ipfs" key has already
             # appeared in the zchain.
             TO_CHECK="$(cat $MESSAGE | jq | grep ipfs | awk '{print $2}' | sed -e 's/"//g;s/,//g')"
-            ak-enter | jq | grep ipfs | awk '{print $2}' | sed -e 's/"//g;s/,//g' | sort | uniq > tempisalreadythere
+            _ak_zchain_crawl | jq | grep ipfs | awk '{print $2}' | sed -e 's/"//g;s/,//g' | sort | uniq > tempisalreadythere
             while IFS="" read -r p || [ -n "$p" ]
             do
                 if [ "$p" == "$TO_CHECK" ]

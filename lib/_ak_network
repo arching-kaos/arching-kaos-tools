@@ -231,7 +231,6 @@ _ak_network_show_peers_ipfs(){
     _ak_not_implemented _ak_network_show_peers_ipfs
 }
 
-
 _ak_network_show_peers(){
     if [ ! -z $1 ] && [ -n "$1" ]
     then
@@ -246,9 +245,7 @@ _ak_network_show_peers(){
             jq -j | \
             sed -e 's/]\[/,/g' | \
             jq
-
     fi
-
 }
 
 _ak_network_ipfs_connect_bootstrap(){
@@ -267,11 +264,9 @@ _ak_network_cjdns_connect(){
         tmpon="yes"
         curl -s "https://arching-kaos.net/files/ak_cjdns_bootstrap_peers" > $peersfile
     fi
-
     totalpeers="$(jq '. | length' < $peersfile)"
     number="0"
     interface="0"
-
     while [ $number -lt $totalpeers ]
     do
         address="$(jq -r '.['$number'].address' < $peersfile)"

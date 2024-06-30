@@ -1,11 +1,24 @@
 #!/bin/bash
+##
+## Brief description
+##
+## Usage:
+##
+##    -h, --help                  Prints this help message
+##
+fullprogrampath="$(realpath $0)"
+PROGRAM=$(basename $0)
+descriptionString="Quick description"
+
+# At least these
+source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_script
 # Assumptions:
 # I suppose each ak node is connected to some IP.
 # They also run IPFS.
 # They also are a part of our swarm.
 # So should we ask for our peers?
 
-source $AK_LIBDIR/_ak_log
 source $AK_LIBDIR/_ak_ipfs
 
 _ak_ipfs_swarm_peers > tmp_peers

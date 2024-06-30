@@ -37,7 +37,7 @@ Arching Kaos and using it.
 
 Generic tools:
 - `ak` - The tools wrapper
-- `ak enter` - Can be used to crawl zchains.
+- `ak zchain --crawl` - Can be used to crawl zchains.
 - `ak zchain --rebase` - Can be used to rebase your zchain to a previous zblock.
 - `ak zchain --reset` - Can be used to reset your zchain to zgenesis.
 
@@ -343,6 +343,6 @@ tools you want.
 
 Example:
 ``` console
-AK_DEBUG="yes"; ak enter -l 1
+AK_DEBUG="yes"; ak zchain --crawl -l 1
 ```
 

@@ -80,18 +80,18 @@ _ak_zchain_rebase(){
 _ak_zchain_extract_cids(){
     if [ ! -z $1 ] && [ -n "$1" ]
     then
-        ak-enter $1 | jq  -M | grep Qm | sed -e 's/".*"://g; s/ //g; s/[{,"]//g' | sort | uniq
+        ak zchain --crawl $1 | jq  -M | grep Qm | sed -e 's/".*"://g; s/ //g; s/[{,"]//g' | sort | uniq
     else
-        ak-enter | jq -M | grep Qm | sed -e 's/".*"://g; s/ //g; s/[{,"]//g' | sort | uniq
+        ak zchain --crawl | jq -M | grep Qm | sed -e 's/".*"://g; s/ //g; s/[{,"]//g' | sort | uniq
     fi
 }
 
 _ak_zchain_extract_data_cids(){
     if [ ! -z $1 ]
     then
-        ak-enter $1 | jq | grep ipfs | awk '{print $2}' | sed -e 's/"//g;s/,//g'
+        ak zchain --crawl $1 | jq | grep ipfs | awk '{print $2}' | sed -e 's/"//g;s/,//g'
     else
-        ak-enter | jq | grep ipfs | awk '{print $2}' | sed -e 's/"//g;s/,//g'
+        ak zchain --crawl | jq | grep ipfs | awk '{print $2}' | sed -e 's/"//g;s/,//g'
     fi
 }
 
@@ -120,14 +120,107 @@ _ak_zchain_calculate_size(){
     rm -rf $temp
 }
 
+_ak_zchain_crawl(){
+    entrance="$(cat $AK_ZLATEST)"
+    verify=1
+    limit=0
+    fromIpns=0
+    while [ "$#" ]; do
+        case "$1" in
+            -h | --help)
+                printf "
+ak zchain --crawl [-N | --no-verify] [-l | --limit <number>] [zblock]
+ak zchain --crawl [-N | --no-verify] [-l | --limit <number>] -n <zchain>
+Usage:
+
+    --help, -h                             Print this help and exit
+
+    --chain <ipns-link>, -n <ipns-link>    Crawl specified chain
+
+    --no-verify, -N                        Don't verify signatures
+
+    <ipfs-link>                            Specify IPFS CID for entrance
+
+Note that combined flags don't work for now
+Running with no flags crawls your chain based on AK_ZLATEST environment
+variable"
+                exit 1
+                ;;
+            -l | --limit)
+                limit=$2
+                shift 2
+                ;;
+            -N | --no-verify)
+                verify=0
+                shift
+                ;;
+            -n | --chain | --ipns)
+                fromIpns=1
+                ipns=$1
+                shift
+                ol=$1
+                entrance="$(_ak_ipns_resolve $1)"
+                if [ $? -ne 0 ]
+                then
+                    _ak_log_error "Could not resolve IPNS name"
+                    exit 1
+                fi
+                shift
+                ;;
+            *)
+                test="$1"
+                if [ ! -z "$test" ] && [ $fromIpns -eq 0 ]
+                then
+                    _ak_ipfs_cid_v0_check "$test"
+                    entrance="$test"
+                elif [ -z "$entrance" ] && [ $fromIpns -eq 1 ]
+                then
+                    entrance="$(cat $AK_ZLATEST)"
+                fi
+                break
+        esac
+    done
+    # We assign the IPFS CIDv0 of an empty file as this is used
+    # as our GENESIS block, hence the "seed" that the tree grows
+    # from.
+    seed="$(cat $AK_ZGENESIS)"
+    # We assume that we found the entrance inside a block, hence
+    # ZBLOCK is labeled as previous
+    zblock="$entrance"
+    # Enter temp folder
+    TEMPASSIN="$(_ak_make_temp_directory)"
+    cd $TEMPASSIN
+    counter=0
+    # The loop
+    # We break the loop from inside the loop
+    while true
+    do
+        if [ $counter -eq 0 ]
+        then
+            echo -n '['
+        fi
+        counter=$(($counter + 1))
+        _ak_zblock_show "$zblock"
+        if [ $limit -ne 0 ] && [ $limit -eq $counter ]
+        then
+            echo -n ']'
+            exit 0
+        else
+            echo -n ','
+        fi
+    done
+}
+
 _ak_zchain_crawl_self(){
-    ak enter
+    _ak_zchain_crawl
 }
 
 _ak_zchain_crawl_remote_ipfs(){
-    ak enter $1
+    _ak_zchain_crawl $1
+    #ak enter $1
 }
 
 _ak_zchain_crawl_remote_ipns(){
-    ak enter -n $1
+    _ak_zchain_crawl -n $1
+    #ak enter -n $1
 }

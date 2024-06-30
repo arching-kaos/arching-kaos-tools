@@ -34,6 +34,9 @@
 ##
 ##    --calculate-size            Calculates the size of a zchain
 ##
+##    --crawl                     Crawls zchains ( --crawl --help for more
+##                                options)
+##
 ##    --crawl-self                Crawls the local zchain
 ##
 ##    --crawl-remote-ipfs         Crawls a remote zchain
@@ -44,9 +47,11 @@ fullprogrampath="$(realpath $0)"
 PROGRAM=$(basename $0)
 descriptionString="Zchain tools"
 
-# At least these
 source $AK_LIBDIR/_ak_log
 source $AK_LIBDIR/_ak_script
+source $AK_LIBDIR/_ak_ipfs
+source $AK_LIBDIR/_ak_gpg
+source $AK_LIBDIR/_ak_zblock
 source $AK_LIBDIR/_ak_zchain
 
 # Flags to run
@@ -55,10 +60,11 @@ if [ ! -z $1 ]; then
         -h | --help) _ak_usage; exit;;
         -r | --reset) _ak_zchain_reset; exit;;
         --rebase) if [ ! -z $2 ]; then _ak_zchain_rebase $2; else exit 1; fi; exit;;
-        --rebase-back-one) _ak_zchain_rebase "`ak-enter -l 2 | jq -r '.[1].zblock'`" ; exit ;;
+        --rebase-back-one) _ak_zchain_rebase "`_ak_zchain_crawl -l 2 | jq -r '.[1].zblock'`" ; exit ;;
         --extract-cids) _ak_zchain_extract_cids $2; exit;;
         --extract-data-cids) _ak_zchain_extract_data_cids $2; exit;;
         --calculate-size) _ak_zchain_calculate_size $2; exit;;
+        --crawl) shift; _ak_zchain_crawl $*; exit;;
         --crawl-self) _ak_zchain_crawl_self; exit;;
         --crawl-remote-ipfs) _ak_zchain_crawl_remote_ipfs $2; exit;;
         --crawl-remote-ipns) _ak_zchain_crawl_remote_ipns $2; exit;;

@@ -8,7 +8,7 @@ const { spawn } = require('child_process');
  *
  */
 module.exports = (req, res) => {
-    const command = spawn("ak-enter");
+    const command = spawn("ak", ["zchain", "--crawl"]);
     response_string = "";
     command.stdout.on("data", data => {
         response_string = response_string + data;

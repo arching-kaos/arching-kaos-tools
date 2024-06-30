@@ -43,7 +43,7 @@ proofofwork(){
 
 usage(){
     echo "$PROGRAM <somethings> <previous> <miner_address>"
-    echo " hit ak-enter after that !!! "
+    echo " hit 'ak-zchain --crawl' after that."
 }
 
 if [ -z "$1" ] ;

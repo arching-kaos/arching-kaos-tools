@@ -1,9 +1,0 @@
-#!/bin/bash
-
-PROGRAM="$(basename $0)"
-source $AK_LIBDIR/_ak_log
-if [ ! -f $AK_WORKDIR/schain.latest ]
-then
-    ak-find-latest-mined-sblock > $AK_WORKDIR/schain.latest
-fi
-cat $AK_WORKDIR/schain.latest

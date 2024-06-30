@@ -28,17 +28,17 @@ After setting up your nickname, you can see that addition by crawling your chain
 like this:
 
 ```console
-$ ak enter
+$ ak zchain --crawl
 ```
 
 Most of the commands come with a `-h` and/or `--help` flags that will provide
 you with details on how to use each command. For example, the help message that
-would appear for `ak enter -h` would look like this:
+would appear for `ak zchain --crawl -h` would look like this:
 ```
-ak-enter - Crawl an arching kaos chain
+ak zchain --crawl - Crawl an arching kaos chain
 ======================================
-ak-enter [-N | --no-verify] [-l | --limit <number>] [zblock]
-ak-enter [-N | --no-verify] [-l | --limit <number>] -n <zchain>
+ak zchain --crawl [-N | --no-verify] [-l | --limit <number>] [zblock]
+ak zchain --crawl [-N | --no-verify] [-l | --limit <number>] -n <zchain>
 Usage:
     --help, -h                             Print this help and exit
     --chain <ipns-link>, -n <ipns-link>    Crawl specified chain
