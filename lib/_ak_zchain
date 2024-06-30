@@ -29,7 +29,7 @@ _ak_zchain_reset(){
     if [ $? != 0 ]; then exit 1; fi
 
     ak-config --publish
-    if [ "$?" -ne 0 ]
+    if [ $? -ne 0 ]
     then
         _ak_log_error "Could not publish new configuration"
         exit 1
@@ -68,7 +68,7 @@ _ak_zchain_rebase(){
     if [ $? != 0 ]; then exit 1; fi
 
     ak-config --publish
-    if [ "$?" -ne 0 ]
+    if [ $? -ne 0 ]
     then
         _ak_log_error "Could not publish new configuration"
         exit 1

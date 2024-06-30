@@ -49,7 +49,7 @@ source $AK_LIBDIR/_ak_log
 if [ ! -d "$TECHDIR" ]
 then
     mkdir -p "$TECHDIR"
-    if [ "$?" == 0 ]
+    if [ $? -eq 0 ]
     then
         _ak_log_info "Folder $TECHDIR created!"
     else
@@ -65,7 +65,7 @@ fi
 if [ ! -d "$FILEMAPSDIR" ]
 then
     mkdir -p "$FILEMAPSDIR"
-    if [ "$?" == 0 ]
+    if [ $? -eq 0 ]
     then
         _ak_log_info "Folder $FILEMAPSDIR created!"
     else
@@ -81,7 +81,7 @@ fi
 if [ ! -d "$CHKDIR" ]
 then
     mkdir -p "$CHKDIR"
-    if [ "$?" == 0 ]
+    if [ $? -eq 0 ]
     then
         _ak_log_info "Folder $CHKDIR created!"
     else

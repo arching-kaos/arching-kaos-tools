@@ -8,7 +8,7 @@ source lib/_ak_ipfs
 # existing one if any.
 ak_gpg_check_or_create(){
     gpg2 --homedir $AK_GPGHOME --list-keys | grep kaos@kaos.kaos -B 1
-    if [ "$?" -ne "0" ]
+    if [ $? -ne 0 ]
     then
         gpg2 --homedir $AK_GPGHOME --batch --passphrase '' --quick-gen-key kaos@kaos.kaos rsa3072 sign 0
         AK_FINGERPRINT="$(gpg2 --homedir $AK_GPGHOME --list-keys | grep kaos@kaos.kaos -B 1 | head -n 1 | awk '{print $1}')"
@@ -19,9 +19,9 @@ ak_gpg_check_or_create(){
 ipfs_zarchive_check_or_mkdir(){
     printf "Checking for /zarchive in IPFS FS..."
     _ak_ipfs files ls /zarchive > /dev/null 2>&1
-    if [ $? != 0 ]; then
+    if [ $? -ne 0 ]; then
         _ak_ipfs files mkdir /zarchive > /dev/null 2>&1
-        if [ $? != 0 ]; then
+        if [ $? -ne 0 ]; then
             printf "\tError!\n"
             exit 1
         else
@@ -35,9 +35,9 @@ ipfs_zarchive_check_or_mkdir(){
 ipfs_zlatest_check_or_create(){
     printf "Looking for /zlatest..."
     _ak_ipfs files stat /zlatest > /dev/null 2>&1
-    if [ $? != 0 ]; then
+    if [ $? -ne 0 ]; then
         _ak_ipfs files cp /ipfs/$(cat $AK_ZGENESIS) /zlatest
-        if [ $? != 0 ]; then
+        if [ $? -ne 0 ]; then
             printf "\tProblem copying %s to /zlatest!\n" "$AK_ZGENESIS"
             exit 1
         else
@@ -56,7 +56,7 @@ if [ -f $AK_ZGENESIS ] ; then printf "%s" "$(_ak_ipfs add -q $AK_GENESIS)" > $AK
 if [ ! -f $AK_ZCHAIN ]
 then
     _ak_ipfs key list | grep zchain
-    if [ "$?" -ne 0 ]
+    if [ $? -ne 0 ]
     then
         printf "%s" "$(_ak_ipfs key gen zchain)" > $AK_ZCHAIN
     else

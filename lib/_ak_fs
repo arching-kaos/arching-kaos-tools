@@ -282,7 +282,7 @@ _ak_fs_find_depth(){
         exit 111
         # Try to download stuff
         #        wget -s $remoteMrk/$currentNode -O $fmrk/$currentNode
-        #        if [ "$?" -ne 0 ]
+        #        if [ $? -ne 0 ]
         #        then
         #            exit 111
         #        fi

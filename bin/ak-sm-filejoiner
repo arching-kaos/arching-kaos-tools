@@ -21,7 +21,7 @@ TMPWD="/tmp/rjs"
 if [ ! -d "$TMPWD" ]
 then
     mkdir -p "$TMPWD"
-    if [ "$?" != 0 ]
+    if [ $? -ne 0 ]
     then
         echo "Can't create $TMPWD dir"
         exit 1
@@ -33,7 +33,7 @@ MAPSDIR="$AK_WORKDIR/fmp"
 CHKDIR="$AK_WORKDIR/ftr"
 
 cd $CHKDIR
-if [ "$?" != 0 ]
+if [ $? -ne 0 ]
 then
     echo "Can't get dir"
     exit 1
@@ -51,7 +51,7 @@ then
 
     bash script
 
-    if [ "$?" != 0 ]
+    if [ $? -ne 0 ]
     then
         echo "Error executing copy script"
         exit 1
@@ -73,7 +73,7 @@ then
 
     # We check if everything is okay
     sha512sum -c $MAPSDIR/$MAPSFILE
-    if [ "$?" != "0" ]; then
+    if [ $? -ne 0 ]; then
         _ak_log_error "Error while checking sums"
         exit 1
     fi

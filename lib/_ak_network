@@ -100,7 +100,7 @@ _ak_network_scan_stellar(){
         test="$(curl \
             --connect-timeout 3 \
             https://horizon.stellar.org/accounts/$p/data/config 2>/dev/null | grep value)"
-        if [ "$?" == 0 ]
+        if [ $? -eq 0 ]
         then
             addressValuePair="$(printf '%s %s\n' "$p" "$(echo $test | sed -e 's/^.*: "//g; s/"//g' | base64 -d)")"
             while IFS="" read -r x || [ -n "$x" ]

@@ -44,7 +44,7 @@ _ak_zblock_show(){
 
             # We check if any $zblock at all
             _ak_ipfs_cat $zblock | jq -c -M > $AK_ZBLOCKDIR/$zblock
-            if [ "$?" -ne 0 ]
+            if [ $? -ne 0 ]
             then
                 _ak_log_error "ZBLOCK $zblock READ failed"
                 exit 1
@@ -90,14 +90,14 @@ _ak_zblock_show(){
             echo -n '"block":"'$block'",'
             _ak_ipfs_cat $block | jq -c -M > $AK_BLOCKDIR/$block
             cat $AK_BLOCKDIR/$block | jq -M > /dev/null 2>&1
-            if [ "$?" -ne 0 ]
+            if [ $? -ne 0 ]
             then
                 _ak_log_error "BLOCK $block READ failed"
                 exit 1
             fi
 
             grep -e 'timestamp' -e 'gpg' -e 'data' -e 'action' -e 'detach' -e 'previous' $AK_BLOCKDIR/$block > /dev/null 2>&1
-            if [ "$?" -ne 0 ]
+            if [ $? -ne 0 ]
             then
                 _ak_log_error "BLOCK $block is NOT a valid block"
                 exit 1
@@ -132,19 +132,19 @@ _ak_zblock_show(){
             if [ $verify == 1 ]
             then
                 _ak_ipfs_get $gpg > /dev/null 2>&1
-                if [ "$?" -ne 0 ]
+                if [ $? -ne 0 ]
                 then
                     _ak_log_error "Could not get GPG key: $gpg ."
                     exit 1
                 fi
                 _ak_gpg_key_import_from_file $gpg > /dev/null 2>&1
-                if [ "$?" -ne 0 ]
+                if [ $? -ne 0 ]
                 then
                     _ak_log_error "Could not import GPG key: $gpg ."
                     exit 1
                 fi
                 _ak_ipfs_get $block_signature > /dev/null 2>&1
-                if [ "$?" -ne 0 ]
+                if [ $? -ne 0 ]
                 then
                     _ak_log_error "Error while getting $block_signature for $block"
                     exit 1
@@ -153,7 +153,7 @@ _ak_zblock_show(){
                 _ak_log_info "Block signature downloaded"
 
                 _ak_ipfs_get $block > /dev/null 2>&1
-                if [ "$?" -ne 0 ]
+                if [ $? -ne 0 ]
                 then
                     _ak_log_error "Could not get $block block"
                     exit 1
@@ -161,7 +161,7 @@ _ak_zblock_show(){
                 _ak_log_info "Downloaded block $block."
 
                 _ak_gpg_verify_signature $block.asc $block > /dev/null 2>&1
-                if [ "$?" -ne 0 ]
+                if [ $? -ne 0 ]
                 then
                     _ak_log_error "Could not verify $block with GPG key $gpg."
                     exit 1

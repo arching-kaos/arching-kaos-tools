@@ -407,7 +407,7 @@ _ak_ipfs_cid_v0_check () {
         exit 1
     fi
     echo $1 | grep -e 'Qm.\{44\}' > /dev/null
-    if [ "$?" -ne 0 ]
+    if [ $? -ne 0 ]
     then
         _ak_log_error "$1 is not an IPFS CIDv0 string"
         exit 1
