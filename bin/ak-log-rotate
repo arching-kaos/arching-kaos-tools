@@ -1,4 +1,0 @@
-#!/bin/bash
-source $AK_LIBDIR/_ak_log
-
-_ak_log_rotate
