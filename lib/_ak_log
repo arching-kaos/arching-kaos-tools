@@ -56,10 +56,11 @@ _ak_log_message(){
         then
             if [ ! -z "$3" ] && [ -n "$3" ]
             then
-                echo "$TS" "<$1>" "[$2]" "$3" >> $AK_LOGSFILE
+                msg="$(echo -n $*| cut -d ' ' -f 3-)"
+                echo "$TS" "<$1>" "[$2]" "$msg" >> $AK_LOGSFILE
                 if [ ! -z $AK_DEBUG ] && [ -n "$AK_DEBUG" ] && [ "$AK_DEBUG" == "yes" ]
                 then
-                    echo "$TS" "<$1>" "[$2]" "$3" >&2
+                    echo "$TS" "<$1>" "[$2]" "$msg" >&2
                 fi
             else
                 echo "$TS" "<$1>" "[ERROR]" "No message" >> $AK_LOGSFILE
