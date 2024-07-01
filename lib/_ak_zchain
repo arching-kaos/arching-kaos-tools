@@ -128,9 +128,13 @@ _ak_zchain_crawl(){
     while [ "$#" ]; do
         case "$1" in
             -h | --help)
-                printf "
+                printf "Zchain crawler
+==============
+
 ak zchain --crawl [-N | --no-verify] [-l | --limit <number>] [zblock]
+
 ak zchain --crawl [-N | --no-verify] [-l | --limit <number>] -n <zchain>
+
 Usage:
 
     --help, -h                             Print this help and exit
@@ -143,7 +147,8 @@ Usage:
 
 Note that combined flags don't work for now
 Running with no flags crawls your chain based on AK_ZLATEST environment
-variable"
+variable
+"
                 exit 1
                 ;;
             -l | --limit)
