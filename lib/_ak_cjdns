@@ -1,0 +1,170 @@
+#!/bin/bash
+
+source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_network
+rust_sh_install_url="https://sh.rustup.rs"
+cjdns_src_git_repo_url="https://github.com/cjdelisle/cjdns"
+cjdnstoolspath="$HOME/cjdns/tools"
+cargo_env="$HOME/.cargo/env"
+
+_ak_cjdns_check_availability(){
+    declare -a cjdns_bins=("cjdroute" "makekeys" "mkpasswd" "privatetopublic" "publictoip6" "randombytes" "sybilsim")
+    for cbin in "${cjdns_bins[@]}"
+    do
+        which $cbin > /dev/null 2>&1
+        if [ $? -ne 0 ]
+        then
+            _ak_log_error "$cbin not found"
+            exit 1
+        else
+            _ak_log_info "$cbin found"
+        fi
+    done
+}
+
+_ak_cargo_rust_check_install(){
+    if [ ! -f $cargo_env ]
+    then
+        curl --proto '=https' --tlsv1.2 -sSf $rust_sh_install_url | sh
+    fi
+    source $cargo_env
+}
+
+_ak_cjdns_install(){
+    _ak_cargo_rust_check_install
+    git clone $cjdns_src_git_repo_url
+    cd cjdns
+    sh do
+    if [ $? -ne 0 ]
+    then
+        _ak_log_error "Failed to compile cjdns"
+        exit 1
+    fi
+    cd ..
+    sudo cp cjdns/cjdroute /usr/bin/cjdroute
+    sudo cp cjdns/target/release/makekeys /usr/bin/makekeys
+    sudo cp cjdns/target/release/mkpasswd /usr/bin/mkpasswd
+    sudo cp cjdns/target/release/privatetopublic /usr/bin/privatetopublic
+    sudo cp cjdns/target/release/publictoip6 /usr/bin/publictoip6
+    sudo cp cjdns/target/release/randombytes /usr/bin/randombytes
+    sudo cp cjdns/target/release/sybilsim /usr/bin/sybilsim
+    ln -s "$(realpath cjdns/tools/dumpLinks)" $HOME/.arching-kaos/bin/dumpLinks
+    ln -s "$(realpath cjdns/tools/cexec)" $HOME/.arching-kaos/bin/cjdns-cexec
+    ln -s "$(realpath cjdns/tools/peerStats)" $HOME/.arching-kaos/bin/peerStats
+    which systemctl 2> /dev/null 1>&2
+    if [ $? -ne 0 ]
+    then
+        _ak_log_error "Systemctl not found... TODO"
+    else
+        sudo cp "$(realpath cjdns/contrib/systemd/cjdns.service)" /etc/systemd/system/cjdns.service
+        sudo cp "$(realpath cjdns/contrib/systemd/cjdns-resume.service)" /etc/systemd/system/cjdns-resume.service
+        sudo systemctl enable --now cjdns.service
+    fi
+}
+
+_ak_cjdns_read_peers_to_vars_with_jq(){
+    totalpeers="$(jq '. | length' < $peersfile)"
+    number="0"
+    interface="0"
+
+    while [ $number -lt $totalpeers ]
+    do
+        address="$(jq -r '.['$number'].address' < $peersfile)"
+        login="$(jq -r '.['$number'].login' < $peersfile)"
+        password="$(jq -r '.['$number'].password' < $peersfile)"
+        publicKey="$(jq -r '.['$number'].publicKey' < $peersfile)"
+        peerName="$(jq -r '.['$number'].peerName' < $peersfile)"
+        if [ $(echo $address | grep '\[') ]
+        then
+            interface="1"
+        else
+            interface="0"
+        fi
+        $cjdnstoolspath/cexec 'UDPInterface_beginConnection("'$publicKey'", "'$address'", "'$peerName'", "'$password'", "'$login'", '$interface')'
+        number="$(( $number + 1 ))"
+    done
+}
+
+_ak_cjdns_read_peers_to_vars_natively(){
+    number=-1
+    cat $peersfile | tr -d $'\n' | sed -e 's/]$/\n/g' | tr -d ' ' | sed -e 's/"//g; s/,/,\n/g; s/}//g; s/,//g' | while read line
+    do
+        if [ $(echo "$line" | grep '{') ]
+        then
+            number=$(($number + 1))
+            if [ $number -ne 0 ]
+            then
+                printf '\n' >> peerfile
+            fi
+        fi
+        if [ $(echo "$line" | grep 'address') ]
+        then
+            printf '%s ' "$(echo -n $line | cut -d ':' -f 2-)" >> peerfile
+        fi
+        if [ $(echo "$line" | grep 'password') ]
+        then
+            printf '%s ' "$(echo -n $line | cut -d ':' -f 2-)" >> peerfile
+        fi
+        if [ $(echo "$line" | grep 'publicKey') ]
+        then
+            printf '%s ' "$(echo -n $line | cut -d ':' -f 2-)" >> peerfile
+        fi
+        if [ $(echo "$line" | grep 'login') ]
+        then
+            printf '%s ' "$(echo -n $line | cut -d ':' -f 2-)" >> peerfile
+        fi
+        if [ $(echo "$line" | grep 'peerName') ]
+        then
+            printf '%s ' "$(echo -n $line | cut -d ':' -f 2-)" >> peerfile
+        fi
+    done
+    printf '\n' >> peerfile
+    cat peerfile | while read address login password publicKey peerName
+    do
+        if [ $(echo $address | grep '\[') ]
+        then
+            interface="1"
+        else
+            interface="0"
+        fi
+        $cjdnstoolspath/cexec 'UDPInterface_beginConnection("'$publicKey'", "'$address'", "'$peerName'", "'$password'", "'$login'", '$interface')'
+    done
+    rm peerfile
+}
+
+
+_ak_cjdns_connect_peers(){
+    _ak_network_cjdns_connect
+    exit $?
+    #
+    # Peers file have to look like this:
+    #
+    # [
+    #   {
+    #     "address": "<IPv4|IPv6>:<port>",
+    #     "login": "<login-name>",
+    #     "password": "<password...>",
+    #     "publicKey": "<publickey with .k suffix>",
+    #     "peerName": "<peername>"
+    #   },
+    #   { ... } <- more peers
+    # ]
+    #
+    # You can have both IPv4 and IPv6 peers on the same file
+    #
+    # Assumes there is ~/cjdns/tools/cexec in place, change it below
+    #
+    if [ ! -z $1 ] && [ -n "$1" ] && [ -f $1 ]
+    then
+        peersfile="$1"
+    else
+        echo "Usage: $(basename $0) <json-peer-list-file>"
+        exit 1
+    fi
+    if command -v jq
+    then
+        _ak_cjdns_read_peers_to_vars_with_jq
+    else
+        _ak_cjdns_read_peers_to_vars_natively
+    fi
+}
