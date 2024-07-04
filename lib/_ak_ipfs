@@ -265,12 +265,22 @@ _ak_ipfs_name_publish(){
         _ak_log_error "No argument given"
         exit 1
     fi
-    _ak_ipfs name publish "$1" "$2"
+    _ak_ipfs name publish --key="$1" "$2"
     if [ $? -ne 0 ]
     then
         _ak_log_error "Failed to get $1"
         exit 1
     fi
+}
+
+_ak_ipfs_config_publish(){
+    if [ -z $1 ] || [ ! -n "$1" ]
+    then
+        _ak_log_error "No argument given"
+        exit 1
+    fi
+    _ak_ipfs_check_config_key
+    _ak_ipfs_name_publish "ak-config" $1
 }
 
 _ak_ipfs_name_resolve(){
@@ -321,35 +331,7 @@ _ak_ipns_resolve(){
     fi
 }
 
-_ak_ipfs_check(){
-    _ak_ipfs_files_ls /zarchive > /dev/null
-    if [ $? -ne 0 ]
-    then
-        _ak_log_error "/zarchive is missing"
-    else
-        _ak_log_info "/zarchive OK"
-    fi
-    _ak_ipfs_files_ls /zlatest > /dev/null
-    if [ $? -ne 0 ]
-    then
-        _ak_log_error "/zlatest is missing"
-    else
-        _ak_log_info "/zlatest is OK"
-    fi
-    _ak_ipfs_key_list | grep zchain > /dev/null
-    if [ $? -ne 0 ]
-    then
-        _ak_log_warning "zchain key is missing"
-        _ak_ipfs_key_gen zchain > $ZCHAIN
-        if [ $? -ne 0 ]
-        then
-            _ak_log_error "zchain fails to create"
-        else
-            _ak_log_info "zchain created"
-        fi
-    else
-        _ak_log_info "zchain is there"
-    fi
+_ak_ipfs_check_config_key(){
     _ak_ipfs_key_list | grep ak-config > /dev/null
     if [ $? -ne 0 ]
     then
@@ -364,6 +346,50 @@ _ak_ipfs_check(){
     else
         _ak_log_info "ak-config is there"
     fi
+}
+
+_ak_ipfs_check_zchain_key(){
+    _ak_ipfs_key_list | grep zchain > /dev/null
+    if [ $? -ne 0 ]
+    then
+        _ak_log_warning "zchain key is missing"
+        _ak_ipfs_key_gen zchain > $ZCHAIN
+        if [ $? -ne 0 ]
+        then
+            _ak_log_error "zchain fails to create"
+        else
+            _ak_log_info "zchain created"
+        fi
+    else
+        _ak_log_info "zchain is there"
+    fi
+}
+
+_ak_ipfs_check_zarchive_dir(){
+    _ak_ipfs_files_ls /zarchive > /dev/null
+    if [ $? -ne 0 ]
+    then
+        _ak_log_error "/zarchive is missing"
+    else
+        _ak_log_info "/zarchive OK"
+    fi
+}
+
+_ak_ipfs_check_zlatest_file(){
+    _ak_ipfs_files_ls /zlatest > /dev/null
+    if [ $? -ne 0 ]
+    then
+        _ak_log_error "/zlatest is missing"
+    else
+        _ak_log_info "/zlatest is OK"
+    fi
+}
+
+_ak_ipfs_check(){
+    _ak_ipfs_check_zarchive_dir
+    _ak_ipfs_check_zlatest_file
+    _ak_ipfs_check_config_key
+    _ak_ipfs_check_zchain_key
 }
 
 _ak_ipfs_init(){
@@ -428,4 +454,8 @@ _ak_ipfs_swarm_install() {
         _ak_log_error "Found swarm.key but not ours"
         _ak_log_error "Visit https://arching-kaos.net/files/swarm.key and copy it to your ipfs folder"
     fi
+}
+
+_ak_ipfs_get_config_ipns_key(){
+    _ak_ipfs_key_list_full | grep 'ak-config' | cut -d ' ' -f 1
 }

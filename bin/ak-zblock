@@ -26,11 +26,6 @@ source $AK_LIBDIR/_ak_log
 source $AK_LIBDIR/_ak_script
 source $AK_LIBDIR/_ak_zblock
 
-# Your stuff here...
-example(){
-    echo "Example"
-}
-
 # Flags to run
 if [ ! -z $1 ]; then
     case $1 in

@@ -1,17 +1,24 @@
 #!/bin/bash
 
-_ak_log_follow(){
-    tail -f $AK_LOGSFILE | while read -r p || [ -n "$p" ]
-    do
-        timestamp="$(echo "$p" | awk '{print $1}')"
-        program="$(echo "$p" | awk '{print $2}')"
-        messagetype="$(echo "$p" | awk '{print $3}')"
-        message="$(echo "$p" | cut -d ' ' -f4-)"
+_ak_log_print_log_line(){
+    if [ -n "$1" ]
+    then
+        timestamp="$(echo "$*" | awk '{print $1}')"
+        program="$(echo "$*" | awk '{print $2}')"
+        messagetype="$(echo "$*" | awk '{print $3}')"
+        message="$(echo "$*" | cut -d ' ' -f4-)"
         printf '%s \033[1;32m%s\033[0;00m \033[1;31m%s\033[0;00m %s\n' \
             "$(date --date=@$timestamp +%Y%m%d_%H%M%S)" \
             "$program" \
             "$messagetype" \
             "$message"
+    fi
+}
+
+_ak_log_follow(){
+    tail -f $AK_LOGSFILE | while read -r p || [ -n "$p" ]
+    do
+        _ak_log_print_log_line "$p"
     done
 }
 
@@ -60,7 +67,7 @@ _ak_log_message(){
                 echo "$TS" "<$1>" "[$2]" "$msg" >> $AK_LOGSFILE
                 if [ ! -z $AK_DEBUG ] && [ -n "$AK_DEBUG" ] && [ "$AK_DEBUG" == "yes" ]
                 then
-                    echo "$TS" "<$1>" "[$2]" "$msg" >&2
+                    _ak_log_print_log_line "$TS <$1> [$2] $msg" >&2
                 fi
             else
                 echo "$TS" "<$1>" "[ERROR]" "No message" >> $AK_LOGSFILE

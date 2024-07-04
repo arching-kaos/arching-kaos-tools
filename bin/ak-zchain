@@ -49,9 +49,6 @@ descriptionString="Zchain tools"
 
 source $AK_LIBDIR/_ak_log
 source $AK_LIBDIR/_ak_script
-source $AK_LIBDIR/_ak_ipfs
-source $AK_LIBDIR/_ak_gpg
-source $AK_LIBDIR/_ak_zblock
 source $AK_LIBDIR/_ak_zchain
 
 # Flags to run

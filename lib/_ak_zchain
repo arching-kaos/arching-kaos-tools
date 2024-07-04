@@ -1,7 +1,7 @@
 #!/bin/bash
-source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_log
-source $AK_LIBDIR/_ak_config
+source $AK_LIBDIR/_ak_ipfs
+source $AK_LIBDIR/_ak_zblock
 
 _ak_zchain_reset(){
     echo "Reseting ZLATEST to ZGENESIS"
@@ -230,3 +230,205 @@ _ak_zchain_crawl_remote_ipns(){
     _ak_zchain_crawl -n $1
     #ak enter -n $1
 }
+
+# _ak_zchain_announce(){}
+#     PROGRAM="$(basename $0)"
+#     printf '[%s]\n' "$PROGRAM"
+#     printf "TEST\t/v0/announce/zchain\n"
+#     # curl http://127.0.0.1:8610/v0/announce/zchain
+#     printf "\t01:\tendpoint with valid data"
+#     curl \
+#         --connect-timeout 3 \
+#         -POST http://localhost:8610/v0/announce/zchain \
+#         --header 'Content-Type: application/json' \
+#         --data-raw '{"zchain":"k51qzi5uqu5dgapvk7bhxmchuqya9immqdpbz0f1r91ckpdqzub63afn3d5apr"}' 2>/dev/null | jq -M -c > /dev/null
+#     if [ $? -eq 0 ]
+#     then
+#         printf "\t\t\033[0;32mPASSED\033[0;0m"
+#     else
+#         printf "\t\033[0;31mFAILED\033[0;0m"
+#     fi
+#     printf "\n"
+# 
+#     printf "\t02:\tendpoint with invalid data"
+#     curl \
+#         --connect-timeout 3 \
+#         -POST http://localhost:8610/v0/announce/zchain \
+#         --header 'Content-Type: application/json' \
+#         --data-raw '{"zchain":"k51qzi5uqu5dgapvk7bhxmchuqya9immqdpbz0f1r91ckpdqzub63afn3d5aar"}' 2>/dev/null | jq -M -c > /dev/null
+#     if [ $? -eq 0 ]
+#     then
+#         printf "\t\t\033[0;32mPASSED\033[0;0m"
+#     else
+#         printf "\t\033[0;31mFAILED\033[0;0m"
+#     fi
+#     printf "\n"
+# 
+#     printf "\t03:\tendpoint no data"
+#     curl \
+#         --connect-timeout 3 \
+#         -POST http://localhost:8610/v0/announce/zchain \
+#         --header 'Content-Type: application/json' \
+#         --data-raw '{"zchain":""}' 2>/dev/null | jq -M -c > /dev/null
+#     if [ $? -eq 0 ]
+#     then
+#         printf "\t\t\t\033[0;32mPASSED\033[0;0m"
+#     else
+#         printf "\t\t\t\033[0;31mFAILED\033[0;0m"
+#     fi
+#     printf "\n"
+# }
+
+# _ak_zchain_chk(){
+#     ##
+#     ##    -h, --help                  Prints this help message
+#     ##
+#     fullprogrampath="$(realpath $0)"
+#     PROGRAM=$(basename $0)
+#     descriptionString="Quick description"
+#     source $AK_LIBDIR/_ak_log
+#     source $AK_LIBDIR/_ak_script
+#     source $AK_LIBDIR/_ak_ipfs
+# 
+#     fix="0"
+#     usage(){
+#         echo "zchain-chk - Check and fix zchain"
+#         echo "---------------------------------"
+#         echo "Usage:"
+#         echo "    --help, -h                             Print this help and exit"
+#         echo "    --chain <ipns-link>, -n <ipns-link>    Crawl specified chain"
+#         echo "    --fix                                  #TODO Fix your chain"
+#         echo ""
+#         echo "Note that combined flags don't work for now"
+#         echo "Running with no flags crawls your chain"
+#     }
+# 
+#     if [ ! -z "$1" ] && [ "$1" == "-h" ] || [ "$1" == "--help" ]
+#     then
+#         usage
+#         exit
+#     elif [ ! -z "$1" ] && [ "$1" == "-f" ] || [ "$1" == "--fix" ]
+#     then
+#         fix="1"
+#         entrance="$(cat $AK_ZLATEST)"
+#     elif [ ! -z "$1" ] && [ "$1" == "-n" ] || [ "$1" == "--chain" ]
+#     then
+#         entrance="$(_ak_ipns_resolve $2)"
+#     elif [ ! -z "$1" ]
+#     then
+#         entrance="$1"
+#     else
+#         # By default we ak-enter from the latest block
+#         # We can alter this by changing this value
+#         entrance="$(cat $AK_ZLATEST)"
+#     fi
+# 
+#     # We assign the IPFS CIDv0 of an empty file as this is used
+#     # as our GENESIS block, hence the "seed" that the tree grows
+#     # from.
+#     seed="$(cat $AK_ZGENESIS)"
+# 
+#     # We assume that we found the entrance inside a block, hence
+#     # ZBLOCK is labeled as previous
+#     zblock="$entrance"
+#     declare -A blocks_found
+# 
+#     # Enter temp folder
+#     TEMPASSIN="$(_ak_make_temp_directory)"
+#     cd $TEMPASSIN
+#     counter=0
+# 
+#     # The loop
+#     # We break the loop from inside the loop
+#     while true
+#     do
+#         if [ $counter == 0 ]
+#         then
+#             echo 'Start checking'
+#         fi
+#         counter=$(expr $counter + 1)
+# 
+#         # Check if $zblock exists as variable
+#         if [ ! -v $zblock ]
+#         then
+#             # Check if it is not our seed cause if it is we skip this part
+#             if [ "$zblock" != "$seed" ]
+#             then
+#                 # Reset timestamp since it's introduced later
+#                 timestamp=''
+#                 # Announce to stdout which ZBLOCK is being read at the moment
+#                 _ak_log_info "Examining $zblock"
+# 
+#                 # We create files named after each ZBLOCK IPFS CID for later
+#                 # reference. Files are empty.
+#                 touch $AK_ZBLOCKDIR/$zblock
+#                 _ak_log_info "Created reference"
+# 
+#                 # We concatenate the zblock's contents, pipe them through filter
+#                 # ak-json2bash and output them to tmp-file
+#                 _ak_ipfs_cat $zblock | ak-json2bash > tmp-zblock
+#                 _ak_log_info "ZBLOCK $zblock READ"
+# 
+#                 # Supposingly you are on a safe environment and you only have
+#                 # access to your chain, I would consider mild secure to source
+#                 # the files into your bash.
+#                 # File an issue/pull request if you think it can be done better!!
+#                 source tmp-zblock
+#                 _ak_log_info "ZBLOCK SOURCED"
+# 
+#                 # Same as above applies to BLOCK and DATA subparts of each ZBLOCK
+#                 # BLOCKS
+#                 _ak_ipfs_cat $block | ak-json2bash > tmp-block
+#                 source tmp-block
+#                 _ak_log_info "BLOCK $block SOURCED"
+#                 touch $AK_BLOCKDIR/$block
+#                 _ak_log_info "BLOCK REFERENCED"
+#                 module="$(echo $action | sed -e 's/\// /g' | awk '{ print $1 }')"
+#                 _ak_log_info "DATA is $module module."
+#                 command="$(echo $action | sed -e 's/\// /g' | awk '{ print $2 }')"
+#                 _ak_log_info "COMMAND is $command"
+#                 if [ ! -v $timestamp ]
+#                 then
+#                     echo "$timestamp : $zblock -> $block -> $previous"
+#                     blocks_found[$counter]="$block"
+#                 fi
+#                 touch $AK_DATADIR/$data
+# 
+#                 # Now, since we sourced the BLOCK to our terminal, we can search
+#                 # for $previous variable. In case we don't find one, we exit with
+#                 # code 0
+#                 if [ -v $previous ]
+#                 then
+#                     _ak_log_error "Block $block has no previous zblock"
+#                     echo "Chain with no genesis"
+#                     if [ "$fix" == "1" ]
+#                     then
+#                         echo "LOL"
+#                     else
+#                         echo "Blocks found and need repacking..."
+#                         for value in ${blocks_found[@]}
+#                         do
+#                             echo $value
+#                             _ak_ipfs_cat $value | jq -M
+#                         done
+#                     fi
+#                     exit 0
+#                 # Otherwise, we inform of the sequence
+#                 else
+#                     zblock=$previous
+#                 fi
+#             # Now check if it is equal to the seed
+#             # which apparently means we reached the seed.
+#             elif [ "$zblock" == "$seed" ]
+#             then
+#                 echo "Chain is OK with GENESIS block = $seed"
+#                 _ak_log_info "Counter $counter"
+#                 exit 0
+#             fi
+#         # And finally, if nothing is there exit with error
+#         else
+#             _ak_log_error "Check not passed... No previous IPFS CID"
+#             exit 1
+#         fi
+#     done
+# }

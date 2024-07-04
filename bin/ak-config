@@ -18,6 +18,7 @@ descriptionString="Arching Kaos Configuration Tool"
 
 source $AK_LIBDIR/_ak_script
 source $AK_LIBDIR/_ak_config
+source $AK_LIBDIR/_ak_ipfs
 
 if [ ! -z $1 ] && [ -n "$1" ]
 then
@@ -26,7 +27,7 @@ then
         --show) _ak_config_show;exit;;
         --publish) _ak_config_publish;exit;;
         --get-published) _ak_config_published;exit;;
-        --get-ipns-key) _ak_config_get_ipns_key;exit;;
+        --get-ipns-key) _ak_ipfs_get_config_ipns_key;exit;;
         *) _ak_usage;exit;;
     esac
 else
