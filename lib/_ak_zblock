@@ -1,9 +1,108 @@
 #!/bin/bash
+#set -x
 source $AK_LIBDIR/_ak_log
 source $AK_LIBDIR/_ak_script
 source $AK_LIBDIR/_ak_gpg
 source $AK_LIBDIR/_ak_html
 source $AK_LIBDIR/_ak_ipfs
+
+if [ ! -d $AK_WORKDIR/ipfs ]
+then
+    mkdir $AK_WORKDIR/ipfs
+fi
+
+_ak_data_expand(){
+    if [ ! -z $1 ] && [ ! -z $2 ] && [ -n "$1" ] && [ -n "$2" ]
+    then
+        TEMP="$(_ak_make_temp_directory)"
+        cd $TEMP
+        _ak_ipfs_cid_v0_check $1
+        _ak_ipfs_cat $1 > /dev/null
+        if [ $? -ne 0 ]
+        then
+            _ak_log_error "Error while reading $1"
+            exit 1
+        fi
+        _ak_ipfs_cat $1 | jq -M > /dev/null
+        if [ $? -ne 0 ]
+        then
+            _ak_log_error "Error while parsing JSON for $1"
+            exit 1
+        fi
+        _ak_ipfs_cat $1 | jq | grep ipfs > /dev/null
+        if [ $? -ne 0 ]
+        then
+            _ak_log_error "_ak_data_expand: No 'ipfs' field in $1"
+            exit 1
+        fi
+        DATA="$(_ak_ipfs_cat $1 | jq -r '.ipfs')" #| grep ipfs | sed -e 's/"ipfs": "//g; s/[",]//g; s/ //g')"
+        if [ $? -ne 0 ]
+        then
+            _ak_log_error "Error while extracting data from JSON for $1"
+            exit 1
+        fi
+        _ak_ipfs_cat $1 | jq | grep detach > /dev/null
+        if [ $? -ne 0 ]
+        then
+            _ak_log_error "_ak_data_expand: No 'detach' field in $1"
+            exit 1
+        fi
+        DETACH="$(_ak_ipfs_cat $1 | jq -r '.detach')" #| grep detach | sed -e 's/"detach": "//g; s/[",]//g; s/ //g')"
+        if [ $? -ne 0 ]
+        then
+            _ak_log_error "Error while extracting data from JSON for $1"
+            exit 1
+        fi
+        _ak_ipfs_cid_v0_check $2
+        gpg="$2"
+        _ak_ipfs_get $gpg > /dev/null 2>&1
+        if [ $? -ne 0 ]
+        then
+            _ak_log_error "Could not get GPG key: $gpg"
+        exit 1
+        fi
+        _ak_gpg_key_import_from_file $gpg > /dev/null 2>&1
+        if [ $? -ne 0 ]
+        then
+            _ak_log_error "Could not import GPG key: $gpg"
+            exit 1
+        fi
+        _ak_ipfs_get $DETACH > /dev/null 2>&1
+        if [ $? -ne 0 ]
+        then
+            _ak_log_error "Error while getting signature: $DETACH for data: $DATA"
+            exit 1
+        fi
+        if [ ! -f $AK_IPFS_ARTIFACTS/$DETACH ]
+        then
+            _ak_log_error "$DETACH was downloaded but not found"
+            exit 1
+        fi
+        ln -s $AK_IPFS_ARTIFACTS/$DETACH $TEMP/$DATA.asc
+        _ak_log_debug "DATA_SIGNATURE $DETACH downloaded"
+        _ak_ipfs_get $DATA > /dev/null 2>&1
+        if [ $? -ne 0 ]
+        then
+            _ak_log_error "Error while getting data: $DATA"
+            exit 1
+        fi
+        _ak_log_debug "DATA $DATA downloaded"
+        _ak_gpg_verify_signature $TEMP/$DATA.asc $AK_IPFS_ARTIFACTS/$DATA # > /dev/null 2>&1
+        if [ $? -ne 0 ]
+        then
+            _ak_log_error "Error while verifying signature for $DATA"
+            exit 1
+        fi
+        # ln -s $AK_IPFS_ARTIFACTS/$DATA $AK_WORKDIR/ipfs
+        _ak_log_info "DATA_SIGNATURE $DATA_SIGNATURE verified"
+        echo -n '"data":"'$1'","'$1'":'$(_ak_ipfs_cat $1|jq -M -c)','
+        cd
+        # rm -rf $TEMP
+    else
+        _ak_log_error "_ak_data_expand HASH GPG"
+        exit 1
+    fi
+}
 
 # _ak_zblock_show
 # ak-zblock [IPFS CID]
@@ -14,16 +113,13 @@ _ak_zblock_show(){
     verify=1
     if [ ! -z $1 ] && [ -n "$1" ]
     then
-        echo $1 | grep -e 'Qm.\{44\}' >/dev/null
-        if [ $? -ne 0 ]
-        then
-            _ak_log_error "Argument provided ($1) was not an IPFS CIDv0 string"
-            exit 1
-        fi
+        _ak_ipfs_cid_v0_check $1
         entrance="$1"
     else
         entrance="$(cat $AK_ZLATEST)"
     fi
+    TEMP=$(_ak_make_temp_directory)
+    cd $TEMP
     zblock=$entrance
     # Check if $zblock exists as variable
     if [ ! -v $zblock ]
@@ -38,94 +134,95 @@ _ak_zblock_show(){
 
             _ak_ipfs_cid_v0_check "$zblock"
 
-            # We check if any $zblock at all
-            _ak_ipfs_cat $zblock | jq -c -M > $AK_ZBLOCKDIR/$zblock
+            # We check if any $zblock at all...
+            # TODO: Eliminate outputing to file since we store all cat/get'ed
+            #       ipfs hashes on local fs.
+            _ak_ipfs_cat $zblock > /dev/null 2>&1
             if [ $? -ne 0 ]
             then
-                _ak_log_error "ZBLOCK $zblock READ failed"
+                _ak_log_error "ZBLOCK $zblock unreachable"
                 exit 1
             fi
-            _ak_log_info "ZBLOCK $zblock READ"
+            _ak_log_debug "ZBLOCK $zblock within reach"
+            # ...and if it's JSON formated
+            cat $AK_IPFS_ARTIFACTS/$zblock | jq > /dev/null 2>&1
+            if [ $? -ne 0 ]
+            then
+                _ak_log_error "ZBLOCK $zblock is not JSON"
+                cat /dev/null > $AK_IPFS_ARTIFACTS/$zblock > /dev/null 2>&1
+                exit 1
+            fi
+            _ak_log_debug "ZBLOCK $zblock is JSON"
             echo -n '{'
 #            echo -n '"id":"'$counter'",'
             echo -n '"zblock":"'$zblock'",'
 
-            # If it's JSON formated
-            cat $AK_ZBLOCKDIR/$zblock | jq -M > /dev/null 2>&1
-            if [ $? -ne 0 ]
-            then
-                _ak_log_error "ZBLOCK $zblock is not JSON"
-                cat /dev/null > $AK_ZBLOCKDIR/$zblock > /dev/null 2>&1
-                exit 1
-            fi
-            _ak_log_info "ZBLOCK $zblock is JSON"
-
             # Be sure that there are the expected values
             # We need 'block' and 'block_signature' inside a 'zblock'
             # Exit if any is missing
-            block="$(cat $AK_ZBLOCKDIR/$zblock | jq -M -r .block)"
+            block="$(cat $AK_IPFS_ARTIFACTS/$zblock | jq -M -r .block)"
             if [ "$block" == "null" ]
             then
-                _ak_log_error "ZBLOCK $zblock has no block"
+                _ak_log_error "ZBLOCK $zblock has no BLOCK"
                 exit 1
             fi
             _ak_ipfs_cid_v0_check "$block"
-            _ak_log_info "ZBLOCK $zblock has block"
+            _ak_log_debug "ZBLOCK $zblock has block $block"
 
-            block_signature="$(cat $AK_ZBLOCKDIR/$zblock | jq -M -r .block_signature)"
+            block_signature="$(cat $AK_IPFS_ARTIFACTS/$zblock | jq -M -r .block_signature)"
             if [ "$block_signature" == "null" ]
             then
-                _ak_log_error "ZBLOCK $zblock doesn't contain a block_signature"
+                _ak_log_error "ZBLOCK $zblock has no BLOCK_SIGNATURE"
                 exit 1
             fi
             _ak_ipfs_cid_v0_check "$block_signature"
-            _ak_log_info "ZBLOCK $zblock contains a block_signature"
+            _ak_log_debug "ZBLOCK $zblock contains a BLOCK_SIGNATURE $block_signature"
 
             # Same as above applies to BLOCK and DATA subparts of each ZBLOCK
             # BLOCKS
             echo -n '"block":"'$block'",'
-            _ak_ipfs_cat $block | jq -c -M > $AK_BLOCKDIR/$block
-            cat $AK_BLOCKDIR/$block | jq -M > /dev/null 2>&1
+            echo -n '"block_signature":"'$block_signature'",'
+
+            _ak_ipfs_cat $block | jq -c -M > /dev/null 2>&1
+            cat $AK_IPFS_ARTIFACTS/$block | jq -M > /dev/null 2>&1
             if [ $? -ne 0 ]
             then
                 _ak_log_error "BLOCK $block READ failed"
                 exit 1
             fi
 
-            grep -e 'timestamp' -e 'gpg' -e 'data' -e 'action' -e 'detach' -e 'previous' $AK_BLOCKDIR/$block > /dev/null 2>&1
+            grep -e 'timestamp' -e 'gpg' -e 'data' -e 'action' -e 'detach' -e 'previous' $AK_IPFS_ARTIFACTS/$block > /dev/null 2>&1
             if [ $? -ne 0 ]
             then
                 _ak_log_error "BLOCK $block is NOT a valid block"
                 exit 1
             fi
-            _ak_log_info "BLOCK $block is a block"
+            _ak_log_debug "BLOCK $block is a block"
 
-            action="$(cat $AK_BLOCKDIR/$block | jq -M -r .action)"
+            action="$(cat $AK_IPFS_ARTIFACTS/$block | jq -M -r .action)"
             module="$(echo $action | sed -e 's/\// /g' | awk '{ print $1 }')"
-            _ak_log_info "DATA is $module module."
+            _ak_log_debug "DATA is $module module."
 
             command="$(echo $action | sed -e 's/\// /g' | awk '{ print $2 }')"
-            _ak_log_info "COMMAND is $command"
+            _ak_log_debug "COMMAND is $command"
 
-            timestamp="$(cat $AK_BLOCKDIR/$block | jq -M -r .timestamp)"
+            timestamp="$(cat $AK_IPFS_ARTIFACTS/$block | jq -M -r .timestamp)"
             if [ "$timestamp" != "null" ]
             then
                 echo -n '"timestamp":"'$timestamp'",'
             fi
 
-            echo -n '"block_signature":"'$block_signature'",'
-
-            detach="$(cat $AK_BLOCKDIR/$block | jq -M -r .detach)"
+            detach="$(cat $AK_IPFS_ARTIFACTS/$block | jq -M -r .detach)"
             echo -n '"detach":"'$detach'",'
 
             echo -n '"module":"'$module'",'
 
             echo -n '"action":"'$command'",'
 
-            gpg="$(cat $AK_BLOCKDIR/$block | jq -M -r .gpg)"
+            gpg="$(cat $AK_IPFS_ARTIFACTS/$block | jq -M -r .gpg)"
             echo -n '"gpg":"'$gpg'",'
 
-            if [ $verify == 1 ]
+            if [ $verify -eq 1 ]
             then
                 _ak_ipfs_get $gpg > /dev/null 2>&1
                 if [ $? -ne 0 ]
@@ -142,11 +239,11 @@ _ak_zblock_show(){
                 _ak_ipfs_get $block_signature > /dev/null 2>&1
                 if [ $? -ne 0 ]
                 then
-                    _ak_log_error "Error while getting $block_signature for $block"
+                    _ak_log_error "Error while getting BLOCK_SIGNATURE $block_signature for BLOCK $block"
                     exit 1
                 fi
-                mv $block_signature $block.asc
-                _ak_log_info "Block signature downloaded"
+                ln -s $AK_IPFS_ARTIFACTS/$block_signature $TEMP/$block.asc
+                _ak_log_info "BLOCK_SIGNATURE $block_signature downloaded"
 
                 _ak_ipfs_get $block > /dev/null 2>&1
                 if [ $? -ne 0 ]
@@ -154,9 +251,9 @@ _ak_zblock_show(){
                     _ak_log_error "Could not get $block block"
                     exit 1
                 fi
-                _ak_log_info "Downloaded block $block."
+                _ak_log_info "BLOCK $block downloaded"
 
-                _ak_gpg_verify_signature $block.asc $block > /dev/null 2>&1
+                _ak_gpg_verify_signature $TEMP/$block.asc $AK_IPFS_ARTIFACTS/$block > /dev/null 2>&1
                 if [ $? -ne 0 ]
                 then
                     _ak_log_error "Could not verify $block with GPG key $gpg."
@@ -165,9 +262,9 @@ _ak_zblock_show(){
                 _ak_log_info "$gpg signature of $block is verified."
             fi
 
-            data="$(cat $AK_BLOCKDIR/$block | jq -M -r .data)"
+            data="$(cat $AK_IPFS_ARTIFACTS/$block | jq -M -r .data)"
             _ak_ipfs_cid_v0_check "$data"
-            ak-data-expand $data $gpg
+            _ak_data_expand $data $gpg
             if [ $? -ne 0 ]
             then
                 _ak_log_error "Failed on data signature verification [data: $data, gpg: $gpg, zblock: $zblock]"
@@ -177,12 +274,13 @@ _ak_zblock_show(){
             # DATA
             # Only print to stdout
             # _ak_ipfs_cat $data
-            touch $AK_DATADIR/$data
+            # touch $AK_DATADIR/$data
+            # ^ unreasonable?
 
             # Now, since we sourced the BLOCK to our terminal, we can search
             # for $previous variable. In case we don't find one, we append one
             # and we exit.
-            previous="$(cat $AK_BLOCKDIR/$block | jq -M -r .previous)"
+            previous="$(cat $AK_IPFS_ARTIFACTS/$block | jq -M -r .previous)"
             if [ -v $previous ]
             then
                 _ak_log_warning "Block $block has no previous zblock, appending pseudo genesis to exit with 2."

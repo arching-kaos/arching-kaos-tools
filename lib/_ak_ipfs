@@ -1,6 +1,11 @@
 #!/bin/bash
 source $AK_LIBDIR/_ak_log
 AK_IPFS_REPO="$AK_WORKDIR/ipfsrepo"
+AK_IPFS_ARTIFACTS="$AK_WORKDIR/ipfs_artifacts"
+if [ ! -d $AK_IPFS_ARTIFACTS ]
+then
+    mkdir -p $AK_IPFS_ARTIFACTS
+fi
 
 _ak_ipfs(){
     export IPFS_PATH=$AK_IPFS_REPO; ipfs $*
@@ -105,20 +110,6 @@ _ak_ipfs_block_stat(){
     fi
 }
 
-_ak_ipfs_cat(){
-    if [ -z $1 ] || [ ! -n "$1" ]
-    then
-        _ak_log_error "no argument given"
-        exit 1
-    fi
-    _ak_ipfs --timeout=10s cat $1
-    if [ $? -ne 0 ]
-    then
-        _ak_log_error "Failed to cat $1"
-        exit 1
-    fi
-}
-
 _ak_ipfs_files_cp(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
@@ -214,13 +205,39 @@ _ak_ipfs_get(){
         _ak_log_error "No argument given"
         exit 1
     fi
-    _ak_ipfs --timeout=10s get "$1" > /dev/null 2>&1
+    if [ ! -f $AK_IPFS_ARTIFACTS/$1 ]
+    then
+        wam="$(pwd)"
+        cd $AK_IPFS_ARTIFACTS
+        _ak_ipfs --timeout=10s get "$1" > /dev/null 2>&1
+        if [ $? -ne 0 ]
+        then
+            _ak_log_error "Failed to get $1"
+            exit 1
+        fi
+        cd $wam
+        ln -s $AK_IPFS_ARTIFACTS/$1 $1
+    fi
+}
+
+_ak_ipfs_cat(){
+    if [ -z $1 ] || [ ! -n "$1" ]
+    then
+        _ak_log_error "no argument given"
+        exit 1
+    fi
+    if [ ! -f $AK_IPFS_ARTIFACTS/$1 ]
+    then
+        _ak_ipfs_get $1
+    fi
+    cat $AK_IPFS_ARTIFACTS/$1
     if [ $? -ne 0 ]
     then
-        _ak_log_error "Failed to get $1"
+        _ak_log_error "Failed to cat $1"
         exit 1
     fi
 }
+
 
 _ak_ipfs_key_gen(){
     if [ -z $1 ] || [ ! -n "$1" ]
@@ -426,22 +443,27 @@ _ak_ipfs_download(){
     fi
 }
 
-_ak_ipfs_cid_v0_check () {
+_ak_ipfs_cid_v0_check(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
-        _ak_log_error "No argument given"
+        _ak_log_error "_ak_ipfs_cid_v0_check: No argument given"
+        exit 1
+    fi
+    if [ $(echo -n $1 | wc -c) -ne 46 ]
+    then
+        _ak_log_error "_ak_ipfs_cid_v0_check: $1 IPFS CIDv0 length mismatch"
         exit 1
     fi
     echo $1 | grep -e 'Qm.\{44\}' > /dev/null
     if [ $? -ne 0 ]
     then
-        _ak_log_error "$1 is not an IPFS CIDv0 string"
+        _ak_log_error "_ak_ipfs_cid_v0_check: $1 is not an IPFS CIDv0 string"
         exit 1
     fi
-    _ak_log_info "$1 provided is an IPFS CIDv0 string"
+    _ak_log_debug "_ak_ipfs_cid_v0_check: $1 provided is an IPFS CIDv0 string"
 }
 
-_ak_ipfs_swarm_install() {
+_ak_ipfs_swarm_install(){
     SWARMSHA512SUM="7001e37412758c43d372a969e977ca11511e034c8c1e233a58dc3ce1c6f3c1aa7d2da8cba9944a5eabaa8885742bfe6cc6794224c146b7129da8f633b53b9cfc"
     if [ ! -f $AK_IPFS_REPO/swarm.key ]
     then

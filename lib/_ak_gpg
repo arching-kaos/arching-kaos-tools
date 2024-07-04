@@ -18,12 +18,12 @@ _ak_gpg_key_import_from_file(){
         _ak_log_error "Empty argument given"
         exit 1
     fi
-    if [ ! -f "$1" ]
+    if [ ! -f "$AK_IPFS_ARTIFACTS/$1" ]
     then
         _ak_log_error "File not found"
         exit 1
     fi
-    _ak_gpg --import $1 > /dev/null 2>&1
+    _ak_gpg --import $AK_IPFS_ARTIFACTS/$1 > /dev/null 2>&1
 }
 
 _ak_gpg_key_self_get_fingerprint_from_config(){
@@ -106,6 +106,7 @@ _ak_gpg_verify_signature(){
     then
         _ak_gpg --verify $1 $2 > /dev/null 2>&1
     else
+        _ak_log_error "Failed to verify detached signature $1 against $2"
         exit 1
     fi
 }
