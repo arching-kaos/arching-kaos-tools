@@ -69,6 +69,11 @@ case "$1" in
             exit 1
         fi
         subargs="$*"
+        if [ ! -f $subcmd/main.sh ]
+        then
+            _ak_log_error "No $(basename $subcmd) module"
+            exit 1
+        fi
         $subcmd/main.sh $subargs
         _ak_exit_program $? "$subcmd module finished";
         ;;
