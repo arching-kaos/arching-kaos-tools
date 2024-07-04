@@ -214,10 +214,11 @@ _ak_network_show_peers_stellar(){
             printf ','
         fi
         counter=$(( $counter + 1 ))
+        akConfigHash="$(_ak_ipfs_name_resolve /ipns/$akConfig|cut -d '/' -f 3)"
         printf '{"stellar":{"address":"%s","config":"%s"},"node_info":%s}' \
             "$stellarAddress" \
             "$akConfig" \
-            "$(_ak_ipfs_cat /ipns/$akConfig)"
+            "$(_ak_ipfs_cat $akConfigHash)"
     done
     printf ']'
     ) #| jq
