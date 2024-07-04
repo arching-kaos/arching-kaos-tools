@@ -1,0 +1,49 @@
+#!/bin/bash
+
+source $AK_LIBDIR/_ak_gpg
+source $AK_LIBDIR/_ak_ipfs
+source $AK_LIBDIR/_ak_node
+
+_ak_config_get_ipns_key(){
+    _ak_ipfs_key_list_full | grep 'ak-config' | cut -d ' ' -f 1
+}
+
+_ak_config_show(){
+    # We will be using our public key also to put it in the block later
+    KEY="tmp-gpg.pub"
+    _ak_gpg_key_self_export $KEY
+    GPG_PUB_KEY=$(_ak_ipfs_add $KEY)
+    rm $KEY
+    profile="$(ak-profile -l)"
+
+    echo '
+{
+    "profile":'$profile',
+    "genesis":"'$(cat $AK_WORKDIR/config/zgenesis)'",
+    "gpg":"'$GPG_PUB_KEY'",
+    "zchain":"'$(cat $AK_WORKDIR/config/zchain)'",
+    "zlatest":"'$(ak-get-zlatest)'"
+}'| jq;
+}
+
+_ak_config_publish(){
+    _ak_config_show | jq -c -M > tmpfile
+    _ak_ipfs key list | grep ak-config 2> /dev/null 1>&2
+    if [ $? -ne 0 ]
+    then
+        _ak_ipfs_key_gen ak-config
+    fi
+    _ak_ipfs_name_publish --key=ak-config /ipfs/$(_ak_ipfs_add tmpfile)
+    if [ $? != 0 ]
+    then
+        echo -e "\033[0;34mError on publishing\033[0;0m\nYour information:\n"
+        cat tmpfile
+        exit 1
+    fi
+    rm tmpfile
+}
+
+_ak_config_published(){
+    _ak_ipfs_cat $(_ak_node_info_ipfs_hash) | jq
+}
+

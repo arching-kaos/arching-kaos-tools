@@ -1,6 +1,7 @@
 #!/bin/bash
 source $AK_LIBDIR/_ak_log
 source $AK_LIBDIR/_ak_ipfs
+source $AK_LIBDIR/_ak_config
 
 _ak_gpg(){
     gpg2 --homedir $AK_GPGHOME $*
@@ -26,7 +27,7 @@ _ak_gpg_key_import_from_file(){
 }
 
 _ak_gpg_key_self_get_fingerprint_from_config(){
-    ak-config --show | jq -r '.gpg'
+    _ak_config_show | jq -r '.gpg'
 }
 
 _ak_gpg_key_self_get_fingerprint(){

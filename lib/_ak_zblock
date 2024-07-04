@@ -551,7 +551,7 @@ _ak_zblock_pack(){
             _ak_log_error "Could not copy $ZBLOCK to /zlatest"
             exit 1
         fi
-        ak-config --publish
+        _ak_config_publish
         if [ $? -ne 0 ]
         then
             _ak_log_error "Could not publish new configuration"

@@ -1,6 +1,7 @@
 #!/bin/bash
 source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_config
 
 _ak_zchain_reset(){
     echo "Reseting ZLATEST to ZGENESIS"
@@ -28,7 +29,7 @@ _ak_zchain_reset(){
     _ak_ipfs_name_publish --key=zchain /ipfs/$(cat $ZLATEST)
     if [ $? != 0 ]; then exit 1; fi
 
-    ak-config --publish
+    _ak_config_publish
     if [ $? -ne 0 ]
     then
         _ak_log_error "Could not publish new configuration"
@@ -67,7 +68,7 @@ _ak_zchain_rebase(){
     _ak_ipfs_name_publish --key=zchain /ipfs/$(cat $AK_ZLATEST)
     if [ $? != 0 ]; then exit 1; fi
 
-    ak-config --publish
+    _ak_config_publish
     if [ $? -ne 0 ]
     then
         _ak_log_error "Could not publish new configuration"
