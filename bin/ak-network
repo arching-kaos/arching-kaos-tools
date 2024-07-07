@@ -6,11 +6,17 @@
 ##
 ##    -h, --help                           Prints this help message
 ##
-##    -s, --scan [ipfs|cjdns|stellar]      Scan network(s) for peers
-##
 ##    -c, --connect [ipfs|cjdns]           Connect to network(s)
 ##
 ##    -p, --peers [ipfs|cjdns|stellar]     Outputs peers found
+##
+##    -s, --scan [ipfs|cjdns|stellar]      Scan network(s) for peers
+##
+## Bonus: CJDNS network scanning modes
+##
+##    -s, --scan cjdns [-w|--whole]        Scan using HIA's knowledge
+##
+##    -s, --scan cjdns [-d|--dump]         Scan using CJDNS' dumpLinks (default)
 ##
 fullprogrampath="$(realpath $0)"
 PROGRAM=$(basename $0)
@@ -25,7 +31,7 @@ source $AK_LIBDIR/_ak_network
 if [ ! -z $1 ]; then
     case $1 in
         -h | --help) _ak_usage; exit;;
-        -s | --scan) _ak_network_scan $2; exit;;
+        -s | --scan) shift; _ak_network_scan $*; exit;;
         -c | --connect) _ak_network_connect $2; exit;;
         -p | --peers) _ak_network_show_peers $2; exit;;
         * ) _ak_usage;;

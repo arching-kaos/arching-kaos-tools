@@ -180,6 +180,31 @@ Running with no flags crawls your chain based on AK_ZLATEST environment
 variable
 ```
 
+### Connect to networks ( `ak network` )
+```console
+$ ak network
+ak-network - AK Nettool
+=======================
+
+Network tools
+
+Usage:
+
+   -h, --help                           Prints this help message
+
+   -c, --connect [ipfs|cjdns]           Connect to network(s)
+
+   -p, --peers [ipfs|cjdns|stellar]     Outputs peers found
+
+   -s, --scan [ipfs|cjdns|stellar]      Scan network(s) for peers
+
+Bonus: CJDNS network scanning flags
+
+   -s, --scan cjdns [-w|--whole]        Scan using HIA's knowledge
+
+   -s, --scan cjdns [-d|--dump]         Scan using CJDNS' dumpLinks (default)
+```
+
 Podman (or Docker)
 ------------------
 
