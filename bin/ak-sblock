@@ -1,0 +1,29 @@
+#!/bin/bash
+##
+## Tools to show/read sblocks
+##
+## Usage:
+##
+##    -h, --help                  Prints this help message
+##
+##    -s, --show <sblock-hash>    Show a particular SBLOCK
+##
+fullprogrampath="$(realpath $0)"
+PROGRAM=$(basename $0)
+descriptionString="Sblock tools"
+
+# At least these
+source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_script
+source $AK_LIBDIR/_ak_sblock
+
+# Flags to run
+if [ ! -z $1 ]
+then
+    case $1 in
+        -h | --help) _ak_usage; exit;;
+        -s | --show) shift; _ak_sblock_show $1; exit;;
+        * ) _ak_usage;;
+    esac
+else _ak_usage
+fi

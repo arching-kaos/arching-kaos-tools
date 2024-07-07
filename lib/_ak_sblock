@@ -1,0 +1,12 @@
+#!/bin/bash
+
+source $AK_LIBDIR/_ak_log
+
+_ak_sblock_show(){
+    if [ ! -z $1 ]
+    then
+        cat $AK_MINEDBLOCKSDIR/$1 | jq
+    else
+        _ak_log_error "No sblock hash input"
+    fi
+}

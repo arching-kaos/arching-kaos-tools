@@ -1,9 +1,0 @@
-#!/bin/bash
-PROGRAM="$(basename $0)"
-
-if [ ! -z $1 ]
-then
-    cat $AK_MINEDBLOCKSDIR/$1 | jq
-else
-    echo "No sblock hash input"
-fi

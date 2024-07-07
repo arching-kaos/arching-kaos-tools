@@ -1,4 +1,7 @@
 #!/bin/bash
+
+source $AK_LIBDIR/_ak_sblock
+
 AK_SCHAINSDIR=$AK_WORKDIR/schains
 GENESIS="00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
 
@@ -62,8 +65,8 @@ _ak_schain_crawl(){
         _ak_log_warning "Could not find $CUR_TARGET"
     else
         ( echo -n '{"sblock":"'$1'",' &&
-        ak-sblock-show $CUR_TARGET | sed -e 's/^{//g') | jq
-        NEXT_TARGET="$(ak-sblock-show $CUR_TARGET | jq -r '.previous')"
+        _ak_sblock_show $CUR_TARGET | sed -e 's/^{//g') | jq
+        NEXT_TARGET="$(_ak_sblock_show $CUR_TARGET | jq -r '.previous')"
         _ak_log_info "Found previous: $NEXT_TARGET"
         _ak_schain_crawl "$NEXT_TARGET"
     fi

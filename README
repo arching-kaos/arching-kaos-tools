@@ -273,7 +273,7 @@ Schain tools
  - ak-mempool                      # TODO
  - ak-miner-script             PROTO Prototype miner
  - ak-network                      # Network Tools (connect to, scan for, dump peers)
- - ak-sblock-show                  # Returns a mined SBLOCK
+ - ak-sblock                       # Returns a mined SBLOCK
  - ak-find-latest-mined-sblock     # In a hay of SBLOCKS finds the latest
 
 Network scouting
