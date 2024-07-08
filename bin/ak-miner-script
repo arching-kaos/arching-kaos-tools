@@ -1,61 +1,51 @@
 #!/bin/bash
 PROGRAM="$(basename $0)"
 gather_zblocks(){
-    cat $AK_ZBLOCKSFILE | \
-        jq | \
-        grep -e 'Qm.\{44\}' | \
-        sed -e 's/\"zblock\"://g; s/ //g;' | \
-        tr -d '\n'| \
-        sed -e 's/""/","/g;
-            s/^/[&/g; s/$/&]/g;
-            s/^/{"zblocks":&/;
-            s/$/&,/g'
+    if [ "$(cat $AK_ZBLOCKSFILE | jq -r '.[].zblock' | wc -l)" -ne 0 ]
+    then
+        cat $AK_ZBLOCKSFILE | \
+            jq | \
+            grep -e 'Qm.\{44\}' | \
+            sed -e 's/\"zblock\"://g; s/ //g;' | \
+            tr -d '\n'| \
+            sed -e 's/""/","/g;
+                s/^/[&/g; s/$/&]/g;
+                s/^/{"zblocks":&/;
+                s/$/&,/g'
+    else
+        echo -ne '{'
+    fi
 }
 
 proofofwork(){
-    TEST="$1"
-    PRE="$2"
-    MINER="$3"
+    TEST="$(gather_zblocks)"
+    MINER="$(ak-gpg --get-key-self-as-ipfs)"
+    PRE="$(ak-find-latest-mined-sblock | jq -r '.latest_block' | tr -d $'\n')"
     i=1
     l=1; while [ $l = 1 ]
     do
         TIMESTAMP="$(date -u +%s)"
-        SHA="$(echo $TEST'"nonce":"'$i'","previous":"'$PRE'","timestamp":"'$TIMESTAMP'","miner":"'$MINER'","reward":"40"}' | sha512sum | awk '{ print $1 }')"
-
+        SHA="$(echo -n $TEST'"nonce":"'$i'","previous":"'$PRE'","timestamp":"'$TIMESTAMP'","miner":"'$MINER'","reward":"40"}' | sha512sum | awk '{ print $1 }')"
         # Static difficulty for securing the sblock
         echo $SHA | grep -e '^000'
         if [ $? -eq 0 ]
         then
             echo "SHA512 is $SHA"
             echo "Mined block:"
-            echo $TEST'"nonce":"'$i'","previous":"'$PRE'","timestamp":"'$TIMESTAMP'","miner":"'$MINER'","reward":"40"}' | jq --compact-output > $AK_MINEDBLOCKSDIR/$SHA
+            echo -n $TEST'"nonce":"'$i'","previous":"'$PRE'","timestamp":"'$TIMESTAMP'","miner":"'$MINER'","reward":"40"}' | jq --compact-output > $AK_MINEDBLOCKSDIR/$SHA
             cat $AK_MINEDBLOCKSDIR/$SHA | jq
             # exit 0
             # Instead of exiting, we will now sleep for 60 seconds
             # after that we continue mining on top of the just mined
             # block.
-            sleep 60
-            proofofwork "$1" "$SHA" "$MINER"
+            sleep 10
+            proofofwork
         fi
         i=$(expr $i + 1);
     done
 }
 
-usage(){
-    echo "$PROGRAM <somethings> <previous> <miner_address>"
-    echo " hit 'ak-zchain --crawl' after that."
-}
-
-if [ -z "$1" ] ;
-then
-    usage
-    exit;
-elif [ ! -z "$1" ] && [ ! -z "$2" ] && [ ! -z "$3" ]
-then
-    proofofwork "$1" "$2" "$3";
-else
-    usage
-fi
+proofofwork
 
 exit
 
