@@ -1,0 +1,270 @@
+#!/bin/bash
+##
+## Calculates the balances of the sblocks found from a chain
+## Saves stuff too for later reference
+##
+## The program is not accepting sblocks that hold invalid zchains
+## The zchains are the ones that can be crawled back from a zblock that is found
+## in the sblock.
+##
+fullprogrampath="$(realpath $0)"
+PROGRAM="$(basename $0)"
+descriptionString="Export balances from schain and zchains"
+source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_script
+source $AK_LIBDIR/_ak_ipfs
+source $AK_LIBDIR/_ak_gpg
+source $AK_LIBDIR/_ak_zchain
+source $AK_LIBDIR/_ak_schain
+source $AK_LIBDIR/_ak_sblock
+#set -xe
+AK_DB="$AK_WORKDIR/db"
+
+# coin max is 10,000.0000000
+# but we count in integer to avoid floating point arithmetic :P
+#
+# Note that this is subject to change when implemented in C
+#
+COINBASE=100000000000
+
+GENESIS="00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+
+AK_BALANCESDIR="$AK_WORKDIR/balances"
+if [ ! -d $AK_BALANCESDIR ]
+then
+    mkdir $AK_BALANCESDIR
+    if [ $? -ne 0 ]
+    then
+        _ak_log_error "Could not create $AK_BALANCESDIR"
+        exit 1
+    fi
+fi
+
+AK_INVALIDATED_SBLOCKS="$AK_WORKDIR/invalid_sblocks"
+if [ ! -d $AK_INVALIDATED_SBLOCKS ]
+then
+    mkdir -p $AK_INVALIDATED_SBLOCKS
+    if [ $? -ne 0 ]
+    then
+        _ak_log_error "Could not create $AK_INVALIDATED_SBLOCKS"
+        exit 1
+    fi
+fi
+
+if [ ! -f $AK_WORKDIR/schain.latest ]
+then
+    _ak_schain_latest_cached
+    LATEST="$(cat $AK_WORKDIR/schain.latest | jq -r '.latest_block')"
+    #echo -n $LATEST > $AK_WORKDIR/schain.latest
+else
+    LATEST="$(cat $AK_WORKDIR/schain.latest | jq -r '.latest_block')"
+fi
+
+TEMP="$(_ak_make_temp_directory)"
+cd $TEMP
+
+_ak_get_zblocks_from_sblock(){
+    if [ "$(_ak_sblock_show $1 | jq 'has("zblocks")')" == "true" ]
+    then
+        mkdir $1 && cd $1
+        _ak_sblock_show $1 | jq -r '.zblocks[]' | while read zblock
+        do
+            touch $zblock.untested
+        done
+        cd ..
+    fi
+}
+
+_ak_verify_zblocks_found(){
+    if [ -d $1 ]
+    then
+        cd $1
+        find . -type f | while read found_filename
+        do
+            filename="$(basename $found_filename)"
+            zblock="$(echo -n $filename | cut -d '.' -f 1)"
+            zblock_status="$(echo -n $filename | cut -d '.' -f 2)"
+            if [ "$zblock_status" == "untested" ] && [ ! -f $AK_DB/zblocks-tested/$zblock.success ] && [ ! -f $AK_DB/zblocks-tested/$zblock.failed ]
+            then
+                _ak_zchain_crawl $zblock > /dev/null 2>&1
+                if [ $? -ne 0 ]
+                then
+                    cp $filename $AK_DB/zblocks-tested/$zblock.failed
+                    mv $filename $zblock.failed
+                else
+                    cp $filename $AK_DB/zblocks-tested/$zblock.success
+                    mv $filename $zblock.success
+                fi
+            elif [ -f $AK_DB/zblocks-tested/$zblock.success ]
+            then
+                mv $filename $zblock.success
+            elif [ -f $AK_DB/zblocks-tested/$zblock.failed ]
+            then
+                mv $filename $zblock.failed
+            fi
+        done
+        cd ..
+    fi
+}
+
+_ak_balances_from_sblock(){
+    if [ -z $1 ] || [ ! -n "$1" ]
+    then
+        _ak_log_error "No sblock provided $1"
+        exit 1
+    fi
+    CUR_TARGET="$1"
+    _ak_log_info "Extracting balances from sblock provided $CUR_TARGET"
+    if [ ! -f $AK_MINEDBLOCKSDIR/$CUR_TARGET ]
+    then
+        _ak_log_error "Sblock not found $CUR_TARGET"
+    fi
+    _ak_log_info "Checking zblocks in sblock $CUR_TARGET"
+    _ak_get_zblocks_from_sblock $CUR_TARGET
+    _ak_log_info "Verifying zblocks in sblock $CUR_TARGET"
+    _ak_verify_zblocks_found $CUR_TARGET
+    _ak_log_debug "Looking for failed ones"
+    if [ -d $CUR_TARGET ]
+    then
+        find $CUR_TARGET -type f | grep failed
+        if [ $? -ne 0 ]
+        then
+            _ak_rewards_from_sblock $CUR_TARGET
+        else
+            _ak_log_warning "$CUR_TARGET is invalid"
+        fi
+    fi
+    #sleep 3
+    _ak_sblock_show $CUR_TARGET | jq
+}
+
+_ak_rewards_from_sblock(){
+    CUR_TARGET="$1"
+    GPG="$(_ak_sblock_show $CUR_TARGET | jq -r '.output')"
+    if [ "$GPG" == "null" ]
+    then
+        GPG="$(_ak_sblock_show $CUR_TARGET | jq -r '.miner')"
+    fi
+    AMOUNT="$(_ak_sblock_show $CUR_TARGET | jq -r '.amount')"
+    if [ "$AMOUNT" == "null" ]
+    then
+        AMOUNT="$(_ak_sblock_show $CUR_TARGET | jq -r '.reward')"
+    fi
+    TIMESTAMP="$(_ak_sblock_show $CUR_TARGET | jq -r '.timestamp')"
+    _ak_log_info "Found [$CUR_TARGET]($TIMESTAMP) $AMOUNT to $GPG"
+    if [ -f "$AK_BALANCESDIR/$(_ak_gpg_key_get_fingerprint_from_ipfs $GPG)" ]
+    then
+        grep "$TIMESTAMP:$CUR_TARGET:$AMOUNT" $AK_BALANCESDIR/$(_ak_gpg_key_get_fingerprint_from_ipfs $GPG) > /dev/null 2>&1
+        if [ $? -ne 0 ]
+        then
+            echo "$TIMESTAMP:$CUR_TARGET:$AMOUNT" >> $AK_BALANCESDIR/$(_ak_gpg_key_get_fingerprint_from_ipfs $GPG)
+            _ak_log_info "Added [$CUR_TARGET]($TIMESTAMP) $AMOUNT to $GPG"
+        fi
+    else
+        echo "$TIMESTAMP:$CUR_TARGET:$AMOUNT" >> $AK_BALANCESDIR/$(_ak_gpg_key_get_fingerprint_from_ipfs $GPG)
+        _ak_log_info "Added [$CUR_TARGET]($TIMESTAMP) $AMOUNT to $GPG"
+    fi
+}
+
+_ak_sblock_get_previous(){
+    if [ -z $1 ] || [ ! -n "$1" ]
+    then
+        _ak_log_error "No sblock provided !!"
+        exit 1
+    fi
+    CUR_TARGET="$1"
+    if [ ! -f $AK_MINEDBLOCKSDIR/$CUR_TARGET ]
+    then
+        _ak_log_error "Sblock not found"
+        exit 1
+    fi
+    PREVIOUS="$(_ak_sblock_show $CUR_TARGET | jq -r '.previous')"
+    echo -n $PREVIOUS
+}
+
+_ak_balances_calculate(){
+    if [ ! -z $1 ] && [ -n "$1" ]
+    then
+        _ak_log_info "Calculating balance for $1"
+        CUR_TARGET="$1"
+        if [ ! -f $AK_BALANCESDIR/$CUR_TARGET ]
+        then
+            _ak_log_warning "Address not found"
+            echo -n '0' > $AK_BALANCESDIR/$CUR_TARGET.total
+        else
+            total=0
+            # Zero cause we are now starting counting from the begging
+            echo -n '0' > $AK_BALANCESDIR/$CUR_TARGET.total
+            cat $AK_BALANCESDIR/$CUR_TARGET | cut -d ':' -f 3 | while read value
+            do
+                _ak_log_info "Found value $value for $CUR_TARGET"
+                total=$(($total + $value))
+                _ak_log_info "New total $total for $CUR_TARGET"
+                echo -n $total > $AK_BALANCESDIR/$CUR_TARGET.total
+            done
+        fi
+    else
+        _ak_log_info "Calculating balances"
+        find $AK_BALANCESDIR -type f | grep -v 'total' | while read account
+        do
+            _ak_balances_calculate "$(basename $account)"
+        done
+    fi
+}
+
+_ak_balances_print(){
+    if [ ! -z $1 ] && [ -n "$1" ]
+    then
+        CUR_TARGET="$1"
+        if [ ! -f $AK_BALANCESDIR/$CUR_TARGET.total ]
+        then
+            _ak_log_error "Account not found"
+            exit 1
+        fi
+        printf '%s:%s\n' "$CUR_TARGET" "$(cat $AK_BALANCESDIR/$CUR_TARGET.total)"
+    else
+        find $AK_BALANCESDIR -type f | grep total | while read CUR_TARGET
+        do
+            printf '%s:%s\n' "$(basename $CUR_TARGET | cut -d'.' -f1)" "$(cat $CUR_TARGET)"
+        done
+    fi
+}
+
+_ak_schain_counting_balances(){
+    if [ ! -z $1 ] && [ -n "$1" ]
+    then
+        CUR_TARGET="$1"
+    else
+        _ak_log_error "No next target found. So long for $1"
+        exit 1
+    fi
+    _ak_log_info "Looking at $CUR_TARGET"
+    counter=$(($counter + 1))
+    if [ "$1" == "$GENESIS" ]
+    then
+        _ak_balances_calculate
+        _ak_balances_print
+        _ak_log_warning "Looks like genesis. Exiting with 0"
+        exit 0
+    fi
+    if [ ! -f $AK_MINEDBLOCKSDIR/$CUR_TARGET ]
+    then
+        _ak_log_error "Could not find $CUR_TARGET"
+        exit 1
+    else
+        _ak_balances_from_sblock $CUR_TARGET
+        NEXT_TARGET="$(_ak_sblock_get_previous $CUR_TARGET)"
+        # mv $AK_MINEDBLOCKSDIR/$CUR_TARGET $AK_INVALIDATED_SBLOCKS/$CUR_TARGET
+        _ak_log_info "Found previous: $NEXT_TARGET"
+        _ak_schain_counting_balances "$NEXT_TARGET"
+    fi
+}
+
+if [ ! -z $1 ] && [ -n "$1" ]
+then
+    _ak_usage
+else
+    CUR_TARGET="$LATEST"
+    _ak_log_info "$CUR_TARGET $LATEST"
+    _ak_schain_counting_balances $CUR_TARGET
+fi
