@@ -62,13 +62,17 @@ case "$1" in
         shift
         subcmd="$AK_MODULESDIR/$(echo $1 | sed -e 's/ /-/g')"
         shift
-        if [ -z $1 ] || [ ! -n "$*" ]
+        if [ ! -n $1 ]
         then
             _ak_log_error "No module selected"
             ls -1 $AK_MODULESDIR
             exit 1
         fi
         subargs="$*"
+        if [ ! -n $subargs ]
+        then
+            subargs="--help"
+        fi
         if [ ! -f $subcmd/main.sh ]
         then
             _ak_log_error "No $(basename $subcmd) module"
