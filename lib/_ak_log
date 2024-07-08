@@ -37,7 +37,10 @@ _ak_log_grep(){
     echo "Select one of those by entering the number of it below and hit enter:"
     select x in $(cat $AK_LOGSFILE | cut -d ' ' -f 2 | sort | uniq)
     do
-        grep $x $AK_LOGSFILE
+        grep $x $AK_LOGSFILE | while read line
+        do
+            _ak_log_print_log_line "$line"
+        done
         break
     done
 }
