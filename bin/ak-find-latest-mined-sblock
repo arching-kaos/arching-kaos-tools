@@ -51,33 +51,45 @@ lookfor(){
     fi
 }
 
-templistblock="$(_ak_make_temp_file)"
-find . -type f | sed 's/^\.\/000/000/g' | grep '^000'  | sort > $templistblock
-while IFS="" read -r p || [ -n "$p" ]
-do
-#    if [ ! "$p" = "" ] && [ ! "$p" = "tmplistblock" ]
-    if [ "$(echo $p | tr -d '\n' | wc -c)" = 128 ]
+_ak_sblock_get_latest_from_haystack_of_sblocks(){
+    templistblock="$(_ak_make_temp_file)"
+    find $AK_MINEDBLOCKSDIR -maxdepth 1 -type f | while read line
+    do
+        basename "${line}" >> $templistblock
+    done
+    if [ "$(cat $templistblock | wc -l)" -ne 0 ]
     then
-        filename="$(basename $p)"
-        _ak_log_info "Investigating $filename..."
-        export CHAIN_PARENT="$filename"
-        counters[$CHAIN_PARENT]=1
-        lookfor "$filename"
+        while IFS="" read -r p || [ -n "$p" ]
+        do
+        #    if [ ! "$p" = "" ] && [ ! "$p" = "tmplistblock" ]
+            if [ "$(echo $p | tr -d '\n' | wc -c)" = 128 ]
+            then
+                filename="$(basename $p)"
+                _ak_log_info "Investigating $filename..."
+                export CHAIN_PARENT="$filename"
+                counters[$CHAIN_PARENT]=1
+                lookfor "$filename"
+            else
+                _ak_log_warning "Nothing to do with $filename"
+            fi
+        done < $templistblock
+        rm $templistblock
+        max=0
+        max_holder=0
+        for value in "${!counters[@]}"
+        do
+            #    echo "${value} : ${counters[${value}]}"
+            if [ ${counters[${value}]} -gt $max  ]
+            then
+                max="${counters[${value}]}"
+                max_holder="${value}"
+                _ak_log_info "New MAX $max on $max_holder"
+            fi
+        done
     else
-        _ak_log_warning "Nothing to do with $filename"
+        max_holder="00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
     fi
-done < $templistblock
-rm $templistblock
-max=0
-max_holder=0
-for value in "${!counters[@]}"
-do
-    #    echo "${value} : ${counters[${value}]}"
-    if [ ${counters[${value}]} -gt $max  ]
-    then
-        max="${counters[${value}]}"
-        max_holder="${value}"
-        _ak_log_info "New MAX $max on $max_holder"
-    fi
-done
-echo '{"latest_block":"'$max_holder'"}'
+    echo -n '{"latest_block":"'$max_holder'"}' | tee $AK_WORKDIR/schain.latest
+}
+
+_ak_sblock_get_latest_from_haystack_of_sblocks $1
