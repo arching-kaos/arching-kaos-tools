@@ -1,4 +1,16 @@
 #!/bin/bash
+## sm files
+##
+##  -h, --help              Prints this help message
+##
+##  --add <file>            Adds file to zchain as a zblock
+##
+##  --index                 List files
+##
+##  --full-index            List all files
+##
+##  --ls-map-files          List map files
+##
 ZFILESDIR="$AK_WORKDIR/files"
 pwd > .pwd
 CRD=$(cat .pwd)
@@ -24,21 +36,13 @@ else
     _ak_log_info "$ZFILESDIR found!"
 fi
 
-usage(){
-    echo "$PROGRAM - file"
-    echo "  -h, --help              Prints this help message"
-    echo "  add <file>              Adds file to zchain as a zblock"
-    echo "  index                   List files"
-    echo "  full-index              List all files"
-    echo "  ls-map-files            List map files"
-}
 
-add(){
+_ak_sm_files_add(){
     FILENAME="$1"
-    main $FILENAME $CRD
+    _ak_sm_files_main $FILENAME $CRD
     cat data | jq -M
 }
-main(){
+_ak_sm_files_main(){
     FILENAME="$1"
     CRP="$2"
 
@@ -128,11 +132,11 @@ EOF
     fi
 }
 
-index(){
+_ak_sm_files_index(){
     tail -n1 $AK_WORKDIR/fmp/* | grep '^[abcdef1234567890]' | awk '{ print $2 }'
 }
 
-ls-mapfiles(){
+_ak_sm_files_ls_mapfiles(){
     cd $AK_WORKDIR/fmp
     for f in `find . -type f | sed -e 's/\.\///g'`;do
         FILENAME="$(tail -n1 $f | grep '^[abcdef1234567890]' | awk '{ print $2 }')"
@@ -142,17 +146,17 @@ ls-mapfiles(){
     done
 }
 
-full-index(){
+_ak_sm_files_full_index(){
     tail -n1 $AK_WORKDIR/fmp/* | grep '^[abcdef1234567890]'
 }
 
 if [ ! -z $1 ]; then
     case $1 in
         -h | --help) usage; exit;;
-        add) add $2; exit;;
-        index) index; exit;;
-        full-index) full-index; exit;;
-        ls-map-files) ls-mapfiles; exit;;
+        --add) _ak_sm_files_add $2; exit;;
+        --index) _ak_sm_files_index; exit;;
+        --full-index) _ak_sm_files_full_index; exit;;
+        --ls-map-files) _ak_sm_files_ls_mapfiles; exit;;
         *) usage; exit;;
     esac
 else usage
