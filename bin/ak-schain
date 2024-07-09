@@ -21,7 +21,7 @@ if [ ! -z $1 ]
 then
     case $1 in
         -h | --help) _ak_usage; exit;;
-        -c | --crawl) _ak_schain_crawl_interface $*; exit;;
+        -c | --crawl) shift; _ak_schain_crawl_interface $*; exit;;
         * ) _ak_usage;;
     esac
 else _ak_usage

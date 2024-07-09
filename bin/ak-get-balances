@@ -84,7 +84,9 @@ _ak_verify_zblocks_found(){
             filename="$(basename $found_filename)"
             zblock="$(echo -n $filename | cut -d '.' -f 1)"
             zblock_status="$(echo -n $filename | cut -d '.' -f 2)"
-            if [ "$zblock_status" == "untested" ] && [ ! -f $AK_DB/zblocks-tested/$zblock.success ] && [ ! -f $AK_DB/zblocks-tested/$zblock.failed ]
+            if [ "$zblock_status" == "untested" ] && \
+                [ ! -f $AK_DB/zblocks-tested/$zblock.success ] && \
+                [ ! -f $AK_DB/zblocks-tested/$zblock.failed ]
             then
                 _ak_zchain_crawl $zblock > /dev/null 2>&1
                 if [ $? -ne 0 ]
@@ -124,27 +126,40 @@ _ak_balances_from_sblock(){
     _ak_log_info "Verifying zblocks in sblock $CUR_TARGET"
     _ak_verify_zblocks_found $CUR_TARGET
     _ak_log_debug "Looking for failed ones"
-    if [ -d $CUR_TARGET ]
-    then
-        find $CUR_TARGET -type f | grep failed
-        if [ $? -ne 0 ]
-        then
-            _ak_rewards_from_sblock $CUR_TARGET
-        else
-            _ak_log_warning "$CUR_TARGET is invalid"
-        fi
-    fi
+    _ak_log_debug "Looking for failed ones @ `pwd` and $CUR_TARGET"
     #sleep 3
-    _ak_sblock_show $CUR_TARGET | jq
+    if [ "$(_ak_sblock_show $CUR_TARGET | jq 'has("zblocks")')" == "true" ]
+    then
+        if [ -d $CUR_TARGET ]
+        then
+            find $CUR_TARGET -type f | grep failed
+            if [ $? -ne 0 ]
+            then
+                _ak_rewards_from_sblock $CUR_TARGET
+            else
+                _ak_log_warning "$CUR_TARGET is invalid"
+            fi
+        fi
+    else
+        _ak_rewards_from_sblock $CUR_TARGET
+    fi
 }
 
 _ak_rewards_from_sblock(){
-    CUR_TARGET="$1"
+    if [ ! -z $1 ] && [ -n "$1" ]
+    then
+        CUR_TARGET="$1"
+    else
+        _ak_log_error "No SBLOCK provided"
+        exit 1
+    fi
     GPG="$(_ak_sblock_show $CUR_TARGET | jq -r '.output')"
+    _ak_log_debug "Got GPG : $GPG"
     if [ "$GPG" == "null" ]
     then
         GPG="$(_ak_sblock_show $CUR_TARGET | jq -r '.miner')"
     fi
+    _ak_log_debug "Now got GPG : $GPG"
     AMOUNT="$(_ak_sblock_show $CUR_TARGET | jq -r '.amount')"
     if [ "$AMOUNT" == "null" ]
     then
