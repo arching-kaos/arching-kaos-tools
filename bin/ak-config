@@ -1,6 +1,6 @@
 #!/bin/bash
 ##
-## Usage:    ak-config [ -h | --help | show | publish | get-published ]
+## Usage:    ak-config [ -h | --help | --show | --publish | --get-published ]
 ##
 ##     -h, --help       Show this help screen
 ##
