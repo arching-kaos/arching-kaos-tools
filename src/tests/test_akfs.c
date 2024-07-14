@@ -86,7 +86,7 @@ void more_than_length()
 void string_is_empty()
 {
     printf("%s\t", __func__);
-    char queried_string[128];
+    char queried_string[128] = "";
     // printf("Hash given:\t%s\n", queried_string);
     //printf("Is a hash: %s\n", ak_fs_verify_input_is_hash(queried_string) ? "true": "false");
     sha512sum resulted_hash = ak_fs_sha512sum_string_to_struct(queried_string);
@@ -175,6 +175,7 @@ void hash_save_to_file()
     {
         printf("\tNO PASS :(\n");
     }
+    fclose(fd);
     free(resulted_string);
 }
 
