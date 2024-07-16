@@ -1,0 +1,206 @@
+#!/bin/bash
+source $AK_LIBDIR/_ak_log
+
+# The directory where the chunked data will be living at
+CHKDIR="$AK_WORKDIR/ftr"
+# The directory for the map files so we can reconstruct the file
+FILEMAPSDIR="$AK_WORKDIR/fmp"
+# A temporary root dir to work on
+TEMPORARYDIR="/tmp/tltmp"
+# A subdir to split the files there
+TECHDIR="/tmp/tltmp/chks"
+# A pin point to return from where we came from
+CURRENTDIR="$(pwd)/"
+# Checking directories and create them if necessary
+
+if [ ! -d "$TECHDIR" ]
+then
+    mkdir -p "$TECHDIR"
+    if [ $? -eq 0 ]
+    then
+        _ak_log_info "Folder $TECHDIR created!"
+    else
+        _ak_log_error "Problem occured while creating $TECHDIR"
+        exit 1
+    fi
+else
+    _ak_log_info "Temp dir found"
+fi
+
+if [ ! -d "$FILEMAPSDIR" ]
+then
+    mkdir -p "$FILEMAPSDIR"
+    if [ $? -eq 0 ]
+    then
+        _ak_log_info "Folder $FILEMAPSDIR created!"
+    else
+        _ak_log_error "Problem occured while creating $FILEMAPSDIR"
+        exit 1
+    fi
+else
+    _ak_log_info "Mapsdir found"
+fi
+
+if [ ! -d "$CHKDIR" ]
+then
+    mkdir -p "$CHKDIR"
+    if [ $? -eq 0 ]
+    then
+        _ak_log_info "Folder $CHKDIR created!"
+    else
+        _ak_log_error "Problem occured while creating $CHKDIR"
+        exit 1
+    fi
+else
+    _ak_log_info "Workdir found"
+fi
+
+cdaw(){
+    pwd > tmp_holder
+}
+
+_ak_sm_file_joiner(){
+    cdaw
+
+    CURDIR="$(cat tmp_holder)"
+
+    TMPWD="/tmp/rjs"
+
+    if [ ! -d "$TMPWD" ]
+    then
+        mkdir -p "$TMPWD"
+        if [ $? -ne 0 ]
+        then
+            _ak_log_error "Can't create $TMPWD dir"
+            exit 1
+        fi
+    fi
+
+    cd $CHKDIR
+    if [ $? -ne 0 ]
+    then
+        _ak_log_error "Can't get dir"
+        exit 1
+    fi
+
+    if [ ! -z $1 ]
+    then
+        MAPSFILE="$1"
+
+        echo '#!/bin/bash' > script
+
+        # We create a script to copy all the chunks and rename them to their serialized
+        # name produced by split when we splitted the file
+        awk '{print "cp '$CHKDIR'/"$1" '$TMPWD'/"$2" "}' $FILEMAPSDIR/$MAPSFILE| grep chk >> script
+
+        bash script
+
+        if [ $? -ne 0 ]
+        then
+            echo "Error executing copy script"
+            exit 1
+        fi
+        rm script
+
+        cd $TMPWD
+
+        echo "$PWD"
+
+        # Final name we are going to rename to
+        OUTPUT="$(tail -n 1 $FILEMAPSDIR/$MAPSFILE | awk '{print $2}')"
+
+        echo $OUTPUT
+
+        # We grep the MAPSFILE for chk filenames in lines and we print them all in
+        # one line so the first `cat` will concatenate all chunks to OUTPUT
+        cat $(echo -n $(cat $FILEMAPSDIR/$MAPSFILE|grep chk|awk '{print $2" "}'|tr -d '\n')) > $OUTPUT
+
+        # We check if everything is okay
+        sha512sum -c $FILEMAPSDIR/$MAPSFILE
+        if [ $? -ne 0 ]
+        then
+            _ak_log_error "Error while checking sums"
+            exit 1
+        fi
+
+        mv $OUTPUT $CURDIR
+
+        rm -rf "$TMPWD"
+
+        rm $CURDIR/tmp_holder
+    else
+        _ak_log_error "No hash given"
+        exit 1
+    fi
+}
+
+_ak_sm_file_splitter(){
+    #
+    # The concept is simple
+    #
+    # 1. For a given file we split in 1MB files inside a temporary directory
+    #
+    # 2. We then create a map file, containing the resulted files and their sha512sum
+    #
+    # 3. We move the files to our $CHKDIR named after their checksums
+    #
+    # We ultimately want to be seeding the file so
+    #
+    # 4. We append the checksum of the original file with its name into the map file
+    #
+    # 5. We rename the map file after its checksum and move it to maps directory
+    #
+    # 6. We are done!
+    #
+
+    # Uncomment next line if you want to debug
+    # set -xe
+
+    if [ ! -f "$1" ]
+    then
+        echo "ERROR File not found"
+        exit 1
+    else
+        FILE="$1"
+    fi
+
+    # Uncomment next line in case you want to debug the resulting script as well
+    # echo 'set -xe' > $TEMPORARYDIR/cmd_queue.sh
+
+    # We get the SHA512 hash for the $FILE given
+    CHECKSUM=$(sha512sum "$FILE"|awk '{print $1}')
+
+    # We split the file into 1048576 bytes and output the chunks into TECHDIR
+    split -b 1048576 --additional-suffix ".chk" -d "$FILE" "$TECHDIR/$(basename "$FILE")-"
+
+    # We go over there...
+    cd $TECHDIR
+
+    # We get every chunks' SHA512 and we craft a script to rename the chunks and
+    # move them to CHKDIR
+    sha512sum  * > $TEMPORARYDIR/map; while IFS="" read -r p || [ -n "$p" ]
+    do
+        echo $p | awk '{print "mv " $2 " '$CHKDIR'/" $1}' >> $TEMPORARYDIR/cmd_queue.sh
+    done < $TEMPORARYDIR/map
+
+    # We run the crafted script
+    sh $TEMPORARYDIR/cmd_queue.sh
+
+    # and we delete it
+    rm $TEMPORARYDIR/cmd_queue.sh
+
+    # We inform the map about the original $FILE name and SHA512
+    echo "$CHECKSUM  $(basename "$FILE")" >> $TEMPORARYDIR/map
+
+    # We get the SHA512 hash of the resulted map file
+    MAPFILEHASH="$(sha512sum $TEMPORARYDIR/map | awk '{ print $1 }')"
+
+    # and we rename it with it and move it to FILEMAPSDIR
+    `sha512sum $TEMPORARYDIR/map | awk '{print "mv " $2 " '$FILEMAPSDIR'/" $1}'`
+
+    # We remove the TEMPORARYDIR
+    rm -rf $TEMPORARYDIR
+
+    # and print the MAPFILEHASH
+    echo "$MAPFILEHASH"
+}

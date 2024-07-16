@@ -1,41 +1,10 @@
 #!/bin/bash
-## sm files
-##
-##  -h, --help              Prints this help message
-##
-##  --add <file>            Adds file to zchain as a zblock
-##
-##  --index                 List files
-##
-##  --full-index            List all files
-##
-##  --ls-map-files          List map files
-##
-ZFILESDIR="$AK_WORKDIR/files"
-pwd > .pwd
-CRD=$(cat .pwd)
 
-PROGRAM="$(basename $0)"
-#set -xe
 source $AK_LIBDIR/_ak_log
 source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_gpg
 source $AK_LIBDIR/_ak_zblock
-
-if [ ! -d $ZFILESDIR ]; then
-    mkdir $ZFILESDIR
-    if [ $? == 0 ]
-    then
-        _ak_log_info "Folder $ZFILESDIR created!"
-    else
-        _ak_log_error "Failed to create $ZFILESDIR folder"
-        exit 1
-    fi
-    cd $ZFILESDIR
-else
-    _ak_log_info "$ZFILESDIR found!"
-fi
-
+source $AK_LIBDIR/_ak_smfiles
 
 _ak_sm_files_add(){
     FILENAME="$1"
@@ -51,7 +20,8 @@ _ak_sm_files_main(){
 
     echo "Adding $FILENAME"
     _ak_log_info "Switching to tmp folder..."
-    if [ $? == 0 ]; then
+    if [ $? -eq 0 ]
+    then
         _ak_log_info "Success"
     else
         _ak_log_error "Error with tmp folder"
@@ -60,7 +30,8 @@ _ak_sm_files_main(){
     _ak_log_info "Copying $1 to $TEMPASSIN"
 
     cp $CRP/$FILENAME $FILENAME
-    if [ $? == 0 ]; then
+    if [ $? -eq 0 ]
+    then
         _ak_log_info "Copied successfully"
     else
         _ak_log_error "Error copying..."
@@ -68,15 +39,17 @@ _ak_sm_files_main(){
 
     _ak_log_info "Adding $FILENAME to IPFS..."
     FILE_IPFS_HASH=$(_ak_ipfs_add $FILENAME)
-    if [ $? == 0 ]; then
+    if [ $? -eq 0 ]
+    then
         _ak_log_info "Added $FILENAME to IPFS"
     else
         _ak_log_error "Error in adding the $FILENAME to IPFS"
     fi
 
     _ak_log_info "Adding $FILE to SHAMAPSYS..."
-    FILEMAP_SHA512_HASH=$(ak-sm-filesplitter $FILENAME)
-    if [ $? == 0 ]; then
+    FILEMAP_SHA512_HASH=$(_ak_sm_file_splitter $FILENAME)
+    if [ $? -eq 0 ]
+    then
         _ak_log_info "Added $FILENAME to SHAMAPSYS"
     else
         _ak_log_error "Error in adding the $FILENAME to SHAMAPSYS"
@@ -85,7 +58,8 @@ _ak_sm_files_main(){
     _ak_log_info "Signing..."
     SIGN_FILE=$FILENAME".asc"
     _ak_gpg_sign_detached $SIGN_FILE $FILENAME
-    if [ $? == 0 ]; then
+    if [ $? -eq 0 ]
+    then
         _ak_log_info "Signed"
     else
         _ak_log_error "Error while signing"
@@ -93,15 +67,17 @@ _ak_sm_files_main(){
 
     _ak_log_info "Adding signature to IPFS"
     SIGNATURE=$(_ak_ipfs_add $SIGN_FILE)
-    if [ $? == 0 ]; then
+    if [ $? -eq 0 ]
+    then
         _ak_log_info "Added"
     else
         _ak_log_error "Error while adding"
     fi
 
     _ak_log_info "Adding signature to SHAMAPSYS"
-    SHAMAPSIGMAP=$(ak-sm-filesplitter $SIGN_FILE)
-    if [ $? == 0 ]; then
+    SHAMAPSIGMAP=$(_ak_sm_file_splitter $SIGN_FILE)
+    if [ $? -eq 0 ]
+    then
         _ak_log_info "Added"
     else
         _ak_log_error "Error while adding"
@@ -123,7 +99,7 @@ EOF
     echo "Publishing..."
 
     _ak_zblock_pack sha-files/announce $(pwd)/data
-    if [ $? == 0 ]
+    if [ $? -eq 0 ]
     then
         echo "cool"
     else
@@ -138,26 +114,16 @@ _ak_sm_files_index(){
 
 _ak_sm_files_ls_mapfiles(){
     cd $AK_WORKDIR/fmp
-    for f in `find . -type f | sed -e 's/\.\///g'`;do
-        FILENAME="$(tail -n1 $f | grep '^[abcdef1234567890]' | awk '{ print $2 }')"
-        FILEHASH="$(tail -n1 $f | grep '^[abcdef1234567890]' | awk '{ print $1 }')"
+    for f in `find . -type f | sed -e 's/\.\///g'`
+    do
+        FILENAME="$(tail -n 1 $f | grep '^[abcdef1234567890]' | awk '{ print $2 }')"
+        FILEHASH="$(tail -n 1 $f | grep '^[abcdef1234567890]' | awk '{ print $1 }')"
         MAPFILE="$f"
         printf "\nMap: %s\nFilename: %s\nSum: %s\n\n" $MAPFILE $FILENAME $FILEHASH
     done
 }
 
 _ak_sm_files_full_index(){
-    tail -n1 $AK_WORKDIR/fmp/* | grep '^[abcdef1234567890]'
+    tail -n 1 $AK_WORKDIR/fmp/* | grep '^[abcdef1234567890]'
 }
 
-if [ ! -z $1 ]; then
-    case $1 in
-        -h | --help) usage; exit;;
-        --add) _ak_sm_files_add $2; exit;;
-        --index) _ak_sm_files_index; exit;;
-        --full-index) _ak_sm_files_full_index; exit;;
-        --ls-map-files) _ak_sm_files_ls_mapfiles; exit;;
-        *) usage; exit;;
-    esac
-else usage
-fi

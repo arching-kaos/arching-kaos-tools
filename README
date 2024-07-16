@@ -291,7 +291,7 @@ Modules
  - repositories                 # Adds repositories to the ZCHAIN
  - roadmap                  PROTO Adds a roadmap to the ZCHAIN
  - transactions                 # Prototype of transactions in the ZCHAIN
- - sm-files                     # Adds a split file's map to the ZCHAIN
+ - smfiles                      # Adds a split file's map to the ZCHAIN
  - todos                    PROTO Adds todo list to the ZCHAIN
 
  Read more at the `./MODULES` file
@@ -301,11 +301,6 @@ Public following (uses ak-profile module)
  - ak-follow               # Follow something
  - ak-following            # List your follows
  - ak-unfollow             # Unfollow something
-
-File splitters
---------------
- - ak-sm-filejoiner            # Joins a file from a map
- - ak-sm-filesplitter          # Splits a file to chunks and creates a map
 
 FS tools
 --------
@@ -336,6 +331,7 @@ Libraries
  - lib/_ak_network
  - lib/_ak_script
  - lib/_ak_log
+ - lib/_ak_smfiles
 
 IPFS Wrappers
 -------------
