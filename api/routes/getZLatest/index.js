@@ -10,7 +10,7 @@ const { spawn } = require('child_process');
  */
 function getZLatest(req, res)
 {
-    const command = spawn("ak-get-zlatest");
+    const command = spawn("ak-zchain", ["--get-latest"]);
     var buffer = "";
     command.stdout.on("data", data => {
         buffer += data;

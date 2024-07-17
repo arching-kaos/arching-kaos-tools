@@ -15,7 +15,7 @@ _ak_config_show(){
     "genesis":"'$(cat $AK_WORKDIR/config/zgenesis)'",
     "gpg":"'$GPG_PUB_KEY'",
     "zchain":"'$(cat $AK_WORKDIR/config/zchain)'",
-    "zlatest":"'$(ak-get-zlatest)'"
+    "zlatest":"'$(ak zchain --get-latest)'"
 }'| jq;
 }
 

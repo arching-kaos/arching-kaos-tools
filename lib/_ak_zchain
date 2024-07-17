@@ -231,6 +231,10 @@ _ak_zchain_crawl_remote_ipns(){
     #ak enter -n $1
 }
 
+_ak_zchain_get_latest(){
+    _ak_ipfs_files_stat /zlatest | head -n 1| tr -d '\n'
+}
+
 # _ak_zchain_announce(){}
 #     PROGRAM="$(basename $0)"
 #     printf '[%s]\n' "$PROGRAM"
