@@ -275,7 +275,6 @@ Experimental
  - ak-mempool                      # TODO
  - ak-miner-script             PROTO Prototype miner
  - ak-get-balances                 # Returns a balances from SCHAIN
- - ak-find-latest-mined-sblock     # In a hay of SBLOCKS finds the latest
 
 Modules
 -------

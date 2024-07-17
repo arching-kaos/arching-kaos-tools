@@ -8,13 +8,13 @@ GENESIS="00000000000000000000000000000000000000000000000000000000000000000000000
 _ak_schain_latest_cached(){
     if [ ! -f $AK_WORKDIR/schain.latest ]
     then
-        ak-find-latest-mined-sblock > $AK_WORKDIR/schain.latest
+        _ak_schain_get_latest > $AK_WORKDIR/schain.latest
     fi
     cat $AK_WORKDIR/schain.latest
 }
 
 _ak_schain_tidy(){
-    SLATEST=$(ak-find-latest-mined-sblock | jq -r '.latest_block')
+    SLATEST=$(_ak_schain_get_latest | jq -r '.latest_block')
     if [ ! -d $AK_SCHAINSDIR ]
     then
         mkdir $AK_SCHAINSDIR
@@ -22,7 +22,7 @@ _ak_schain_tidy(){
 }
 
 _ak_schain_block_latest_block_hash(){
-    ak-find-latest-mined-sblock | jq -r '.latest_block'
+    _ak_schain_get_latest | jq -r '.latest_block'
 }
 
 _ak_schain_crawl(){

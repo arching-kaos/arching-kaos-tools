@@ -20,7 +20,7 @@ gather_zblocks(){
 proofofwork(){
     TEST="$(gather_zblocks)"
     MINER="$(ak-gpg --get-key-self-as-ipfs)"
-    PRE="$(ak-find-latest-mined-sblock | jq -r '.latest_block' | tr -d $'\n')"
+    PRE="$(ak schain --get-latest | jq -r '.latest_block' | tr -d $'\n')"
     i=1
     l=1; while [ $l = 1 ]
     do
