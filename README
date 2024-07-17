@@ -273,7 +273,7 @@ Utilities
 Experimental
 ------------
  - ak-mempool                      # TODO
- - ak-miner-script             PROTO Prototype miner
+ - ak-mine                     PROTO Prototype miner
  - ak-get-balances                 # Returns a balances from SCHAIN
 
 Modules
