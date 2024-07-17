@@ -94,3 +94,85 @@ _ak_schain_crawl_interface(){
         done
     fi
 }
+
+_ak_schain_count_schain(){
+    echo -n $1 | grep -e '[0-9a-f]\{128\}' > /dev/null
+    if [ $? -ne 0 ]
+    then
+        _ak_log_error "Not a SHA512 hash"
+        exit 1
+    fi
+    echo -n $1 | grep -e '0\{128\}' > /dev/null
+    if [ $? -ne 0 ]
+    then
+        _ak_log_info "Genesis block found!"
+    fi
+    if [ ! -z $2 ] && [ -n "$2" ]
+    then
+        printf '%s' "$(echo $(( $(cat $tempcounters/$2) + 1 )))" > $tempcounters/$2
+    fi
+    _ak_log_info "Accessing file: $1"
+    NEXT_TARGET="$(cat "$AK_MINEDBLOCKSDIR/$1" | jq -r '.previous')"
+    if [ -n "$NEXT_TARGET" ]
+    then
+        _ak_log_info "Found previous: $NEXT_TARGET"
+        if [ ! -f "$AK_MINEDBLOCKSDIR/$NEXT_TARGET" ]
+        then
+            _ak_log_warning "Could not find $NEXT_TARGET"
+        else
+            _ak_schain_count_schain "$NEXT_TARGET" "$2"
+        fi
+    else
+        _ak_log_warning "No next target found. So long for $1"
+    fi
+}
+
+_ak_sblock_get_latest_from_haystack_of_sblocks(){
+    templistblock="$(_ak_make_temp_file)"
+    tempcounters="$(_ak_make_temp_directory)"
+    max="$(_ak_make_temp_file)"
+    max_holder="$(_ak_make_temp_file)"
+    echo -n 0 > $max
+    echo -n "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" > $max_holder
+    find $AK_MINEDBLOCKSDIR -maxdepth 1 -type f | while read line
+    do
+        basename "${line}" >> $templistblock
+    done
+    if [ "$(cat $templistblock | wc -l)" -eq 0 ]
+    then
+        _ak_log_error "No sblocks found"
+        max_holder="00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        printf '{"latest_block":"%s"}' "$max_holder" | tee $AK_WORKDIR/schain.latest
+        exit
+    fi
+    cat $templistblock | while read line
+    do
+        if [ "$(echo $line | tr -d '\n' | wc -c)" -eq 128 ]
+        then
+            filename="$(basename $line)"
+            _ak_log_info "Investigating $filename..."
+            printf '1' > $tempcounters/$filename
+            _ak_schain_count_schain "$filename" "$filename"
+        else
+            _ak_log_warning "Nothing to do with $filename"
+        fi
+    done
+    rm $templistblock
+    find $tempcounters -type f | while read line
+    do
+        _ak_log_debug "Current MAX $(cat $max) on $(cat $max_holder)"
+        _ak_log_debug "Current $(cat $line) blocks on $(basename $line)"
+        linesum="$(cat $line)"
+        if [ $linesum -gt $(cat $max) ]
+        then
+            cat $line > $max
+            basename $line > $max_holder
+            _ak_log_info "New MAX $(cat $max) on $(cat $max_holder)"
+        fi
+    done
+    printf '{"latest_block":"%s"}' "$(cat $max_holder)" | tee $AK_WORKDIR/schain.latest
+}
+
+_ak_schain_get_latest(){
+    _ak_sblock_get_latest_from_haystack_of_sblocks
+}

@@ -8,6 +8,10 @@
 ##
 ##    -c, --crawl                 Crawl an schain or latest known
 ##
+##    -l, --get-latest            Returns latest sblock from saved sblocks. The
+##                                latest sblock would belong to the longest
+##                                schain if more than one schains found.
+##
 fullprogrampath="$(realpath $0)"
 PROGRAM=$(basename $0)
 descriptionString="Schain tools"
@@ -22,6 +26,7 @@ then
     case $1 in
         -h | --help) _ak_usage; exit;;
         -c | --crawl) shift; _ak_schain_crawl_interface $*; exit;;
+        -l | --get-latest) _ak_schain_get_latest; exit;;
         * ) _ak_usage;;
     esac
 else _ak_usage
