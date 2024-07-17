@@ -7,9 +7,15 @@
 ## reference them, export blocks to HTML pages, "roll-back" your zchain to an
 ## older block, reset your zchain and more.
 ##
+## Run with no arguments to see available commands
+##
 ##    -h, --help                  Prints this help message
 ##
-## Run with no arguments to see available commands
+##    -m, --module [module]       Run a specified module. If no module provided
+##                                the list of available modules will be printed.
+##
+##    [command] [args]            Run a command. If none provided a list of
+##                                commands will be printed.
 ##
 fullprogrampath="$(realpath $0)"
 PROGRAM="$(basename $0)"
