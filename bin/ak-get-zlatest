@@ -1,3 +1,0 @@
-#!/bin/bash
-source $AK_LIBDIR/_ak_ipfs
-_ak_ipfs_files_stat /zlatest | head -n 1| tr -d '\n'
