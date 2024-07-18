@@ -300,6 +300,41 @@ As you have already witnessed, prototype is another way of telling "will do" or
 "here is an idea".
 
 
+## follow
+
+Prototype - Follows something!
+
+"Something" is completely accurate at this point as it is following nothing in
+particular. The purpose of introducing it was to be able to add a "follow/add"
+block to your chain, so in some sense to inform others that others exist too
+and you "follow" them as in the "social media" terminology.
+
+The place from which you are doing it though is vague. The first thought was to
+have the `ak-config` IPNS key in the list. An update on that key would fetch you
+the new latest of the zchain that this key point to, hence, being able to crawl
+the latest version of it. That was mostly cause the 'ak-config' output would be
+something like this:
+
+```json
+{
+  "profile": {
+    "nickname": "someone",
+  },
+  "genesis": "QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH",
+  "gpg": "42A...",
+  "zchain": "k51q...",
+  "zlatest": "Qm..."
+}
+```
+
+Other than publishing that you follow or unfollow someone's ak-config IPNS key,
+the module doesn't do anything else.
+
+Privacy-wise, someone would not like to let others know what their follow list
+is.
+
+
+
 ## Notes
  - [1] "data_signature" is labeled as "detach" inside the block.
  - [2] README file mentions that the whole project is in experimental state, btw

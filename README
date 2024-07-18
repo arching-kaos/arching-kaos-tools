@@ -291,14 +291,9 @@ Modules
  - transactions                 # Prototype of transactions in the ZCHAIN
  - smfiles                      # Adds a split file's map to the ZCHAIN
  - todos                    PROTO Adds todo list to the ZCHAIN
+ - follow                   PROTO Follow IPNS keys of ZCHAIN for changes
 
  Read more at the `./MODULES` file
-
-Public following (uses ak-profile module)
------------------------------------------
- - ak-follow               # Follow something
- - ak-following            # List your follows
- - ak-unfollow             # Unfollow something
 
 FS tools
 --------
