@@ -97,6 +97,7 @@ function requestParser(req, res)
     printRequest(req);
     akLogMessage('INFO', `Incoming from [${req.connection.remoteAddress}]:${req.socket._peername.port} @ ${req.headers.host}${req.url}`);
     if (checkIfAllowedIP(req.connection.remoteAddress)){
+        res.setHeader('Access-Control-Allow-Origin', '*');
         processMethod(req, res);
     }
     else {
