@@ -6,7 +6,7 @@ const { spawn } = require('child_process');
  * sorry I was laughing at the term.. superchain
  */
 function getSLatest(req, res) {
-    const command = spawn("ak-schain-latest-cached");
+    const command = spawn("ak-schain",["-l"]);
     response_string = "";
     command.stdout.on("data", data => {
         response_string = response_string + data;
