@@ -260,7 +260,6 @@ Utilities
  - ak-log                  # Logging tools
  - ak-clean                # Cleans up temporary folders created by these tools
  - ak-config               # Publish your configuration to IPNS
- - ak-enter                # Crawls ZCHAINS
  - ak-get-zlatest          # Returns zlatest ZBLOCK according to IPFS FS
  - ak-gpg                  # Return your GPG key as IPFS CID
  - ak-network              # Network Tools (connect to, scan for, dump peers)
