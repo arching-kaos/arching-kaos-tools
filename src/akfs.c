@@ -2,7 +2,9 @@
 #include <stdbool.h>
 #include <assert.h>
 #include <stdlib.h>
+#include <string.h>
 #include <akfs.h>
+#include <sys/stat.h>
 
 char* ak_fs_return_hash_path(char* string)
 {
@@ -87,8 +89,73 @@ bool ak_fs_verify_input_is_hash(char* string)
 
 int ak_fs_create_dir_for_hash(char* string)
 {
-    (void) string;
-    return -1;
+    /* TODO
+     * Some aspects of this function
+     * 1. We need a "root" place to put our dirs into, this is not specified
+     *    anywhere in this code but it is spartially specified in other files
+     *    like lib/_ak_fs bash script and the rc/config file we currently source
+     *    in $HOME/.bashrc
+     * 2. We might need to "lock" onto some version of glibc and be aware of
+     *    other systems that do not use that one.
+     */
+    if ( ak_fs_verify_input_is_hash(string) )
+    {
+        char* dir_path = ak_fs_return_hash_dir(string);
+        // We will need to separate the string so we can create the path one
+        // directory at the time
+        int len = strlen(dir_path);
+        for ( int i = 0; i < len+1; ++i)
+        {
+            if ( dir_path[i] == '/' )
+            {
+                //printf("%c\n", dir_path[i]);
+                //char* test = strndup(dir_path, i);
+                //printf("A: [i:%d] [c:%c] - %s\n", i, dir_path[i], test);
+                continue;
+            }
+            else
+            {
+                char* incremental_dir_path = strndup(dir_path, i+1);
+                // printf("B: [i:%d] [c:%c] - %s\n", i, dir_path[i], test);
+                struct stat sb;
+                if (stat(incremental_dir_path, &sb) == 0 && S_ISDIR(sb.st_mode))
+                {
+                    continue;
+                }
+                else
+                {
+                    int return_code = mkdir(incremental_dir_path, 0777);
+                    if ( return_code == 0 )
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        // should be unreachable I guess since previous checks
+                        // though it could be caused by some other kind of error
+                        // like, no permission, or exists but is not a directory
+                        // but a file, dev, char, pipe whatever this thing
+                        // supports anyway
+                        free(incremental_dir_path);
+                        free(dir_path);
+                        return -3;
+                    }
+                }
+                free(incremental_dir_path);
+            }
+        }
+        //printf("%d\n", len);
+        //printf("%s\n", dir_path);
+        //const char *pathname = dir_path;
+        //int ec = mkdir(pathname, 0777);
+        //return ec;
+        free(dir_path);
+        return 0;
+    }
+    else
+    {
+        return -2;
+    }
 }
 
 sha512sum ak_fs_sha512sum_string_to_struct(char* string)
