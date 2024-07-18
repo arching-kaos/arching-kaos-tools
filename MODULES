@@ -262,7 +262,7 @@ Prototype of transactions in the ZCHAIN
 No checks no nothings, it is like saying I give you 30. No unit, no check for
 validity, nothing. This will be useful when SCHAIN is further developed.
 
-## sm-files
+## smfiles
 
 Adds a split file's map to the ZCHAIN
 
@@ -298,6 +298,27 @@ Prototype - Adds todo list to the ZCHAIN
 
 As you have already witnessed, prototype is another way of telling "will do" or
 "here is an idea".
+
+```
+$ ak -m todos
+main.sh - Quick description
+===========================
+
+Brief description
+
+Usage:
+
+   -h, --help        Prints this help message
+
+   index             Prints an indexed table of your todos files
+
+   import <file>     #TODO
+
+   add <file>        Creates a data file from the todos file you point to
+
+   create            Vim is going to pop up, you will write and save your
+                     todosletter and it's going to be saved
+```
 
 
 ## follow
