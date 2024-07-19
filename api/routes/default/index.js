@@ -11,7 +11,6 @@ module.exports = (req, res) => {
             GET:[
                 {welcome:settings.DEF_PROTO+"["+settings.LOCAL_IP+"]:"+settings.PORT+"/"},
                 {gathered_zblocks:settings.DEF_PROTO+"["+settings.LOCAL_IP+"]:"+settings.PORT+settings.URL_PREFIX+"/see"},
-                {gathered_zchain_zlatest_pairs:settings.DEF_PROTO+"["+settings.LOCAL_IP+"]:"+settings.PORT+settings.URL_PREFIX+"/seens"},
                 {node_local_chain:settings.DEF_PROTO+"["+settings.LOCAL_IP+"]:"+settings.PORT+settings.URL_PREFIX+"/chain"},
                 {node_local_peers:settings.DEF_PROTO+"["+settings.LOCAL_IP+"]:"+settings.PORT+settings.URL_PREFIX+"/peers"},
                 {node_local_info:settings.DEF_PROTO+"["+settings.LOCAL_IP+"]:"+settings.PORT+settings.URL_PREFIX+"/node_info"},
@@ -21,7 +20,6 @@ module.exports = (req, res) => {
                 {getMerkleTree:settings.DEF_PROTO+"["+settings.LOCAL_IP+"]:"+settings.PORT+settings.URL_PREFIX+"/mrk/:mkr"},
             ],
             POST:[
-                {send_me_a_zchain_link:settings.DEF_PROTO+"["+settings.LOCAL_IP+"]:"+settings.PORT+settings.URL_PREFIX+"/announce/zchain"},
                 {send_me_a_zblock:settings.DEF_PROTO+"["+settings.LOCAL_IP+"]:"+settings.PORT+settings.URL_PREFIX+"/announce/zblock"},
             ]
         }
