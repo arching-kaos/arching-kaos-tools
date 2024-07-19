@@ -7,6 +7,34 @@ _ak_gpg(){
     gpg2 --homedir $AK_GPGHOME $*
 }
 
+_ak_gpg_check_or_create(){
+    _ak_gpg --list-keys | grep kaos@kaos.kaos -B 1
+    if [ $? -ne 0 ]
+    then
+        _ak_gpg --batch --passphrase '' --quick-gen-key kaos@kaos.kaos rsa3072 sign 0
+        AK_FINGERPRINT="$(_ak_gpg --list-keys | grep kaos@kaos.kaos -B 1 | head -n 1 | awk '{print $1}')"
+        _ak_gpg --batch --passphrase '' --quick-add-key $AK_FINGERPRINT rsa3072 encrypt 0
+    fi
+}
+
+_ak_gpg_create_key(){
+    if [ -z $1 ] || [ ! -n "$1" ]
+    then
+        _ak_log_error "No email label was given"
+        exit 1
+    fi
+    _ak_gpg --list-secret-keys | grep -F $1 >/dev/null 2>&1
+    if [ $? -eq 0 ]
+    then
+        _ak_log_error "Key exists with the same email label"
+        exit 1
+    fi
+    exit 3
+    _ak_gpg --batch --passphrase '' --quick-gen-key $1 rsa3072 sign 0
+    AK_FINGERPRINT="$(_ak_gpg --list-keys | grep $1 -B 1 | head -n 1 | awk '{print $1}')"
+    _ak_gpg --batch --passphrase '' --quick-add-key $AK_FINGERPRINT rsa3072 encrypt 0
+}
+
 _ak_gpg_key_import_from_file(){
     if [ -z $1 ]
     then
@@ -56,10 +84,28 @@ _ak_gpg_key_get_fingerprint_from_ipfs(){
     fi
 }
 
+_ak_gpg_sign(){
+    if [ ! -z $1 ] && [ -n "$1" ] && [ ! -z $2 ] && [ -n "$2" ]
+    then
+        _ak_gpg --sign --sign-with $AK_FINGERPRINT --armor --output $1 $2
+    else
+        exit 1
+    fi
+}
+
 _ak_gpg_sign_detached(){
     if [ ! -z $1 ] && [ -n "$1" ] && [ ! -z $2 ] && [ -n "$2" ]
     then
         _ak_gpg --detach-sign --sign-with $AK_FINGERPRINT --armor --output $1 $2
+    else
+        exit 1
+    fi
+}
+
+_ak_gpg_sign_clear(){
+    if [ ! -z $1 ] && [ -n "$1" ] && [ ! -z $2 ] && [ -n "$2" ]
+    then
+        _ak_gpg --clear-sign --sign-with $AK_FINGERPRINT --armor --output $1 $2
     else
         exit 1
     fi
@@ -120,17 +166,72 @@ _ak_gpg_key_self_export(){
     fi
 }
 
+_ak_gpg_list_keys_plain(){
+    _ak_gpg --list-keys
+}
+
 _ak_gpg_list_keys(){
     _ak_gpg --list-keys | grep '^ ' | awk '{print $1}'
 }
 
+_ak_gpg_list_keys_long(){
+    _ak_gpg --list-keys | \
+        grep -A 1 '^ \{6\}' | \
+        tr $'\n' ' ' | \
+        tr '\-\-' $'\n' | \
+        awk '{print $1 " " $5}' | \
+        sort | \
+        uniq
+}
+
+_ak_gpg_list_secret_keys_plain(){
+    _ak_gpg --list-secret-keys
+}
+
+_ak_gpg_list_secret_keys(){
+    _ak_gpg --list-secret-keys | grep '^ ' | awk '{print $1}'
+}
+
+_ak_gpg_list_secret_keys_long(){
+    _ak_gpg --list-secret-keys | \
+        grep -A 1 '^ \{6\}' | \
+        tr $'\n' ' ' | \
+        tr '\-\-' $'\n' | \
+        awk '{print $1 " " $5}' | \
+        sort | \
+        uniq
+}
+
 _ak_gpg_select_key(){
-    select x in $(_ak_gpg_list_keys | tr '\n' ' ')
+    select x in $(_ak_gpg_list_secret_keys | tr '\n' ' ')
     do
-        echo $x
         if [ -n "$x" ]
         then
+            _ak_log_info "$x was selected"
+            printf '%s' "$x" > $AK_WORKDIR/selected_key
             break
+        else
+            _ak_log_warning "You didn't select a key"
+        fi
+    done
+}
+
+_ak_gpg_delete_key(){
+    select x in $(_ak_gpg_list_keys | tr '\n' ' ')
+    do
+        if [ -n "$x" ]
+        then
+            _ak_log_info "$x was selected"
+            _ak_gpg --delete-keys $x
+            if [ $? -ne 0 ]
+            then
+                _ak_log_error "Some error occured while removing $x"
+            else
+                _ak_log_info "Key $x was deleted"
+            fi
+            break
+        else
+            _ak_log_warning "You didn't select a key"
         fi
     done
 }

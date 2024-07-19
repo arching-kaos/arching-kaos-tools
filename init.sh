@@ -12,6 +12,7 @@ ak_gpg_check_or_create(){
     then
         gpg2 --homedir $AK_GPGHOME --batch --passphrase '' --quick-gen-key kaos@kaos.kaos rsa3072 sign 0
         AK_FINGERPRINT="$(gpg2 --homedir $AK_GPGHOME --list-keys | grep kaos@kaos.kaos -B 1 | head -n 1 | awk '{print $1}')"
+        printf '%s' "$AK_FINGERPRINT" > $AK_WORKDIR/current_key
         gpg2 --homedir $AK_GPGHOME --batch --passphrase '' --quick-add-key $AK_FINGERPRINT rsa3072 encrypt 0
     fi
 }
