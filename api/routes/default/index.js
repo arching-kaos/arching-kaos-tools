@@ -5,6 +5,8 @@ module.exports = (req, res) => {
     res.writeHead(404, { 'Content-Type': 'application/json'});
     res.end(JSON.stringify({
         message:"Hello! Welcome to Arching Kaos API! See available routes below!",
+        version:"0.0.0",
+
         routes:{
             GET:[
                 {welcome:settings.DEF_PROTO+"["+settings.LOCAL_IP+"]:"+settings.PORT+"/"},
