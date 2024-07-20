@@ -87,6 +87,16 @@ _ak_zchain_extract_cids(){
     fi
 }
 
+_ak_zchain_extract_cids_limit(){
+    if [ ! -z $1 ] && [ -n "$1" ] && [ ! -z $2 ] && [ -n "$2" ]
+
+    then
+        _ak_zchain_crawl -l $2 $1 | jq  -M | grep Qm | sed -e 's/".*"://g; s/ //g; s/[{,"]//g' | sort | uniq
+    else
+        _ak_zchain_crawl | jq -M | grep Qm | sed -e 's/".*"://g; s/ //g; s/[{,"]//g' | sort | uniq
+    fi
+}
+
 _ak_zchain_extract_data_cids(){
     if [ ! -z $1 ]
     then
