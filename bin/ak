@@ -62,8 +62,37 @@ fi
 
 subcmd="$(echo $* | sed -e 's/ /-/g')"
 
-# Add functionality for separate modules directory
 case "$1" in
+    -f|--function)
+        shift
+        if [ ! -z $1 ] && [ -n "$1" ]
+        then
+            grep -rnF "$1(){" $AK_BINDIR/* $AK_LIBDIR/* $AK_MODULESDIR/*
+            if [ $? -ne 0 ]
+            then
+                _ak_log_error "No function $1 found"
+                exit 1
+            fi
+            if [ $(grep -rnF "$1(){" $AK_LIBDIR/* $AK_MODULESDIR/* | wc -l) -gt 1 ]
+            then
+                _ak_log_error "More than one functions found with name $1"
+                exit 1
+            fi
+            filename="$(grep -rnF "$1(){" $AK_LIBDIR/* $AK_MODULESDIR/* | cut -d ':' -f 1)"
+            line="$(grep -rnF "$1(){" $AK_LIBDIR/* $AK_MODULESDIR/* | cut -d ':' -f 2)"
+            functionname="$(grep -rnF "$1(){" $AK_LIBDIR/* $AK_MODULESDIR/* | cut -d ':' -f 3)"
+            printf 'Use with:\n' >&2
+            printf 'source %s\n%s\n' "$filename" "$(echo -n $functionname | sed 's/(){//')"
+            exit
+        else
+            grep -rnF "(){" $AK_LIBDIR/* $AK_MODULESDIR/* | \
+                sed -e "s#$AK_WORKDIR/##g" | sed -e 's/(){//g' | cut -d ':' -f 1,3 | tr ':' $'\t'
+            exit
+        fi
+        ;;
+
+
+    # Add functionality for separate modules directory
     -m|--module)
         shift
         subcmd="$AK_MODULESDIR/$(echo $1 | sed -e 's/ /-/g')"
