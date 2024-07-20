@@ -60,9 +60,9 @@ _ak_modules_mixtapes_get_local_latest(){
     cd $tempdir
     if [ -z "$1" ]
     then
-        ak zchain --crawl -l 1 | jq > aktempzblock
+        _ak_zchain_crawl -l 1 | jq > aktempzblock
     else
-        ak zchain --crawl -l 1 $1 | jq > aktempzblock
+        _ak_zchain_crawl -l 1 $1 | jq > aktempzblock
     fi
     curzblock="`cat aktempzblock | jq -r '.[].zblock'`"
     curaction="`cat aktempzblock | jq -r '.[].action'`"

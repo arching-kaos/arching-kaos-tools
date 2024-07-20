@@ -81,18 +81,18 @@ _ak_zchain_rebase(){
 _ak_zchain_extract_cids(){
     if [ ! -z $1 ] && [ -n "$1" ]
     then
-        ak zchain --crawl $1 | jq  -M | grep Qm | sed -e 's/".*"://g; s/ //g; s/[{,"]//g' | sort | uniq
+        _ak_zchain_crawl $1 | jq  -M | grep Qm | sed -e 's/".*"://g; s/ //g; s/[{,"]//g' | sort | uniq
     else
-        ak zchain --crawl | jq -M | grep Qm | sed -e 's/".*"://g; s/ //g; s/[{,"]//g' | sort | uniq
+        _ak_zchain_crawl | jq -M | grep Qm | sed -e 's/".*"://g; s/ //g; s/[{,"]//g' | sort | uniq
     fi
 }
 
 _ak_zchain_extract_data_cids(){
     if [ ! -z $1 ]
     then
-        ak zchain --crawl $1 | jq | grep ipfs | awk '{print $2}' | sed -e 's/"//g;s/,//g'
+        _ak_zchain_crawl $1 | jq | grep ipfs | awk '{print $2}' | sed -e 's/"//g;s/,//g'
     else
-        ak zchain --crawl | jq | grep ipfs | awk '{print $2}' | sed -e 's/"//g;s/,//g'
+        _ak_zchain_crawl | jq | grep ipfs | awk '{print $2}' | sed -e 's/"//g;s/,//g'
     fi
 }
 
@@ -223,12 +223,10 @@ _ak_zchain_crawl_self(){
 
 _ak_zchain_crawl_remote_ipfs(){
     _ak_zchain_crawl $1
-    #ak enter $1
 }
 
 _ak_zchain_crawl_remote_ipns(){
     _ak_zchain_crawl -n $1
-    #ak enter -n $1
 }
 
 _ak_zchain_get_latest(){
