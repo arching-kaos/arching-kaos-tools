@@ -135,14 +135,16 @@ _ak_network_scan_cjdns_dump(){
     which dumpLinks > /dev/null 2>&1
     if [ $? -ne 0 ]
     then
-        echo "You need to install cjdns and cjdns-tools"
-        exit 1
+        echo "You need to install cjdns and cjdns-tools ... falling back to -w"
+        _ak_network_scan_cjdns_full
+        exit 0
     fi
     which publictoip6 > /dev/null 2>&1
     if [ $? -ne 0 ]
     then
-        echo "You need to install cjdns and cjdns-tools"
-        exit 1
+        echo "You need to install cjdns and cjdns-tools ... falling back to -w"
+        _ak_network_scan_cjdns_full
+        exit 0
     fi
     TEMPDIR="$(_ak_make_temp_directory)"
     AK_ZPEERSFILE="$HOME/.arching-kaos/peersFile"
