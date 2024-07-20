@@ -12,6 +12,8 @@
 ##
 ##    --connect                   Connect to ak cjdns nodes
 ##
+##    --ip                        Returns your cjdns IPv6
+##
 fullprogrampath="$(realpath $0)"
 PROGRAM=$(basename $0)
 descriptionString="cjdns helper"
@@ -29,6 +31,7 @@ then
         --check) _ak_cjdns_check_availability; exit;;
         --install) _ak_cjdns_install; exit;;
         --connect) _ak_cjdns_connect_peers; exit;;
+        --ip) _ak_cjdns_get_ip; exit;;
         * ) _ak_usage;;
     esac
 else _ak_usage

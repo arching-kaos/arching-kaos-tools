@@ -168,3 +168,16 @@ _ak_cjdns_connect_peers(){
         _ak_cjdns_read_peers_to_vars_natively
     fi
 }
+
+_ak_cjdns_get_ip(){
+    which ip > /dev/null 2>&1
+    if [ $? -ne 0 ]
+    then
+        _ak_log_error "You need ip tool installed"
+        exit 2
+    fi
+    ip a | \
+        grep 'inet6 *fc' | \
+        awk '{print $2}' | \
+        cut -d'/' -f1
+}
