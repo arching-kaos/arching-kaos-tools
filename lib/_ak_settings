@@ -12,6 +12,12 @@ _ak_settings_get(){
             _ak_log_error "No ungrouped settings allowed"
             exit 1
         fi
+        echo $1 | grep '\.\.' > /dev/null 2>&1
+        if [ $? -eq 0 ]
+        then
+            _ak_log_error "No '..' allowed"
+            exit 1
+        fi
         subset="$(echo $1 | cut -d '.' -f 1)"
         echo "$subset" | grep '[.\-\*/~!@#$%^&*()_=\-\>\<,{}[]]' > /dev/null 2>&1
         if [ $? -eq 0 ]
@@ -50,6 +56,12 @@ _ak_settings_get(){
 _ak_settings_set(){
     if [ ! -z "$1" ] && [ -n "$1" ]
     then
+        echo $1 | grep '\.\.' > /dev/null 2>&1
+        if [ $? -eq 0 ]
+        then
+            _ak_log_error "No '..' allowed"
+            exit 1
+        fi
         if [ ! -z "$2" ] && [ -n "$2" ]
         then
             cd $AK_SETTINGS
