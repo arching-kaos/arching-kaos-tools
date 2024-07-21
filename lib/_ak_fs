@@ -240,7 +240,9 @@ _ak_fs_import(){
     counter=0
     while IFS="" read -r p || [ -n "$p" ]
     do
-        printf "mv %s %s/%s\n" "$(echo $p | awk '{ print $2 }')" "$CHKDIR" "$(echo $p | awk '{ print $1 }')" >> $TEMPORARYDIR/cmd_queue.sh
+#        printf "mv %s %s/%s\n" "$(echo $p | awk '{ print $2 }')" "$CHKDIR" "$(echo $p | awk '{ print $1 }')" >> $TEMPORARYDIR/cmd_queue.sh
+        mkdir -p $CHKDIR/$(_ak_fs_return_hash_dir $(echo $p | awk '{ print $1 }'))
+        cp $(echo $p | awk '{ print $2 }') $CHKDIR/$(_ak_fs_return_hash_path $(echo $p | awk '{ print $1 }'))
         counter=`expr "$counter" + 1`
     done < $TEMPORARYDIR/map
 
@@ -342,9 +344,9 @@ _ak_fs_cat(){
                     else
                         cat $expectedPath >> workspace.$nextLevel
                     fi
-                elif [ -f $ftr/$p ]
+                elif [ -f $ftr/$(_ak_fs_return_hash_path $p) ]
                 then
-                    cat $ftr/$p >> output
+                    cat $ftr/$(_ak_fs_return_hash_path $p) >> output
                 fi
             fi
         done < workspace.$counter
