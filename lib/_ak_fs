@@ -168,7 +168,7 @@ _ak_fs_import(){
             FACTOR=$(( $FACTOR * 2 ))
         done
         _ak_log_info "Gonna split in $FACTOR size"
-        sleep 30
+        sleep 3
         # We split the file into 4*1024 bytes and output the chunks into TECHDIR
         split -a 50 -b $FACTOR --additional-suffix ".chk" -d "$FILE" "$TECHDIR/$(basename "$FILE")-"
     fi
