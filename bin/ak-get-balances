@@ -17,17 +17,9 @@ source $AK_LIBDIR/_ak_gpg
 source $AK_LIBDIR/_ak_zchain
 source $AK_LIBDIR/_ak_schain
 source $AK_LIBDIR/_ak_sblock
+source $AK_LIBDIR/_ak_coin
 #set -xe
 AK_DB="$AK_WORKDIR/db"
-
-# coin max is 10,000.0000000
-# but we count in integer to avoid floating point arithmetic :P
-#
-# Note that this is subject to change when implemented in C
-#
-COINBASE=100000000000
-
-GENESIS="00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
 
 AK_BALANCESDIR="$AK_WORKDIR/balances"
 if [ ! -d $AK_BALANCESDIR ]
