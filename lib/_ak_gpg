@@ -208,7 +208,7 @@ _ak_gpg_select_key(){
         if [ -n "$x" ]
         then
             _ak_log_info "$x was selected"
-            printf '%s' "$x" > $AK_WORKDIR/selected_key
+            _ak_settings_set "gpg.fingerprint" "$x"
             break
         else
             _ak_log_warning "You didn't select a key"

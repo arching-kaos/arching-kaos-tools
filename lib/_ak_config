@@ -3,8 +3,9 @@ source $AK_LIBDIR/_ak_node
 
 _ak_config_show(){
     # We will be using our public key also to put it in the block later
-    KEY="tmp-gpg.pub"
-    _ak_gpg_key_self_export $KEY
+    KEY="self.pub"
+    ak-gpg --export-key-self-to-file
+    _ak_log_debug "$KEY"
     GPG_PUB_KEY=$(_ak_ipfs_add $KEY)
     rm $KEY
     profile="$(ak-profile -l)"
