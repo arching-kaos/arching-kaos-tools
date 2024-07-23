@@ -31,10 +31,9 @@ _ak_gpg_create_key(){
         _ak_log_error "Key exists with the same email label"
         exit 1
     fi
-    exit 3
-    _ak_gpg --batch --passphrase '' --quick-gen-key $1 rsa3072 sign 0
-    AK_FINGERPRINT="$(_ak_gpg --list-keys | grep $1 -B 1 | head -n 1 | awk '{print $1}')"
-    _ak_gpg --batch --passphrase '' --quick-add-key $AK_FINGERPRINT rsa3072 encrypt 0
+    _ak_gpg --batch --passphrase '' --quick-gen-key $1 rsa4096 sign 0
+    FINGERPRINT="$(_ak_gpg --list-keys | grep $1 -B 1 | head -n 1 | awk '{print $1}')"
+    _ak_gpg --batch --passphrase '' --quick-add-key $FINGERPRINT rsa4096 encrypt 0
 }
 
 _ak_gpg_key_import_from_file(){
