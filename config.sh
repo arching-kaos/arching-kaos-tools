@@ -22,10 +22,11 @@ export AK_ZLIST="$AK_WORKDIR/zlist"
 export AK_ZLATEST="$AK_WORKDIR/zlatest"
 export AK_LOGSFILE="$AK_WORKDIR/logs"
 export AK_GPGHOME="$AK_WORKDIR/keyring"
-export AK_FINGERPRINT="$(cat $AK_WORKDIR/selected_key)"
 export AK_MINEDBLOCKSDIR="$AK_WORKDIR/mined_blocks"
 export AK_ZBLOCKSFILE="$AK_WORKDIR/zBlocksFile"
 export AK_ZPAIRSFILE="$AK_WORKDIR/pairsFile"
 export AK_ZPEERSFILE="$AK_WORKDIR/peersFile"
 export AK_CACHEDIR="$AK_WORKDIR/cache"
 
+source $AK_LIBDIR/_ak_settings
+export AK_FINGERPRINT="$(_ak_settings_get gpg.fingerprint)"
