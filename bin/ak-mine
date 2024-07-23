@@ -1,5 +1,19 @@
 #!/bin/bash
-PROGRAM="$(basename $0)"
+##
+## You can mine sblocks for schain
+##
+## Usage:
+##
+##    -h, --help                  Prints this help message
+##    --mine                      Starts mining for SCHAIN
+##
+fullprogrampath="$(realpath $0)"
+PROGRAM=$(basename $0)
+descriptionString="Sblock mining"
+
+source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_script
+
 gather_zblocks(){
     if [ "$(cat $AK_ZBLOCKSFILE | jq -r '.[].zblock' | wc -l)" -ne 0 ]
     then
@@ -45,8 +59,18 @@ proofofwork(){
     done
 }
 
-proofofwork
-
-exit
 
 
+
+
+# Flags to run
+if [ ! -z $1 ]
+then
+    case $1 in
+        -h | --help) _ak_usage; exit;;
+        --example) example; exit;;
+        --mine) proofofwork; exit;;
+        * ) _ak_usage;;
+    esac
+else _ak_usage
+fi

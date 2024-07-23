@@ -1,14 +1,41 @@
 #!/bin/bash
+##
+## Arching Kaos system starter
+##
+## You can use this for starting up on login of your user or with cron
+## @reboot bash -c "$HOME/.arching-kaos/bin/ak-startup --start"
+##
+## Usage:
+##
+##    -h, --help                  Prints this help message
+##    --start                     Starts the AK system
+##
+fullprogrampath="$(realpath $0)"
+PROGRAM=$(basename $0)
+descriptionString="AK system starter"
 source $HOME/.arching-kaos/rc
 PATH=$PATH:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:$HOME/bin:$AK_WORKDIR/bin
 
-source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_log
-_ak_ipfs_starter
-_ak_log_rotate
+source $AK_LIBDIR/_ak_script
 
-ak-daemon > $AK_WORKDIR/akd.log 2>&1 & printf '%s' "$!" > $AK_WORKDIR/akd.pid
-if [ ! -z $1 ] && [ -n "$1" ] && [ "$1" == "--podman" ]
+_ak_start_up_sequence(){
+    _ak_ipfs_starter
+    _ak_log_rotate
+
+    ak-daemon > $AK_WORKDIR/akd.log 2>&1 & printf '%s' "$!" > $AK_WORKDIR/akd.pid
+    if [ ! -z $1 ] && [ -n "$1" ] && [ "$1" == "--podman" ]
+    then
+        _ak_log_follow
+    fi
+}
+
+if [ ! -z $1 ]
 then
-    _ak_log_follow
+    case $1 in
+        -h | --help) _ak_usage; exit;;
+        --start) shift; _ak_start_up_sequence $1; exit;;
+        * ) _ak_usage;;
+    esac
+else _ak_usage
 fi
