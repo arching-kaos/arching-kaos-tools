@@ -19,6 +19,7 @@ _ak_gpg_check_or_create(){
 }
 
 _ak_gpg_create_key(){
+    _ak_log_debug "Key name: $1"
     if [ -z $1 ] || [ ! -n "$1" ]
     then
         _ak_log_error "No email label was given"

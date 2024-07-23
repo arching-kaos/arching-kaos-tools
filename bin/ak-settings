@@ -21,7 +21,7 @@ source $AK_LIBDIR/_ak_settings
 
 if [ ! -z "$AK_SETTINGS" ] && [ -n "$AK_SETTINGS" ]
 then
-    _ak_log_info "AK_SETTINGS = $AK_SETTINGS"
+    _ak_log_debug "AK_SETTINGS = $AK_SETTINGS"
 else
     _ak_log_error "No settings variable is set"
     exit 1
