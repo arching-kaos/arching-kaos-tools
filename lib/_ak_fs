@@ -247,10 +247,10 @@ _ak_fs_import(){
     done < $TEMPORARYDIR/map
 
     # We run the crafted script
-    sh $TEMPORARYDIR/cmd_queue.sh
+#    sh $TEMPORARYDIR/cmd_queue.sh
 
     # and we delete it
-    rm $TEMPORARYDIR/cmd_queue.sh
+#    rm $TEMPORARYDIR/cmd_queue.sh
 
     # We inform the map about the original $FILE name and SHA512
     echo "$CHECKSUM  $(basename "$FILE")" >> $TEMPORARYDIR/map
