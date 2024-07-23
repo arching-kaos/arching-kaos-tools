@@ -2,6 +2,7 @@
 source $AK_LIBDIR/_ak_log
 source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_config
+source $AK_LIBDIR/_ak_settings
 
 _ak_gpg(){
     gpg2 --homedir $AK_GPGHOME $*
@@ -234,4 +235,27 @@ _ak_gpg_delete_key(){
             _ak_log_warning "You didn't select a key"
         fi
     done
+}
+
+_ak_gpg_delete_secret_key(){
+    if [ ! -z $1 ]
+    then
+        x="$1"
+        if [ -n "$x" ]
+        then
+            _ak_log_info "$x was selected"
+            _ak_gpg --delete-secret-keys $x
+            if [ $? -ne 0 ]
+            then
+                _ak_log_error "Some error occured while removing $x"
+                exit 1
+            else
+                _ak_log_info "Key $x was deleted"
+            fi
+            exit
+        else
+            _ak_log_warning "You didn't select a key"
+            exit 1
+        fi
+    fi
 }
