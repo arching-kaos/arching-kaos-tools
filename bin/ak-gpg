@@ -64,7 +64,7 @@ if [ ! -z $1 ]; then
         --list-secret-keys-plain | -lsp) _ak_gpg_list_secret_keys_plain; exit;;
         --create-key | -c) shift; _ak_gpg_create_key $1; exit;;
         --select-key | -s) _ak_gpg_select_key; exit;;
-        --delete-key | -s) _ak_gpg_delete_key; exit;;
+        --delete-key | -d) _ak_gpg_delete_key; exit;;
         * ) _ak_usage;;
     esac
 else _ak_usage
