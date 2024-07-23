@@ -253,13 +253,13 @@ _ak_fs_import(){
 #    rm $TEMPORARYDIR/cmd_queue.sh
 
     # We inform the map about the original $FILE name and SHA512
-    echo "$CHECKSUM  $(basename "$FILE")" >> $TEMPORARYDIR/map
+#    echo "$CHECKSUM  $(basename "$FILE")" >> $TEMPORARYDIR/map
 
     # We get the SHA512 hash of the resulted map file
-    MAPFILEHASH="$(sha512sum $TEMPORARYDIR/map | awk '{ print $1 }')"
+#    MAPFILEHASH="$(sha512sum $TEMPORARYDIR/map | awk '{ print $1 }')"
 
     # and we rename it with it and move it to FILEMAPSDIR
-    `sha512sum $TEMPORARYDIR/map | awk '{print "mv " $2 " '$FILEMAPSDIR/'" $1}'`
+#    `sha512sum $TEMPORARYDIR/map | awk '{print "mv " $2 " '$FILEMAPSDIR/'" $1}'`
 
     mp512p="$(sha512sum $TEMPORARYDIR/3rd_gen_map | awk '{print $1}')"
     mv $TEMPORARYDIR/3rd_gen_map $FILEMAPSDIR/$mp512p
