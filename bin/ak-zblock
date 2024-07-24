@@ -4,18 +4,16 @@
 ## from given information, which can be added on top of your zchain.
 ##
 ## Usage:
-##
-##    -h, --help                  Prints this help message
-##
-##    -s, --show                  Shows the zblock provided
-##
-##    -x, --gen-html              Generates an HTML document for a given zblock
-##
-##    -c, --cache                 Caches a zblock
-##
-##    -p, --pack                  Packs a zblock
-##
-##    -a, --announce              Announces a zblock
+##    -h, --help                             Prints this help message
+##    -s, --show [zblock]                    Shows the zblock provided. In case
+##                                           of no zblock, the latest of your
+##                                           zchain is shown.
+##    -x, --gen-html <zblock>                Generates an HTML document for a
+##                                           given zblock
+##    -c, --cache                            Caches a zblock
+##    -p, --pack <module/action> <hash>      Packs a zblock
+##    -r, --repack <zblock> <previous>       Repacks a zblock at previous
+##    -a, --announce                         Announces a zblock
 ##
 fullprogrampath="$(realpath $0)"
 PROGRAM=$(basename $0)
@@ -43,7 +41,11 @@ if [ ! -z $1 ]; then
             exit
             ;;
         -p | --pack)
-            _ak_zblock_pack $2
+            _ak_zblock_pack $2 $3
+            exit
+            ;;
+        -r | --repack)
+            _ak_zblock_repack $2 $3
             exit
             ;;
         -a | --announce)

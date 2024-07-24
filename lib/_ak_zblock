@@ -542,6 +542,135 @@ _ak_zblock_cache(){
 
 }
 
+_ak_zblock_repack(){
+    if [ -z $1 ] || [ ! -n "$1" ]
+    then
+        _ak_log_error "No zblock hash provided"
+        exit 1
+    fi
+    _ak_ipfs_cid_v0_check $1
+    if [ $? -ne 0 ]
+    then
+        _ak_log_error "Not valid zblock hash provided"
+        exit 1
+    fi
+    zblock_to_repack="$1"
+    if [ -z $2 ] || [ ! -n "$2" ]
+    then
+        _ak_log_error "No zblock hash provided"
+        exit 1
+    fi
+    _ak_ipfs_cid_v0_check $2
+    if [ $? -ne 0 ]
+    then
+        _ak_log_error "Not valid zblock hash provided"
+        exit 1
+    fi
+    zblock_to_repack_at="$2"
+
+    MESSAGE="$zblock_to_repack"
+
+    ACTION="$(_ak_zblock_show $zblock_to_repack  | jq -r '.module,.action' | tr $'\n' '/' | sed -e 's/\/$//g')"
+    if [ ! -n "$ACTION" ]
+    then
+        _ak_log_error "Empty action"
+        exit 1
+    fi
+    if [ ! -f "$AK_IPFS_ARTIFACTS/$MESSAGE" ]
+    then
+        _ak_log_error "File does not exist. Aborting..."
+        exit 1
+    fi
+    data="$(_ak_zblock_show $zblock_to_repack | jq -r '.data')"
+
+    _ak_log_info "We are repacking $ACTION with content $MESSAGE at $zblock_to_repack_at"
+
+
+    MESSAGE_HASH="$data"
+
+    # We create a detached and armor signature of it
+    MESSAGE_SIGN_FILE="$data.asc"
+    _ak_gpg_sign_detached $MESSAGE_SIGN_FILE $AK_IPFS_ARTIFACTS/$data
+
+    # We add the signature to IPFS
+    MESSAGE_SIGNATURE=$(_ak_ipfs_add $MESSAGE_SIGN_FILE)
+
+    # We will be using our public key also to put it in the block later
+    KEY="self.pub"
+    _ak_gpg_key_self_export $KEY
+    GPG_PUB_KEY=$(_ak_ipfs_add $KEY)
+
+    # Acquire last block of information, to chain this one with previous posted
+    PREVIOUS="$zblock_to_repack_at"
+
+    # We create a block of json like this:
+    printf '{"timestamp":"%s","action":"%s","data":"%s","detach":"%s","gpg":"%s","previous":"%s"}' $(date -u +%s) $ACTION $MESSAGE_HASH $MESSAGE_SIGNATURE $GPG_PUB_KEY $PREVIOUS > block
+    BLOCK="block"
+    BLOCK_SIG=$BLOCK".asc"
+    # We have a block now, so we sign it
+    _ak_gpg_sign_detached $BLOCK_SIG $BLOCK
+
+    # We now add the signature to IPFS
+    BLOCK_SIGNATURE=$(_ak_ipfs_add $BLOCK_SIG)
+
+    # We also add the block!
+    BLOCK=$(_ak_ipfs_add $BLOCK)
+
+    # So we now do the think almost again
+    printf '{"block":"%s","block_signature":"%s"}' $BLOCK $BLOCK_SIGNATURE > zblock
+    ZBL="zblock"
+    # and we add it on IPFS
+    ZBLOCK=$(_ak_ipfs_add $ZBL)
+    echo $ZBLOCK
+
+    # cat $PWD/zblock | jq -M
+    # Optional or extending with
+    # python send_as_ak_tx $ZBLOCK
+    # or for "offline" use
+    echo $ZBLOCK > $AK_ZLATEST
+    _ak_ipfs_name_publish --key=zchain $ZBLOCK > /dev/null 2>&1
+    if [ $? -ne 0 ]
+    then
+        _ak_log_error "Failed publishing ZBLOCK: $ZBLOCK"
+        exit 1
+    fi
+    _ak_ipfs_files_ls /zarchive > /dev/null 2>&1
+    if [ $? -ne 0 ]
+    then
+        _ak_log_warning "/zarchive does not exist"
+        _ak_ipfs_files_mkdir /zarchive > /dev/null 2>&1
+        if [ $? -ne 0 ]
+        then
+            _ak_log_error "Could not create /zarchive directory. Aborting."
+            exit 1
+        fi
+    fi
+    _ak_ipfs_files_cp /zlatest /zarchive/$(date -u +%s)-$(_ak_ipfs_files_stat /zlatest | head -n 1) > /dev/null 2>&1
+    if [ $? -ne 0 ]
+    then
+        _ak_log_error "Could not back up previous /zlatest"
+        exit 1
+    fi
+    _ak_ipfs_files_rm /zlatest > /dev/null 2>&1
+    if [ $? -ne 0 ]
+    then
+        _ak_log_error "Could not remove previous /zlatest"
+        exit 1
+    fi
+    _ak_ipfs_files_cp /ipfs/$ZBLOCK /zlatest > /dev/null 2>&1
+    if [ $? -ne 0 ]
+    then
+        _ak_log_error "Could not copy $ZBLOCK to /zlatest"
+        exit 1
+    fi
+    _ak_config_publish
+    if [ $? -ne 0 ]
+    then
+        _ak_log_error "Could not publish new configuration"
+        exit 1
+    fi
+}
+
 _ak_zblock_pack(){
     if [ ! -z $2 ];
     then
@@ -551,7 +680,7 @@ _ak_zblock_pack(){
             # We check firstly if the encapsulated value of the "ipfs" key has already
             # appeared in the zchain.
             TO_CHECK="$(cat $MESSAGE | jq | grep ipfs | awk '{print $2}' | sed -e 's/"//g;s/,//g')"
-            _ak_zchain_crawl | jq | grep ipfs | awk '{print $2}' | sed -e 's/"//g;s/,//g' | sort | uniq > tempisalreadythere
+            ak-zchain --crawl | jq | grep ipfs | awk '{print $2}' | sed -e 's/"//g;s/,//g' | sort | uniq > tempisalreadythere
             while IFS="" read -r p || [ -n "$p" ]
             do
                 if [ "$p" == "$TO_CHECK" ]
