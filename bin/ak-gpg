@@ -14,6 +14,8 @@
 ##
 ##    --export-key-self-to-file           Exports self public key as 'self.pub'
 ##
+##    --clear-sign <file> <output>        Sign a file clearly
+##
 ##    -l, --list-keys                     Returns a list of known GPG keys
 ##
 ##    -lp, --list-keys-plain              Returns a list of known GPG keys as
@@ -59,6 +61,7 @@ if [ ! -z $1 ]; then
         --get-key-self-as-fingerprint) _ak_gpg_key_self_get_fingerprint; exit;;
         --get-key-fingerprint-from-ipfs) _ak_gpg_key_get_fingerprint_from_ipfs $1; exit;;
         --export-key-self-to-file) _ak_gpg_key_self_export 'self.pub'; exit;;
+        --clear-sign) shift; _ak_gpg_sign_clear "$2" "$1"; exit;;
         --list-keys | -l) _ak_gpg_list_keys; exit;;
         --list-keys-long | -ll) _ak_gpg_list_keys_long; exit;;
         --list-keys-plain | -lp) _ak_gpg_list_keys_plain; exit;;
