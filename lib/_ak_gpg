@@ -99,6 +99,7 @@ _ak_gpg_sign_detached(){
     then
         _ak_gpg --detach-sign --sign-with $AK_FINGERPRINT --armor --output $1 $2
     else
+        _ak_log_error "Not enough arguments"
         exit 1
     fi
 }

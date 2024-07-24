@@ -583,6 +583,11 @@ _ak_zblock_repack(){
     fi
     data="$(_ak_zblock_show $zblock_to_repack | jq -r '.data')"
 
+    if [ ! -f $AK_IPFS_ARTIFACTS/$data ]
+    then
+        _ak_log_error "$data file doesn't exist"
+        exit 1
+    fi
     _ak_log_info "We are repacking $ACTION with content $MESSAGE at $zblock_to_repack_at"
 
 
@@ -591,17 +596,21 @@ _ak_zblock_repack(){
     # We create a detached and armor signature of it
     MESSAGE_SIGN_FILE="$data.asc"
     _ak_gpg_sign_detached $MESSAGE_SIGN_FILE $AK_IPFS_ARTIFACTS/$data
+    _ak_log_debug "Signature made for $data"
 
     # We add the signature to IPFS
     MESSAGE_SIGNATURE=$(_ak_ipfs_add $MESSAGE_SIGN_FILE)
+    _ak_log_debug "Hash made for $data: $MESSAGE_SIGNATURE"
 
     # We will be using our public key also to put it in the block later
     KEY="self.pub"
     _ak_gpg_key_self_export $KEY
     GPG_PUB_KEY=$(_ak_ipfs_add $KEY)
+    _ak_log_debug "Key: $GPG_PUB_KEY"
 
     # Acquire last block of information, to chain this one with previous posted
     PREVIOUS="$zblock_to_repack_at"
+    _ak_log_debug "Previous: $PREVIOUS"
 
     # We create a block of json like this:
     printf '{"timestamp":"%s","action":"%s","data":"%s","detach":"%s","gpg":"%s","previous":"%s"}' $(date -u +%s) $ACTION $MESSAGE_HASH $MESSAGE_SIGNATURE $GPG_PUB_KEY $PREVIOUS > block
@@ -609,12 +618,15 @@ _ak_zblock_repack(){
     BLOCK_SIG=$BLOCK".asc"
     # We have a block now, so we sign it
     _ak_gpg_sign_detached $BLOCK_SIG $BLOCK
+    _ak_log_debug "Signature made for block"
 
     # We now add the signature to IPFS
     BLOCK_SIGNATURE=$(_ak_ipfs_add $BLOCK_SIG)
+    _ak_log_debug "Block signature hash: $BLOCK_SIGNATURE"
 
     # We also add the block!
     BLOCK=$(_ak_ipfs_add $BLOCK)
+    _ak_log_debug "Block hash: $BLOCK"
 
     # So we now do the think almost again
     printf '{"block":"%s","block_signature":"%s"}' $BLOCK $BLOCK_SIGNATURE > zblock
@@ -622,13 +634,14 @@ _ak_zblock_repack(){
     # and we add it on IPFS
     ZBLOCK=$(_ak_ipfs_add $ZBL)
     echo $ZBLOCK
+    _ak_log_debug "Zblock hash: $ZBLOCK"
 
     # cat $PWD/zblock | jq -M
     # Optional or extending with
     # python send_as_ak_tx $ZBLOCK
     # or for "offline" use
     echo $ZBLOCK > $AK_ZLATEST
-    _ak_ipfs_name_publish --key=zchain $ZBLOCK > /dev/null 2>&1
+    _ak_ipfs_name_publish zchain /ipfs/$ZBLOCK #> /dev/null 2>&1
     if [ $? -ne 0 ]
     then
         _ak_log_error "Failed publishing ZBLOCK: $ZBLOCK"

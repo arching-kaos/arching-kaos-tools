@@ -9,6 +9,11 @@ fi
 
 _ak_ipfs(){
     export IPFS_PATH=$AK_IPFS_REPO; ipfs $*
+    if [ $? -ne 0 ]
+    then
+        _ak_log_error "Some error occured when running: ipfs $*"
+        exit 1
+    fi
 }
 
 _ak_ipfs_daemon(){
@@ -41,6 +46,7 @@ _ak_ipfs_scanner(){
         _ak_ipfs_get_peers
         if [ $? -ne 0 ]
         then
+            _ak_log_error "Failed to get IPFS peers"
             exit 1
         fi
     fi
@@ -351,6 +357,7 @@ _ak_ipns_resolve(){
         echo -n $rsld | sed -e 's/\/ipfs\///'
         _ak_log_info "Resolved $1 to $rsld"
     else
+        _ak_log_error "No argument given to resolve"
         exit 1
     fi
 }
