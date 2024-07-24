@@ -20,7 +20,7 @@ if [ ! -z $1 ]
 then
     case $1 in
         -h | --help) _ak_usage; exit;;
-        -d | --daemon) _ak_ipfs daemon; exit;;
+        -d | --daemon) _ak_ipfs_starter; exit;;
         * ) _ak_usage;;
     esac
 else _ak_usage

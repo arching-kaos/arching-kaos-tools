@@ -330,6 +330,13 @@ _ak_ipfs_starter(){
         _ak_log_error "Failed to start IPFS daemon"
         exit 1
     fi
+    akipfsdpid="$(cat $AK_WORKDIR/akipfsd.pid)"
+    ps $akipfsdpid
+    if [ $? -ne 0 ]
+    then
+        _ak_log_error "Failed to start IPFS daemon PID $akipfsdpid"
+        exit 1
+    fi
 }
 
 _ak_ipns_resolve(){
