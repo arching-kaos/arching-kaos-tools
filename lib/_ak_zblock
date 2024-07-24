@@ -665,7 +665,7 @@ _ak_zblock_announce(){
             --connect-timeout 3 \
             --header 'Content-Type: application/json' \
             --data-raw '{"zblock":"'$1'"}' \
-            "http://127.0.0.1:8610/v0/announce/zblock" \
+            "http://[$(_ak_settings_get api.bindToIP)]:8610/v0/announce/zblock" \
             2>/dev/null | jq -M -c > /dev/null
         if [ $? -ne 0 ]
         then
@@ -677,7 +677,7 @@ _ak_zblock_announce(){
         curl \
             --connect-timeout 3 \
             --header 'Content-Type: application/json' \
-            --data-raw '{"zblock":"'$(_ak_zchain_get_latest)'"}' \
+            --data-raw '{"zblock":"'$(ak-zchain --get-latest)'"}' \
             "http://127.0.0.1:8610/v0/announce/zblock" \
             2>/dev/null | jq -M -c > /dev/null
         if [ $? -ne 0 ]
