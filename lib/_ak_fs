@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source $AK_LIBDIR/_ak_log
+
 _ak_fs_return_hash_path(){
     hashpath="$(echo -n "$1" |sed 's/./&\//g;s/\/$//g')"
     echo -n "$hashpath"
@@ -15,7 +17,7 @@ _ak_fs_verify_input_is_hash(){
     then
         return 0
     else
-        echo "no hash?!" >&2
+        _ak_log_error "no hash?!"
         exit 1
     fi
 }
@@ -376,4 +378,12 @@ _ak_fs_export(){
         exit 1
     fi
     _ak_fs_export "$1" > $outputFilename
+}
+
+_ak_fs_list(){
+    FILEMAPSDIR="$AK_WORKDIR/fmp"
+    find $FILEMAPSDIR -type f | while read fina
+    do
+        cat $fina | tr $'\n' ' ' | awk '{ print $2 " " $3 }'
+    done
 }
