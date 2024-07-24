@@ -180,7 +180,8 @@ _ak_gpg_list_keys_long(){
         grep -A 1 '^ \{6\}' | \
         tr $'\n' ' ' | \
         tr '\-\-' $'\n' | \
-        awk '{print $1 " " $5}' | \
+        sed -e 's/\[//g' | \
+        awk '{print $1 " " $4}' | \
         sort | \
         uniq
 }
