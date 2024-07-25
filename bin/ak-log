@@ -5,15 +5,11 @@
 ## Usage:
 ##
 ##    -h, --help                  Prints this help message
-##
 ##    -f, --follow                Follows the log file as its appended with new
 ##                                messages
-##
 ##    -m, --message <program> <type> <message>
 ##                                Adds a log message to the log
-##
 ##    -r, --rotate                Cleans up log files after archiving them
-##
 ##    -g, --grep                  Select a script to view only logs from that
 ##
 fullprogrampath="$(realpath $0)"

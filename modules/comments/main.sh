@@ -1,11 +1,8 @@
 #!/bin/bash
 ##
 ## -h, --help                Prints this help message"
-##
 ## index                     Prints an indexed table of your comments files"
-##
 ## add <file> <refer_to>     Creates a data file from the comments file you point to"
-##
 ## create <refer_to>         Vim is going to pop up, you will write and save your"
 ##                           commentsletter and it's going to be saved"
 ##

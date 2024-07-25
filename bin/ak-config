@@ -3,13 +3,9 @@
 ## Usage:    ak-config [ -h | --help | --show | --publish | --get-published ]
 ##
 ##     -h, --help       Show this help screen
-##
 ##     --show           Show current configuration (from FileSystem)
-##
 ##     --publish        Publish current configuration
-##
 ##     --get-published  Get published ak-config (from IPFS)
-##
 ##     --get-ipns-key   Get the ak-config IPNS key
 ##
 fullprogrampath="$(realpath $0)"

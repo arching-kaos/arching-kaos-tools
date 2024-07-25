@@ -5,39 +5,25 @@
 ## Usage:
 ##
 ##    -h, --help                          Prints this help message
-##
 ##    --get-key-self-as-ipfs              Returns your key as an IPFS hash
-##
 ##    --get-key-self-as-fingerprint       Returns the fingerprint of your key
-##
 ##    --get-key-fingerprint-from-ipfs     Returns the fingerprint of a given key
-##
 ##    --export-key-self-to-file           Exports self public key as 'self.pub'
-##
 ##    --clear-sign <file> <output>        Sign a file clearly
-##
+##    --verify-file <file>                Verify a clear signed file
 ##    -l, --list-keys                     Returns a list of known GPG keys
-##
 ##    -lp, --list-keys-plain              Returns a list of known GPG keys as
 ##                                        plain GPG output
-##
 ##    -ll, --list-keys-long               Returns a list of known GPG keys with
 ##                                        their 1st uid
-##
 ##    -ls, --list-secret-keys             Returns a list of secret GPG keys
-##
 ##    -lsp, --list-secret-keys-plain      Returns a list of secret GPG keys as
 ##                                        plain GPG output
-##
 ##    -lsl, --list-secret-keys-long       Returns a list of secret GPG keys with
 ##                                        their 1st uid
-##
 ##    -c, --create-key <email>            Creates a GPG key with a label <email>
-##
 ##    -s, --select-key                    Selects the GPG key you want to use
-##
 ##    -d, --delete-key                    Delete GPG keys from your keyring
-##
 ##    -ds, --delete-secret-key <fingerprint>
 ##                                        Delete GPG keys from your keyring
 ##
@@ -62,6 +48,7 @@ if [ ! -z $1 ]; then
         --get-key-fingerprint-from-ipfs) _ak_gpg_key_get_fingerprint_from_ipfs $1; exit;;
         --export-key-self-to-file) _ak_gpg_key_self_export 'self.pub'; exit;;
         --clear-sign) shift; _ak_gpg_sign_clear "$2" "$1"; exit;;
+        --verify-file) shift; _ak_gpg_verify_clear_signature "$1"; exit;;
         --list-keys | -l) _ak_gpg_list_keys; exit;;
         --list-keys-long | -ll) _ak_gpg_list_keys_long; exit;;
         --list-keys-plain | -lp) _ak_gpg_list_keys_plain; exit;;

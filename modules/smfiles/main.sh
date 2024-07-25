@@ -2,13 +2,9 @@
 ## sm files
 ##
 ##  -h, --help              Prints this help message
-##
 ##  --add <file>            Adds file to zchain as a zblock
-##
 ##  --index                 List files
-##
 ##  --full-index            List all files
-##
 ##  --ls-map-files          List map files
 ##
 ZFILESDIR="$AK_WORKDIR/files"

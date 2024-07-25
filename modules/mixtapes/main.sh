@@ -5,9 +5,7 @@
 ## Usage:
 ##
 ##  -a <artist> <title> <file>            Adds a file with tags artist and title
-##
 ##  -h , --help
-##
 ##  -s , --specs
 ##
 # We can extend it by calling the _ak_zblock_pack.sh mixtape/add data ## ORIGINAL LINE

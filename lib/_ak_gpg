@@ -149,6 +149,23 @@ _ak_gpg_encrypt_for_self(){
     fi
 }
 
+_ak_gpg_verify_clear_signature(){
+    if [ ! -z $1 ] && [ -n "$1" ] && [ -f "$1" ]
+    then
+        fingerprint="$(cat $1 | _ak_gpg 2>&1 | grep RSA | awk '{print $5}')"
+        if [ $? -ne 0 ]
+        then
+            _ak_log_error "Could not verify signature"
+            exit 1
+        fi
+        _ak_log_debug "$1 signed with $fingerprint"
+        cat $1 | _ak_gpg 2> /dev/null
+    else
+        _ak_log_error "Failed to verify detached signature $1 against $2"
+        exit 1
+    fi
+}
+
 _ak_gpg_verify_signature(){
     if [ ! -z $1 ] && [ -n "$1" ] && [ -f "$1" ] && [ ! -z $2 ] && [ -n "$2" ] && [ -f "$2" ] 
     then

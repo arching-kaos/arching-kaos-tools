@@ -10,7 +10,6 @@
 ## Usage:
 ##
 ##    -h, --help                  Prints this help message
-##
 ##    -c, --clean                 Removes all /tmp/aktmp* directories
 ##
 

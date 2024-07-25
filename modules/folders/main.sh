@@ -3,8 +3,6 @@
 ##
 ##
 ##    -h, --help                  Prints this help message
-##
-##
 ##     add <folder>               Try ak-folders add <folder>
 ##
 fullprogrampath="$(realpath $0)"

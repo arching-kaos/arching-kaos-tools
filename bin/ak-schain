@@ -5,9 +5,7 @@
 ## Usage:
 ##
 ##    -h, --help                  Prints this help message
-##
 ##    -c, --crawl                 Crawl an schain or latest known
-##
 ##    -l, --get-latest            Returns latest sblock from saved sblocks. The
 ##                                latest sblock would belong to the longest
 ##                                schain if more than one schains found.

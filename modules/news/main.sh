@@ -1,25 +1,17 @@
 #!/bin/bash
 ##
 ##    -h, --help                  Prints this help message
-##
 ##    -l, --local-index           Prints an indexed table of your news files
-##
 ##    -i, --import <file>         TODO
-##
 ##    -a, --add <file>            Creates a data file from the news file you
 ##                                point to
-##
 ##    -r, --read <zblock>         Reads a zblock as a news data
-##
 ##    -r, --read local_latest     Reads the latest zblock found on your local
 ##                                zchain
-##
 ##    -c, --create                Vim is going to pop up, you will write and
 ##                                save your newsletter and it's going to bei
 ##                                saved
-##
 ##    -s, --specs                 Print specs of data block
-##
 ##    -x, --html <zblock>         Returns an appropriate html element from a
 ##                                NEWS zblock
 ##

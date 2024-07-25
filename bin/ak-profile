@@ -6,14 +6,10 @@
 ## Usage:
 ##
 ##     -h, --help                      Prints this help message
-##
 ##     -l, --local-index               Show current status
-##
 ##     --show <data IPFS CIDv0>        Show profile entry from specified DATA
 ##                                     IPFS CIDv0
-##
 ##     -s, --set <property> <value>    Sets a profile value
-##
 ##     -g, --get <property>            Gets a profile value from the on-disk
 ##                                     file.
 ##
@@ -22,7 +18,6 @@
 ##     -a, --add <file>                Creates a data file from the profile file
 ##                                     you point (file should already be in
 ##                                     ZPROFILEDIR).
-##
 ##     -i, --import <folder>           Import a folder to zchain #TODO
 ##
 fullprogrampath="$(realpath $0)"

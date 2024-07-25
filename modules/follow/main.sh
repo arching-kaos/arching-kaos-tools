@@ -5,11 +5,8 @@
 ## Usage:
 ##
 ##    -h, --help                  Prints this help message
-##
 ##    -f, --follow                Adds a ... to your follow list
-##
 ##    -l, --list                  Shows a list of your followings
-##
 ##    -u, --unfollow              Unfollows a ...
 ##
 fullprogrampath="$(realpath $0)"

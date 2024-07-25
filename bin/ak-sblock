@@ -5,7 +5,6 @@
 ## Usage:
 ##
 ##    -h, --help                  Prints this help message
-##
 ##    -s, --show <sblock-hash>    Show a particular SBLOCK
 ##
 fullprogrampath="$(realpath $0)"

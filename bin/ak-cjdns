@@ -5,13 +5,9 @@
 ## Usage:
 ##
 ##    -h, --help                  Prints this help message
-##
 ##    --check                     Check for binaries
-##
 ##    --install                   Install cjdns
-##
 ##    --connect                   Connect to ak cjdns nodes
-##
 ##    --ip                        Returns your cjdns IPv6
 ##
 fullprogrampath="$(realpath $0)"

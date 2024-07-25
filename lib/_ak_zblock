@@ -685,7 +685,7 @@ _ak_zblock_repack(){
 }
 
 _ak_zblock_pack(){
-    if [ ! -z $2 ];
+    if [ ! -z $2 ]
     then
         MESSAGE="$2"
         ACTION="$1"

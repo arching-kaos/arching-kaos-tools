@@ -5,9 +5,7 @@
 ## Usage:
 ##
 ##    -h, --help                  Prints this help message
-##
 ##    --ipfs
-##
 ##    --ipns
 ##
 fullprogrampath="$(realpath $0)"

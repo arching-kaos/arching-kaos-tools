@@ -5,13 +5,9 @@
 ## Usage:
 ##
 ##    -h, --help        Prints this help message
-##
 ##    index             Prints an indexed table of your todos files
-##
 ##    import <file>     #TODO
-##
 ##    add <file>        Creates a data file from the todos file you point to
-##
 ##    create            Vim is going to pop up, you will write and save your
 ##                      todosletter and it's going to be saved
 ##

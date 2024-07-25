@@ -5,7 +5,6 @@
 ## Usage:
 ##
 ##    -h, --help                  Prints this help message
-##
 ##    -r, --reset                 Reset zchain
 ##                                Backs up your latest block into IPFS
 ##                                filesystem, replaces it with an empty file
@@ -15,7 +14,6 @@
 ##                                This program, does NOT delete anything from
 ##                                your IPFS repository, neither denies access to
 ##                                previously created blocks.
-##
 ##    --rebase <zblock>           Rebase zchain to a zblock
 ##                                Backs up your latest block into IPFS
 ##                                filesystem, replaces it with a zblock and
@@ -25,24 +23,15 @@
 ##                                This program, does NOT delete anything from
 ##                                your IPFS repository, neither denies access to
 ##                                previously created blocks.
-##
 ##    --rebase-back-one           Rebase zchain one zblock back
-##
 ##    --extract-cids              Extracts IPFS CIDv0 links of a zchain
-##
 ##    --extract-data-cids         Extracts data IPFS CIDv0 links from a zchain
-##
 ##    --calculate-size            Calculates the size of a zchain
-##
 ##    --crawl                     Crawls zchains ( --crawl --help for more
 ##                                options)
-##
 ##    --crawl-self                Crawls the local zchain
-##
 ##    --crawl-remote-ipfs         Crawls a remote zchain
-##
 ##    --crawl-remote-ipns         Crawls a remote zchain from ipns key
-##
 ##    --get-latest                Returns the latest zblock from your zchain
 ##
 fullprogrampath="$(realpath $0)"
