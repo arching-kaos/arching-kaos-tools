@@ -752,7 +752,7 @@ _ak_zblock_pack(){
         # python send_as_ak_tx $ZBLOCK
         # or for "offline" use
         echo $ZBLOCK > $AK_ZLATEST
-        _ak_ipfs_name_publish --key=zchain $ZBLOCK > /dev/null 2>&1
+        _ak_ipfs_name_publish zchain /ipfs/$ZBLOCK > /dev/null 2>&1
         if [ $? -ne 0 ]
         then
             _ak_log_error "Failed publishing ZBLOCK: $ZBLOCK"
