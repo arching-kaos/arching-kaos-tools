@@ -1,5 +1,10 @@
 FROM archlinux:latest
 RUN pacman -Suy --noconfirm && pacman -Syu --noconfirm which git screen pinentry -y 
+RUN pacman -Suy --noconfirm wget -y
+RUN pacman -Suy --noconfirm jq -y
+RUN pacman -Suy --noconfirm nodejs -y
+RUN pacman -Suy --noconfirm npm -y
+RUN pacman -Suy --noconfirm make -y
 COPY . /root/arching-kaos-tools
 RUN bash -c 'cd /root/arching-kaos-tools && /root/arching-kaos-tools/install.sh'
 RUN git config --global user.email "kaos@kaos.kaos"
