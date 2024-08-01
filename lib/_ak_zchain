@@ -1,6 +1,7 @@
 #!/bin/bash
 source $AK_LIBDIR/_ak_log
 source $AK_LIBDIR/_ak_ipfs
+source $AK_LIBDIR/_ak_zblock
 
 _ak_zchain_reset(){
     echo "Reseting ZLATEST to ZGENESIS"
@@ -215,7 +216,7 @@ variable
             echo -n '['
         fi
         counter=$(($counter + 1))
-        ak-zblock --show "$zblock"
+        _ak_zblock_show "$zblock"
         if [ $limit -ne 0 ] && [ $limit -eq $counter ]
         then
             echo -n ']'
