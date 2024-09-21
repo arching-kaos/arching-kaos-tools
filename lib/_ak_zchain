@@ -10,16 +10,23 @@ _ak_zchain_reset(){
     if [ $? != 0 ]; then exit 1; fi
 
     echo "Make sure /zarchive folder exists within IPFS FS"
-    _ak_ipfs_files_mkdir /zarchive
-    if [ $? != 0 ]; then echo "Folder already there"; fi
+    _ak_ipfs_files_stat /zarchive
+    if [ $? -ne 0 ]
+    then
+        _ak_ipfs_files_mkdir /zarchive
+        if [ $? -ne 0 ]; then echo "Could not create directory /zarchive"; fi
+    fi
 
-    echo "Archive the previous AK_ZLATEST"
-    _ak_ipfs_files_cp /zlatest /zarchive/$(date -u +%s)-$(_ak_ipfs_files_stat /zlatest | head -n 1)
-    if [ $? != 0 ]; then exit 1; fi
-
-    echo "Removing previous /zlatest entry"
-    _ak_ipfs_files_rm /zlatest
-    if [ $? != 0 ]; then exit 1; fi
+    _ak_ipfs_files_stat /zlatest
+    if [ $? -eq 0 ]
+    then
+        echo "Archive the previous AK_ZLATEST"
+        _ak_ipfs_files_cp /zlatest /zarchive/$(date -u +%s)-$(_ak_ipfs_files_stat /zlatest | head -n 1)
+        if [ $? != 0 ]; then exit 1; fi
+        echo "Removing previous /zlatest entry"
+        _ak_ipfs_files_rm /zlatest
+        if [ $? != 0 ]; then exit 1; fi
+    fi
 
     echo "Copying reset AK_ZLATEST"
     CZLATEST="$(cat $AK_ZLATEST)"
