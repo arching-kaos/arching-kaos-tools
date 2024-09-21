@@ -12,7 +12,7 @@ _ak_ipfs(){
     if [ $? -ne 0 ]
     then
         _ak_log_error "Some error occured when running: ipfs $*"
-        exit 1
+        #exit 1
     fi
 }
 
@@ -201,7 +201,7 @@ _ak_ipfs_files_stat(){
     if [ $? -ne 0 ]
     then
         _ak_log_error "Failed to get file's stats $1"
-        #exit 1
+        exit 1
     fi
 }
 
