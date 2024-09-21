@@ -5,37 +5,61 @@ source $AK_LIBDIR/_ak_zblock
 source $AK_LIBDIR/_ak_script
 
 _ak_zchain_reset(){
-    echo "Reseting AK_ZLATEST to AK_ZGENESIS"
+    _ak_log_info "Reseting AK_ZLATEST to AK_ZGENESIS"
     cp $AK_ZGENESIS $AK_ZLATEST
-    if [ $? != 0 ]; then exit 1; fi
+    if [ $? -ne 0 ]
+    then
+        _ak_log_error "Failed to reset AK_ZLATEST to AK_ZGENESIS"
+        exit 1
+    fi
 
-    echo "Make sure /zarchive folder exists within IPFS FS"
+    _ak_log_info "Make sure /zarchive folder exists within IPFS FS"
     _ak_ipfs_files_stat /zarchive
     if [ $? -ne 0 ]
     then
         _ak_ipfs_files_mkdir /zarchive
-        if [ $? -ne 0 ]; then echo "Could not create directory /zarchive"; fi
+        if [ $? -ne 0 ]
+        then
+            _ak_log_error "Could not create directory /zarchive"
+            exit 1
+        fi
     fi
 
     _ak_ipfs_files_stat /zlatest
     if [ $? -eq 0 ]
     then
-        echo "Archive the previous AK_ZLATEST"
+        _ak_log_info "Archive the previous AK_ZLATEST"
         _ak_ipfs_files_cp /zlatest /zarchive/$(date -u +%s)-$(_ak_ipfs_files_stat /zlatest | head -n 1)
-        if [ $? != 0 ]; then exit 1; fi
-        echo "Removing previous /zlatest entry"
+        if [ $? -ne 0 ]
+        then
+            _ak_log_error "Failed to copy /zlatest to /zarchive"
+            exit 1
+        fi
+        _ak_log_info "Removing previous /zlatest entry"
         _ak_ipfs_files_rm /zlatest
-        if [ $? != 0 ]; then exit 1; fi
+        if [ $? -ne 0 ]
+        then
+            _ak_log_error "Failed to remove /zlatest"
+            exit 1
+        fi
     fi
 
-    echo "Copying reset AK_ZLATEST"
+    _ak_log_info "Copying reset AK_ZLATEST"
     CZLATEST="$(cat $AK_ZLATEST)"
     _ak_ipfs_files_cp /ipfs/$CZLATEST /zlatest
-    if [ $? != 0 ]; then exit 1; fi
+    if [ $? -ne 0 ]
+    then
+        _ak_log_error "Failed to copy AK_ZLATEST to /zlatest"
+        exit 1
+    fi
 
-    echo "Publishing new (reset) AK_ZLATEST"
+    _ak_log_info "Publishing new (reset) AK_ZLATEST"
     _ak_ipfs_name_publish --key=zchain /ipfs/$(cat $AK_ZLATEST)
-    if [ $? != 0 ]; then exit 1; fi
+    if [ $? -ne 0 ]
+    then
+        _ak_log_error "Failed to publish updated zchain"
+        exit 1
+    fi
 
     _ak_config_publish
     if [ $? -ne 0 ]
