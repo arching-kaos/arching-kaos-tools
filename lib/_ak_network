@@ -198,7 +198,7 @@ _ak_network_scan_cjdns_full(){
     online_ips="$TEMPDIR/oi"
     filtered_online_pubkeys_ips="$TEMPDIR/fopi"
     curl -s \
-        --connect-timeout=5 \
+        --connect-timeout 5 \
         "http://hia.cjdns.ca/watchlist/c/walk.pubkey" > $pubkeys_ips
     if [ $? -ne 0 ]
     then
@@ -206,7 +206,7 @@ _ak_network_scan_cjdns_full(){
         exit 1
     fi
     curl -s \
-        --connect-timeout=5 \
+        --connect-timeout 5 \
         "http://hia.cjdns.ca/watchlist/hia.iplist" > $online_ips
     if [ $? -ne 0 ]
     then

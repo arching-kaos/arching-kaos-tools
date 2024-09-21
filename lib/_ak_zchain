@@ -28,7 +28,7 @@ _ak_zchain_reset(){
     fi
 
     _ak_log_info "Checking if /zlatest file exists"
-    _ak_ipfs files stat /zlatest > /dev/null 2>&1
+    _ak_ipfs_files_stat /zlatest > /dev/null 2>&1
     if [ $? -eq 0 ]
     then
         _ak_log_info "Archive the previous AK_ZLATEST"
@@ -73,7 +73,7 @@ _ak_zchain_reset(){
         exit 1
     fi
 
-    echo "Reset was successful"
+    _ak_log_info "Reset was successful"
     exit 0
 }
 
