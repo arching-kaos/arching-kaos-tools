@@ -23,10 +23,12 @@ _ak_zchain_reset(){
             _ak_log_error "Could not create directory /zarchive"
             exit 1
         fi
+    else
+        _ak_log_info "/zarchive directory exists"
     fi
 
     _ak_log_info "Checking if /zlatest file exists"
-    _ak_ipfs_files_stat /zlatest > /dev/null
+    _ak_ipfs_files_stat /zlatest > /dev/null 2>&1
     if [ $? -eq 0 ]
     then
         _ak_log_info "Archive the previous AK_ZLATEST"
@@ -43,6 +45,8 @@ _ak_zchain_reset(){
             _ak_log_error "Failed to remove /zlatest"
             exit 1
         fi
+    else
+        _ak_log_info "/zlatest not found, skipping backup"
     fi
 
     _ak_log_info "Copying reset AK_ZLATEST"
