@@ -13,8 +13,8 @@ _ak_zchain_reset(){
         exit 1
     fi
 
-    _ak_log_info "Make sure /zarchive folder exists within IPFS FS"
-    _ak_ipfs_files_stat /zarchive
+    _ak_log_info "Checking if /zarchive directory exists"
+    _ak_ipfs_files_stat /zarchive > /dev/null
     if [ $? -ne 0 ]
     then
         _ak_ipfs_files_mkdir /zarchive
