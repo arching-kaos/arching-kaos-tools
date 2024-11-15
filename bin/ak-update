@@ -1,14 +1,14 @@
 #!/bin/bash
 
-if [ -L $AK_WORKDIR/bin/ak ]
+if [ -L "${AK_WORKDIR}/bin/ak" ]
 then
-    $source_dir ="$(ls -l $AK_WORKDIR/bin/ak | rev | cut -d ' ' -f 1 | rev | sed 's/bin\/ak//')"
+    source_dir="$(ls -l ${AK_WORKDIR}/bin/ak | rev | cut -d ' ' -f 1 | rev | sed 's/\/bin\/ak//')"
 else
     echo "Can't update... ak script is not a link"
     exit 1
 fi
 
-if [ -d ${source_dir} ] && [ -d ${source_dir}/.git ]
+if [ -d "${source_dir}" ] && [ -d "${source_dir}/.git" ]
 then
     cd ${source_dir}
     git pull
