@@ -35,7 +35,6 @@ _ak_help(){
 }
 
 _ak_title_description(){
-
     if [ ! -n "$descriptionString" ]
     then
         # Choose to exit with error to enforce standard
@@ -44,7 +43,6 @@ _ak_title_description(){
         # Alternative solution
         # full_title="$(printf '%s' "$PROGRAM")"
     fi
-
     full_title="$(printf '%s - %s' "$PROGRAM" "$descriptionString")"
     delimiter_count=`echo -n $full_title | wc -c`
     (

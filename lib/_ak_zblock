@@ -110,6 +110,7 @@ _ak_data_expand(){
 # Returns a JSON array representing the chain retrieved.
 # Logs messages to $LOGSFILE.
 _ak_zblock_show(){
+    caller >&2
     verify=1
     if [ ! -z $1 ] && [ -n "$1" ]
     then
