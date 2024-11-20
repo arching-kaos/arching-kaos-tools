@@ -74,7 +74,7 @@ programs used are:
 - git (v2.34.1)
 - which (v2.21)
 - jq (v1.6)
-- nodejs (v18.14)
+- nodejs (v16+)
 - npm (v9.5.0)
 - npx (v9.5.0)
 
