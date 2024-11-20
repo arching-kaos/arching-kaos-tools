@@ -47,9 +47,9 @@ _ak_fs_import(){
     # 2. We then create a map file and a merkle tree containing the resulted files
     # and their sha512sum.
     #
-    # 3. We move the splitted files to our $CHKDIR named after their checksums
+    # 3. We move the splitted files to our $AK_CHUNKSDIR named after their checksums
     #
-    # 4. We move the merkle tree pairs to $MERKLEDIR
+    # 4. We move the merkle tree pairs to $AK_LEAFSDIR
     #
     # We ultimately want to be seeding the file so
     #
@@ -60,12 +60,6 @@ _ak_fs_import(){
     # 6. We are done!
     #
 
-    # The directory where the chunked data will be living at
-    CHKDIR="$AK_WORKDIR/ftr"
-    # The directory for the map files so we can reconstruct the file
-    FILEMAPSDIR="$AK_WORKDIR/fmp"
-    # Merkle tree file/references
-    MERKLEDIR="$AK_WORKDIR/fmrk"
     # A temporary root dir to work on
     TEMPORARYDIR="$(_ak_make_temp_directory)"
     # A subdir to split the files there
@@ -88,53 +82,53 @@ _ak_fs_import(){
             exit 1
         fi
     else
-        _ak_log_info "Temp dir found"
+        _ak_log_debug "Temp dir found"
     fi
 
-    # FILEMAPSDIR
-    if [ ! -d "$FILEMAPSDIR" ]
+    # AK_MAPSDIR
+    if [ ! -d "$AK_MAPSDIR" ]
     then
-        mkdir -p "$FILEMAPSDIR"
+        mkdir -p "$AK_MAPSDIR"
         if [ $? -eq 0 ]
         then
-            _ak_log_info "Folder $FILEMAPSDIR created!"
+            _ak_log_debug "Folder $AK_MAPSDIR created!"
         else
-            _ak_log_error "Problem occured while creating $FILEMAPSDIR"
+            _ak_log_error "Problem occured while creating $AK_MAPSDIR"
             exit 1
         fi
     else
-        _ak_log_info "Mapsdir found"
+        _ak_log_debug "Mapsdir found"
     fi
 
-    # CHKDIR
-    if [ ! -d "$CHKDIR" ]
+    # AK_CHUNKSDIR
+    if [ ! -d "$AK_CHUNKSDIR" ]
     then
-        mkdir -p "$CHKDIR"
+        mkdir -p "$AK_CHUNKSDIR"
         if [ $? -eq 0 ]
         then
-            _ak_log_info "Folder $CHKDIR created!"
+            _ak_log_info "Folder $AK_CHUNKSDIR created!"
         else
-            _ak_log_error "Problem occured while creating $CHKDIR"
+            _ak_log_error "Problem occured while creating $AK_CHUNKSDIR"
             exit 1
         fi
     else
-        _ak_log_info "Workdir found"
+        _ak_log_debug "Workdir found"
     fi
 
-    # MERKLEDIR
-    if [ ! -d "$MERKLEDIR" ]
+    # AK_LEAFSDIR
+    if [ ! -d "$AK_LEAFSDIR" ]
     then
-        mkdir -p "$MERKLEDIR"
+        mkdir -p "$AK_LEAFSDIR"
         if [ $? -eq 0 ]
         then
-            _ak_log_info "Folder $MERKLEDIR created!"
+            _ak_log_info "Folder $AK_LEAFSDIR created!"
         else
-            _ak_log_error "Problem occured while creating $MERKLEDIR"
-            echo "ERROR Can't create $MERKLEDIR"
+            _ak_log_error "Problem occured while creating $AK_LEAFSDIR"
+            echo "ERROR Can't create $AK_LEAFSDIR"
             exit 1
         fi
     else
-        _ak_log_info "Workdir found"
+        _ak_log_debug "Workdir found"
     fi
     if [ ! -f "$1" ]
     then
@@ -180,7 +174,7 @@ _ak_fs_import(){
     cd $TECHDIR
     #set -xe
     # We get every chunks' SHA512 and we craft a script to rename the chunks and
-    # move them to CHKDIR
+    # move them to AK_CHUNKSDIR
     for file in $TEMPORARYDIR/chks/*
     do
         sha512sum $file >> $TEMPORARYDIR/map
@@ -210,17 +204,19 @@ _ak_fs_import(){
             sed -n "$a"p "$workingIndex" | awk '{ print $1 }' >> level.$c.pair.$a-$b
             sed -n "$b"p "$workingIndex" | awk '{ print $1 }' >> level.$c.pair.$a-$b
             shaSum="$(sha512sum level.$c.pair.$a-$b | awk '{ print $1 }')"
-            mkdir -p $MERKLEDIR/$(_ak_fs_return_hash_dir $shaSum)
-            cp level.$c.pair.$a-$b $MERKLEDIR/$(_ak_fs_return_hash_path $shaSum)
+            #mkdir -p $AK_LEAFSDIR/$(_ak_fs_return_hash_dir $shaSum)
+            #cp level.$c.pair.$a-$b $AK_LEAFSDIR/$(_ak_fs_return_hash_path $shaSum)
+            cp level.$c.pair.$a-$b $AK_LEAFSDIR/$shaSum
             sha512sum level.$c.pair.$a-$b | awk '{ print $1 }' >> level.$c.map
             a=`expr "$a" + 2`
         done
         workingIndex="level.$c.map"
         _ak_fs_appendLastIfNotEven "$workingIndex"
         shaSum=`sha512sum $workingIndex | awk '{ print $1 }'`
-        mkdir -p $MERKLEDIR/$(_ak_fs_return_hash_dir $shaSum)
-        cp $workingIndex $MERKLEDIR/$(_ak_fs_return_hash_path $shaSum)
-    #    cp $workingIndex $MERKLEDIR/$shaSum
+        #mkdir -p $AK_LEAFSDIR/$(_ak_fs_return_hash_dir $shaSum)
+        #cp $workingIndex $AK_LEAFSDIR/$(_ak_fs_return_hash_path $shaSum)
+        cp $workingIndex $AK_LEAFSDIR/$shaSum
+    #    cp $workingIndex $AK_LEAFSDIR/$shaSum
         totalChunks=`cat $workingIndex | wc -l`
         c=`expr $c - 1`
     done
@@ -242,9 +238,9 @@ _ak_fs_import(){
     counter=0
     while IFS="" read -r p || [ -n "$p" ]
     do
-#        printf "mv %s %s/%s\n" "$(echo $p | awk '{ print $2 }')" "$CHKDIR" "$(echo $p | awk '{ print $1 }')" >> $TEMPORARYDIR/cmd_queue.sh
-        mkdir -p $CHKDIR/$(_ak_fs_return_hash_dir $(echo $p | awk '{ print $1 }'))
-        cp $(echo $p | awk '{ print $2 }') $CHKDIR/$(_ak_fs_return_hash_path $(echo $p | awk '{ print $1 }'))
+#        printf "mv %s %s/%s\n" "$(echo $p | awk '{ print $2 }')" "$AK_CHUNKSDIR" "$(echo $p | awk '{ print $1 }')" >> $TEMPORARYDIR/cmd_queue.sh
+        #mkdir -p $AK_CHUNKSDIR/$(echo $p | awk '{ print $1 }')
+        cp $(echo $p | awk '{ print $2 }') $AK_CHUNKSDIR/$(echo $p | awk '{ print $1 }')
         counter=`expr "$counter" + 1`
     done < $TEMPORARYDIR/map
 
@@ -260,11 +256,11 @@ _ak_fs_import(){
     # We get the SHA512 hash of the resulted map file
 #    MAPFILEHASH="$(sha512sum $TEMPORARYDIR/map | awk '{ print $1 }')"
 
-    # and we rename it with it and move it to FILEMAPSDIR
-#    `sha512sum $TEMPORARYDIR/map | awk '{print "mv " $2 " '$FILEMAPSDIR/'" $1}'`
+    # and we rename it with it and move it to AK_MAPSDIR
+#    `sha512sum $TEMPORARYDIR/map | awk '{print "mv " $2 " '$AK_MAPSDIR/'" $1}'`
 
     mp512p="$(sha512sum $TEMPORARYDIR/3rd_gen_map | awk '{print $1}')"
-    mv $TEMPORARYDIR/3rd_gen_map $FILEMAPSDIR/$mp512p
+    mv $TEMPORARYDIR/3rd_gen_map $AK_MAPSDIR/$mp512p
 
     # We remove the TEMPORARYDIR
     rm -rf $TEMPORARYDIR
@@ -276,7 +272,8 @@ _ak_fs_import(){
 
 _ak_fs_find_depth(){
     currentNode="$1"
-    pathToNode="$fmrk/$(_ak_fs_return_hash_path $currentNode)"
+    #pathToNode="$AK_LEAFSDIR/$(_ak_fs_return_hash_path $currentNode)"
+    pathToNode="$AK_LEAFSDIR/$currentNode"
     if [ -f $pathToNode ] && [ "$(du -b $pathToNode | awk '{print $1}')" == "258" ]
     then
         fileHead="$(head -n 1 $pathToNode)"
@@ -288,7 +285,7 @@ _ak_fs_find_depth(){
     else
         exit 111
         # Try to download stuff
-        #        wget -s $remoteMrk/$currentNode -O $fmrk/$currentNode
+        #        wget -s $remoteMrk/$currentNode -O $AK_LEAFSDIR/$currentNode
         #        if [ $? -ne 0 ]
         #        then
         #            exit 111
@@ -310,8 +307,6 @@ _ak_fs_cat(){
         exit 1
     fi
     treeRootHash="$1"
-    fmrk="$AK_WORKDIR/fmrk"
-    ftr="$AK_WORKDIR/ftr"
     # Enter temp folder
     TEMPASSIN="$(_ak_make_temp_directory)"
     cd $TEMPASSIN
@@ -337,7 +332,8 @@ _ak_fs_cat(){
             then
                 echo hi
             else
-                expectedPath="$fmrk/$(_ak_fs_return_hash_path $p)"
+                #expectedPath="$AK_LEAFSDIR/$(_ak_fs_return_hash_path $p)"
+                expectedPath="$AK_LEAFSDIR/$p"
                 if [ -f $expectedPath ]
                 then
                     if [ "$(head -n 1 $expectedPath)" == "$(tail -n 1 $expectedPath)" ]
@@ -346,9 +342,11 @@ _ak_fs_cat(){
                     else
                         cat $expectedPath >> workspace.$nextLevel
                     fi
-                elif [ -f $ftr/$(_ak_fs_return_hash_path $p) ]
+                #elif [ -f $AK_CHUNKSDIR/$(_ak_fs_return_hash_path $p) ]
+                elif [ -f $AK_CHUNKSDIR/$p ]
                 then
-                    cat $ftr/$(_ak_fs_return_hash_path $p) >> output
+                    #cat $AK_CHUNKSDIR/$(_ak_fs_return_hash_path $p) >> output
+                    cat $AK_CHUNKSDIR/$p >> output
                 fi
             fi
         done < workspace.$counter
@@ -381,9 +379,15 @@ _ak_fs_export(){
 }
 
 _ak_fs_list(){
-    FILEMAPSDIR="$AK_WORKDIR/fmp"
-    find $FILEMAPSDIR -type f | while read fina
-    do
-        cat $fina | tr $'\n' ' ' | awk '{ print $2 " " $3 }'
-    done
+    if [ -d "${AK_MAPSDIR}" ]
+    then
+        find $AK_MAPSDIR -type f | while read fina
+        do
+            cat $fina | tr $'\n' ' ' | awk '{ print $2 " " $3 }'
+        done
+    else
+        _ak_log_debug "Making ${AK_MAPSDIR} directory"
+        mkdir -p ${AK_MAPSDIR}
+        _ak_log_debug "Empty directory"
+    fi
 }

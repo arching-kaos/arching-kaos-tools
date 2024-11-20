@@ -20,7 +20,9 @@ const config = {
     peersFile : env.AK_ZPEERSFILE,
     cacheDir : env.AK_CACHEDIR,
     minedBlocksDir: env.AK_MINEDBLOCKSDIR,
+    chunksDir: env.AK_CHUNKSDIR,
+    leafsDir: env.AK_LEAFSDIR,
+    mapsDir: env.AK_MAPSDIR,
     printDebug: env.AK_DEBUG
-
 }
 module.exports = config; 

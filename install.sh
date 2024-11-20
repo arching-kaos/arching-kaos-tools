@@ -135,6 +135,9 @@ if [ ! -f $AK_ZBLOCKSFILE ]; then touch $AK_ZBLOCKSFILE; fi
 if [ ! -f $AK_ZPAIRSFILE ]; then touch $AK_ZPAIRSFILE; fi
 if [ ! -d $AK_CACHEDIR ]; then mkdir $AK_CACHEDIR; fi
 if [ ! -d $AK_GPGHOME ]; then mkdir $AK_GPGHOME && chmod 700 -R $AK_GPGHOME; fi
+if [ ! -d $AK_CHUNKSDIR ]; then mkdir -p $AK_CHUNKSDIR; fi
+if [ ! -d $AK_LEAFSDIR ]; then mkdir -p $AK_LEAFSDIR; fi
+if [ ! -d $AK_MAPSDIR ]; then mkdir -p $AK_MAPSDIR; fi
 
 touch $AK_WORKDIR/logs
 logthis(){

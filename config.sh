@@ -27,6 +27,9 @@ export AK_ZBLOCKSFILE="$AK_WORKDIR/zBlocksFile"
 export AK_ZPAIRSFILE="$AK_WORKDIR/pairsFile"
 export AK_ZPEERSFILE="$AK_WORKDIR/peersFile"
 export AK_CACHEDIR="$AK_WORKDIR/cache"
+export AK_CHUNKSDIR="$AK_WORKDIR/akfs/chunks"
+export AK_LEAFSDIR="$AK_WORKDIR/akfs/leafs"
+export AK_MAPSDIR="$AK_WORKDIR/akfs/maps"
 
 source $AK_LIBDIR/_ak_settings
 export AK_FINGERPRINT="$(_ak_settings_get gpg.fingerprint)"

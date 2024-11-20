@@ -6,6 +6,9 @@ const getPeers = require('./routes/getPeers/index.js');
 const getZblock = require('./routes/getZblock/index.js');
 const getZlatest = require('./routes/getZLatest/index.js');
 const getSblock = require('./routes/getSBlock/index.js');
+const getChunk = require('./routes/getChunk/index.js');
+const getLeaf = require('./routes/getLeaf/index.js');
+const getMap = require('./routes/getMap/index.js');
 const getSlatest = require('./routes/getSLatest/index.js');
 
 const akLogMessage = require('./lib/akLogMessage');
@@ -52,6 +55,9 @@ function getRoutes(req, res)
             case 'zlatest': getZlatest(req, res); break;
             case 'sblock': getSblock(req, res); break;
             case 'slatest': getSlatest(req, res); break;
+            case 'chunk': getChunk(req, res); break;
+            case 'leaf': getLeaf(req, res); break;
+            case 'map': getMap(req, res); break;
             default: notImplemented(req, res);
         }
     }
