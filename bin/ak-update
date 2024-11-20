@@ -11,8 +11,17 @@ fi
 if [ -d "${source_dir}" ] && [ -d "${source_dir}/.git" ]
 then
     cd ${source_dir}
-    git pull
-    ./update.sh
+    current_latest_commit="$(git -P log --oneline | head -n 1 | awk '{print $1}')"
+    pull_output="$(git pull)"
+    echo -n "${pull_output}" | grep "Already up to date." > /dev/null 2>&1
+    if [ $? -ne 0 ]
+    then
+        echo "${pull_output}"
+        ./update.sh
+        git -P log ${current_latest_commit}..HEAD
+    else
+        echo "${pull_output}"
+    fi
 else
     echo "Can't update... source not found or not a git repository"
     exit 1
