@@ -29,7 +29,6 @@ Previous developments
 3. From a directory full of blocks, find the latest block of the longest chain
 4. API for calling some of the bash scripts
 
-
 Description
 -----------
 This is an installable repository which provides various tools for running
@@ -113,6 +112,132 @@ Navigate to your cloned repository and execute the following command:
 This will output an archive with your aknet-gpg-keyring to your $HOME folder.
 
 It will NOT remove your IPFS repository, neither is going to clean it.
+
+Podman (or Docker)
+------------------
+
+There is a ContainerFile that you can use to build an image which you can then
+deploy in a container.
+
+Use:
+
+```
+podman build -f ContainerFile -t arching-kaos-tools .
+```
+
+Specialized ContainerFiles are available in `./podman/` for various
+distributions:
+- alpine
+- archlinux
+- debian
+- fedora
+- opensuse
+
+More over there are two scripts for testing with podman:
+1. `./test_with_podman.sh` - build one or all images
+2. `./full_test_with_podman.sh` - build one image and bash in it
+
+TODO
+----
+
+Next things to come are:
+- [ ] - zblock manipulator to fix wrong previous block references and repack
+        zblocks.
+- [X] - zchain rebase-like procedure to move the zblocks to another seed or set
+        another previous block (e.g. join chains)
+- [x] - Clean up installation and filesystem usage
+- [x] - Log rotate to gzip archives
+- [ ] - Filters for log searching for IPFS hashes or names
+- [ ] - Use of IPFS file system to store/pin sub chains, previous chains or
+        other chains
+
+Concepts under thought
+----------------------
+
+- Base chain, derived from personal ones.
+- Daemon to monitor chains' states, update and sign new zblocks.
+- Find a minimum agreement of what is valid or not. (important)
+- Spam defence (e.g. how to protect the network from abuse cases) (important)
+- Reduce size of all parts of chain (stringify JSON) (improvement)
+
+Scripts' description
+--------------------
+
+Utilities
+---------
+ - ak-log                  # Logging tools
+ - ak-clean                # Cleans up temporary folders created by these tools
+ - ak-config               # Publish your configuration to IPNS
+ - ak-get-zlatest          # Returns zlatest ZBLOCK according to IPFS FS
+ - ak-gpg                  # Return your GPG key as IPFS CID
+ - ak-network              # Network Tools (connect to, scan for, dump peers)
+ - ak-node-info            # Returns IPFS CID or IPNS key for your online config
+ - ak-sblock               # sblock tools
+ - ak-schain               # schain tools
+ - ak-zblock               # zblock tools
+ - ak-zchain               # zchain tools
+
+Modules
+-------
+ - articles                 PROTO Adds an article to your ZCHAIN
+ - categories               PROTO Adds or references categories to the ZCHAIN
+ - comments                     # References a comment to a ZBLOCK
+ - files                        # Adds a file to the ZCHAIN
+ - folders                  PROTO Adds a folder to the ZCHAIN
+ - mixtapes                     # Adds a mixtape to the ZCHAIN
+ - news                         # Adds a news article to the ZCHAIN
+ - profile                      # Adds key-value pairs to the ZCHAIN
+ - reference                    # Adds references to the ZCHAIN
+ - repositories                 # Adds repositories to the ZCHAIN
+ - roadmap                  PROTO Adds a roadmap to the ZCHAIN
+ - transactions                 # Prototype of transactions in the ZCHAIN
+ - smfiles                      # Adds a split file's map to the ZCHAIN
+ - todos                    PROTO Adds todo list to the ZCHAIN
+ - follow                   PROTO Follow IPNS keys of ZCHAIN for changes
+
+ Read more at the `./MODULES` file
+
+Experimental
+------------
+ - ak-mempool                      # TODO
+ - ak-mine                     PROTO Prototype miner
+ - ak-get-balances                 # Returns a balances from SCHAIN
+
+Libraries
+---------
+ - lib/_ak_ipfs
+ - lib/_ak_fs
+ - lib/_ak_gpg
+ - lib/_ak_newline
+ - lib/_ak_network
+ - lib/_ak_script
+ - lib/_ak_log
+ - lib/_ak_smfiles
+
+IPFS Wrappers
+-------------
+ - ak-ipfs-starter
+ - ak-ipfs-daemon
+
+Not completed or just odd
+-------------------------
+
+Deprecated
+----------
+ - ak-json2bash
+
+
+Debugging
+---------
+
+Setting `AK_DEBUG` shell variable to `"yes"` will make all log messages to
+appear on your stderr (file descriptor 2). After setting this variable, run the
+tools you want.
+
+Example:
+``` console
+AK_DEBUG="yes"; ak zchain --crawl -l 1
+```
 
 Examples
 --------
@@ -205,96 +330,6 @@ Bonus: CJDNS network scanning flags
    -s, --scan cjdns [-d|--dump]         Scan using CJDNS' dumpLinks (default)
 ```
 
-Podman (or Docker)
-------------------
-
-There is a ContainerFile that you can use to build an image which you can then
-deploy in a container.
-
-Use:
-
-```
-podman build -f ContainerFile -t arching-kaos-tools .
-```
-
-Specialized ContainerFiles are available in `./podman/` for various
-distributions:
-- alpine
-- archlinux
-- debian
-- fedora
-- opensuse
-
-More over there are two scripts for testing with podman:
-1. `./test_with_podman.sh` - build one or all images
-2. `./full_test_with_podman.sh` - build one image and bash in it
-
-TODO
-----
-
-Next things to come are:
-- [ ] - zblock manipulator to fix wrong previous block references and repack
-        zblocks.
-- [X] - zchain rebase-like procedure to move the zblocks to another seed or set
-        another previous block (e.g. join chains)
-- [x] - Clean up installation and filesystem usage
-- [x] - Log rotate to gzip archives
-- [ ] - Filters for log searching for IPFS hashes or names
-- [ ] - Use of IPFS file system to store/pin sub chains, previous chains or
-        other chains
-
-Concepts under thought
-----------------------
-
-- Base chain, derived from personal ones.
-- Daemon to monitor chains' states, update and sign new zblocks.
-- Find a minimum agreement of what is valid or not. (important)
-- Spam defence (e.g. how to protect the network from abuse cases) (important)
-- Reduce size of all parts of chain (stringify JSON) (improvement)
-
-Script usage
-------------
-
-Utilities
----------
- - ak-log                  # Logging tools
- - ak-clean                # Cleans up temporary folders created by these tools
- - ak-config               # Publish your configuration to IPNS
- - ak-get-zlatest          # Returns zlatest ZBLOCK according to IPFS FS
- - ak-gpg                  # Return your GPG key as IPFS CID
- - ak-network              # Network Tools (connect to, scan for, dump peers)
- - ak-node-info            # Returns IPFS CID or IPNS key for your online config
- - ak-sblock               # sblock tools
- - ak-schain               # schain tools
- - ak-zblock               # zblock tools
- - ak-zchain               # zchain tools
-
-Experimental
-------------
- - ak-mempool                      # TODO
- - ak-mine                     PROTO Prototype miner
- - ak-get-balances                 # Returns a balances from SCHAIN
-
-Modules
--------
- - articles                 PROTO Adds an article to your ZCHAIN
- - categories               PROTO Adds or references categories to the ZCHAIN
- - comments                     # References a comment to a ZBLOCK
- - files                        # Adds a file to the ZCHAIN
- - folders                  PROTO Adds a folder to the ZCHAIN
- - mixtapes                     # Adds a mixtape to the ZCHAIN
- - news                         # Adds a news article to the ZCHAIN
- - profile                      # Adds key-value pairs to the ZCHAIN
- - reference                    # Adds references to the ZCHAIN
- - repositories                 # Adds repositories to the ZCHAIN
- - roadmap                  PROTO Adds a roadmap to the ZCHAIN
- - transactions                 # Prototype of transactions in the ZCHAIN
- - smfiles                      # Adds a split file's map to the ZCHAIN
- - todos                    PROTO Adds todo list to the ZCHAIN
- - follow                   PROTO Follow IPNS keys of ZCHAIN for changes
-
- Read more at the `./MODULES` file
-
 FS tools
 --------
  - ak-fs
@@ -314,40 +349,3 @@ Usage:
 
    --cat <hash>                              Concatenates from given hash
 ```
-
-Libraries
----------
- - lib/_ak_ipfs
- - lib/_ak_fs
- - lib/_ak_gpg
- - lib/_ak_newline
- - lib/_ak_network
- - lib/_ak_script
- - lib/_ak_log
- - lib/_ak_smfiles
-
-IPFS Wrappers
--------------
- - ak-ipfs-starter
- - ak-ipfs-daemon
-
-Not completed or just odd
--------------------------
-
-Deprecated
-----------
- - ak-json2bash
-
-
-Debugging
----------
-
-Setting `AK_DEBUG` shell variable to `"yes"` will make all log messages to
-appear on your stderr (file descriptor 2). After setting this variable, run the
-tools you want.
-
-Example:
-``` console
-AK_DEBUG="yes"; ak zchain --crawl -l 1
-```
-
