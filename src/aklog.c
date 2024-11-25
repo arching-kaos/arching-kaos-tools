@@ -128,42 +128,12 @@ void ak_log_print_log_line(char* line)
                                 }
                                 break;
                         }
-                        // line[k]
-                        // if ( k 
-
                     }
                     last_space = i;
                 }
-                //printf("%c", line[i]);
             }
-            // else
-            // {
-            //     for ( int k = last_space+1; k < i+1; k++ )
-            //     {
-            //         if ( line[k] == '\0' )
-            //         {
-            //             printf("just broke: %d\n", k);
-            //             break;
-            //         }
-            //         printf("No break: %d\n", k);
-            //         printf("%c", line[k]);
-            //     }
-            // }
             i++;
-            /* if [ -n "$1" ]
-             * then
-             *     char* timestamp="$(echo "$*" | awk '{print $1}')";
-             *     program="$(echo "$*" | awk '{print $2}')";
-             *     messagetype="$(echo "$*" | awk '{print $3}')";
-             *     message="$(echo "$*" | cut -d ' ' -f4-)";
-             *     printf('%s \033[1;32m%s\033[0;00m \033[1;31m%s\033[0;00m %s\n' \
-             *         "$(date --date=@$timestamp +%Y%m%d_%H%M%S)" \
-             *         "$program" \
-             *         "$messagetype" \
-             *         "$message");
-             */
         }
-        printf("\n");
     }
 }
 
@@ -239,7 +209,7 @@ void ak_log_message(char* program, char* type, char* message)
                 printf( "%ld <%s> [%s] %s\n", ts, program, type, message); // out to file though
                 if ( AK_DEBUG )
                 {
-                    asprintf(&some_string, "%s <%s> [%s] %s\n", ts_string, program, type, message);
+                    asprintf(&some_string, "%s <%s> [%s] %s", ts_string, program, type, message);
                     ak_log_print_log_line(some_string);
                     // fprintf(stderr, "%s <%s> [%s] %s\n", ts_string, program, type, message);
                 }
