@@ -1,6 +1,5 @@
 FROM archlinux:latest
 RUN pacman -Suy --noconfirm && pacman -Syu --noconfirm which git screen pinentry -y 
-RUN pacman -Suy --noconfirm wget -y
 RUN pacman -Suy --noconfirm jq -y
 RUN pacman -Suy --noconfirm nodejs -y
 RUN pacman -Suy --noconfirm npm -y

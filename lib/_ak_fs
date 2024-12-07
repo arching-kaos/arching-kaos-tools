@@ -285,7 +285,7 @@ _ak_fs_find_depth(){
     else
         exit 111
         # Try to download stuff
-        #        wget -s $remoteMrk/$currentNode -O $AK_LEAFSDIR/$currentNode
+        #        curl -s $remoteMrk/$currentNode -o $AK_LEAFSDIR/$currentNode
         #        if [ $? -ne 0 ]
         #        then
         #            exit 111

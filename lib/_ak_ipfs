@@ -453,7 +453,7 @@ _ak_ipfs_download(){
     _ak_log_info "Downloading ipfs $IPFS_VERSION"
     if [ ! -f $AK_ARCHIVESDIR/$IPFS_TARGET_FILE ]
     then
-        wget -O $AK_ARCHIVESDIR/$IPFS_TARGET_FILE https://dist.ipfs.tech/kubo/$IPFS_VERSION/$IPFS_TARGET_FILE ;
+        curl -s -o $AK_ARCHIVESDIR/$IPFS_TARGET_FILE https://dist.ipfs.tech/kubo/$IPFS_VERSION/$IPFS_TARGET_FILE
     else
         _ak_log_info "Already have the latest version"
         exit 0
@@ -485,7 +485,7 @@ _ak_ipfs_swarm_install(){
     if [ ! -f $AK_IPFS_REPO/swarm.key ]
     then
         _ak_log_info "Downloading swarm key"
-        wget -O $AK_IPFS_REPO/swarm.key https://arching-kaos.net/files/swarm.key
+        curl -s -o $AK_IPFS_REPO/swarm.key https://arching-kaos.net/files/swarm.key
     elif [ -f $AK_IPFS_REPO/swarm.key ] && [ "$(sha512sum $AK_IPFS_REPO/swarm.key | awk '{ print $1 }')" == "$SWARMSHA512SUM" ]
     then
         _ak_log_info "Congrats! You are already in our swarm"

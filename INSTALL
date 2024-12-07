@@ -53,7 +53,7 @@ In a bash terminal issue the following commands:
 cd $HOME
 mkdir arching-kaos-tools
 cd arching-kaos-tools
-wget https://arching-kaos.net/files/arching-kaos-tools/arching-kaos-tools-nightly-20230914.tar.gz
+curl -s -o arching-kaos-tools-nightly-20230914.tar.gz https://arching-kaos.net/lfiles/arching-kaos-tools/arching-kaos-tools-nightly-20230914.tar.gz
 tar xvf arching-kaos-tools-nightly-20230914.tar.gz
 
 ```

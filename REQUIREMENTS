@@ -15,7 +15,6 @@ npm
 npx
 make
 curl
-wget
 screen
 
 Note that some of those are checked if they already exist in your system during

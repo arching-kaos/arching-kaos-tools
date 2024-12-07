@@ -68,7 +68,7 @@ checkIfSudoAvailable(){
 checkIfSudoAvailable
 
 # Depedencies check and install
-declare -a depedencies=("curl" "wget" "bash" "jq" "npm" "gpg" "git" "make" "screen" "gpg-agent")
+declare -a depedencies=("curl" "bash" "jq" "npm" "gpg" "git" "make" "screen" "gpg-agent")
 for dep in "${depedencies[@]}"
 do
     printf "Checking for %s..." "$dep"
