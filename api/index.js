@@ -3,13 +3,15 @@ const http = require("node:http");
 const welcomeMessage = require("./routes/default/index.js");
 const getNodeInfo = require('./routes/getNodeInfo/index.js');
 const getPeers = require('./routes/getPeers/index.js');
-const getZblock = require('./routes/getZblock/index.js');
+const getIPFSHash = require('./routes/getIPFSHash/index.js');
 const getZlatest = require('./routes/getZLatest/index.js');
 const getSblock = require('./routes/getSBlock/index.js');
 const getChunk = require('./routes/getChunk/index.js');
 const getLeaf = require('./routes/getLeaf/index.js');
 const getMap = require('./routes/getMap/index.js');
 const getSlatest = require('./routes/getSLatest/index.js');
+const getRemoteNodeInfo = require('./routes/getRemoteNodeInfo/index.js');
+const getRemotePeers = require('./routes/getRemotePeers/index.js');
 
 const akLogMessage = require('./lib/akLogMessage');
 
@@ -51,13 +53,15 @@ function getRoutes(req, res)
             case 'root': testRootRoute(req, res); break;
             case 'peers': getPeers(req, res); break;
             case 'node_info': getNodeInfo(req, res); break;
-            case 'zblock': getZblock(req, res); break;
+            case 'ipfs_hash': getIPFSHash(req, res); break;
             case 'zlatest': getZlatest(req, res); break;
             case 'sblock': getSblock(req, res); break;
             case 'slatest': getSlatest(req, res); break;
             case 'chunk': getChunk(req, res); break;
             case 'leaf': getLeaf(req, res); break;
             case 'map': getMap(req, res); break;
+            case 'remote_node_info': getRemoteNodeInfo(req, res); break;
+            case 'remote_peers': getRemotePeers(req, res); break;
             default: notImplemented(req, res);
         }
     }
