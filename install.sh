@@ -35,9 +35,10 @@ installCommand=""
 dontAskFlag=""
 checkPkgManager(){
     declare -a pkgmanagers=("dnf" "apt" "zypper" "pacman" "apk")
+    printf "Searching for package manager..."
     for pkgm in "${pkgmanagers[@]}"
     do
-        printf "Searching for package manager..."
+        printf "? ${pkgm}"
         which $pkgm 2> /dev/null 1>&2
         if [ $? -eq 0 ]
         then
