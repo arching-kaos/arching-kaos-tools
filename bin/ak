@@ -52,6 +52,10 @@ then
             _ak_usage
             exit 1
             ;;
+        -v|--version)
+            _ak_version
+            exit 1
+            ;;
     esac
 fi
 

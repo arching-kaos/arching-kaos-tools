@@ -58,7 +58,27 @@ _ak_title_description(){
 
 _ak_usage(){
     _ak_title_description
-    _ak_help
+    _ak_help 2>&1
+}
+
+_ak_print_version(){
+    git_repo="$(ls -l $AK_LIBDIR/_ak_script | cut -d '>' -f 2 | sed 's/^ //' | rev | cut -d '/' -f 3- | rev)"
+    patch_version="$(git --git-dir="${git_repo}/.git" -P log --reverse --oneline --decorate | tail -n 1 | cut -d ' ' -f 1)"
+    gtags="$(git --git-dir="${git_repo}/.git" -P tag | tail -n 1)"
+    if [ -f "$AK_WORKDIR/version" ]
+    then
+        cat $AK_WORKDIR/version
+    elif [ -n "${gtags}" ]
+    then
+        echo "${gtags}"
+    else
+        echo "v0.0.0-${patch_version}"
+    fi
+}
+
+_ak_version(){
+    printf '%s - ' "$PROGRAM"
+    _ak_print_version 2>&1
 }
 
 _ak_not_implemented(){
