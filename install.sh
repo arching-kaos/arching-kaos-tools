@@ -77,36 +77,35 @@ do
     if [ $? -ne 0 ]
     then
         printf "\t Not found!"
-        if [ "$packageManager" != "" ]
+        if [ "$dep" == "npm" ]
+        then
+            curl -o nvm_installer.sh https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh
+            if [ $? -ne 0 ]
+            then
+                printf "\t Failed to download!\n"
+                exit 1
+            fi
+            printf "\t Downloaded!"
+            bash nvm_installer.sh
+            if [ $? -ne 0 ]
+            then
+                printf "\t Failed to install nvm!\n"
+                exit 1
+            fi
+            printf "\t nvm installed!"
+            printf "\t Installing latest nodejs..."
+            export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+            nvm install $(nvm ls-remote|tail -n 1)
+            if [ $? -ne 0 ]
+            then
+                printf "\t Failed to install nodejs!\n"
+                exit 1
+            fi
+            printf "\t nodejs installed!\n"
+        elif [ "$packageManager" != "" ]
         then
             printf "\t Attempting installation..."
-            if [ "$dep" == "npm" ]
-            then
-                curl -o nvm_installer.sh https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh
-                if [ $? -ne 0 ]
-                then
-                    printf "\t Failed to download!\n"
-                    exit 1
-                fi
-                printf "\t Downloaded!"
-                bash nvm_installer.sh
-                if [ $? -ne 0 ]
-                then
-                    printf "\t Failed to install nvm!\n"
-                    exit 1
-                fi
-                printf "\t nvm installed!"
-                printf "\t Installing latest nodejs..."
-                export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
-                [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
-                nvm install $(nvm ls-remote|tail -n 1)
-                if [ $? -ne 0 ]
-                then
-                    printf "\t Failed to install nodejs!\n"
-                    exit 1
-                fi
-                printf "\t nodejs installed!\n"
-            else
                 $sudoBin $packageManager $installCommand $dontAskFlag $dep > /dev/null 2>&1
                 if [ $? -ne 0 ]
                 then
@@ -114,7 +113,6 @@ do
                     exit 1
                 fi
                 printf "\t installed!\n"
-            fi
         else
             printf "\t Don't know how to install!\n\nInstall $dep manually!\n"
             exit 1
