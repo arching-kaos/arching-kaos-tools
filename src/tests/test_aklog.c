@@ -22,32 +22,32 @@ void test_rotate()
 
 void test_log_message()
 {
-    ak_log_message("TEST", "TEST", "test message info");
+    ak_log_message(__func__, "TEST", "test message info");
 }
 
 void test_exit()
 {
-    ak_log_exit("TEST", "test message info");
+    ak_log_exit(__func__, "test message info");
 }
 
 void test_warning()
 {
-    ak_log_warning("TEST", "test message info");
+    ak_log_warning(__func__, "test message info");
 }
 
 void test_debug()
 {
-    ak_log_debug("TEST", "test message info");
+    ak_log_debug(__func__, "test message info");
 }
 
 void test_error()
 {
-    ak_log_error("TEST", "test message info");
+    ak_log_error(__func__, "test message info");
 }
 
 void test_info()
 {
-    ak_log_info("TEST", "test message info");
+    ak_log_info(__func__, "test message info");
 }
 
 int main (void)

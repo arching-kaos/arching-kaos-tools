@@ -79,13 +79,39 @@ do
         if [ "$packageManager" != "" ]
         then
             printf "\t Attempting installation..."
-            $sudoBin $packageManager $installCommand $dontAskFlag $dep > /dev/null 2>&1
-            if [ $? -ne 0 ]
+            if [ "$dep" == "npm" ]
             then
-                printf "\t Failed to install!\n"
-                exit 1
+                curl -o nvm_installer.sh https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh
+                if [ $? -ne 0 ]
+                then
+                    print "\t Failed to download!\n"
+                    exit 1
+                fi
+                printf "\t Downloaded!"
+                bash nvm_installer.sh
+                if [ $? -ne 0 ]
+                then
+                    print "\t Failed to install nvm!\n"
+                    exit 1
+                fi
+                printf "\t nvm installed!"
+                printf "\t Installing latest nodejs..."
+                nvm install $(nvm ls-remote|tail -n 1)
+                if [ $? -ne 0 ]
+                then
+                    print "\t Failed to install nodejs!\n"
+                    exit 1
+                fi
+                printf "\t nodejs installed!\n"
+            else
+                $sudoBin $packageManager $installCommand $dontAskFlag $dep > /dev/null 2>&1
+                if [ $? -ne 0 ]
+                then
+                    printf "\t Failed to install!\n"
+                    exit 1
+                fi
+                printf "\t installed!\n"
             fi
-            printf "\t installed!\n"
         else
             printf "\t Don't know how to install!\n\nInstall $dep manually!\n"
             exit 1
