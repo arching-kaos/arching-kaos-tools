@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if [ ! -d $PWD/lib ]
 then
     mkdir $PWD/lib

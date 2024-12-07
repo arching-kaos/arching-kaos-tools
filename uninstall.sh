@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 printf "Arching Kaos Tools - Uninstaller\n"
 echo '--------------------------------'
 if [ ! -d "$AK_WORKDIR" ] ; then printf "No arching-kaos found... Aborting...\n"; exit 1; fi

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 echo "Building lib/aklog.so" && \
 gcc -c -shared -Wextra -Wall -Werror -pedantic -ggdb -fPIC -I./include aklog.c -o lib/aklog.so && \

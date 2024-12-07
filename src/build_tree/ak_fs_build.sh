@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 echo "Building lib/akfs.so" && \
 gcc -c -shared -Wextra -Wall -Werror -pedantic -ggdb -fPIC -I./include akfs.c -o lib/akfs.so && \

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ##
 ## You can maintain a list of friendly zchains or ids
 ##

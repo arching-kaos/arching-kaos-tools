@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ##
 ## The following creates a mixtape data message
 ##

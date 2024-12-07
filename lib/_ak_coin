@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # coin max is 10,000.0000000
 # but we count in integer to avoid floating point arithmetic :P
 #

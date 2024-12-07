@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ##
 ## Tools to add, get and cat files to/from the Arching Kaos File System
 ##

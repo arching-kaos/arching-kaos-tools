@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ##
 ## Performs various operations on a zblock. Additionally, it can also pack one
 ## from given information, which can be added on top of your zchain.

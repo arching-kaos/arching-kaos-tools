@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 PROGRAM="$(basename $0)"
 printf '[%s]\n' "$PROGRAM"
 API_RES="$(curl -s http://127.0.0.1:8610/v0/zlatest 2>/dev/null | sha512sum - | awk '{ printf $1 }')"

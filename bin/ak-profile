@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ##
 ## Indexes, shows, imports, adds, sets and gets values from and to the
 ## zchain and files.

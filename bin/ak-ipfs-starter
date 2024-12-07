@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 PROGRAM="$(basename $0)"
 
 source $AK_LIBDIR/_ak_log

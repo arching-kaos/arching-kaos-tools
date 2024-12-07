@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 PROGRAM="$(basename $0)"
 printf '[%s]\n' "$PROGRAM"
 curl -s http://127.0.0.1:8610 2>/dev/null | jq > /dev/null

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 source $AK_LIBDIR/_ak_ipfs
 
 # Resolves the IPNS key "ak-config" to its current IPFS value

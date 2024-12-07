@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 PROGRAM="$(basename $0)"
 source lib/_ak_script
 source lib/_ak_log

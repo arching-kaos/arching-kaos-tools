@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ##
 ## Usage:    ak-config [ -h | --help | --show | --publish | --get-published ]
 ##

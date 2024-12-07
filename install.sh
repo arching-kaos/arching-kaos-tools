@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 clear
 printf "Arching Kaos Tools Installer\n"
 printf "============================\n"

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -x
 source lib/_ak_ipfs
 source lib/_ak_settings

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 PROGRAM="$(basename $0)"
 printf '[%s] Starting tests...\n' "$PROGRAM"
 bash node_local_chain.sh

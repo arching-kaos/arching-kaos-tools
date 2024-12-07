@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 export AK_DEBUG="yes"
 ##
 ## Arching Kaos CLI tool is the main executable script to use for exploring,

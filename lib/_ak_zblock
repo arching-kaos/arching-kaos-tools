@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #set -x
 source $AK_LIBDIR/_ak_log
 source $AK_LIBDIR/_ak_script

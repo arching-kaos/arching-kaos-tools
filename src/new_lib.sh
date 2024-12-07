@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 library="${1}"
 library_capitals="$(echo ${library} | tr '[:lower:]' '[:upper:]')"

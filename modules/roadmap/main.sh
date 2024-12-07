@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 echo "$(basename $0) - Not implemented"
 exit 1
 

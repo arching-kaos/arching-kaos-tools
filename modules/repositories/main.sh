@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 source $AK_LIBDIR/_ak_zblock
 REPODIR="$HOME/projects"
 BAREDIR="$HOME/bare"

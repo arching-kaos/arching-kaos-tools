@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 source $AK_LIBDIR/_ak_log
 AK_IPFS_REPO="$AK_WORKDIR/ipfsrepo"
 AK_IPFS_ARTIFACTS="$AK_WORKDIR/ipfs_artifacts"

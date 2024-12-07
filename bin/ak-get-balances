@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ##
 ## Calculates the balances of the sblocks found from a chain
 ## Saves stuff too for later reference

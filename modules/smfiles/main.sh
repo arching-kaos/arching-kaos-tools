@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ## sm files
 ##
 ##  -h, --help              Prints this help message

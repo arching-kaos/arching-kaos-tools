@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 podman_dir="podman"
 now="$(date -u +%s)"
 

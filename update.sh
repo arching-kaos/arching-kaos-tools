@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Updates bin files
 find $AK_BINDIR -type l | while read link

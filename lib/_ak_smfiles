@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 source $AK_LIBDIR/_ak_log
 
 # The directory where the chunked data will be living at
@@ -87,7 +87,7 @@ _ak_sm_file_joiner(){
     then
         MAPSFILE="$1"
 
-        echo '#!/bin/bash' > script
+        echo '#!/usr/bin/env bash' > script
 
         # We create a script to copy all the chunks and rename them to their serialized
         # name produced by split when we splitted the file

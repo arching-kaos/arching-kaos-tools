@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ##
 ##     -h, --help       Prints this help message"
 ##     index            Prints an indexed table of your news files"

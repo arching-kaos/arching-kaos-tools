@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ##
 ## It is a minimal wrapper aroung lib/_ak_gpg.
 ##

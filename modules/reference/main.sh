@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ## #TODO
 ## All you need to know is that there are two options available:
 ## -h, --help               Prints this help message
