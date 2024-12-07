@@ -84,14 +84,14 @@ do
                 curl -o nvm_installer.sh https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh
                 if [ $? -ne 0 ]
                 then
-                    print "\t Failed to download!\n"
+                    printf "\t Failed to download!\n"
                     exit 1
                 fi
                 printf "\t Downloaded!"
                 bash nvm_installer.sh
                 if [ $? -ne 0 ]
                 then
-                    print "\t Failed to install nvm!\n"
+                    printf "\t Failed to install nvm!\n"
                     exit 1
                 fi
                 printf "\t nvm installed!"
@@ -99,7 +99,7 @@ do
                 nvm install $(nvm ls-remote|tail -n 1)
                 if [ $? -ne 0 ]
                 then
-                    print "\t Failed to install nodejs!\n"
+                    printf "\t Failed to install nodejs!\n"
                     exit 1
                 fi
                 printf "\t nodejs installed!\n"
