@@ -13,10 +13,6 @@ void ak_log_print_log_line(char* line)
         int i = 0;
         int spaces_found = 0;
         int last_space = -1;
-        long int l = 1000000000;
-        long int ts = 0;
-        struct tm *timeInfo;
-        char ts_string[16]; // %Y%Y%Y%Y%m%m%d%d_%H%H%M%M%S%S
         while ( line[i] != '\0' )
         {
             if ( line[i] == ' ' ) //  && spaces_found < 4)
@@ -33,47 +29,12 @@ void ak_log_print_log_line(char* line)
                                 {
                                     if ( line[k] == ' ' )
                                     {
-                                        timeInfo = localtime(&ts);
-                                        strftime(ts_string, sizeof(ts_string), "%Y%m%d_%H%M%S", timeInfo);
-                                        printf("%s ", ts_string);
+                                        printf(" ");
                                         break;
                                     }
                                     else
                                     {
-                                        switch(line[k])
-                                        {
-                                            case '0':
-                                                ts = 0*l + ts;
-                                                break;
-                                            case '1':
-                                                ts = 1*l + ts;
-                                                break;
-                                            case '2':
-                                                ts = 2*l + ts;
-                                                break;
-                                            case '3':
-                                                ts = 3*l + ts;
-                                                break;
-                                            case '4':
-                                                ts = 4*l + ts;
-                                                break;
-                                            case '5':
-                                                ts = 5*l + ts;
-                                                break;
-                                            case '6':
-                                                ts = 6*l + ts;
-                                                break;
-                                            case '7':
-                                                ts = 7*l + ts;
-                                                break;
-                                            case '8':
-                                                ts = 8*l + ts;
-                                                break;
-                                            case '9':
-                                                ts = 9*l + ts;
-                                                break;
-                                        }
-                                        l = l/10;
+                                        printf("%c", line[k]);
                                     }
                                     k++;
                                 }
@@ -191,13 +152,23 @@ void ak_log_rotate()
 
 void ak_log_message(char* program, char* type, char* message)
 {
-    time_t ts = time(NULL);
     struct tm *timeInfo;
-    char ts_string[16]; // %Y%Y%Y%Y%m%m%d%d_%H%H%M%M%S%S
-    time(&ts);
-    timeInfo = localtime(&ts);
+    time_t ts;
+    char ts_string[200]; // %Y%Y%Y%Y%m%m%d%d_%H%H%M%M%S%S
     char* some_string = {0};
-    strftime(ts_string, sizeof(ts_string), "%Y%m%d_%H%M%S", timeInfo);
+    ts = time(NULL);
+    char* timeStampFormat = "%Y%m%d_%H%M%S";
+    timeInfo = localtime(&ts);
+    if ( timeInfo == NULL )
+    {
+        perror("localtime");
+        exit(EXIT_FAILURE);
+    }
+    if ( strftime(ts_string, sizeof(ts_string), timeStampFormat, timeInfo) == 0 )
+    {
+        fprintf(stderr, "strftime returned 0");
+        exit(EXIT_FAILURE);
+    }
     if ( program != NULL )
     {
         if ( type != NULL )
@@ -228,7 +199,6 @@ void ak_log_message(char* program, char* type, char* message)
         else
         {
             // echo "$TS" "<$1>" "[ERROR]" "No type and message" >> $AK_LOGSFILE
-
             printf("%s <%s> [ERROR] No type and message\n", ts_string, program); // out to file
             if ( AK_DEBUG )
             {
