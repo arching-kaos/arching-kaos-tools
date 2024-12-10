@@ -449,7 +449,7 @@ _ak_ipfs_download(){
         echo "ERROR UNKNOWN ARCHITECTURE $(uname --machine)"
         exit 1
     fi
-    IPFS_TARGET_FILE="kubo_"$IPFS_VERSION"_linux-$ARCH.tar.gz"
+    IPFS_TARGET_FILE="kubo_${IPFS_VERSION}_$(uname|tr "[:upper:]" "[:lower:]")-${ARCH}.tar.gz"
     _ak_log_info "Downloading ipfs $IPFS_VERSION"
     if [ ! -f $AK_ARCHIVESDIR/$IPFS_TARGET_FILE ]
     then
