@@ -180,7 +180,7 @@ _ak_network_scan_cjdns_dump(){
         fi
     done
     printf ']' >> walk.aknet
-    mv walk.aknet $AK_ZPEERSFILE
+    mv walk.aknet $AK_ZPEERSFILE.hyperboria
     rm -rf $TEMPDIR
 }
 
@@ -245,7 +245,59 @@ _ak_network_scan_cjdns_full(){
         fi
     done
     printf ']' >> walk.aknet
-    mv walk.aknet $AK_ZPEERSFILE
+    mv walk.aknet $AK_ZPEERSFILE.hyperboria
+    rm -rf $TEMPDIR
+}
+
+_ak_network_scan_yggdrasil_full(){
+    # This scan is using HIA resources to scan the whole cjdns network for peers
+    #
+    # Ref:
+    #  - https://github.com/ircerr/yia/
+    #  - http://yia.yggdrasil-network.ca/watchlist/yia.iplist
+    #
+    TEMPDIR="$(_ak_make_temp_directory)"
+    cd $TEMPDIR
+    pubkeys_ips="$TEMPDIR/pi"
+    online_ips="$TEMPDIR/oi"
+    filtered_online_pubkeys_ips="$TEMPDIR/fopi"
+    curl -s \
+        --connect-timeout 5 \
+        "http://yia.yggdrasil-network.ca/crawler/crawler-yia.pubkey" > $pubkeys_ips
+    if [ $? -ne 0 ]
+    then
+        _ak_log_error "Couldn't fetch DB from YIA"
+        exit 1
+    fi
+    counter=0
+    printf '[' > walk.aknet
+    cat $pubkeys_ips \
+        | sort \
+        | uniq \
+        | while read -r pkey ip || [ -n "$ip" ]
+    do
+        _ak_log_debug "Scanning $ip..."
+        node_info="$(curl \
+            --connect-timeout 3 \
+            -A 'akd/0.1.0; https://github.com/arching-kaos' \
+            "http://[$ip]:8610/v0/node_info" 2>/dev/null | jq -c -M)"
+        if [ $? -eq 0 ] && [ $(echo -n "$node_info" | wc -c) -gt 0 ]
+        then
+            if [ "$counter" -ne "0" ]
+            then
+                printf ',' >> walk.aknet
+            fi
+            if [ ! -n "$node_info" ]
+            then
+                node_info="null"
+            fi
+            printf '{"yggdrasil":{"public_key":"%s","ip":"%s"},"node_info":%s}' \
+                "$pkey" "$ip" "$node_info" >> walk.aknet
+            counter="`expr $counter + 1`"
+        fi
+    done
+    printf ']' >> walk.aknet
+    mv walk.aknet $AK_ZPEERSFILE.yggdrasil
     rm -rf $TEMPDIR
 }
 
@@ -262,6 +314,17 @@ _ak_network_scan_cjdns(){
     fi
 }
 
+_ak_network_scan_yggdrasil(){
+    if [ ! -z $1 ] && [ -n "$1" ]
+    then
+        case $1 in
+            *) _ak_network_scan_yggdrasil_full; exit;;
+        esac
+    else
+        _ak_network_scan_yggdrasil_full
+    fi
+}
+
 _ak_network_scan(){
     if [ ! -z $1 ] && [ -n "$1" ]
     then
@@ -269,12 +332,14 @@ _ak_network_scan(){
             stellar) _ak_network_scan_stellar; exit;;
             ipfs) _ak_network_scan_ipfs; exit;;
             cjdns) shift; _ak_network_scan_cjdns $1; exit;;
+            yggdrasil) shift; _ak_network_scan_yggdrasil $1; exit;;
             * ) _ak_log_error "Unknown network $1";exit 1;;
         esac
     else
         _ak_network_scan_stellar
         _ak_network_scan_ipfs
         _ak_network_scan_cjdns
+        _ak_network_scan_yggdrasil
     fi
 }
 _ak_network_show_peers_stellar(){
@@ -301,7 +366,11 @@ _ak_network_show_peers_stellar(){
 }
 
 _ak_network_show_peers_cjdns(){
-    cat $AK_ZPEERSFILE | jq
+    cat $AK_ZPEERSFILE.hyperboria | jq
+}
+
+_ak_network_show_peers_yggdrasil(){
+    cat $AK_ZPEERSFILE.yggdrasil | jq
 }
 
 _ak_network_show_peers_ipfs(){
@@ -315,10 +384,11 @@ _ak_network_show_peers(){
             stellar) _ak_network_show_peers_stellar; exit;;
             cjdns) _ak_network_show_peers_cjdns; exit;;
             ipfs) _ak_network_show_peers_ipfs; exit;;
+            yggdrasil) _ak_network_show_peers_yggdrasil; exit;;
             * ) _ak_log_error "Unknown network $1";exit 1;;
         esac
     else
-        (_ak_network_show_peers_stellar; _ak_network_show_peers_cjdns; _ak_network_show_peers_ipfs) | \
+        (_ak_network_show_peers_stellar; _ak_network_show_peers_cjdns; _ak_network_show_peers_yggdrasil; _ak_network_show_peers_ipfs) | \
             jq -j | \
             sed -e 's/]\[/,/g' | \
             jq
