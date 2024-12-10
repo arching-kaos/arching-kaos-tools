@@ -21,7 +21,7 @@ _ak_ipfs_install(){
     _ak_log_info "ipfs installed on $AK_BINDIR"
 }
 
-which ipfs > /dev/null 2>&1
+which kubo > /dev/null 2>&1
 if [ $? -ne 0 ]
 then
     _ak_ipfs_download
