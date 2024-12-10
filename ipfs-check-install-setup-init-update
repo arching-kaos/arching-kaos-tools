@@ -15,7 +15,7 @@ _ak_ipfs_install(){
     TEMPASSIN=$(cat tempassin)
     cd $TEMPASSIN
     tar xf $AK_ARCHIVESDIR/$IPFS_TARGET_FILE
-    cp kubo/ipfs $AK_BINDIR/ipfs
+    cp kubo/ipfs $AK_BINDIR/kubo
     cd $ak_curdir
     rm -rf $TEMPASSIN
     _ak_log_info "ipfs installed on $AK_BINDIR"

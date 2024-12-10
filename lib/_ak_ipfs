@@ -8,10 +8,10 @@ then
 fi
 
 _ak_ipfs(){
-    export IPFS_PATH=$AK_IPFS_REPO; ipfs $*
+    export IPFS_PATH=$AK_IPFS_REPO; kubo $*
     if [ $? -ne 0 ]
     then
-        _ak_log_error "Some error occured when running: ipfs $*"
+        _ak_log_error "Some error occured when running: kubo $*"
         #exit 1
     fi
 }
@@ -450,7 +450,7 @@ _ak_ipfs_download(){
         exit 1
     fi
     IPFS_TARGET_FILE="kubo_${IPFS_VERSION}_$(uname|tr "[:upper:]" "[:lower:]")-${ARCH}.tar.gz"
-    _ak_log_info "Downloading ipfs $IPFS_VERSION"
+    _ak_log_info "Downloading kubo $IPFS_VERSION"
     if [ ! -f $AK_ARCHIVESDIR/$IPFS_TARGET_FILE ]
     then
         curl -s -o $AK_ARCHIVESDIR/$IPFS_TARGET_FILE https://dist.ipfs.tech/kubo/$IPFS_VERSION/$IPFS_TARGET_FILE
