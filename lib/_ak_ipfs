@@ -436,17 +436,20 @@ _ak_ipfs_download(){
     IPFS_VERSION="$(curl \
         --connect-timeout 3 \
         -s https://dist.ipfs.tech/kubo/versions | tail -1)"
-    if [ "$(uname --machine)" == "x86_64" ]
+    if [ "$(uname -m)" == "amd64" ]
     then
         ARCH="amd64"
-    elif [ "$(uname --machine)" == "armv7l" ]
+    elif [ "$(uname -m)" == "x86_64" ]
+    then
+        ARCH="amd64"
+    elif [ "$(uname -m)" == "armv7l" ]
     then
         ARCH="arm"
-    elif [ "$(uname --machine)" == "aarch64" ]
+    elif [ "$(uname -m)" == "aarch64" ]
     then
         ARCH="arm64"
     else
-        echo "ERROR UNKNOWN ARCHITECTURE $(uname --machine)"
+        echo "ERROR UNKNOWN ARCHITECTURE $(uname -m)"
         exit 1
     fi
     IPFS_TARGET_FILE="kubo_${IPFS_VERSION}_$(uname|tr "[:upper:]" "[:lower:]")-${ARCH}.tar.gz"
