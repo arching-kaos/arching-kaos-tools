@@ -511,7 +511,7 @@ _ak_zblock_cache(){
 
     if [ ! -z "$1" ] && [ -n "$1" ]
     then
-        if [ -f "$AK_ZBLOCKDIR/$1" ] && [ "$(du -b $AK_ZBLOCKDIR/$1 | awk '{ print $1 }')" != "0" ]
+        if [ -f "$AK_ZBLOCKDIR/$1" ] && [ "$( (du -b $AK_ZBLOCKDIR/$1 || du -A $AK_ZBLOCKDIR/$1)2>/dev/null | awk '{ print $1 }')" != "0" ]
         then
             # if [ "$(sha512sum $AK_ZBLOCKDIR/$1 | awk '{ print $1 }')" == "$(_ak_zblock_show $1 | sha512sum | awk '{ print $1 }')" ]
             if [ ! -f $FZBLOCKSDIR/$1 ]

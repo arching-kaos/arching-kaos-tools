@@ -157,7 +157,7 @@ _ak_zchain_calculate_size(){
         if [ "$p" != "" ]
         then
             _ak_ipfs_get $p
-            num="$(du -bs --apparent-size $p | cut -d $'\t' -f 1)"
+            num="$( (du -b $p || du -A $p)2>/dev/null | cut -d $'\t' -f 1)"
         else
             num=0
         fi
