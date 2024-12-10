@@ -8,7 +8,7 @@ _ak_log_print_log_line(){
         messagetype="$(echo "$*" | awk '{print $3}')"
         message="$(echo "$*" | cut -d ' ' -f4-)"
         printf '%s \033[1;32m%s\033[0;00m \033[1;31m%s\033[0;00m %s\n' \
-            "$(date --date=@$timestamp +%Y%m%d_%H%M%S)" \
+            "$(date --date=@$timestamp +%Y%m%d_%H%M%S 2>/dev/null || date -r $timestamp +%Y%m%d_%H%M%S 2>/dev/null)" \
             "$program" \
             "$messagetype" \
             "$message"
