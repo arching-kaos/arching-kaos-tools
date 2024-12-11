@@ -3,13 +3,15 @@
 source $AK_LIBDIR/_ak_log
 
 _ak_fs_return_hash_path(){
-    hashpath="$(echo -n "$1" |sed 's/./&\//g;s/\/$//g')"
-    echo -n "$hashpath"
+    #hashpath="$(echo -n "$1" |sed 's/./&\//g;s/\/$//g')"
+    #hashpath="$(echo -n "$1" | fold -w 4 | tr $'\n' '/')"
+    echo -n "$1"
 }
 
 _ak_fs_return_hash_dir(){
-    hashdir="$(echo -n "$1" | sed -e 's/./&\//g' | grep '\(./\)\{128\}' | sed -e 's/..$//')"
-    echo -n "$hashdir"
+    #hashdir="$(_ak_fs_return_hash_path $1 | sed -e 's/.....$//')"
+    #echo -n "$hashdir"
+    echo -n "$1"
 }
 
 _ak_fs_verify_input_is_hash(){
