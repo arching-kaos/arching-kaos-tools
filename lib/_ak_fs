@@ -155,7 +155,7 @@ _ak_fs_import(){
 
     # We get the SHA512 hash for the $FILE given
     CHECKSUM=$(sha512sum "$FILE"|awk '{print $1}')
-    FILE_SIZE="$( (du -b $FILE||du -A $FILE)2>/dev/null | awk '{ print $1 }')"
+    FILE_SIZE="$( (du -b $FILE||stat -f %z $FILE)2>/dev/null | awk '{ print $1 }')"
     if [ $FILE_SIZE -lt 4097 ]
     then
         cp $FILE "$TECHDIR/$(basename "$FILE")-00000000000000000000000000000000000000000000000000.chk"
@@ -276,7 +276,7 @@ _ak_fs_find_depth(){
     currentNode="$1"
     #pathToNode="$AK_LEAFSDIR/$(_ak_fs_return_hash_path $currentNode)"
     pathToNode="$AK_LEAFSDIR/$currentNode"
-    if [ -f $pathToNode ] && [ "$( (du -b $pathToNode||du -A $pathToNode)2>/dev/null | awk '{print $1}')" == "258" ]
+    if [ -f $pathToNode ] && [ "$( (du -b $pathToNode||stat -f %z $pathToNode)2>/dev/null | awk '{print $1}')" == "258" ]
     then
         fileHead="$(head -n 1 $pathToNode)"
         counter="$(expr $counter + 1)"
