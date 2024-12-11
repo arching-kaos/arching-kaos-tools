@@ -158,7 +158,7 @@ _ak_fs_import(){
     FILE_SIZE="$( (du -b $FILE||stat -f %z $FILE)2>/dev/null | awk '{ print $1 }')"
     if [ $FILE_SIZE -lt 4097 ]
     then
-        cp $FILE "$TECHDIR/$(basename "$FILE")-00000000000000000000000000000000000000000000000000.chk"
+        cp $FILE "$TECHDIR/chunk-0000000000000"
     else
         FACTOR=1024
         while [ $(( $FILE_SIZE / $FACTOR )) -gt 250 ]
