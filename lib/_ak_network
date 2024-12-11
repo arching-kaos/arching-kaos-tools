@@ -149,17 +149,23 @@ _ak_network_scan_cjdns_dump(){
     TEMPDIR="$(_ak_make_temp_directory)"
     AK_ZPEERSFILE="$HOME/.arching-kaos/peersFile"
     cd $TEMPDIR
-    counter=0
-    printf '[' > walk.aknet
+    max="$(dumpLinks |wc -l)"
     dumpLinks \
         | cut -d ' ' -f 2,4 \
         | sed 's/ /\n/g' \
         | sort \
         | uniq \
-        | grep -v `dumpLinks | grep '0000\.0000\.0000\.0001' | cut -d ' ' -f 2` \
+        | grep -v `dumpLinks | grep '0000\.0000\.0000\.0001' \
+        | cut -d ' ' -f 2` > dumpedLinks
+    counter=0
+    count=0
+    max="$(cat dumpedLinks| wc -l)"
+    printf '[' > walk.aknet
+    cat dumpedLinks \
         | while read -r ip || [ -n "$ip" ]
     do
-        _ak_log_debug "Scanning $(publictoip6 $ip)..."
+        count="$(( $count + 1 ))"
+        _ak_log_debug "Scanning [${count}/${max}] $(publictoip6 $ip)..."
         node_info="$(curl \
             --connect-timeout 3 \
             -A 'akd/0.1.0; https://github.com/arching-kaos' \
@@ -218,13 +224,16 @@ _ak_network_scan_cjdns_full(){
         grep -F "$line" $pubkeys_ips >> $filtered_online_pubkeys_ips
     done
     counter=0
+    count=0
+    max="$(cat $filtered_online_pubkeys_ips|wc -l)"
     printf '[' > walk.aknet
     cat $filtered_online_pubkeys_ips \
         | sort \
         | uniq \
         | while read -r pkey ip || [ -n "$ip" ]
     do
-        _ak_log_debug "Scanning $ip..."
+        count="$(( $count + 1 ))"
+        _ak_log_debug "Scanning [${count}/${max}] $ip..."
         node_info="$(curl \
             --connect-timeout 3 \
             -A 'akd/0.1.0; https://github.com/arching-kaos' \
@@ -270,13 +279,16 @@ _ak_network_scan_yggdrasil_full(){
         exit 1
     fi
     counter=0
+    count=0
+    max="$(cat $pubkeys_ips|wc -l)"
     printf '[' > walk.aknet
     cat $pubkeys_ips \
         | sort \
         | uniq \
         | while read -r pkey ip || [ -n "$ip" ]
     do
-        _ak_log_debug "Scanning $ip..."
+        count="$(( $count + 1 ))"
+        _ak_log_debug "Scanning [${count}/${max}] $ip..."
         node_info="$(curl \
             --connect-timeout 3 \
             -A 'akd/0.1.0; https://github.com/arching-kaos' \
