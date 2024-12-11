@@ -119,12 +119,12 @@ _ak_ipfs_block_stat(){
 _ak_ipfs_files_cp(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
-        _ak_log_error "No argument given"
+        _ak_log_error "Source: No argument given"
         exit 1
     fi
     if [ -z $2 ] || [ ! -n "$2" ]
     then
-        _ak_log_error "No argument given"
+        _ak_log_error "Destination: No argument given"
         exit 1
     fi
     _ak_ipfs files cp "$1" "$2"
