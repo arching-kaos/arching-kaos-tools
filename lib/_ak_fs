@@ -212,7 +212,7 @@ function _ak_fs_import(){
 #    `sha512sum $TEMPDIR/map | awk '{print "mv " $2 " '$AK_MAPSDIR/'" $1}'`
 
     mp512p="$(sha512sum $TEMPDIR/3rd_gen_map | awk '{print $1}')"
-    mv -f $TEMPDIR/3rd_gen_map $AK_MAPSDIR/$mp512p
+    cp $TEMPDIR/3rd_gen_map $AK_MAPSDIR/$mp512p
 
     # We remove the TEMPDIR
     rm -rf $TEMPDIR
