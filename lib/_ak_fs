@@ -42,7 +42,7 @@ function _ak_fs_create_dir_for_hash(){
 function _ak_fs_appendLastIfNotEven(){
     if [ "$(( $(wc -l "$1" | awk '{ print $1 }') % 2))" -ne 0 ]
     then
-        tail -n 1 "$1" >> "$1"
+        head -n 1 "$1" >> "$1"
     fi
 }
 
