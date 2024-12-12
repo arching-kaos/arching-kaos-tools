@@ -69,16 +69,16 @@ function _ak_fs_import(){
     #
 
     # A temporary root dir to work on
-    TEMPORARYDIR="$(_ak_make_temp_directory)"
+    TEMPDIR="$(_ak_make_temp_directory)"
     # A subdir to split the files there
-    TECHDIR="$TEMPORARYDIR/chks"
+    TCHKDIR="$TEMPDIR/chks"
     # A pin point to return from where we came from
     CURRENTDIR="$(pwd)"
 
     # Checking directories and create them if necessary
-    # rm -rf $TEMPORARYDIR
+    # rm -rf $TEMPDIR
 
-    _ak_check_and_create_dir $TECHDIR
+    _ak_check_and_create_dir $TCHKDIR
     _ak_fs_dir_init_setup
     if [ ! -f "$1" ]
     then
@@ -92,21 +92,21 @@ function _ak_fs_import(){
         # sha256sum as quick pointer to root of the tree
         #
         _ak_log_info "Storing original hash of $1 along with its name"
-        sha512sum "$1" > $TEMPORARYDIR/3rd_gen_map
+        sha512sum "$1" > $TEMPDIR/3rd_gen_map
         _ak_log_info "Encoding to base64"
         base64 $1 > file
         FILE="file"
     fi
 
     # Uncomment next line in case you want to debug the resulting script as well
-    # echo 'set -xe' > $TEMPORARYDIR/cmd_queue.sh
+    # echo 'set -xe' > $TEMPDIR/cmd_queue.sh
 
     # We get the SHA512 hash for the $FILE given
     CHECKSUM=$(sha512sum "$FILE"|awk '{print $1}')
     FILE_SIZE="$( (du -b $FILE||stat -f %z $FILE)2>/dev/null | awk '{ print $1 }')"
     if [ $FILE_SIZE -lt 4097 ]
     then
-        cp $FILE "$TECHDIR/chunk-0000000000000"
+        cp $FILE "$TCHKDIR/chunk-0000000000000"
     else
         FACTOR=1024
         while [ $(( $FILE_SIZE / $FACTOR )) -gt 250 ]
@@ -115,23 +115,25 @@ function _ak_fs_import(){
         done
         _ak_log_info "Gonna split in $FACTOR size"
         sleep 3
-        # We split the file into 4*1024 bytes and output the chunks into TECHDIR
-        split -a 13 -b $FACTOR -d "$FILE" "$TECHDIR/chunk-"
+        # We split the file into 4*1024 bytes and output the chunks into TCHKDIR
+        split -a 13 -b $FACTOR -d "$FILE" "$TCHKDIR/chunk-"
     fi
     _ak_log_info "File done splitting"
 
     # We go over there...
-    cd $TECHDIR
+    cd $TCHKDIR
     #set -xe
     # We get every chunks' SHA512 and we craft a script to rename the chunks and
     # move them to AK_CHUNKSDIR
-    for file in $TEMPORARYDIR/chks/*
+    for file in *
     do
-        sha512sum $file >> $TEMPORARYDIR/map
+        _ak_log_debug "Hashing ${file}..."
+        sha512sum $file >> $TEMPDIR/map
+        _ak_log_debug "Hashing of ${file} completed"
     done
-    _ak_fs_appendLastIfNotEven "$TEMPORARYDIR/map"
+    _ak_fs_appendLastIfNotEven "$TEMPDIR/map"
     # Figure out how many times we need to pack
-    totalChunks=`grep 'chunk-' $TEMPORARYDIR/map | wc -l`
+    totalChunks=`grep 'chunk-' $TEMPDIR/map | wc -l`
     temp="$totalChunks"
     timesRan=0
     while [ $temp -ne 1 ]
@@ -142,7 +144,7 @@ function _ak_fs_import(){
     _ak_log_debug "Ran $timesRan times"
     _ak_log_debug "Total chunks $totalChunks"
 
-    workingIndex="$TEMPORARYDIR/map"
+    workingIndex="$TEMPDIR/map"
     c=$timesRan
     while [ $c -ne 0 ]
     do
@@ -174,46 +176,46 @@ function _ak_fs_import(){
     if [ -f level.1.map ]
     then
         sha512sum level.1.map
-        sha512sum level.1.map >> $TEMPORARYDIR/3rd_gen_map
+        sha512sum level.1.map >> $TEMPDIR/3rd_gen_map
     else
         echo error
         exit 1
     fi
 
     # Reset file with uniq
-    cat $TEMPORARYDIR/map | uniq > $TEMPORARYDIR/map2
-    cat $TEMPORARYDIR/map2 > $TEMPORARYDIR/map
-    rm $TEMPORARYDIR/map2
+    cat $TEMPDIR/map | uniq > $TEMPDIR/map2
+    cat $TEMPDIR/map2 > $TEMPDIR/map
+    rm $TEMPDIR/map2
 
     counter=0
     while IFS="" read -r p || [ -n "$p" ]
     do
-#        printf "mv %s %s/%s\n" "$(echo $p | awk '{ print $2 }')" "$AK_CHUNKSDIR" "$(echo $p | awk '{ print $1 }')" >> $TEMPORARYDIR/cmd_queue.sh
+#        printf "mv %s %s/%s\n" "$(echo $p | awk '{ print $2 }')" "$AK_CHUNKSDIR" "$(echo $p | awk '{ print $1 }')" >> $TEMPDIR/cmd_queue.sh
         #mkdir -p $AK_CHUNKSDIR/$(echo $p | awk '{ print $1 }')
         cp $(echo $p | awk '{ print $2 }') $AK_CHUNKSDIR/$(echo $p | awk '{ print $1 }')
         counter=`expr "$counter" + 1`
-    done < $TEMPORARYDIR/map
+    done < $TEMPDIR/map
 
     # We run the crafted script
-#    sh $TEMPORARYDIR/cmd_queue.sh
+#    sh $TEMPDIR/cmd_queue.sh
 
     # and we delete it
-#    rm $TEMPORARYDIR/cmd_queue.sh
+#    rm $TEMPDIR/cmd_queue.sh
 
     # We inform the map about the original $FILE name and SHA512
-#    echo "$CHECKSUM  $(basename "$FILE")" >> $TEMPORARYDIR/map
+#    echo "$CHECKSUM  $(basename "$FILE")" >> $TEMPDIR/map
 
     # We get the SHA512 hash of the resulted map file
-#    MAPFILEHASH="$(sha512sum $TEMPORARYDIR/map | awk '{ print $1 }')"
+#    MAPFILEHASH="$(sha512sum $TEMPDIR/map | awk '{ print $1 }')"
 
     # and we rename it with it and move it to AK_MAPSDIR
-#    `sha512sum $TEMPORARYDIR/map | awk '{print "mv " $2 " '$AK_MAPSDIR/'" $1}'`
+#    `sha512sum $TEMPDIR/map | awk '{print "mv " $2 " '$AK_MAPSDIR/'" $1}'`
 
-    mp512p="$(sha512sum $TEMPORARYDIR/3rd_gen_map | awk '{print $1}')"
-    mv $TEMPORARYDIR/3rd_gen_map $AK_MAPSDIR/$mp512p
+    mp512p="$(sha512sum $TEMPDIR/3rd_gen_map | awk '{print $1}')"
+    mv $TEMPDIR/3rd_gen_map $AK_MAPSDIR/$mp512p
 
-    # We remove the TEMPORARYDIR
-    rm -rf $TEMPORARYDIR
+    # We remove the TEMPDIR
+    rm -rf $TEMPDIR
 
     # and print the MAPFILEHASH
     echo "$mp512p"
@@ -333,7 +335,7 @@ function _ak_fs_list(){
     then
         find $AK_MAPSDIR -type f | while read fina
         do
-            cat $fina | tr $'\n' ' ' | awk '{ print $3 " " $2 }'
+            cat $fina | tr '\n' ' ' | awk '{ print $3 " " $2 }'
         done
     else
         _ak_log_debug "Making ${AK_MAPSDIR} directory"
