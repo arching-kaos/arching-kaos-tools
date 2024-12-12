@@ -337,7 +337,7 @@ function _ak_fs_list(){
     then
         find $AK_MAPSDIR -type f | while read fina
         do
-            cat $fina | tr '\n' ' ' | awk '{ print $3 " " $2 }'
+            cat $fina | tr '\n' ' ' | awk '{ print "'$(basename ${fina})' " $3 " " $2 }'
         done
     else
         _ak_log_debug "Making ${AK_MAPSDIR} directory"
