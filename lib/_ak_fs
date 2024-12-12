@@ -2,19 +2,25 @@
 
 source $AK_LIBDIR/_ak_log
 
-_ak_fs_return_hash_path(){
+function _ak_fs_dir_init_setup(){
+    _ak_check_and_create_dir $AK_MAPSDIR
+    _ak_check_and_create_dir $AK_CHUNKSDIR
+    _ak_check_and_create_dir $AK_LEAFSDIR
+}
+
+function _ak_fs_return_hash_path(){
     #hashpath="$(echo -n "$1" |sed 's/./&\//g;s/\/$//g')"
     #hashpath="$(echo -n "$1" | fold -w 4 | tr $'\n' '/')"
     echo -n "$1"
 }
 
-_ak_fs_return_hash_dir(){
+function _ak_fs_return_hash_dir(){
     #hashdir="$(_ak_fs_return_hash_path $1 | sed -e 's/.....$//')"
     #echo -n "$hashdir"
     echo -n "$1"
 }
 
-_ak_fs_verify_input_is_hash(){
+function _ak_fs_verify_input_is_hash(){
     if [ ! -z "$1" ] && echo "$1" | grep '[0123456789abcdef]\{128\}' > /dev/null 2>&1
     then
         return 0
@@ -24,7 +30,7 @@ _ak_fs_verify_input_is_hash(){
     fi
 }
 
-_ak_fs_create_dir_for_hash(){
+function _ak_fs_create_dir_for_hash(){
     _ak_fs_verify_input_is_hash $2
     if [ ! -z $1 ] && [ ! -z $2 ] && [ -n "$1" ] && [ -n "$2" ]
     then
@@ -33,14 +39,14 @@ _ak_fs_create_dir_for_hash(){
 }
 
 # Append last chk if not even number
-_ak_fs_appendLastIfNotEven(){
+function _ak_fs_appendLastIfNotEven(){
     if [ "$(( $(wc -l "$1" | awk '{ print $1 }') % 2))" -ne 0 ]
     then
         tail -n 1 "$1" >> "$1"
     fi
 }
 
-_ak_fs_import(){
+function _ak_fs_import(){
     #
     # The concept is bit more complicated now
     #
@@ -72,66 +78,8 @@ _ak_fs_import(){
     # Checking directories and create them if necessary
     # rm -rf $TEMPORARYDIR
 
-    # TECHDIR
-    if [ ! -d "$TECHDIR" ]
-    then
-        mkdir -p "$TECHDIR"
-        if [ $? -eq 0 ]
-        then
-            _ak_log_info "Folder $TECHDIR created!"
-        else
-            _ak_log_error "Problem occured while creating $TECHDIR"
-            exit 1
-        fi
-    else
-        _ak_log_debug "Temp dir found"
-    fi
-
-    # AK_MAPSDIR
-    if [ ! -d "$AK_MAPSDIR" ]
-    then
-        mkdir -p "$AK_MAPSDIR"
-        if [ $? -eq 0 ]
-        then
-            _ak_log_debug "Folder $AK_MAPSDIR created!"
-        else
-            _ak_log_error "Problem occured while creating $AK_MAPSDIR"
-            exit 1
-        fi
-    else
-        _ak_log_debug "Mapsdir found"
-    fi
-
-    # AK_CHUNKSDIR
-    if [ ! -d "$AK_CHUNKSDIR" ]
-    then
-        mkdir -p "$AK_CHUNKSDIR"
-        if [ $? -eq 0 ]
-        then
-            _ak_log_info "Folder $AK_CHUNKSDIR created!"
-        else
-            _ak_log_error "Problem occured while creating $AK_CHUNKSDIR"
-            exit 1
-        fi
-    else
-        _ak_log_debug "Workdir found"
-    fi
-
-    # AK_LEAFSDIR
-    if [ ! -d "$AK_LEAFSDIR" ]
-    then
-        mkdir -p "$AK_LEAFSDIR"
-        if [ $? -eq 0 ]
-        then
-            _ak_log_info "Folder $AK_LEAFSDIR created!"
-        else
-            _ak_log_error "Problem occured while creating $AK_LEAFSDIR"
-            echo "ERROR Can't create $AK_LEAFSDIR"
-            exit 1
-        fi
-    else
-        _ak_log_debug "Workdir found"
-    fi
+    _ak_check_and_create_dir $TECHDIR
+    _ak_fs_dir_init_setup
     if [ ! -f "$1" ]
     then
         _ak_log_error "File $1 not found"
@@ -183,7 +131,7 @@ _ak_fs_import(){
     done
     _ak_fs_appendLastIfNotEven "$TEMPORARYDIR/map"
     # Figure out how many times we need to pack
-    totalChunks=`grep 'chk' $TEMPORARYDIR/map | wc -l`
+    totalChunks=`grep 'chunk-' $TEMPORARYDIR/map | wc -l`
     temp="$totalChunks"
     timesRan=0
     while [ $temp -ne 1 ]
@@ -272,7 +220,7 @@ _ak_fs_import(){
 
 }
 
-_ak_fs_find_depth(){
+function _ak_fs_find_depth(){
     currentNode="$1"
     #pathToNode="$AK_LEAFSDIR/$(_ak_fs_return_hash_path $currentNode)"
     pathToNode="$AK_LEAFSDIR/$currentNode"
@@ -296,7 +244,7 @@ _ak_fs_find_depth(){
     fi
 }
 
-_ak_fs_cat(){
+function _ak_fs_cat(){
     if [ -z $1 ]
     then
         echo "Please provide a SHA512 hash"
@@ -359,7 +307,7 @@ _ak_fs_cat(){
     _ak_log_info "Recreation of $treeRootHash succeeded!"
 }
 
-_ak_fs_export(){
+function _ak_fs_export(){
     if [ -z $1 ]
     then
         _ak_log_error "Please provide a SHA512 hash"
@@ -380,12 +328,12 @@ _ak_fs_export(){
     _ak_fs_export "$1" > $outputFilename
 }
 
-_ak_fs_list(){
+function _ak_fs_list(){
     if [ -d "${AK_MAPSDIR}" ]
     then
         find $AK_MAPSDIR -type f | while read fina
         do
-            cat $fina | tr $'\n' ' ' | awk '{ print $2 " " $3 }'
+            cat $fina | tr $'\n' ' ' | awk '{ print $3 " " $2 }'
         done
     else
         _ak_log_debug "Making ${AK_MAPSDIR} directory"
