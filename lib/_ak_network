@@ -378,11 +378,21 @@ _ak_network_show_peers_stellar(){
 }
 
 _ak_network_show_peers_cjdns(){
-    cat $AK_ZPEERSFILE.hyperboria | jq
+    if [ -f $AK_ZPEERSFILE.hyperboria ]
+    then
+        cat $AK_ZPEERSFILE.hyperboria | jq
+    else
+        _ak_log_debug "No hyperboria peers found"
+    fi
 }
 
 _ak_network_show_peers_yggdrasil(){
-    cat $AK_ZPEERSFILE.yggdrasil | jq
+    if [ -f $AK_ZPEERSFILE.yggdrasil ]
+    then
+        cat $AK_ZPEERSFILE.yggdrasil | jq
+    else
+        _ak_log_debug "No yggdrasil peers found"
+    fi
 }
 
 _ak_network_show_peers_ipfs(){
