@@ -2,11 +2,11 @@
 source $AK_LIBDIR/_ak_log
 
 # Wanna talk about it?
-_ak_new_line(){
+function _ak_new_line(){
     printf '\n'
 }
 
-_ak_exit_program(){
+function _ak_exit_program(){
 # Needs rework:
 #    cd $curdir
 #    if [ "$3" == "save_log" ]
@@ -23,7 +23,7 @@ _ak_exit_program(){
     exit $1
 }
 
-_ak_help(){
+function _ak_help(){
     if [ ! -z $fullprogrampath ] && [ -n "$fullprogrampath" ]
     then
         cat $fullprogrampath |grep '^##'| sed 's/^##//g;s/^ //g' 1>&2
@@ -34,7 +34,7 @@ _ak_help(){
     fi
 }
 
-_ak_title_description(){
+function _ak_title_description(){
     if [ ! -n "$descriptionString" ]
     then
         # Choose to exit with error to enforce standard
@@ -56,12 +56,12 @@ _ak_title_description(){
     _ak_new_line ) 1>&2
 }
 
-_ak_usage(){
+function _ak_usage(){
     _ak_title_description
     _ak_help 2>&1
 }
 
-_ak_print_version(){
+function _ak_print_version(){
     git_repo="$(ls -l $AK_LIBDIR/_ak_script | cut -d '>' -f 2 | sed 's/^ //' | rev | cut -d '/' -f 3- | rev)"
     patch_version="$(git --git-dir="${git_repo}/.git" -P log --reverse --oneline --decorate | tail -n 1 | cut -d ' ' -f 1)"
     gtags="$(git --git-dir="${git_repo}/.git" -P tag | tail -n 1)"
@@ -76,17 +76,17 @@ _ak_print_version(){
     fi
 }
 
-_ak_version(){
+function _ak_version(){
     printf '%s - ' "$PROGRAM"
     _ak_print_version 2>&1
 }
 
-_ak_not_implemented(){
+function _ak_not_implemented(){
     #_ak_title_description
     _ak_log_error "Not implemented: $*"
 }
 
-_ak_make_temp_directory(){
+function _ak_make_temp_directory(){
     AK_TEMP="$(mktemp -d /tmp/aktmp-XXXXXXX)"
     if [ ! -d "$AK_TEMP" ]
     then
@@ -97,7 +97,7 @@ _ak_make_temp_directory(){
     echo "$AK_TEMP"
 }
 
-_ak_make_temp_file(){
+function _ak_make_temp_file(){
     AK_TEMP="$(mktemp /tmp/aktmp-XXXXXXX)"
     if [ ! -f "$AK_TEMP" ]
     then
@@ -106,4 +106,20 @@ _ak_make_temp_file(){
     fi
     _ak_log_info "File $AK_TEMP created successfully"
     echo "$AK_TEMP"
+}
+
+function _ak_check_and_create_dir(){
+    if [ ! -d "$1" ]
+    then
+        mkdir -p "$1"
+        if [ $? -eq 0 ]
+        then
+            _ak_log_info "Folder $1 created!"
+        else
+            _ak_log_error "Problem occured while creating $1"
+            exit 1
+        fi
+    else
+        _ak_log_debug "$1 dir found"
+    fi
 }
