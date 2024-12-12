@@ -374,7 +374,7 @@ _ak_network_show_peers_stellar(){
             "$(_ak_ipfs_cat $akConfigHash)"
     done
     printf ']'
-    ) #| jq
+    ) | sed -e 's/[]//g' #| jq
 }
 
 _ak_network_show_peers_cjdns(){
