@@ -18,12 +18,14 @@ module.exports = (req, res) => {
         {
             if(fs.existsSync(path))
             {
-                res.send(fs.readFileSync(path));
+                res.writeHead(200, {'Content-Type': 'application/json'});
+                res.end(fs.readFileSync(path));
             }
         }
         catch (error)
         {
-            res.send({"error":error.message});
+            res.writeHead(404, {'Content-Type': 'application/json'});
+            res.end(JSON.stringify({"error":error.message}));
         }
     }
     else
