@@ -25,6 +25,10 @@ then
         --add|--import) _ak_fs_import $2; exit;;
         --get|--export) _ak_fs_export $2 $3; exit;;
         --cat) _ak_fs_cat $2; exit;;
+        --net-cat) _ak_fs_net_cat $2; exit;;
+        --net-get) _ak_fs_net_get $2; exit;;
+        --net-cat-from-map) _ak_fs_net_cat_from_map_hash $2; exit;;
+        --net-get-from-map) _ak_fs_net_get_from_map_hash $2; exit;;
         --list) _ak_fs_list; exit;;
         * ) _ak_usage;;
     esac

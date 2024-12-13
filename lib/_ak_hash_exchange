@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_fm
+AK_TREEFS="$AK_WORKDIR/tree"
+AK_SESSIONSDIR="$AK_WORKDIR/sessions"
+
+function _ak_he_select_random_peer(){
+    ( ak network --peers cjdns | jq -r '.[].cjdns.ip' ; \
+      ak network --peers yggdrasil | jq -r '.[].yggdrasil.ip' ) | sort -R | head -n 1
+}
+
+function _ak_he_list_peers(){
+    ( ak network --peers cjdns | jq -r '.[].cjdns.ip' ; \
+      ak network --peers yggdrasil | jq -r '.[].yggdrasil.ip' )
+}
+
+function _ak_he_url_request_chunk_hash_from_peer(){
+    if [ ! -z $1 ] && [ -n "$1" ] && [ ! -z $2 ] && [ -n "$2" ]
+    then
+        printf 'http://[%s]:8610/v0/chunk/%s' "$1" "$2"
+    fi
+}
+
+function _ak_he_url_request_leaf_hash_from_peer(){
+    if [ ! -z $1 ] && [ -n "$1" ] && [ ! -z $2 ] && [ -n "$2" ]
+    then
+        printf 'http://[%s]:8610/v0/leaf/%s' "$1" "$2"
+    fi
+}
+
+function _ak_he_url_request_map_hash_from_peer(){
+    if [ ! -z $1 ] && [ -n "$1" ] && [ ! -z $2 ] && [ -n "$2" ]
+    then
+        printf 'http://[%s]:8610/v0/map/%s' "$1" "$2"
+    fi
+}
+
+function _ak_he_url_request_chunk_hash_from_random_peer(){
+    if [ ! -z $1 ] && [ -n "$1" ]
+    then
+        _ak_he_url_request_chunk_hash_from_peer "$(_ak_he_select_random_peer)" "$1"
+    fi
+}
+
+function _ak_he_url_request_leaf_hash_from_random_peer(){
+    if [ ! -z $1 ] && [ -n "$1" ]
+    then
+        _ak_he_url_request_leaf_hash_from_peer "$(_ak_he_select_random_peer)" "$1"
+    fi
+}
+
+function _ak_he_url_request_map_hash_from_random_peer(){
+    if [ ! -z $1 ] && [ -n "$1" ]
+    then
+        _ak_he_url_request_map_hash_from_peer "$(_ak_he_select_random_peer)" "$1"
+    fi
+}

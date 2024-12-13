@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_hash_exchange
 
 function _ak_fs_dir_init_setup(){
     _ak_check_and_create_dir $AK_MAPSDIR
@@ -262,8 +263,8 @@ function _ak_fs_cat(){
     fi
     treeRootHash="$1"
     # Enter temp folder
-    TEMPASSIN="$(_ak_make_temp_directory)"
-    cd $TEMPASSIN
+    TEMPDIR="$(_ak_make_temp_directory)"
+    cd $TEMPDIR
     currentNode="$treeRootHash"
     counter=0
     printf "%s" "$currentNode" > workspace.0
@@ -343,5 +344,360 @@ function _ak_fs_list(){
         _ak_log_debug "Making ${AK_MAPSDIR} directory"
         mkdir -p ${AK_MAPSDIR}
         _ak_log_debug "Empty directory"
+    fi
+}
+
+function _ak_fs_from_map_get_original_hash(){
+    if [ ! -z "$1" ] && [ -n "$1" ]
+    then
+        if [ -f "$AK_MAPSDIR/$1" ]
+        then
+            cat $AK_MAPSDIR/$1 | tr '\n' ' ' | awk '{ print $1 }'
+        else
+            _ak_log_error "Map $1 was not found"
+        fi
+    else
+        _ak_log_error "No input given"
+    fi
+}
+
+function _ak_fs_from_map_get_original_filename(){
+    if [ ! -z "$1" ] && [ -n "$1" ]
+    then
+        if [ -f "$AK_MAPSDIR/$1" ]
+        then
+            cat $AK_MAPSDIR/$1 | tr '\n' ' ' | awk '{ print $2 }'
+        else
+            _ak_log_error "Map $1 was not found"
+        fi
+    else
+        _ak_log_error "No input given"
+    fi
+}
+
+function _ak_fs_from_map_get_root_hash(){
+    if [ ! -z "$1" ] && [ -n "$1" ]
+    then
+        if [ -f "$AK_MAPSDIR/$1" ]
+        then
+            cat $AK_MAPSDIR/$1 | tr '\n' ' ' | awk '{ print $3 }'
+        else
+            _ak_log_error "Map $1 was not found"
+        fi
+    else
+        _ak_log_error "No input given"
+    fi
+}
+
+function _ak_fs_cat_from_map_hash(){
+    if _ak_fs_verify_input_is_hash "$1"
+    then
+        _ak_fs_cat `_ak_fs_from_map_get_root_hash $1`
+    fi
+}
+
+function _ak_fs_get_from_map_hash(){
+    if _ak_fs_verify_input_is_hash "$1"
+    then
+        _ak_fs_get `_ak_fs_from_map_get_root_hash $1` "`_ak_fs_from_map_get_original_filename $1`"
+    fi
+}
+
+function _ak_net_try_leaf(){
+    if [ ! -z "$1" ] && [ -n "$1" ]
+    then
+        if [ ! -f "$AK_LEAFSDIR/$1" ]
+        then
+            _ak_he_list_peers | while read peer
+            do
+                _ak_log_info "Searching as a leaf... $1 @ ${peer}"
+                request_url="$(_ak_he_url_request_leaf_hash_from_peer ${peer} $1)"
+                curl -s --connect-timeout 3 -o $1 ${request_url}
+                if [ $? -ne 0 ]
+                then
+                    _ak_log_warning "Curl to ${request_url} failed."
+                    continue
+                fi
+                if [ -f $1 ]
+                then
+                    _ak_log_info "${request_url} gave out a file"
+                    if [ "$(sha512sum $1 | awk '{print $1}')" == "$1" ]
+                    then
+                        _ak_log_info "File hash match"
+                        if [ "$(cat $1 | wc -l)" == 2 ]
+                        then
+                            _ak_log_info "File has two lines"
+                            if [ "$(cat $1 | grep '^[0-9a-z]\{128\}$' | wc -l)" == 2 ]
+                            then
+                                _ak_log_info "File has two lines which are 2 hashes"
+                                cat $1
+                                cp $1 ${AK_LEAFSDIR}/$1
+                                exit
+                                break
+                            else
+                                _ak_log_warning "File $1 doesn't match expected format (two hashes)"
+                                rm $1
+                            fi
+                        else
+                            _ak_log_warning "File $1 doesn't match expected format (two lines)"
+                            rm $1
+                        fi
+                    else
+                        cat $1 | jq >&2
+                        _ak_log_warning "File $1 doesn't match expected hash: $(sha512sum $1 | awk '{print $1}')"
+                        rm $1
+                    fi
+                else
+                    _ak_log_warning "No file $1"
+                fi
+            done
+        fi
+    fi
+}
+function _ak_net_try_chunk(){
+    if [ ! -z "$1" ] && [ -n "$1" ]
+    then
+        if [ ! -f "$AK_CHUNKSDIR/$1" ]
+        then
+            _ak_he_list_peers | while read peer
+            do
+                _ak_log_info "Searching as a chunk... $1 @ ${peer}"
+                request_url="$(_ak_he_url_request_chunk_hash_from_peer ${peer} $1)"
+                curl -s --connect-timeout 3 -o $1 ${request_url}
+                if [ $? -ne 0 ]
+                then
+                    _ak_log_warning "Curl to $request_url failed."
+                    continue
+                fi
+                if [ -f $1 ]
+                then
+                    _ak_log_info "File found"
+                    if [ "$(sha512sum $1 | awk '{print $1}')" == "$1" ]
+                    then
+                        _ak_log_info "File is valid"
+                        if [ "$(cat $1 | grep -v '^[-A-Za-z0-9+/]*=\{0,3\}$')" == "" ]
+                        then
+                            _ak_log_info "File is base64"
+                            cat $1
+                            cp $1 ${AK_CHUNKSDIR}/$1
+                            exit
+                            break
+                        else
+                            _ak_log_warning "File $1 doesn't match expected format (base64)"
+                            rm $1
+                        fi
+                    else
+                        cat $1 | jq >&2
+                        _ak_log_warning "File $1 doesn't match expected hash: $(sha512sum $1 | awk '{print $1}')"
+                        rm $1
+                    fi
+                else
+                    _ak_log_warning "No file $1"
+                fi
+            done
+        fi
+    fi
+}
+
+function _ak_fs_net_find_depth(){
+    currentNode="$1"
+    pathToNode="$AK_LEAFSDIR/$currentNode"
+    _ak_net_try_leaf ${currentNode}
+    _ak_net_try_chunk ${currentNode}
+    if [ -f $pathToNode ] && [ "$( (du -b $pathToNode||stat -f %z $pathToNode)2>/dev/null | awk '{print $1}')" == "258" ]
+    then
+        fileHead="$(head -n 1 $pathToNode)"
+        counter="$(expr $counter + 1)"
+        _ak_fs_net_find_depth "$fileHead"
+    elif [ ! -f $pathToNode ]
+    then
+        printf "%s" "$counter" > depth
+    else
+        pwd
+        exit 111
+        # Try to download stuff
+        #        curl -s $remoteMrk/$currentNode -o $AK_LEAFSDIR/$currentNode
+        #        if [ $? -ne 0 ]
+        #        then
+        #            exit 111
+        #        fi
+        #        _ak_fs_find_depth "$currentNode"
+    fi
+}
+
+function _ak_fs_net_cat(){
+    if [ -z $1 ]
+    then
+        echo "Please provide a SHA512 hash"
+        exit 1
+    fi
+    echo $1 | grep "[0123456789abcdef]\{128\}"
+    if [ $? -ne 0 ]
+    then
+        echo "Look, I asked for a SHA512 hash, please try again"
+        exit 1
+    fi
+    treeRootHash="$1"
+    TEMPDIR="$(_ak_make_temp_directory)"
+    cd $TEMPDIR
+    _ak_log_debug "We are here: $(pwd)"
+    currentNode="$treeRootHash"
+    counter=0
+    printf "%s" "$currentNode" > workspace.0
+    while [ ! -f "$currentNode" ]
+    do
+        curl -s -o ${currentNode} $(_ak_he_url_request_leaf_hash_from_random_peer ${currentNode})
+    done
+    _ak_fs_net_find_depth "$currentNode"
+    depth="$(expr `cat depth` + 1)"
+    counter="0"
+    printf "%s" "$depth"
+    if [ -f output ]
+    then
+        rm output
+    fi
+    touch output
+    while [ "$counter" -lt "$depth" ]
+    do
+        _ak_log_debug "Entering loop... $counter $depth"
+        while IFS="" read -r p || [ -n "$p" ]
+        do
+            nextLevel="$(expr $counter + 1)"
+            if [ "$p" == "" ]
+            then
+                echo hi
+            else
+                expectedPath="$AK_LEAFSDIR/$p"
+                if [ -f $expectedPath ]
+                then
+                    _ak_log_info "Leaf available"
+                    if [ "$(head -n 1 $expectedPath)" == "$(tail -n 1 $expectedPath)" ]
+                    then
+                        head -n 1 $expectedPath >> workspace.$nextLevel
+                    else
+                        cat $expectedPath >> workspace.$nextLevel
+                    fi
+                elif [ -f $AK_CHUNKSDIR/$p ]
+                then
+                    _ak_log_info "Chunk available"
+                    cat $AK_CHUNKSDIR/$p >> output
+                else
+                    _ak_log_info "Retrying with network"
+                    _ak_net_try_leaf $p
+                    _ak_net_try_chunk $p
+                    _ak_log_info "After network try..."
+                    if [ -f $AK_LEAFSDIR/$1 ]
+                    then
+                        _ak_log_info "Leaf available over net"
+                        if [ "$(head -n 1 $AK_LEAFSDIR/$1)" == "$(tail -n 1 $AK_LEAFSDIR/$1)" ]
+                        then
+                            head -n 1 $AK_LEAFSDIR/$1 >> workspace.$nextLevel
+                        else
+                            cat $AK_LEAFSDIR/$1 >> workspace.$nextLevel
+                        fi
+                    elif [ -f $AK_CHUNKSDIR/$p ]
+                    then
+                        _ak_log_info "Chunk available over net"
+                        cat $AK_CHUNKSDIR/$p >> output
+                    fi
+                fi
+            fi
+        done < workspace.$counter
+        counter="$(expr $counter + 1)"
+    done
+    base64 -d output > output.d
+    shaout="$(sha512sum output.d | awk '{print $1}')"
+    expHash="$2"
+    if [ "$shaout" == "$expHash" ]
+    then
+        base64 -d output
+        _ak_log_info "Recreation of $treeRootHash succeeded!"
+    else
+        _ak_log_error "Recreation of $treeRootHash failed!"
+        _ak_log_error "Expected: $expHash"
+        _ak_log_error "Got:  $shaout"
+    fi
+}
+
+function _ak_fs_from_map_net_get_original_hash(){
+    TEMPDIR=$(_ak_make_temp_directory)
+    cd $TEMPDIR
+    if _ak_fs_verify_input_is_hash "$1"
+    then
+        _ak_he_list_peers | while read peer
+        do
+            _ak_log_debug "Trying $(_ak_he_url_request_map_hash_from_peer ${peer} $1)..."
+            curl -s --connect-timeout 3 -o ${TEMPDIR}/peer_${peer}.reply $(_ak_he_url_request_map_hash_from_peer ${peer} $1)
+        done
+        find . -type f | while read reply
+        do
+            cat ${reply} | jq >/dev/null 2>&1
+            if [ $? -eq 0 ]
+            then
+                _ak_log_error "Found error in reply: $(cat ${reply} | jq -r '.error')"
+            else
+                if [ $(cat ${reply} | wc -l) -ne 2 ]
+                then
+                    _ak_log_error "${reply} is not two lines long"
+                    exit 1
+                else
+                    _ak_log_info "${reply} is two lines long"
+                fi
+                if [ $(cat ${reply} | grep '^[0-9a-z]\{128\}  ' | wc -l) -eq 2 ]
+                then
+                    _ak_log_info "${reply} contains two hashes"
+                else
+                    _ak_log_error "${reply} doesn't contain the appropriate info"
+                    exit 1
+                fi
+                cat ${reply} | head -n 1 | awk '{print $1}'
+                break
+            fi
+        done
+    fi
+}
+
+function _ak_fs_from_map_net_get_root_hash(){
+    TEMPDIR=$(_ak_make_temp_directory)
+    cd $TEMPDIR
+    if _ak_fs_verify_input_is_hash "$1"
+    then
+        _ak_he_list_peers | while read peer
+        do
+            _ak_log_debug "Trying $(_ak_he_url_request_map_hash_from_peer ${peer} $1)..."
+            curl -s --connect-timeout 3 -o ${TEMPDIR}/peer_${peer}.reply $(_ak_he_url_request_map_hash_from_peer ${peer} $1)
+        done
+        find . -type f | while read reply
+        do
+            cat ${reply} | jq >/dev/null 2>&1
+            if [ $? -eq 0 ]
+            then
+                _ak_log_error "Found error in reply: $(cat ${reply} | jq -r '.error')"
+            else
+                if [ $(cat ${reply} | wc -l) -ne 2 ]
+                then
+                    _ak_log_error "${reply} is not two lines long"
+                    exit 1
+                else
+                    _ak_log_info "${reply} is two lines long"
+                fi
+                if [ $(cat ${reply} | grep '^[0-9a-z]\{128\}  ' | wc -l) -eq 2 ]
+                then
+                    _ak_log_info "${reply} contains two hashes"
+                else
+                    _ak_log_error "${reply} doesn't contain the appropriate info"
+                    exit 1
+                fi
+                cat ${reply} | grep 'level.1.map' | awk '{print $1}'
+                break
+            fi
+        done
+    fi
+}
+
+function _ak_fs_net_cat_from_map_hash(){
+    if _ak_fs_verify_input_is_hash "$1"
+    then
+        _ak_fs_net_cat `_ak_fs_from_map_net_get_root_hash $1` `_ak_fs_from_map_net_get_original_hash $1`
     fi
 }
