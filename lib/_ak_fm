@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-_ak_fm_remove_line_from_file(){
+function _ak_fm_remove_line_from_file(){
     tempfile="$(_ak_make_temp_file)"
     if [ ! -f "$2" ]
     then
@@ -9,6 +9,7 @@ _ak_fm_remove_line_from_file(){
     fi
     grep "$1" "$2" > /dev/null 2>&1
     if [ $? -ne 0 ]
+    then
         _ak_log_error "Could not find line: $1 in $2"
         exit 1
     fi
@@ -17,7 +18,7 @@ _ak_fm_remove_line_from_file(){
     rm $tempfile
 }
 
-_ak_fm_sort_uniq_file(){
+function _ak_fm_sort_uniq_file(){
     if [ ! -f "$1" ]
     then
         _ak_log_info "No file to process"
