@@ -230,12 +230,12 @@ else
 fi
 
 _ak_log_debug "Searching if rc is already there"
-grep "source $HOME/$HAK/rc" $HOME/$SHELLRC > /dev/null 2>&1
+grep "source $HOME/$HAK/rc" $SHELLRC > /dev/null 2>&1
 if [ $? -eq 0 ]
 then
     _ak_log_debug "Already installed";
 else
-    echo "source $HOME/$HAK/rc" >> $HOME/$SHELLRC
+    echo "source $HOME/$HAK/rc" >> $SHELLRC
     _ak_log_debug "$HAK installed at $HOME and sourced it in $SHELLRC"
     source $HOME/$HAK/rc;
 fi
