@@ -1,4 +1,22 @@
 #!/usr/bin/env bash
+###
+### arching-kaos-tools
+### Tools to interact and build an Arching Kaos Infochain
+### Copyright (C) 2021 - 2025  kaotisk
+###
+### This program is free software: you can redistribute it and/or modify
+### it under the terms of the GNU General Public License as published by
+### the Free Software Foundation, either version 3 of the License, or
+### (at your option) any later version.
+###
+### This program is distributed in the hope that it will be useful,
+### but WITHOUT ANY WARRANTY; without even the implied warranty of
+### MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+### GNU General Public License for more details.
+###
+### You should have received a copy of the GNU General Public License
+### along with this program.  If not, see <http://www.gnu.org/licenses/>.
+###
 ##
 ## You can maintain a list of friendly zchains or ids
 ##
@@ -10,7 +28,7 @@
 ##    -u, --unfollow              Unfollows a ...
 ##
 fullprogrampath="$(realpath $0)"
-PROGRAM="$(realpath $0 | rev |cut -d '/' -f 2 | rev)"
+PROGRAM="ak-module-$(realpath $0 | rev |cut -d '/' -f 2 | rev)"
 descriptionString="Following stuff"
 
 source $AK_LIBDIR/_ak_log

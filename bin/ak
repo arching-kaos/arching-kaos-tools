@@ -1,4 +1,22 @@
 #!/usr/bin/env bash
+###
+### arching-kaos-tools
+### Tools to interact and build an Arching Kaos Infochain
+### Copyright (C) 2021 - 2025  kaotisk
+###
+### This program is free software: you can redistribute it and/or modify
+### it under the terms of the GNU General Public License as published by
+### the Free Software Foundation, either version 3 of the License, or
+### (at your option) any later version.
+###
+### This program is distributed in the hope that it will be useful,
+### but WITHOUT ANY WARRANTY; without even the implied warranty of
+### MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+### GNU General Public License for more details.
+###
+### You should have received a copy of the GNU General Public License
+### along with this program.  If not, see <http://www.gnu.org/licenses/>.
+###
 export AK_DEBUG="yes"
 ##
 ## Arching Kaos CLI tool is the main executable script to use for exploring,
@@ -29,6 +47,7 @@ source $AK_LIBDIR/_ak_script
 if [ $# -eq 0 ]
 then
     _ak_log_warning "No command given"
+    _ak_log_info "Available commands:"
     (
         find $AK_BINDIR | grep 'ak-' | while read available
         do
@@ -41,7 +60,7 @@ then
                 #$(echo $subcmd) $args
             fi
         done
-    ) | sort | uniq
+    ) | sort | uniq | sed 's/^/# /g' | while read line; do _ak_log_info "$line";done
     exit 1
 fi
 
@@ -72,7 +91,7 @@ case "$1" in
         shift
         if [ ! -z $1 ] && [ -n "$1" ]
         then
-            grep -rnF "$1(){" $AK_BINDIR/* $AK_LIBDIR/* $AK_MODULESDIR/*
+            grep -rnF "$1(){" $AK_BINDIR/* $AK_LIBDIR/* $AK_MODULESDIR/* > /dev/null 2>&1
             if [ $? -ne 0 ]
             then
                 _ak_log_error "No function $1 found"
@@ -85,13 +104,20 @@ case "$1" in
             fi
             filename="$(grep -rnF "$1(){" $AK_LIBDIR/* $AK_MODULESDIR/* | cut -d ':' -f 1)"
             line="$(grep -rnF "$1(){" $AK_LIBDIR/* $AK_MODULESDIR/* | cut -d ':' -f 2)"
-            functionname="$(grep -rnF "$1(){" $AK_LIBDIR/* $AK_MODULESDIR/* | cut -d ':' -f 3)"
-            printf 'Use with:\n' >&2
+            functionname="$(grep -rnF "$1(){" $AK_LIBDIR/* $AK_MODULESDIR/* | cut -d ':' -f 3|sed -e 's/function //g')"
+            _ak_log_info "Use with:"
             printf 'source %s\n%s\n' "$filename" "$(echo -n $functionname | sed 's/(){//')"
             exit
         else
+            _ak_log_error "No function selected"
+            _ak_log_info "Available functions:"
             grep -rnF "(){" $AK_LIBDIR/* $AK_MODULESDIR/* | \
-                sed -e "s#$AK_WORKDIR/##g" | sed -e 's/(){//g' | cut -d ':' -f 1,3 | tr ':' $'\t'
+                sed -e "s#$AK_WORKDIR/##g" | \
+                sed -e 's/function //g;s/(){//g' | \
+                cut -d ':' -f 1,3 | \
+                tr ':' ' ' | \
+                awk '{print $1 " " $2}' | \
+                sort | while read line; do _ak_log_info "${line}"; done
             exit
         fi
         ;;
@@ -104,7 +130,8 @@ case "$1" in
         if [ ! -n "$1" ]
         then
             _ak_log_error "No module selected"
-            ls -1 $AK_MODULESDIR
+            _ak_log_info "Modules available:"
+            ls -1 $AK_MODULESDIR | sed 's/^/# /g' | while read line; do _ak_log_info "$line";done
             exit 1
         fi
         shift

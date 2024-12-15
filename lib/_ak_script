@@ -1,4 +1,22 @@
 #!/usr/bin/env bash
+###
+### arching-kaos-tools
+### Tools to interact and build an Arching Kaos Infochain
+### Copyright (C) 2021 - 2025  kaotisk
+###
+### This program is free software: you can redistribute it and/or modify
+### it under the terms of the GNU General Public License as published by
+### the Free Software Foundation, either version 3 of the License, or
+### (at your option) any later version.
+###
+### This program is distributed in the hope that it will be useful,
+### but WITHOUT ANY WARRANTY; without even the implied warranty of
+### MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+### GNU General Public License for more details.
+###
+### You should have received a copy of the GNU General Public License
+### along with this program.  If not, see <http://www.gnu.org/licenses/>.
+###
 source $AK_LIBDIR/_ak_log
 
 # Wanna talk about it?
@@ -26,8 +44,23 @@ function _ak_exit_program(){
 function _ak_help(){
     if [ ! -z $fullprogrampath ] && [ -n "$fullprogrampath" ]
     then
-        cat $fullprogrampath |grep '^##'| sed 's/^##//g;s/^ //g' 1>&2
+        cat $fullprogrampath | grep -v '^###' | grep '^##'| sed 's/^##//g;s/^ //g' >&2 #| \
+        # cat | while read line
+        # do
+        #     echo -n "$line" | xxd
+        #     _ak_log_info "$line"
+        # done
         exit 1
+    else
+        _ak_log_error "fullprogrampath was not set"
+        exit 1
+    fi
+}
+
+function _ak_license(){
+    if [ ! -z $fullprogrampath ] && [ -n "$fullprogrampath" ]
+    then
+        cat $fullprogrampath | grep '^###' | sed 's/^###//g;s/^ //g' >&2
     else
         _ak_log_error "fullprogrampath was not set"
         exit 1
@@ -57,8 +90,11 @@ function _ak_title_description(){
 }
 
 function _ak_usage(){
-    _ak_title_description
-    _ak_help 2>&1
+    (
+        _ak_title_description 2>&1
+        _ak_license 2>&1
+        _ak_help 2>&1
+    ) | sed 's/^/# /g' | while read line; do  _ak_log_info "$line"; done
 }
 
 function _ak_print_version(){
@@ -114,12 +150,28 @@ function _ak_check_and_create_dir(){
         mkdir -p "$1"
         if [ $? -eq 0 ]
         then
-            _ak_log_info "Folder $1 created!"
+            _ak_log_info "Directory $1 created!"
         else
             _ak_log_error "Problem occured while creating $1"
             exit 1
         fi
     else
         _ak_log_debug "$1 dir found"
+    fi
+}
+
+function _ak_let_there_be_file(){
+    if [ ! -f "$1" ]
+    then
+        touch "$1"
+        if [ $? -eq 0 ]
+        then
+            _ak_log_info "File $1 created!"
+        else
+            _ak_log_error "Problem occured while creating $1"
+            exit 1
+        fi
+    else
+        _ak_log_debug "$1 file found"
     fi
 }

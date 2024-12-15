@@ -1,35 +1,101 @@
 #!/usr/bin/env bash
 clear
-printf "Arching Kaos Tools Installer\n"
-printf "============================\n"
-printf "Welcome to our ever involving installer\n"
-printf "We will be as verbose as possible, yet minimal\n"
-printf "Our default behaviour is to ask the less is needed\n"
-printf "\n"
-printf "For minimum overall friction, we will ask sudo access only if it's\n"
-printf "needed for a missing package.\n"
-printf "\n"
-printf "We discourage running the installer with sudo.\n"
-printf "\n"
+printf '%s\n' "Arching Kaos Tools Installer"
+printf '%s\n' "============================"
+printf '%s\n' "Welcome to our ever involving installer"
+printf '%s\n' "We will be as verbose as possible, yet minimal"
+printf '%s\n' "Our default behaviour is to ask the less is needed"
+printf '%s\n' "For minimum overall friction, we will ask sudo access only if it's"
+printf '%s\n' "needed for a missing package."
+printf '%s\n' "We discourage running the installer with sudo."
+if [ -d ~/.arching-kaos ]
+then
+    printf '%s\n' "Error: Found ~/.arching-kaos directory."
+    printf '%s\n' "Please backup your previous installationr and rerun ./install.sh."
+    exit 1
+fi
+
 printf "Installation starts in..."
-countdown=5
-printf " %s" "$countdown"
-countdown="$(expr $countdown - 1)"
-sleep 1
-while [ $countdown -gt 0 ]
-do
-    if [ $countdown -lt 10 ]
+
+countdown_seconds(){
+    default_countdown=5
+    if [ ! -z "$1" ] && [ -n "$1" ]
     then
-        printf "\b\b %s" "$countdown"
+        if [ "$1" ~= '^[0-9]*$' ]
+        then
+            countdown=$1
+        else
+            countdown=${default_countdown}
+        fi
     else
-        printf "\b\b%s" "$countdown"
+        countdown=${default_countdown}
     fi
+    printf " %s" "$countdown"
     countdown="$(expr $countdown - 1)"
     sleep 1
-done
-printf "\b\b starting!!!"
-sleep 1
-printf "\n"
+    while [ $countdown -gt 0 ]
+    do
+        if [ $countdown -lt 10 ]
+        then
+            printf "\b\b %s" "$countdown"
+        else
+            printf "\b\b%s" "$countdown"
+        fi
+        countdown="$(expr $countdown - 1)"
+        sleep 1
+    done
+    printf "\b\b starting!!!"
+    sleep 1
+    printf "\n"
+}
+
+countdown_seconds 10
+
+
+source ./config.sh
+if [ $? -ne 0 ]
+then
+    printf "Error: Sourcing ./config.sh failed"
+    exit 2
+fi
+
+printf "%s" $(pwd) > wam
+WHEREAMI="$(cat wam)"
+if [ ! -d $AK_WORKDIR ]
+then
+    mkdir $AK_WORKDIR
+else
+    printf "Error: Found %s.\n" "$AK_WORKDIR"
+    printf "Please back up your previous installation\n"
+    printf "and rerun ./install.sh.\n"
+    exit 3
+fi
+
+touch $AK_LOGSFILE
+
+source ./lib/_ak_log
+source ./lib/_ak_script
+
+_ak_check_and_create_dir $AK_CONFIGDIR
+_ak_check_and_create_dir $AK_BINDIR
+_ak_check_and_create_dir $AK_SETTINGS
+_ak_check_and_create_dir $AK_LIBDIR
+_ak_check_and_create_dir $AK_MODULESDIR
+_ak_check_and_create_dir $AK_ZBLOCKDIR
+_ak_check_and_create_dir $AK_BLOCKDIR
+_ak_check_and_create_dir $AK_DATADIR
+_ak_check_and_create_dir $AK_ARCHIVESDIR
+_ak_check_and_create_dir $AK_MINEDBLOCKSDIR
+_ak_check_and_create_dir $AK_CACHEDIR
+_ak_check_and_create_dir $AK_CHUNKSDIR
+_ak_check_and_create_dir $AK_LEAFSDIR
+_ak_check_and_create_dir $AK_MAPSDIR
+_ak_check_and_create_dir $AK_GPGHOME
+chmod 700 -R $AK_GPGHOME
+_ak_let_there_be_file $AK_GENESIS
+_ak_let_there_be_file $AK_ZBLOCKSFILE
+_ak_let_there_be_file $AK_ZPAIRSFILE
+
 packageManager=""
 installCommand=""
 dontAskFlag=""
@@ -93,10 +159,10 @@ do
                 exit 1
             fi
             printf "\t nvm installed!"
-            printf "\t Installing latest nodejs..."
             export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
-            nvm install $(nvm ls-remote|tail -n 1)
+            [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
+            printf "\t Installing latest nodejs..."
+            nvm install $(nvm ls-remote|tail -n 1|sed -e 's/ *//g')
             if [ $? -ne 0 ]
             then
                 printf "\t Failed to install nodejs!\n"
@@ -123,53 +189,17 @@ do
 done
 
 # Work-around for gpg2 calls on distros that don't provide a link
-which gpg2
+which gpg2 > /dev/null 2>&1
 if [ $? -ne 0 ]
 then
-    which gpg
+    which gpg > /dev/null 2>&1
     if [ $? -eq 0 ]
     then
         $sudoBin ln -s `which gpg` /usr/bin/gpg2
     fi
 fi
 
-source ./config.sh
-printf "%s" $(pwd) > wam
-WHEREAMI="$(cat wam)"
-if [ ! -d $AK_WORKDIR ]
-then
-    mkdir $AK_WORKDIR
-else
-    printf "Error: Found %s.\n" "$AK_WORKDIR"
-    printf "Please back up your previous installation\n"
-    printf "and rerun ./install.sh.\n"
-    exit 5
-fi
 
-if [ ! -d $AK_CONFIGDIR ] ; then mkdir $AK_CONFIGDIR ;fi
-if [ ! -d $AK_BINDIR ]; then mkdir $AK_BINDIR ;fi
-if [ ! -d $AK_SETTINGS ]; then mkdir $AK_SETTINGS ;fi
-if [ ! -d $AK_LIBDIR ]; then mkdir $AK_LIBDIR ;fi
-if [ ! -d $AK_MODULESDIR ]; then mkdir $AK_MODULESDIR ;fi
-if [ ! -d $AK_ZBLOCKDIR ]; then mkdir $AK_ZBLOCKDIR ;fi
-if [ ! -d $AK_BLOCKDIR ]; then mkdir $AK_BLOCKDIR ;fi
-if [ ! -d $AK_DATADIR ]; then mkdir $AK_DATADIR ;fi
-if [ ! -d $AK_ARCHIVESDIR ]; then mkdir $AK_ARCHIVESDIR ;fi
-if [ ! -f $AK_LOGSFILE ]; then touch $AK_LOGSFILE ;fi
-if [ ! -f $AK_GENESIS ]; then touch $AK_GENESIS;fi
-if [ ! -d $AK_MINEDBLOCKSDIR ]; then mkdir $AK_MINEDBLOCKSDIR; fi
-if [ ! -f $AK_ZBLOCKSFILE ]; then touch $AK_ZBLOCKSFILE; fi
-if [ ! -f $AK_ZPAIRSFILE ]; then touch $AK_ZPAIRSFILE; fi
-if [ ! -d $AK_CACHEDIR ]; then mkdir $AK_CACHEDIR; fi
-if [ ! -d $AK_GPGHOME ]; then mkdir $AK_GPGHOME && chmod 700 -R $AK_GPGHOME; fi
-if [ ! -d $AK_CHUNKSDIR ]; then mkdir -p $AK_CHUNKSDIR; fi
-if [ ! -d $AK_LEAFSDIR ]; then mkdir -p $AK_LEAFSDIR; fi
-if [ ! -d $AK_MAPSDIR ]; then mkdir -p $AK_MAPSDIR; fi
-
-touch $AK_WORKDIR/logs
-logthis(){
-    echo "Install script: $1" >> $AK_WORKDIR/logs
-}
 
 HAK=".arching-kaos"
 logthis "Searching for $HAK folder and files"
@@ -195,8 +225,8 @@ then
     SHELLRC='.bashrc'
     logthis "BASH found";
 else
-    logthis "Unknown shell... defaulting to bash"
-    SHELLRC='.bashrc'
+    logthis "Unknown shell... defaulting to ~/.profile"
+    SHELLRC='.profile'
 fi
 
 logthis "Searching if rc is already there"
@@ -223,5 +253,6 @@ if [ $? -ne 0 ]
 then
     printf 'Building API daemon failed\n'
     exit 1
+else
+    ln -s $WHEREAMI/build/ak-daemon $AK_BINDIR/ak-daemon
 fi
-ln -s $WHEREAMI/build/ak-daemon $AK_BINDIR/ak-daemon
