@@ -95,6 +95,7 @@ chmod 700 -R $AK_GPGHOME
 _ak_let_there_be_file $AK_GENESIS
 _ak_let_there_be_file $AK_ZBLOCKSFILE
 _ak_let_there_be_file $AK_ZPAIRSFILE
+bash update.sh
 
 packageManager=""
 installCommand=""
