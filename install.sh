@@ -1,14 +1,42 @@
 #!/usr/bin/env bash
+###
+### arching-kaos-tools
+### Tools to interact and build an Arching Kaos Infochain
+### Copyright (C) 2021 - 2025  kaotisk
+###
+### This program is free software: you can redistribute it and/or modify
+### it under the terms of the GNU General Public License as published by
+### the Free Software Foundation, either version 3 of the License, or
+### (at your option) any later version.
+###
+### This program is distributed in the hope that it will be useful,
+### but WITHOUT ANY WARRANTY; without even the implied warranty of
+### MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+### GNU General Public License for more details.
+###
+### You should have received a copy of the GNU General Public License
+### along with this program.  If not, see <http://www.gnu.org/licenses/>.
+###
+##
+## Welcome to our ever involving installer
+## We will be as verbose as possible, yet minimal
+##
+## Our default behaviour is to ask the less is needed
+##
+## For minimum overall friction, we will ask sudo access only if it's
+## needed for a missing package.
+##
+## We discourage running the installer with sudo.
+##
 clear
 export AK_DEBUG="yes"
-printf '%s\n' "Arching Kaos Tools Installer"
-printf '%s\n' "============================"
-printf '%s\n' "Welcome to our ever involving installer"
-printf '%s\n' "We will be as verbose as possible, yet minimal"
-printf '%s\n' "Our default behaviour is to ask the less is needed"
-printf '%s\n' "For minimum overall friction, we will ask sudo access only if it's"
-printf '%s\n' "needed for a missing package."
-printf '%s\n' "We discourage running the installer with sudo."
+fullprogrampath="$(realpath $0)"
+PROGRAM="$(basename $0)"
+descriptionString="Arching Kaos Tools Installer"
+
+source ./lib/_ak_script
+_ak_usage
+
 if [ -d ~/.arching-kaos ]
 then
     printf '%s\n' "Error: Found ~/.arching-kaos directory."
@@ -75,7 +103,6 @@ fi
 touch $AK_LOGSFILE
 
 source ./lib/_ak_log
-source ./lib/_ak_script
 
 _ak_check_and_create_dir $AK_CONFIGDIR
 _ak_check_and_create_dir $AK_BINDIR
