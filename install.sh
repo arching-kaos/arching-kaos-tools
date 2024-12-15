@@ -21,7 +21,7 @@ countdown_seconds(){
     default_countdown=5
     if [ ! -z "$1" ] && [ -n "$1" ]
     then
-        if [ "$1" ~= '^[0-9]*$' ]
+        if [ "$(echo -n $1 | sed -e 's/^[0-9]*$//g')" == "" ]
         then
             countdown=$1
         else
