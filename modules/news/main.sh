@@ -34,11 +34,12 @@
 ##                                NEWS zblock
 ##
 fullprogrampath="$(realpath $0)"
-PROGRAM="ak-module-$(realpath $0 | rev |cut -d '/' -f 2 | rev)"
+MODULE="$(realpath $0 | rev |cut -d '/' -f 2 | rev)"
+PROGRAM="ak-module-$MODULE"
 descriptionString="Module to read, create and add zblocks"
 
 source $AK_LIBDIR/_ak_script
-source $AK_MODULESDIR/$PROGRAM/lib.sh
+source $AK_MODULESDIR/$MODULE/lib.sh
 
 if [ ! -z $1 ]
 then

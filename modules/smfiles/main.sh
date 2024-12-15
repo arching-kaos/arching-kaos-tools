@@ -30,12 +30,13 @@ pwd > .pwd
 CRD=$(cat .pwd)
 
 fullprogrampath="$(realpath $0)"
-PROGRAM="ak-module-$(realpath $0 | rev |cut -d '/' -f 2 | rev)"
+MODULE="$(realpath $0 | rev |cut -d '/' -f 2 | rev)"
+PROGRAM="ak-module-$MODULE"
 descriptionString="Module to files in zchain"
 
 source $AK_LIBDIR/_ak_log
 source $AK_LIBDIR/_ak_script
-source $AK_MODULESDIR/$PROGRAM/lib.sh
+source $AK_MODULESDIR/$MODULE/lib.sh
 
 if [ ! -d $ZFILESDIR ]
 then

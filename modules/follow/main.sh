@@ -28,12 +28,13 @@
 ##    -u, --unfollow              Unfollows a ...
 ##
 fullprogrampath="$(realpath $0)"
-PROGRAM="ak-module-$(realpath $0 | rev |cut -d '/' -f 2 | rev)"
+MODULE="$(realpath $0 | rev |cut -d '/' -f 2 | rev)"
+PROGRAM="ak-module-$MODULE"
 descriptionString="Following stuff"
 
 source $AK_LIBDIR/_ak_log
 source $AK_LIBDIR/_ak_script
-source $AK_MODULESDIR/$PROGRAM/lib.sh
+source $AK_MODULESDIR/$MODULE/lib.sh
 
 if [ ! -z $1 ]
 then

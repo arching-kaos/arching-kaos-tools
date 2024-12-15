@@ -28,10 +28,11 @@
 ##
 # We can extend it by calling the _ak_zblock_pack.sh mixtape/add data ## ORIGINAL LINE
 fullprogrampath="$(realpath $0)"
-PROGRAM="ak-module-$(realpath $0 | rev |cut -d '/' -f 2 | rev)"
+MODULE="$(realpath $0 | rev |cut -d '/' -f 2 | rev)"
+PROGRAM="ak-module-$MODULE"
 descriptionString="AK mixtape block creator"
 source $AK_LIBDIR/_ak_script
-source $AK_MODULESDIR/$PROGRAM/lib.sh
+source $AK_MODULESDIR/$MODULE/lib.sh
 
 if [ ! -z $1 ]; then
     case $1 in
