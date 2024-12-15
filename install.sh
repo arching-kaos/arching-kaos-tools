@@ -73,8 +73,9 @@ fi
 
 touch $AK_LOGSFILE
 
-source $WHEREAMI/lib/_ak_log
-source $WHEREAMI/lib/_ak_script
+source ./lib/_ak_log
+bash update.sh
+source ./lib/_ak_script
 
 _ak_check_and_create_dir $AK_CONFIGDIR
 _ak_check_and_create_dir $AK_BINDIR
@@ -95,7 +96,6 @@ chmod 700 -R $AK_GPGHOME
 _ak_let_there_be_file $AK_GENESIS
 _ak_let_there_be_file $AK_ZBLOCKSFILE
 _ak_let_there_be_file $AK_ZPAIRSFILE
-bash update.sh
 
 packageManager=""
 installCommand=""
