@@ -29,13 +29,6 @@
 ## We discourage running the installer with sudo.
 ##
 clear
-export AK_DEBUG="yes"
-fullprogrampath="$(realpath $0)"
-PROGRAM="$(basename $0)"
-descriptionString="Arching Kaos Tools Installer"
-
-source ./lib/_ak_script
-_ak_usage
 
 if [ -d ~/.arching-kaos ]
 then
@@ -43,6 +36,37 @@ then
     printf '%s\n' "Please backup your previous installationr and rerun ./install.sh."
     exit 1
 fi
+
+source ./config.sh
+if [ $? -ne 0 ]
+then
+    printf "Error: Sourcing ./config.sh failed"
+    exit 2
+fi
+
+printf "%s" $(pwd) > wam
+WHEREAMI="$(cat wam)"
+if [ ! -d $AK_WORKDIR ]
+then
+    mkdir $AK_WORKDIR
+else
+    printf "Error: Found %s.\n" "$AK_WORKDIR"
+    printf "Please back up your previous installation\n"
+    printf "and rerun ./install.sh.\n"
+    exit 3
+fi
+
+touch $AK_LOGSFILE
+
+source ./lib/_ak_log
+
+export AK_DEBUG="yes"
+fullprogrampath="$(realpath $0)"
+PROGRAM="$(basename $0)"
+descriptionString="Arching Kaos Tools Installer"
+
+source ./lib/_ak_script
+_ak_usage
 
 printf "Installation starts in..."
 
@@ -78,31 +102,8 @@ countdown_seconds(){
     printf "\n"
 }
 
-countdown_seconds 10
+countdown_seconds 5
 
-
-source ./config.sh
-if [ $? -ne 0 ]
-then
-    printf "Error: Sourcing ./config.sh failed"
-    exit 2
-fi
-
-printf "%s" $(pwd) > wam
-WHEREAMI="$(cat wam)"
-if [ ! -d $AK_WORKDIR ]
-then
-    mkdir $AK_WORKDIR
-else
-    printf "Error: Found %s.\n" "$AK_WORKDIR"
-    printf "Please back up your previous installation\n"
-    printf "and rerun ./install.sh.\n"
-    exit 3
-fi
-
-touch $AK_LOGSFILE
-
-source ./lib/_ak_log
 
 _ak_check_and_create_dir $AK_CONFIGDIR
 _ak_check_and_create_dir $AK_BINDIR
