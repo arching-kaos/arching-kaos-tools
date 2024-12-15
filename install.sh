@@ -91,6 +91,7 @@ _ak_check_and_create_dir $AK_CHUNKSDIR
 _ak_check_and_create_dir $AK_LEAFSDIR
 _ak_check_and_create_dir $AK_MAPSDIR
 _ak_check_and_create_dir $AK_GPGHOME
+echo "AK_GPGHOME: $AK_GPGHOME"
 chmod 700 -R $AK_GPGHOME
 _ak_let_there_be_file $AK_GENESIS
 _ak_let_there_be_file $AK_ZBLOCKSFILE
@@ -189,20 +190,20 @@ do
 done
 
 # Work-around for gpg2 calls on distros that don't provide a link
+_ak_log_debug "Looking for gpg2 link"
 which gpg2 > /dev/null 2>&1
 if [ $? -ne 0 ]
 then
     which gpg > /dev/null 2>&1
     if [ $? -eq 0 ]
     then
+        _ak_log_debug "Making a gpg2 link"
         $sudoBin ln -s `which gpg` /usr/bin/gpg2
     fi
 fi
 
-
-
 HAK=".arching-kaos"
-_ak_log_debug "Searching for $HAK folder and files"
+_ak_log_debug "Searching for $HAK directory"
 if [ ! -d $HOME/$HAK ]; then
     mkdir $HOME/$HAK
     _ak_log_debug "$HAK created in $HOME";
@@ -216,17 +217,17 @@ if [ ! -f $HOME/$HAK/rc ]; then
 fi
 
 _ak_log_debug "Searching for shell"
-if [ $SHELL == "/usr/bin/zsh" ]
+if [ -f "~/.zshrc" ]
 then
-    SHELLRC=".zshrc"
+    SHELLRC="~/.zshrc"
     _ak_log_debug "ZSH found";
-elif [ $SHELL == "/usr/bin/bash" ]
+elif [ -f "~/.bashrc" ]
 then
-    SHELLRC='.bashrc'
+    SHELLRC='~/.bashrc'
     _ak_log_debug "BASH found";
 else
-    _ak_log_debug "Unknown shell... defaulting to ~/.profile"
-    SHELLRC='.profile'
+    _ak_log_debug "Unknown shell... defaulting to ~/.shrc"
+    SHELLRC='~/.shrc'
 fi
 
 _ak_log_debug "Searching if rc is already there"
