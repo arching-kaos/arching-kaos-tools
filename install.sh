@@ -74,7 +74,6 @@ fi
 touch $AK_LOGSFILE
 
 source ./lib/_ak_log
-bash update.sh
 source ./lib/_ak_script
 
 _ak_check_and_create_dir $AK_CONFIGDIR
