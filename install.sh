@@ -73,8 +73,8 @@ fi
 
 touch $AK_LOGSFILE
 
-source ./lib/_ak_log
-source ./lib/_ak_script
+source $WHEREAMI/lib/_ak_log
+source $WHEREAMI/lib/_ak_script
 
 _ak_check_and_create_dir $AK_CONFIGDIR
 _ak_check_and_create_dir $AK_BINDIR
@@ -202,41 +202,41 @@ fi
 
 
 HAK=".arching-kaos"
-logthis "Searching for $HAK folder and files"
+_ak_log_debug "Searching for $HAK folder and files"
 if [ ! -d $HOME/$HAK ]; then
     mkdir $HOME/$HAK
-    logthis "$HAK created in $HOME";
+    _ak_log_debug "$HAK created in $HOME";
 fi
 
-logthis "Searching for rc"
+_ak_log_debug "Searching for rc"
 if [ ! -f $HOME/$HAK/rc ]; then
     echo export PATH=$PATH:$HOME/$HAK/bin > $HOME/$HAK/rc
     cat config.sh >> $HOME/$HAK/rc
-    logthis "New rc export to file";
+    _ak_log_debug "New rc export to file";
 fi
 
-logthis "Searching for shell"
+_ak_log_debug "Searching for shell"
 if [ $SHELL == "/usr/bin/zsh" ]
 then
     SHELLRC=".zshrc"
-    logthis "ZSH found";
+    _ak_log_debug "ZSH found";
 elif [ $SHELL == "/usr/bin/bash" ]
 then
     SHELLRC='.bashrc'
-    logthis "BASH found";
+    _ak_log_debug "BASH found";
 else
-    logthis "Unknown shell... defaulting to ~/.profile"
+    _ak_log_debug "Unknown shell... defaulting to ~/.profile"
     SHELLRC='.profile'
 fi
 
-logthis "Searching if rc is already there"
+_ak_log_debug "Searching if rc is already there"
 grep "source $HOME/$HAK/rc" $HOME/$SHELLRC > /dev/null 2>&1
 if [ $? -eq 0 ]
 then
-    logthis "Already installed";
+    _ak_log_debug "Already installed";
 else
     echo "source $HOME/$HAK/rc" >> $HOME/$SHELLRC
-    logthis "$HAK installed at $HOME and sourced it in $SHELLRC"
+    _ak_log_debug "$HAK installed at $HOME and sourced it in $SHELLRC"
     source $HOME/$HAK/rc;
 fi
 
