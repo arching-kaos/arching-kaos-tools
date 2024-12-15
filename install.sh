@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 clear
+export AK_DEBUG="yes"
 printf '%s\n' "Arching Kaos Tools Installer"
 printf '%s\n' "============================"
 printf '%s\n' "Welcome to our ever involving installer"
