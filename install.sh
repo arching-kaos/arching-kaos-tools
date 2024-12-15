@@ -91,8 +91,7 @@ _ak_check_and_create_dir $AK_CHUNKSDIR
 _ak_check_and_create_dir $AK_LEAFSDIR
 _ak_check_and_create_dir $AK_MAPSDIR
 _ak_check_and_create_dir $AK_GPGHOME
-echo "AK_GPGHOME: $AK_GPGHOME"
-chmod 700 -R $AK_GPGHOME
+chmod 700 $AK_GPGHOME
 _ak_let_there_be_file $AK_GENESIS
 _ak_let_there_be_file $AK_ZBLOCKSFILE
 _ak_let_there_be_file $AK_ZPAIRSFILE
@@ -219,15 +218,15 @@ fi
 _ak_log_debug "Searching for shell"
 if [ -f "~/.zshrc" ]
 then
-    SHELLRC="~/.zshrc"
+    SHELLRC="${HOME}/zshrc"
     _ak_log_debug "ZSH found";
-elif [ -f "~/.bashrc" ]
+elif [ -f "${HOME}/.bashrc" ]
 then
-    SHELLRC='~/.bashrc'
+    SHELLRC="${HOME}/.bashrc"
     _ak_log_debug "BASH found";
 else
     _ak_log_debug "Unknown shell... defaulting to ~/.shrc"
-    SHELLRC='~/.shrc'
+    SHELLRC="${HOME}/.shrc"
 fi
 
 _ak_log_debug "Searching if rc is already there"
