@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -x
+#set -x
 source lib/_ak_ipfs
 source lib/_ak_settings
 
