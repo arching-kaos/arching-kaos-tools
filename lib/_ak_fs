@@ -289,7 +289,7 @@ function _ak_fs_cat(){
     _ak_fs_find_depth "$currentNode"
     depth="$(expr `cat depth` + 1)"
     counter="0"
-    printf "%s" "$depth"
+    # printf "%s" "$depth"
     if [ -f output ]
     then
         rm output
@@ -569,7 +569,7 @@ function _ak_fs_net_cat(){
     _ak_fs_net_find_depth "$currentNode"
     depth="$(expr `cat depth` + 1)"
     counter="0"
-    printf "%s" "$depth"
+    # printf "%s" "$depth"
     if [ -f output ]
     then
         rm output
