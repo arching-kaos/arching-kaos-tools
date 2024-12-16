@@ -30,7 +30,12 @@
 ##
 clear
 
-if [ -d ~/.arching-kaos ]
+export AK_DEBUG="yes"
+fullprogrampath="$(realpath $0)"
+PROGRAM="$(basename $0)"
+descriptionString="Arching Kaos Tools Installer"
+
+if [ -d "${HOME}/.arching-kaos" ]
 then
     printf '%s\n' "Error: Found ~/.arching-kaos directory."
     printf '%s\n' "Please backup your previous installationr and rerun ./install.sh."
@@ -59,12 +64,6 @@ fi
 touch $AK_LOGSFILE
 
 source ./lib/_ak_log
-
-export AK_DEBUG="yes"
-fullprogrampath="$(realpath $0)"
-PROGRAM="$(basename $0)"
-descriptionString="Arching Kaos Tools Installer"
-
 source ./lib/_ak_script
 _ak_usage
 
