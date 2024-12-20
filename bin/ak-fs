@@ -28,6 +28,8 @@
 ##    --cat <hash>                              Concatenates from given hash
 ##    --list                                    Lists names and roots available
 ##    --net-cat-from-map                        Concatenates from map via the network
+##    --cfm <hash map>                          Concatenates from map
+##    --gfm <hash map>                          Get file from map
 ##
 fullprogrampath="$(realpath $0)"
 PROGRAM=$(basename $0)
@@ -42,13 +44,15 @@ then
     case $1 in
         -h | --help) _ak_usage; exit;;
         --add|--import) _ak_fs_import $2; exit;;
-        --get|--export) _ak_fs_export $2 $3; exit;;
+        --get|--export) shift; _ak_fs_export $1 $2; exit;;
         --cat) _ak_fs_cat $2; exit;;
         --net-cat) _ak_fs_net_cat $2; exit;;
         --net-get) _ak_fs_net_get $2; exit;;
         --net-cat-from-map) _ak_fs_net_cat_from_map_hash $2; exit;;
         --net-get-from-map) _ak_fs_net_get_from_map_hash $2; exit;;
         --list) _ak_fs_list; exit;;
+        --cfm) _ak_fs_cat_from_map_hash $2; exit;;
+        --gfm) _ak_fs_get_from_map_hash $2; exit;;
         * ) _ak_usage;;
     esac
 else

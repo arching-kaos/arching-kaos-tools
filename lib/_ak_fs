@@ -199,7 +199,7 @@ function _ak_fs_import(){
         sha512sum level.1.map
         sha512sum level.1.map >> $TEMPDIR/3rd_gen_map
     else
-        echo error
+        ak_log_error "Got error an error, level.1.map is missing"
         exit 1
     fi
 
@@ -273,10 +273,10 @@ function _ak_fs_cat(){
         echo "Please provide a SHA512 hash"
         exit 1
     fi
-    echo $1 | grep "[0123456789abcdef]\{128\}"
+    echo $1 | grep "[0123456789abcdef]\{128\}" > /dev/null 2>&1
     if [ $? -ne 0 ]
     then
-        echo "Look, I asked for a SHA512 hash, please try again"
+        _ak_log_error "Look, I asked for a SHA512 hash, please try again"
         exit 1
     fi
     treeRootHash="$1"
@@ -303,7 +303,7 @@ function _ak_fs_cat(){
             nextLevel="$(expr $counter + 1)"
             if [ "$p" == "" ]
             then
-                echo hi
+                _ak_log_debug "Got empty line"
             else
                 #expectedPath="$AK_LEAFSDIR/$(_ak_fs_return_hash_path $p)"
                 expectedPath="$AK_LEAFSDIR/$p"
@@ -342,13 +342,13 @@ function _ak_fs_export(){
         exit 2
     fi
     outputFilename="$2"
-    echo $1 | grep "[0123456789abcdef]\{128\}"
+    echo $1 | grep "[0123456789abcdef]\{128\}" > /dev/null 2>&1
     if [ $? -ne 0 ]
     then
         _ak_log_error "Look, I asked for a SHA512 hash, please try again"
         exit 1
     fi
-    _ak_fs_export "$1" > $outputFilename
+    _ak_fs_cat "$1" > $outputFilename
 }
 
 function _ak_fs_list(){
@@ -417,7 +417,7 @@ function _ak_fs_cat_from_map_hash(){
 function _ak_fs_get_from_map_hash(){
     if _ak_fs_verify_input_is_hash "$1"
     then
-        _ak_fs_get `_ak_fs_from_map_get_root_hash $1` "`_ak_fs_from_map_get_original_filename $1`"
+        _ak_fs_export `_ak_fs_from_map_get_root_hash $1` "$(basename `_ak_fs_from_map_get_original_filename $1`)"
     fi
 }
 
@@ -549,7 +549,7 @@ function _ak_fs_net_cat(){
         echo "Please provide a SHA512 hash"
         exit 1
     fi
-    echo $1 | grep "[0123456789abcdef]\{128\}"
+    echo $1 | grep "[0123456789abcdef]\{128\}" > /dev/null 2>&1
     if [ $? -ne 0 ]
     then
         echo "Look, I asked for a SHA512 hash, please try again"
@@ -583,7 +583,7 @@ function _ak_fs_net_cat(){
             nextLevel="$(expr $counter + 1)"
             if [ "$p" == "" ]
             then
-                echo hi
+                _ak_log_debug "Got empty line"
             else
                 expectedPath="$AK_LEAFSDIR/$p"
                 if [ -f $expectedPath ]
