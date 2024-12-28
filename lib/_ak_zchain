@@ -22,7 +22,7 @@ source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_zblock
 source $AK_LIBDIR/_ak_script
 
-_ak_zchain_reset(){
+function _ak_zchain_reset(){
     _ak_log_info "Reseting AK_ZLATEST to AK_ZGENESIS"
     cp $AK_ZGENESIS $AK_ZLATEST
     if [ $? -ne 0 ]
@@ -30,7 +30,6 @@ _ak_zchain_reset(){
         _ak_log_error "Failed to reset AK_ZLATEST to AK_ZGENESIS"
         exit 1
     fi
-
     _ak_log_info "Checking if /zarchive directory exists"
     _ak_ipfs_files_stat /zarchive > /dev/null
     if [ $? -ne 0 ]
@@ -44,7 +43,6 @@ _ak_zchain_reset(){
     else
         _ak_log_info "/zarchive directory exists"
     fi
-
     _ak_log_info "Checking if /zlatest file exists"
     _ak_ipfs_files_stat /zlatest > /dev/null 2>&1
     if [ $? -eq 0 ]
@@ -66,7 +64,6 @@ _ak_zchain_reset(){
     else
         _ak_log_info "/zlatest not found, skipping backup"
     fi
-
     _ak_log_info "Copying reset AK_ZLATEST"
     CZLATEST="$(cat $AK_ZLATEST)"
     _ak_ipfs_files_cp /ipfs/$CZLATEST /zlatest
@@ -75,7 +72,6 @@ _ak_zchain_reset(){
         _ak_log_error "Failed to copy AK_ZLATEST to /zlatest"
         exit 1
     fi
-
     _ak_log_info "Publishing new (reset) AK_ZLATEST"
     _ak_ipfs_name_publish --key=zchain /ipfs/$(cat $AK_ZLATEST)
     if [ $? -ne 0 ]
@@ -83,46 +79,38 @@ _ak_zchain_reset(){
         _ak_log_error "Failed to publish updated zchain"
         exit 1
     fi
-
     _ak_config_publish
     if [ $? -ne 0 ]
     then
         _ak_log_error "Could not publish new configuration"
         exit 1
     fi
-
     _ak_log_info "Reset was successful"
     exit 0
 }
 
-_ak_zchain_rebase(){
+function _ak_zchain_rebase(){
     if [ ! -n "$1" ]; then exit 1; fi
     ZTARGET="$1"
     echo "Reseting ZLATEST to ZTARGET"
     echo $ZTARGET > $AK_ZLATEST
     if [ $? != 0 ]; then exit 1; fi
-
     echo "Make sure /zarchive folder exists within IPFS FS"
     _ak_ipfs_files_mkdir /zarchive
     if [ $? != 0 ]; then echo "Folder already there"; fi
-
     echo "Archive the previous ZLATEST"
     _ak_ipfs_files_cp /zlatest /zarchive/$(date -u +%s)-$(_ak_ipfs_files_stat /zlatest | head -n 1)
     if [ $? != 0 ]; then exit 1; fi
-
     echo "Removing previous /zlatest entry"
     _ak_ipfs_files_rm /zlatest
     if [ $? != 0 ]; then exit 1; fi
-
     echo "Copying rebased ZLATEST"
     CZLATEST="$(cat $AK_ZLATEST)"
     _ak_ipfs_files_cp /ipfs/$CZLATEST /zlatest
     if [ $? != 0 ]; then exit 1; fi
-
     echo "Publishing new (rebased) ZLATEST"
     _ak_ipfs_name_publish --key=zchain /ipfs/$(cat $AK_ZLATEST)
     if [ $? != 0 ]; then exit 1; fi
-
     _ak_config_publish
     if [ $? -ne 0 ]
     then
@@ -133,7 +121,7 @@ _ak_zchain_rebase(){
     exit 0
 }
 
-_ak_zchain_extract_cids(){
+function _ak_zchain_extract_cids(){
     if [ ! -z $1 ] && [ -n "$1" ]
     then
         _ak_zchain_crawl $1 | jq  -M | grep Qm | sed -e 's/".*"://g; s/ //g; s/[{,"]//g' | sort | uniq
@@ -142,9 +130,8 @@ _ak_zchain_extract_cids(){
     fi
 }
 
-_ak_zchain_extract_cids_limit(){
+function _ak_zchain_extract_cids_limit(){
     if [ ! -z $1 ] && [ -n "$1" ] && [ ! -z $2 ] && [ -n "$2" ]
-
     then
         _ak_zchain_crawl -l $2 $1 | jq  -M | grep Qm | sed -e 's/".*"://g; s/ //g; s/[{,"]//g' | sort | uniq
     else
@@ -152,7 +139,7 @@ _ak_zchain_extract_cids_limit(){
     fi
 }
 
-_ak_zchain_extract_data_cids(){
+function _ak_zchain_extract_data_cids(){
     if [ ! -z $1 ]
     then
         _ak_zchain_crawl $1 | jq | grep ipfs | awk '{print $2}' | sed -e 's/"//g;s/,//g'
@@ -161,7 +148,7 @@ _ak_zchain_extract_data_cids(){
     fi
 }
 
-_ak_zchain_calculate_size(){
+function _ak_zchain_calculate_size(){
     temp="$(_ak_make_temp_directory)"
     cd $temp
     if [ ! -z $1 ] && [ -n "$1" ]
@@ -186,7 +173,7 @@ _ak_zchain_calculate_size(){
     rm -rf $temp
 }
 
-_ak_zchain_crawl(){
+function _ak_zchain_crawl(){
     entrance="$(cat $AK_ZLATEST)"
     verify=1
     limit=0
@@ -282,19 +269,19 @@ variable
     done
 }
 
-_ak_zchain_crawl_self(){
+function _ak_zchain_crawl_self(){
     _ak_zchain_crawl
 }
 
-_ak_zchain_crawl_remote_ipfs(){
+function _ak_zchain_crawl_remote_ipfs(){
     _ak_zchain_crawl $1
 }
 
-_ak_zchain_crawl_remote_ipns(){
+function _ak_zchain_crawl_remote_ipns(){
     _ak_zchain_crawl -n $1
 }
 
-_ak_zchain_get_latest(){
+function _ak_zchain_get_latest(){
     _ak_ipfs_files_stat /zlatest | head -n 1| tr -d '\n'
 }
 
