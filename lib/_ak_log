@@ -18,7 +18,7 @@
 ### along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
-_ak_log_print_log_line(){
+function _ak_log_print_log_line(){
     if [ -n "$1" ]
     then
         timestamp="$(echo "$*" | awk '{print $1}')"
@@ -33,14 +33,14 @@ _ak_log_print_log_line(){
     fi
 }
 
-_ak_log_follow(){
+function _ak_log_follow(){
     tail -f $AK_LOGSFILE | while read -r p || [ -n "$p" ]
     do
         _ak_log_print_log_line "$p"
     done
 }
 
-_ak_log_grep(){
+function _ak_log_grep(){
     if [ ! -z $1 ] && [ -n "$1" ]
     then
         if [ "$1" == "-h" ] || [ "$1" == "--help" ]
@@ -50,7 +50,6 @@ _ak_log_grep(){
             exit 1
         fi
     fi
-
     echo "The following scripts have entries in the log file."
     echo "Select one of those by entering the number of it below and hit enter:"
     select x in $(cat $AK_LOGSFILE | cut -d ' ' -f 2 | sort | uniq)
@@ -63,7 +62,7 @@ _ak_log_grep(){
     done
 }
 
-_ak_log_rotate(){
+function _ak_log_rotate(){
     if [ -f $AK_LOGSFILE ]
     then
         tar cvfz $AK_ARCHIVESDIR/logs_$(date -u +%s).tar.gz $AK_WORKDIR/logs
@@ -76,7 +75,7 @@ _ak_log_rotate(){
     fi
 }
 
-_ak_log_message(){
+function _ak_log_message(){
     TS="$(date -u +%s)"
     if [ ! -z $1 ] && [ -n "$1" ]
     then
@@ -116,23 +115,23 @@ _ak_log_message(){
     fi
 }
 
-_ak_log_exit(){
+function _ak_log_exit(){
     _ak_log_message "$PROGRAM" "EXIT" "$1"
 }
 
-_ak_log_warning(){
+function _ak_log_warning(){
     _ak_log_message "$PROGRAM" "WARNING" "$1"
 }
 
-_ak_log_debug(){
+function _ak_log_debug(){
     _ak_log_message "$PROGRAM" "DEBUG" "$1"
 }
 
-_ak_log_error(){
+function _ak_log_error(){
     _ak_log_message "$PROGRAM" "ERROR" "$1"
 }
 
-_ak_log_info(){
+function _ak_log_info(){
     _ak_log_message "$PROGRAM" "INFO" "$1"
 }
 

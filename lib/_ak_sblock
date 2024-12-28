@@ -20,7 +20,7 @@
 
 source $AK_LIBDIR/_ak_log
 
-_ak_sblock_show(){
+function _ak_sblock_show(){
     if [ ! -z $1 ]
     then
         cat $AK_MINEDBLOCKSDIR/$1 | jq

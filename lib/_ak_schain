@@ -23,7 +23,7 @@ source $AK_LIBDIR/_ak_sblock
 AK_SCHAINSDIR=$AK_WORKDIR/schains
 GENESIS="00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
 
-_ak_schain_latest_cached(){
+function _ak_schain_latest_cached(){
     if [ ! -f $AK_WORKDIR/schain.latest ]
     then
         _ak_schain_get_latest > $AK_WORKDIR/schain.latest
@@ -31,7 +31,7 @@ _ak_schain_latest_cached(){
     cat $AK_WORKDIR/schain.latest
 }
 
-_ak_schain_tidy(){
+function _ak_schain_tidy(){
     SLATEST=$(_ak_schain_get_latest | jq -r '.latest_block')
     if [ ! -d $AK_SCHAINSDIR ]
     then
@@ -39,11 +39,11 @@ _ak_schain_tidy(){
     fi
 }
 
-_ak_schain_block_latest_block_hash(){
+function _ak_schain_block_latest_block_hash(){
     _ak_schain_get_latest | jq -r '.latest_block'
 }
 
-_ak_schain_crawl(){
+function _ak_schain_crawl(){
     if [ ! -z $1 ] && [ -n "$1" ]
     then
         CUR_TARGET="$1"
@@ -51,7 +51,6 @@ _ak_schain_crawl(){
         _ak_log_warning "No next target found. So long for $1"
         exit 1
     fi
-
     if [ $counter -eq 0 ]
     then
         echo '['
@@ -69,7 +68,6 @@ _ak_schain_crawl(){
         echo ','
         counter=$(($counter + 1))
     fi
-
     if [ "$1" == "$GENESIS" ]
     then
         echo '{"genesis":"genesis"}' | jq
@@ -77,7 +75,6 @@ _ak_schain_crawl(){
         _ak_log_warning "Looks like genesis. Exiting with 0"
         exit 0
     fi
-
     if [ ! -f "$AK_MINEDBLOCKSDIR/$CUR_TARGET" ]
     then
         _ak_log_warning "Could not find $CUR_TARGET"
@@ -90,7 +87,7 @@ _ak_schain_crawl(){
     fi
 }
 
-_ak_schain_crawl_interface(){
+function _ak_schain_crawl_interface(){
     LIMIT_ENABLED="no"
     LIMIT=0
     counter=0
@@ -113,7 +110,7 @@ _ak_schain_crawl_interface(){
     fi
 }
 
-_ak_schain_count_schain(){
+function _ak_schain_count_schain(){
     echo -n $1 | grep -e '[0-9a-f]\{128\}' > /dev/null
     if [ $? -ne 0 ]
     then
@@ -145,7 +142,7 @@ _ak_schain_count_schain(){
     fi
 }
 
-_ak_sblock_get_latest_from_haystack_of_sblocks(){
+function _ak_sblock_get_latest_from_haystack_of_sblocks(){
     templistblock="$(_ak_make_temp_file)"
     tempcounters="$(_ak_make_temp_directory)"
     max="$(_ak_make_temp_file)"
@@ -191,6 +188,6 @@ _ak_sblock_get_latest_from_haystack_of_sblocks(){
     printf '{"latest_block":"%s"}' "$(cat $max_holder)" | tee $AK_WORKDIR/schain.latest
 }
 
-_ak_schain_get_latest(){
+function _ak_schain_get_latest(){
     _ak_sblock_get_latest_from_haystack_of_sblocks
 }

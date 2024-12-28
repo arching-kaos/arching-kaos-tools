@@ -19,7 +19,7 @@
 ###
 source $AK_LIBDIR/_ak_log
 
-_ak_generate_html_header(){   
+function _ak_generate_html_header(){
     printf '<!DOCTYPE html>\n<html>\n<head>\n'
     printf '<title>Arching Kaos Chain Data</title>\n'
     printf '    <meta charset="UTF-8">\n'
@@ -82,7 +82,7 @@ _ak_generate_html_header(){
     printf '<body>\n'
 }
 
-_ak_generate_html_zblock(){
+function _ak_generate_html_zblock(){
     if [ ! -z $1 ] && [ -n "$1" ]
     then
         arg="$1"
@@ -160,7 +160,6 @@ _ak_generate_html_zblock(){
             _ak_log_error "Empty datablock value"
             exit 1
         fi
-
         # Output data in HTML format
         printf '    <h1>%s</h1>\n' "$PROGRAM"
         printf '    <h2>🔎 %szblock</h2>\n' "$zblock"

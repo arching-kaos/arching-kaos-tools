@@ -88,17 +88,14 @@ function _ak_fs_import(){
     #
     # 6. We are done!
     #
-
     # A temporary root dir to work on
     TEMPDIR="$(_ak_make_temp_directory)"
     # A subdir to split the files there
     TCHKDIR="$TEMPDIR/chks"
     # A pin point to return from where we came from
     CURRENTDIR="$(pwd)"
-
     # Checking directories and create them if necessary
     # rm -rf $TEMPDIR
-
     _ak_check_and_create_dir $TCHKDIR
     _ak_fs_dir_init_setup
     if [ ! -f "$1" ]
@@ -118,10 +115,8 @@ function _ak_fs_import(){
         base64 $1 > file
         FILE="file"
     fi
-
     # Uncomment next line in case you want to debug the resulting script as well
     # echo 'set -xe' > $TEMPDIR/cmd_queue.sh
-
     # We get the SHA512 hash for the $FILE given
     CHECKSUM=$(sha512sum "$FILE"|awk '{print $1}')
     FILE_SIZE="$( (du -b $FILE||stat -f %z $FILE)2>/dev/null | awk '{ print $1 }')"
@@ -140,7 +135,6 @@ function _ak_fs_import(){
         split -a 13 -b $FACTOR -d "$FILE" "$TCHKDIR/chunk-"
     fi
     _ak_log_info "File done splitting"
-
     # We go over there...
     cd $TCHKDIR
     #set -xe
@@ -164,7 +158,6 @@ function _ak_fs_import(){
     done
     _ak_log_debug "Ran $timesRan times"
     _ak_log_debug "Total chunks $totalChunks"
-
     workingIndex="$TEMPDIR/map"
     c=$timesRan
     while [ $c -ne 0 ]
@@ -193,7 +186,6 @@ function _ak_fs_import(){
         totalChunks=`cat $workingIndex | wc -l`
         c=`expr $c - 1`
     done
-
     if [ -f level.1.map ]
     then
         sha512sum level.1.map
@@ -202,12 +194,10 @@ function _ak_fs_import(){
         ak_log_error "Got error an error, level.1.map is missing"
         exit 1
     fi
-
     # Reset file with uniq
     cat $TEMPDIR/map | uniq > $TEMPDIR/map2
     cat $TEMPDIR/map2 > $TEMPDIR/map
     rm $TEMPDIR/map2
-
     counter=0
     while IFS="" read -r p || [ -n "$p" ]
     do
@@ -216,31 +206,22 @@ function _ak_fs_import(){
         cp $(echo $p | awk '{ print $2 }') $AK_CHUNKSDIR/$(echo $p | awk '{ print $1 }')
         counter=`expr "$counter" + 1`
     done < $TEMPDIR/map
-
     # We run the crafted script
 #    sh $TEMPDIR/cmd_queue.sh
-
     # and we delete it
 #    rm $TEMPDIR/cmd_queue.sh
-
     # We inform the map about the original $FILE name and SHA512
 #    echo "$CHECKSUM  $(basename "$FILE")" >> $TEMPDIR/map
-
     # We get the SHA512 hash of the resulted map file
 #    MAPFILEHASH="$(sha512sum $TEMPDIR/map | awk '{ print $1 }')"
-
     # and we rename it with it and move it to AK_MAPSDIR
 #    `sha512sum $TEMPDIR/map | awk '{print "mv " $2 " '$AK_MAPSDIR/'" $1}'`
-
     mp512p="$(sha512sum $TEMPDIR/3rd_gen_map | awk '{print $1}')"
     cp $TEMPDIR/3rd_gen_map $AK_MAPSDIR/$mp512p
-
     # We remove the TEMPDIR
     rm -rf $TEMPDIR
-
     # and print the MAPFILEHASH
     echo "$mp512p"
-
 }
 
 function _ak_fs_find_depth(){
@@ -325,7 +306,6 @@ function _ak_fs_cat(){
         done < workspace.$counter
         counter="$(expr $counter + 1)"
     done
-
     base64 -d output
     _ak_log_info "Recreation of $treeRootHash succeeded!"
 }

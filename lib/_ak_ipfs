@@ -25,7 +25,7 @@ then
     mkdir -p $AK_IPFS_ARTIFACTS
 fi
 
-_ak_ipfs(){
+function _ak_ipfs(){
     export IPFS_PATH=$AK_IPFS_REPO; kubo $*
     if [ $? -ne 0 ]
     then
@@ -34,12 +34,12 @@ _ak_ipfs(){
     fi
 }
 
-_ak_ipfs_daemon(){
+function _ak_ipfs_daemon(){
     _ak_ipfs daemon --routing=dht --migrate &
     printf '%s' "$!" > $AK_WORKDIR/akipfsd.pid
 }
 
-_ak_ipfs_swarm_connect(){
+function _ak_ipfs_swarm_connect(){
     if [ ! -z $1 ] && [ -n "$1" ]
     then
         _ak_ipfs swarm connect "$1"
@@ -48,7 +48,7 @@ _ak_ipfs_swarm_connect(){
     fi
 }
 
-_ak_ipfs_get_peers(){
+function _ak_ipfs_get_peers(){
     _ak_ipfs swarm peers 1> /dev/null 2>&1
     if [ $? -eq 0 ]
     then
@@ -56,7 +56,7 @@ _ak_ipfs_get_peers(){
     fi
 }
 
-_ak_ipfs_scanner(){
+function _ak_ipfs_scanner(){
     peersIPFSfile="$AK_WORKDIR/peers.ipfs"
     ak_peersIPFSfile="$AK_WORKDIR/ipfs.peers.akn"
     if [ ! -f $peersIPFSfile ]
@@ -104,7 +104,7 @@ _ak_ipfs_scanner(){
     mv walk.aknet $ak_peersIPFSfile
 }
 
-_ak_ipfs_add(){
+function _ak_ipfs_add(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
         _ak_log_error "no argument given"
@@ -120,7 +120,7 @@ _ak_ipfs_add(){
     fi
 }
 
-_ak_ipfs_block_stat(){
+function _ak_ipfs_block_stat(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
         _ak_log_error "no argument given"
@@ -134,7 +134,7 @@ _ak_ipfs_block_stat(){
     fi
 }
 
-_ak_ipfs_files_cp(){
+function _ak_ipfs_files_cp(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
         _ak_log_error "Source: No argument given"
@@ -153,7 +153,7 @@ _ak_ipfs_files_cp(){
     fi
 }
 
-_ak_ipfs_files_ls(){
+function _ak_ipfs_files_ls(){
     _ak_ipfs files ls "$1"
     if [ $? -ne 0 ]
     then
@@ -162,7 +162,7 @@ _ak_ipfs_files_ls(){
     fi
 }
 
-_ak_ipfs_files_mkdir(){
+function _ak_ipfs_files_mkdir(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
         _ak_log_error "No argument given"
@@ -176,7 +176,7 @@ _ak_ipfs_files_mkdir(){
     fi
 }
 
-_ak_ipfs_files_mv(){
+function _ak_ipfs_files_mv(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
         _ak_log_error "No argument given"
@@ -195,7 +195,7 @@ _ak_ipfs_files_mv(){
     fi
 }
 
-_ak_ipfs_files_rm(){
+function _ak_ipfs_files_rm(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
         _ak_log_error "No argument given"
@@ -209,7 +209,7 @@ _ak_ipfs_files_rm(){
     fi
 }
 
-_ak_ipfs_files_stat(){
+function _ak_ipfs_files_stat(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
         _ak_log_error "No argument given"
@@ -223,7 +223,7 @@ _ak_ipfs_files_stat(){
     fi
 }
 
-_ak_ipfs_get(){
+function _ak_ipfs_get(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
         _ak_log_error "No argument given"
@@ -244,7 +244,7 @@ _ak_ipfs_get(){
     fi
 }
 
-_ak_ipfs_cat(){
+function _ak_ipfs_cat(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
         _ak_log_error "no argument given"
@@ -262,8 +262,7 @@ _ak_ipfs_cat(){
     fi
 }
 
-
-_ak_ipfs_key_gen(){
+function _ak_ipfs_key_gen(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
         _ak_log_error "No argument given"
@@ -277,7 +276,7 @@ _ak_ipfs_key_gen(){
     fi
 }
 
-_ak_ipfs_key_list(){
+function _ak_ipfs_key_list(){
     _ak_ipfs key list
     if [ $? -ne 0 ]
     then
@@ -286,7 +285,7 @@ _ak_ipfs_key_list(){
     fi
 }
 
-_ak_ipfs_key_list_full(){
+function _ak_ipfs_key_list_full(){
     _ak_ipfs key list -l
     if [ $? -ne 0 ]
     then
@@ -295,7 +294,7 @@ _ak_ipfs_key_list_full(){
     fi
 }
 
-_ak_ipfs_name_publish(){
+function _ak_ipfs_name_publish(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
         _ak_log_error "No argument given"
@@ -314,7 +313,7 @@ _ak_ipfs_name_publish(){
     fi
 }
 
-_ak_ipfs_config_publish(){
+function _ak_ipfs_config_publish(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
         _ak_log_error "No argument given"
@@ -324,7 +323,7 @@ _ak_ipfs_config_publish(){
     _ak_ipfs_name_publish "ak-config" $1
 }
 
-_ak_ipfs_name_resolve(){
+function _ak_ipfs_name_resolve(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
         _ak_log_error "No argument given"
@@ -338,7 +337,7 @@ _ak_ipfs_name_resolve(){
     fi
 }
 
-_ak_ipfs_swarm_peers(){
+function _ak_ipfs_swarm_peers(){
     _ak_ipfs swarm peers
     if [ $? -ne 0 ]
     then
@@ -347,7 +346,7 @@ _ak_ipfs_swarm_peers(){
     fi
 }
 
-_ak_ipfs_starter(){
+function _ak_ipfs_starter(){
     _ak_ipfs_daemon
     if [ $? -ne 0 ]
     then
@@ -363,7 +362,7 @@ _ak_ipfs_starter(){
     fi
 }
 
-_ak_ipns_resolve(){
+function _ak_ipns_resolve(){
     if [ ! -z $1 ]
     then
         rsld=$(_ak_ipfs_name_resolve $1)
@@ -380,7 +379,7 @@ _ak_ipns_resolve(){
     fi
 }
 
-_ak_ipfs_check_config_key(){
+function _ak_ipfs_check_config_key(){
     _ak_ipfs_key_list | grep ak-config > /dev/null
     if [ $? -ne 0 ]
     then
@@ -397,7 +396,7 @@ _ak_ipfs_check_config_key(){
     fi
 }
 
-_ak_ipfs_check_zchain_key(){
+function _ak_ipfs_check_zchain_key(){
     _ak_ipfs_key_list | grep zchain > /dev/null
     if [ $? -ne 0 ]
     then
@@ -414,7 +413,7 @@ _ak_ipfs_check_zchain_key(){
     fi
 }
 
-_ak_ipfs_check_zarchive_dir(){
+function _ak_ipfs_check_zarchive_dir(){
     _ak_ipfs_files_ls /zarchive > /dev/null
     if [ $? -ne 0 ]
     then
@@ -424,7 +423,7 @@ _ak_ipfs_check_zarchive_dir(){
     fi
 }
 
-_ak_ipfs_check_zlatest_file(){
+function _ak_ipfs_check_zlatest_file(){
     _ak_ipfs_files_ls /zlatest > /dev/null
     if [ $? -ne 0 ]
     then
@@ -434,14 +433,14 @@ _ak_ipfs_check_zlatest_file(){
     fi
 }
 
-_ak_ipfs_check(){
+function _ak_ipfs_check(){
     _ak_ipfs_check_zarchive_dir
     _ak_ipfs_check_zlatest_file
     _ak_ipfs_check_config_key
     _ak_ipfs_check_zchain_key
 }
 
-_ak_ipfs_init(){
+function _ak_ipfs_init(){
     if [ ! -d $AK_IPFS_REPO ]
     then
         mkdir $AK_IPFS_REPO
@@ -449,7 +448,7 @@ _ak_ipfs_init(){
     fi
 }
 
-_ak_ipfs_download(){
+function _ak_ipfs_download(){
     _ak_log_info "Attempting to install IPFS..."
     IPFS_VERSION="$(curl \
         --connect-timeout 3 \
@@ -481,7 +480,7 @@ _ak_ipfs_download(){
     fi
 }
 
-_ak_ipfs_cid_v0_check(){
+function _ak_ipfs_cid_v0_check(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
         _ak_log_error "_ak_ipfs_cid_v0_check: No argument given"
@@ -501,7 +500,7 @@ _ak_ipfs_cid_v0_check(){
     _ak_log_debug "_ak_ipfs_cid_v0_check: $1 provided is an IPFS CIDv0 string"
 }
 
-_ak_ipfs_swarm_install(){
+function _ak_ipfs_swarm_install(){
     SWARMSHA512SUM="7001e37412758c43d372a969e977ca11511e034c8c1e233a58dc3ce1c6f3c1aa7d2da8cba9944a5eabaa8885742bfe6cc6794224c146b7129da8f633b53b9cfc"
     if [ ! -f $AK_IPFS_REPO/swarm.key ]
     then
@@ -516,6 +515,6 @@ _ak_ipfs_swarm_install(){
     fi
 }
 
-_ak_ipfs_get_config_ipns_key(){
+function _ak_ipfs_get_config_ipns_key(){
     _ak_ipfs_key_list_full | grep 'ak-config' | cut -d ' ' -f 1
 }

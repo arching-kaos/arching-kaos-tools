@@ -20,7 +20,7 @@
 
 source $AK_LIBDIR/_ak_script
 
-_ak_settings_get(){
+function _ak_settings_get(){
     if [ ! -z "$1" ] && [ -n "$1" ]
     then
         cd $AK_SETTINGS
@@ -71,7 +71,7 @@ _ak_settings_get(){
     fi
 }
 
-_ak_settings_set(){
+function _ak_settings_set(){
     if [ ! -z "$1" ] && [ -n "$1" ]
     then
         echo $1 | grep '\.\.' > /dev/null 2>&1
@@ -125,10 +125,10 @@ _ak_settings_set(){
     fi
 }
 
-_ak_settings_get_sub(){
+function _ak_settings_get_sub(){
     _ak_not_implemented
 }
 
-_ak_settings_get_all(){
+function _ak_settings_get_all(){
     _ak_not_implemented
 }

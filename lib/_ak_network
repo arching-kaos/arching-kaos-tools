@@ -22,7 +22,7 @@ source $AK_LIBDIR/_ak_ipfs
 
 cjdnstoolspath="$HOME/cjdns/tools"
 
-_ak_network_stellar_show_ids(){
+function _ak_network_stellar_show_ids(){
     i=0
     flag=0
     while [ "$i" -lt "$limit" ]
@@ -47,19 +47,19 @@ _ak_network_stellar_show_ids(){
     done
 }
 
-_ak_network_stellar_get_next_page(){
+function _ak_network_stellar_get_next_page(){
     cat $tempfile | jq -r '._links.next.href'
     # cat $tempfile | grep -1 next | grep https | sed -e 's/^.*https/https/' | sed -e 's/\u0026/\&/g; s/"//g; s/\\//g'
 }
 
-_ak_network_stellar_proceed_to_next_page(){
+function _ak_network_stellar_proceed_to_next_page(){
     nextURL="$(_ak_network_stellar_get_next_page)"
     curl \
         --connect-timeout 3 \
         "$nextURL" > $tempfile 2>/dev/null
 }
 
-_ak_network_stellar_get_asset_holders(){
+function _ak_network_stellar_get_asset_holders(){
     if [ ! -z $1 ] && [ $1 -gt 0 ] && [ -n "$1" ]
     then
         limit=$1
@@ -71,11 +71,10 @@ _ak_network_stellar_get_asset_holders(){
         https://horizon.stellar.org/accounts\?asset\=ARCHINGKAOS:GB4QVKD6NW3CSNO5TNPARAWNPPXOPSSTKB35XCWB7PUNBIQTK3DVELB2\&limit\=$limit > $tempfile 2>/dev/null
 }
 
-_ak_network_scan_stellar(){
+function _ak_network_scan_stellar(){
     tempdir=`_ak_make_temp_directory`
     tempfile="$tempdir/tmp"
     tempaddr="$tempdir/tmpaddr"
-
     stellarParticipants="$AK_WORKDIR/stellar-network-participants"
     stellarParticipantsOnline="$AK_WORKDIR/stellar-network-participants-online"
     if [ ! -f "$stellarParticipants" ]
@@ -94,21 +93,18 @@ _ak_network_scan_stellar(){
     then
         touch $tempaddr
     fi
-
     if [ ! -z $1 ] && [ "$1" == "-l" ] && [ ! -z $2 ]
     then
         limit=$2
     else
         limit=3
     fi
-
     _ak_network_stellar_get_asset_holders $limit
     while [ "$(tail -1 $stellarParticipants)" != "null" ]
     do
         _ak_network_stellar_show_ids
         _ak_network_stellar_proceed_to_next_page
     done
-
     grep G $stellarParticipants > $tempaddr
     cat $tempaddr > $stellarParticipants
     rm $tempfile $tempaddr
@@ -140,11 +136,11 @@ _ak_network_scan_stellar(){
     done < $stellarParticipants
 }
 
-_ak_network_scan_ipfs(){
+function _ak_network_scan_ipfs(){
     _ak_not_implemented _ak_network_scan_ipfs
 }
 
-_ak_network_scan_cjdns_dump(){
+function _ak_network_scan_cjdns_dump(){
     #
     # Needs CJDNS tools in your PATH
     #
@@ -208,7 +204,7 @@ _ak_network_scan_cjdns_dump(){
     rm -rf $TEMPDIR
 }
 
-_ak_network_scan_cjdns_full(){
+function _ak_network_scan_cjdns_full(){
     # This scan is using HIA resources to scan the whole cjdns network for peers
     #
     # Ref:
@@ -276,7 +272,7 @@ _ak_network_scan_cjdns_full(){
     rm -rf $TEMPDIR
 }
 
-_ak_network_scan_yggdrasil_full(){
+function _ak_network_scan_yggdrasil_full(){
     # This scan is using HIA resources to scan the whole cjdns network for peers
     #
     # Ref:
@@ -331,7 +327,7 @@ _ak_network_scan_yggdrasil_full(){
     rm -rf $TEMPDIR
 }
 
-_ak_network_scan_cjdns(){
+function _ak_network_scan_cjdns(){
     if [ ! -z $1 ] && [ -n "$1" ]
     then
         case $1 in
@@ -344,7 +340,7 @@ _ak_network_scan_cjdns(){
     fi
 }
 
-_ak_network_scan_yggdrasil(){
+function _ak_network_scan_yggdrasil(){
     if [ ! -z $1 ] && [ -n "$1" ]
     then
         case $1 in
@@ -355,7 +351,7 @@ _ak_network_scan_yggdrasil(){
     fi
 }
 
-_ak_network_scan(){
+function _ak_network_scan(){
     if [ ! -z $1 ] && [ -n "$1" ]
     then
         case $1 in
@@ -372,7 +368,7 @@ _ak_network_scan(){
         _ak_network_scan_yggdrasil
     fi
 }
-_ak_network_show_peers_stellar(){
+function _ak_network_show_peers_stellar(){
     stellarParticipants="$AK_WORKDIR/stellar-network-participants"
     stellarParticipantsOnline="$AK_WORKDIR/stellar-network-participants-online"
     if [ -f "${stellarParticipantsOnline}" ]
@@ -400,7 +396,7 @@ _ak_network_show_peers_stellar(){
     fi
 }
 
-_ak_network_show_peers_cjdns(){
+function _ak_network_show_peers_cjdns(){
     if [ -f $AK_ZPEERSFILE.hyperboria ]
     then
         cat $AK_ZPEERSFILE.hyperboria | jq
@@ -409,7 +405,7 @@ _ak_network_show_peers_cjdns(){
     fi
 }
 
-_ak_network_show_peers_yggdrasil(){
+function _ak_network_show_peers_yggdrasil(){
     if [ -f $AK_ZPEERSFILE.yggdrasil ]
     then
         cat $AK_ZPEERSFILE.yggdrasil | jq
@@ -418,11 +414,11 @@ _ak_network_show_peers_yggdrasil(){
     fi
 }
 
-_ak_network_show_peers_ipfs(){
+function _ak_network_show_peers_ipfs(){
     _ak_not_implemented _ak_network_show_peers_ipfs
 }
 
-_ak_network_show_peers(){
+function _ak_network_show_peers(){
     if [ ! -z $1 ] && [ -n "$1" ]
     then
         case $1 in
@@ -440,14 +436,14 @@ _ak_network_show_peers(){
     fi
 }
 
-_ak_network_ipfs_connect_bootstrap(){
+function _ak_network_ipfs_connect_bootstrap(){
     curl -s "https://arching-kaos.net/files/ak_ipfs_bootstrap_peers" | while read peer
     do
         _ak_ipfs_swarm_connect "$peer"
     done
 }
 
-_ak_network_cjdns_connect(){
+function _ak_network_cjdns_connect(){
     if [ ! -z $1 ] && [ -n "$1" ] && [ -f $1 ]
     then
         peersfile="$1"
@@ -481,11 +477,11 @@ _ak_network_cjdns_connect(){
     fi
 }
 
-_ak_network_cjdns_connect_bootstrap(){
+function _ak_network_cjdns_connect_bootstrap(){
     _ak_network_cjdns_connect
 }
 
-_ak_network_connect(){
+function _ak_network_connect(){
     if [ ! -z $1 ] && [ -n "$1" ]
     then
         case $1 in

@@ -19,7 +19,7 @@
 ###
 source $AK_LIBDIR/_ak_node
 
-_ak_config_show(){
+function _ak_config_show(){
     # We will be using our public key also to put it in the block later
     KEY="self.pub"
     ak-gpg --export-key-self-to-file
@@ -27,7 +27,6 @@ _ak_config_show(){
     GPG_PUB_KEY=$(_ak_ipfs_add $KEY)
     rm $KEY
     profile="$(ak-profile -l)"
-
     echo '
 {
     "profile":'$profile',
@@ -38,7 +37,7 @@ _ak_config_show(){
 }'| jq;
 }
 
-_ak_config_publish(){
+function _ak_config_publish(){
     _ak_config_show | jq -c -M > tmpfile
     ipfs_hash="$(_ak_ipfs_add tmpfile)"
     _ak_ipfs_config_publish $ipfs_hash
@@ -51,7 +50,7 @@ _ak_config_publish(){
     rm tmpfile
 }
 
-_ak_config_published(){
+function _ak_config_published(){
     _ak_ipfs_cat $(_ak_node_info_ipfs_hash) | jq
 }
 

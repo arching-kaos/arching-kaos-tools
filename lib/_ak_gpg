@@ -24,11 +24,11 @@ source $AK_LIBDIR/_ak_settings
 
 export AK_FINGERPRINT="$(_ak_settings_get gpg.fingerprint)"
 
-_ak_gpg(){
+function _ak_gpg(){
     gpg2 --homedir $AK_GPGHOME $*
 }
 
-_ak_gpg_check_or_create(){
+function _ak_gpg_check_or_create(){
     _ak_gpg --list-keys | grep kaos@kaos.kaos -B 1
     if [ $? -ne 0 ]
     then
@@ -38,7 +38,7 @@ _ak_gpg_check_or_create(){
     fi
 }
 
-_ak_gpg_create_key(){
+function _ak_gpg_create_key(){
     _ak_log_debug "Key name: $1"
     if [ -z $1 ] || [ ! -n "$1" ]
     then
@@ -56,7 +56,7 @@ _ak_gpg_create_key(){
     _ak_gpg --batch --passphrase '' --quick-add-key $FINGERPRINT rsa4096 encrypt 0
 }
 
-_ak_gpg_key_import_from_file(){
+function _ak_gpg_key_import_from_file(){
     if [ -z $1 ]
     then
         _ak_log_error "No argument given"
@@ -75,11 +75,11 @@ _ak_gpg_key_import_from_file(){
     _ak_gpg --import $AK_IPFS_ARTIFACTS/$1 > /dev/null 2>&1
 }
 
-_ak_gpg_key_self_get_fingerprint_from_config(){
+function _ak_gpg_key_self_get_fingerprint_from_config(){
     _ak_config_show | jq -r '.gpg'
 }
 
-_ak_gpg_key_self_get_fingerprint(){
+function _ak_gpg_key_self_get_fingerprint(){
     if [ -z $1 ]
     then
         _ak_ipfs_cat "$(_ak_gpg_key_self_get_fingerprint_from_config)" | \
@@ -92,7 +92,7 @@ _ak_gpg_key_self_get_fingerprint(){
     fi
 }
 
-_ak_gpg_key_get_fingerprint_from_ipfs(){
+function _ak_gpg_key_get_fingerprint_from_ipfs(){
     if [ -n "$1" ]
     then
         _ak_ipfs_cat "$1" | \
@@ -105,7 +105,7 @@ _ak_gpg_key_get_fingerprint_from_ipfs(){
     fi
 }
 
-_ak_gpg_sign(){
+function _ak_gpg_sign(){
     if [ ! -z $1 ] && [ -n "$1" ] && [ ! -z $2 ] && [ -n "$2" ]
     then
         _ak_gpg --sign --sign-with $AK_FINGERPRINT --armor --output $1 $2
@@ -114,7 +114,7 @@ _ak_gpg_sign(){
     fi
 }
 
-_ak_gpg_sign_detached(){
+function _ak_gpg_sign_detached(){
     if [ ! -z $1 ] && [ -n "$1" ] && [ ! -z $2 ] && [ -n "$2" ]
     then
         _ak_gpg --detach-sign --sign-with $AK_FINGERPRINT --armor --output $1 $2
@@ -124,7 +124,7 @@ _ak_gpg_sign_detached(){
     fi
 }
 
-_ak_gpg_sign_clear(){
+function _ak_gpg_sign_clear(){
     if [ ! -z $1 ] && [ -n "$1" ] && [ ! -z $2 ] && [ -n "$2" ]
     then
         _ak_gpg --clear-sign --sign-with $AK_FINGERPRINT --armor --output $1 $2
@@ -133,7 +133,7 @@ _ak_gpg_sign_clear(){
     fi
 }
 
-_ak_gpg_encrypt_sign(){
+function _ak_gpg_encrypt_sign(){
     if [ ! -z $1 ] && [ -n "$1" ] && [ ! -z $2 ] && [ -n "$2" ] && [ ! -z $3 ] && [ -n "$3" ]
     then
         _ak_gpg --sign-with $AK_FINGERPRINT --encypt -r $3 --armor --output $1 $2
@@ -142,7 +142,7 @@ _ak_gpg_encrypt_sign(){
     fi
 }
 
-_ak_gpg_encrypt_sign_for_self(){
+function _ak_gpg_encrypt_sign_for_self(){
     if [ ! -z $1 ] && [ -n "$1" ] && [ ! -z $2 ] && [ -n "$2" ]
     then
         _ak_gpg --sign-with $AK_FINGERPRINT --encypt -r $AK_FINGERPRINT --armor --output $1 $2
@@ -151,7 +151,7 @@ _ak_gpg_encrypt_sign_for_self(){
     fi
 }
 
-_ak_gpg_encrypt(){
+function _ak_gpg_encrypt(){
     if [ ! -z $1 ] && [ -n "$1" ] && [ ! -z $2 ] && [ -n "$2" ] && [ ! -z $3 ] && [ -n "$3" ]
     then
         _ak_gpg --encypt -r $3 --armor --output $1 $2
@@ -160,7 +160,7 @@ _ak_gpg_encrypt(){
     fi
 }
 
-_ak_gpg_encrypt_for_self(){
+function _ak_gpg_encrypt_for_self(){
     if [ ! -z $1 ] && [ -n "$1" ] && [ ! -z $2 ] && [ -n "$2" ]
     then
         _ak_gpg --encypt -r $AK_FINGERPRINT --armor --output $1 $2
@@ -169,7 +169,7 @@ _ak_gpg_encrypt_for_self(){
     fi
 }
 
-_ak_gpg_verify_clear_signature(){
+function _ak_gpg_verify_clear_signature(){
     if [ ! -z $1 ] && [ -n "$1" ] && [ -f "$1" ]
     then
         fingerprint="$(cat $1 | _ak_gpg 2>&1 | grep RSA | awk '{print $5}')"
@@ -186,7 +186,7 @@ _ak_gpg_verify_clear_signature(){
     fi
 }
 
-_ak_gpg_verify_signature(){
+function _ak_gpg_verify_signature(){
     if [ ! -z $1 ] && [ -n "$1" ] && [ -f "$1" ] && [ ! -z $2 ] && [ -n "$2" ] && [ -f "$2" ] 
     then
         _ak_gpg --verify $1 $2 > /dev/null 2>&1
@@ -196,7 +196,7 @@ _ak_gpg_verify_signature(){
     fi
 }
 
-_ak_gpg_key_self_export(){
+function _ak_gpg_key_self_export(){
     if [ ! -z $1 ] && [ -n "$1" ]
     then
         _ak_gpg --armour --output $1 --export $AK_FINGERPRINT
@@ -205,15 +205,15 @@ _ak_gpg_key_self_export(){
     fi
 }
 
-_ak_gpg_list_keys_plain(){
+function _ak_gpg_list_keys_plain(){
     _ak_gpg --list-keys
 }
 
-_ak_gpg_list_keys(){
+function _ak_gpg_list_keys(){
     _ak_gpg --list-keys | grep '^ ' | awk '{print $1}'
 }
 
-_ak_gpg_list_keys_long(){
+function _ak_gpg_list_keys_long(){
     _ak_gpg --list-keys | \
         grep -A 1 '^ \{6\}' | \
         tr $'\n' ' ' | \
@@ -224,15 +224,15 @@ _ak_gpg_list_keys_long(){
         uniq
 }
 
-_ak_gpg_list_secret_keys_plain(){
+function _ak_gpg_list_secret_keys_plain(){
     _ak_gpg --list-secret-keys
 }
 
-_ak_gpg_list_secret_keys(){
+function _ak_gpg_list_secret_keys(){
     _ak_gpg --list-secret-keys | grep '^ ' | awk '{print $1}'
 }
 
-_ak_gpg_list_secret_keys_long(){
+function _ak_gpg_list_secret_keys_long(){
     _ak_gpg --list-secret-keys | \
         grep -A 1 '^ \{6\}' | \
         tr $'\n' ' ' | \
@@ -243,7 +243,7 @@ _ak_gpg_list_secret_keys_long(){
         uniq
 }
 
-_ak_gpg_select_key(){
+function _ak_gpg_select_key(){
     select x in $(_ak_gpg_list_secret_keys | tr '\n' ' ')
     do
         if [ -n "$x" ]
@@ -257,7 +257,7 @@ _ak_gpg_select_key(){
     done
 }
 
-_ak_gpg_delete_key(){
+function _ak_gpg_delete_key(){
     select x in $(_ak_gpg_list_keys | tr '\n' ' ')
     do
         if [ -n "$x" ]
@@ -277,7 +277,7 @@ _ak_gpg_delete_key(){
     done
 }
 
-_ak_gpg_delete_secret_key(){
+function _ak_gpg_delete_secret_key(){
     if [ ! -z $1 ]
     then
         x="$1"
