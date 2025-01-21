@@ -1,0 +1,163 @@
+#!/usr/bin/env bash
+###
+### arching-kaos-tools
+### Tools to interact and build an Arching Kaos Infochain
+### Copyright (C) 2021 - 2025  kaotisk
+###
+### This program is free software: you can redistribute it and/or modify
+### it under the terms of the GNU General Public License as published by
+### the Free Software Foundation, either version 3 of the License, or
+### (at your option) any later version.
+###
+### This program is distributed in the hope that it will be useful,
+### but WITHOUT ANY WARRANTY; without even the implied warranty of
+### MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+### GNU General Public License for more details.
+###
+### You should have received a copy of the GNU General Public License
+### along with this program.  If not, see <http://www.gnu.org/licenses/>.
+###
+source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_ipfs
+
+function _ak_network_stellar_show_ids(){
+    i=0
+    flag=0
+    while [ "$i" -lt "$limit" ]
+    do
+        test="$(cat $tempfile | jq '.["_embedded"]' | jq .'["records"]' | jq '.['$i']' | jq '.["id"]' | sed -e 's/\"//g')"
+        while IFS="" read -r p || [ -n "$p" ]
+        do
+            if [ "$p" == "$test" ]
+            then
+                flag=1
+                break
+            fi
+        done < $stellarParticipants
+        if [ "$flag" == "0" ]
+        then
+            echo $test >> $stellarParticipants
+            _ak_log_info "Added $test"
+        else
+            _ak_log_info "$test already there. Skipping..."
+        fi
+        i="$(expr $i + 1)"
+    done
+}
+
+function _ak_network_stellar_get_next_page(){
+    cat $tempfile | jq -r '._links.next.href'
+    # cat $tempfile | grep -1 next | grep https | sed -e 's/^.*https/https/' | sed -e 's/\u0026/\&/g; s/"//g; s/\\//g'
+}
+
+function _ak_network_stellar_proceed_to_next_page(){
+    nextURL="$(_ak_network_stellar_get_next_page)"
+    curl \
+        --connect-timeout 3 \
+        "$nextURL" > $tempfile 2>/dev/null
+}
+
+function _ak_network_stellar_get_asset_holders(){
+    if [ ! -z $1 ] && [ $1 -gt 0 ] && [ -n "$1" ]
+    then
+        limit=$1
+    else
+        limit=3
+    fi
+    curl \
+        --connect-timeout 3 \
+        https://horizon.stellar.org/accounts\?asset\=ARCHINGKAOS:GB4QVKD6NW3CSNO5TNPARAWNPPXOPSSTKB35XCWB7PUNBIQTK3DVELB2\&limit\=$limit > $tempfile 2>/dev/null
+}
+
+function _ak_network_stellar_scan(){
+    tempdir=`_ak_make_temp_directory`
+    tempfile="$tempdir/tmp"
+    tempaddr="$tempdir/tmpaddr"
+    stellarParticipants="$AK_WORKDIR/stellar-network-participants"
+    stellarParticipantsOnline="$AK_WORKDIR/stellar-network-participants-online"
+    if [ ! -f "$stellarParticipants" ]
+    then
+        touch $stellarParticipants
+    fi
+    if [ ! -f "$stellarParticipantsOnline" ]
+    then
+        touch $stellarParticipantsOnline
+    fi
+    if [ ! -f "$tempdir" ]
+    then
+        touch $tempdir
+    fi
+    if [ ! -f "$tempaddr" ]
+    then
+        touch $tempaddr
+    fi
+    if [ ! -z $1 ] && [ "$1" == "-l" ] && [ ! -z $2 ]
+    then
+        limit=$2
+    else
+        limit=3
+    fi
+    _ak_network_stellar_get_asset_holders $limit
+    while [ "$(tail -1 $stellarParticipants)" != "null" ]
+    do
+        _ak_network_stellar_show_ids
+        _ak_network_stellar_proceed_to_next_page
+    done
+    grep G $stellarParticipants > $tempaddr
+    cat $tempaddr > $stellarParticipants
+    rm $tempfile $tempaddr
+    while IFS="" read -r p || [ -n "$p" ]
+    do
+        flag=0
+        test="$(curl \
+            --connect-timeout 3 \
+            https://horizon.stellar.org/accounts/$p/data/config 2>/dev/null | grep value)"
+        if [ $? -eq 0 ]
+        then
+            addressValuePair="$(printf '%s %s\n' "$p" "$(echo $test | sed -e 's/^.*: "//g; s/"//g' | base64 -d)")"
+            while IFS="" read -r x || [ -n "$x" ]
+            do
+                if [ "$x" == "$addressValuePair" ]
+                then
+                    flag=1
+                    break
+                fi
+            done < $stellarParticipantsOnline
+            if [ "$flag" == "0" ]
+            then
+                echo $addressValuePair >> $stellarParticipantsOnline
+                _ak_log_info "$p is configured with  $(echo $addressValuePair | awk '{ print $2 }'). Added to online participants."
+            else
+                _ak_log_info "$(echo $addressValuePair | awk '{ print $2 }') is already in $stellarParticipantsOnline. Skipping..."
+            fi
+        fi
+    done < $stellarParticipants
+}
+
+function _ak_network_stellar_show_peers(){
+    stellarParticipants="$AK_WORKDIR/stellar-network-participants"
+    stellarParticipantsOnline="$AK_WORKDIR/stellar-network-participants-online"
+    if [ -f "${stellarParticipantsOnline}" ]
+    then
+    (
+        printf '['
+        counter=0
+        cat $stellarParticipantsOnline | while read stellarAddress akConfig
+        do
+            if [ $counter -ne 0 ]
+            then
+                printf ','
+            fi
+            counter=$(( $counter + 1 ))
+            akConfigHash="$(_ak_ipfs_name_resolve /ipns/$akConfig|cut -d '/' -f 3)"
+            printf '{"stellar":{"address":"%s","config":"%s"},"node_info":%s}' \
+                "$stellarAddress" \
+                "$akConfig" \
+                "$(_ak_ipfs_cat $akConfigHash)"
+        done
+        printf ']'
+        ) | sed -e 's/\[]//g' #| jq
+    else
+        _ak_log_debug "No stellar peers found"
+    fi
+}

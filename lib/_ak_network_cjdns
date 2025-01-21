@@ -1,0 +1,225 @@
+#!/usr/bin/env bash
+###
+### arching-kaos-tools
+### Tools to interact and build an Arching Kaos Infochain
+### Copyright (C) 2021 - 2025  kaotisk
+###
+### This program is free software: you can redistribute it and/or modify
+### it under the terms of the GNU General Public License as published by
+### the Free Software Foundation, either version 3 of the License, or
+### (at your option) any later version.
+###
+### This program is distributed in the hope that it will be useful,
+### but WITHOUT ANY WARRANTY; without even the implied warranty of
+### MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+### GNU General Public License for more details.
+###
+### You should have received a copy of the GNU General Public License
+### along with this program.  If not, see <http://www.gnu.org/licenses/>.
+###
+source $AK_LIBDIR/_ak_log
+
+cjdnstoolspath="$HOME/cjdns/tools"
+
+function _ak_network_cjdns_scan_dump(){
+    #
+    # Needs CJDNS tools in your PATH
+    #
+    # Ref: https://github.com/cjdelisle/cjdns
+    #
+    which dumpLinks > /dev/null 2>&1
+    if [ $? -ne 0 ]
+    then
+        echo "You need to install cjdns and cjdns-tools ... falling back to -w"
+        _ak_network_cjdns_scan_full
+        exit 0
+    fi
+    which publictoip6 > /dev/null 2>&1
+    if [ $? -ne 0 ]
+    then
+        echo "You need to install cjdns and cjdns-tools ... falling back to -w"
+        _ak_network_cjdns_scan_full
+        exit 0
+    fi
+    TEMPDIR="$(_ak_make_temp_directory)"
+    AK_ZPEERSFILE="$HOME/.arching-kaos/peersFile"
+    cd $TEMPDIR
+    max="$(dumpLinks |wc -l)"
+    dumpLinks \
+        | cut -d ' ' -f 2,4 \
+        | sed 's/ /\n/g' \
+        | sort \
+        | uniq \
+        | grep -v `dumpLinks | grep '0000\.0000\.0000\.0001' \
+        | cut -d ' ' -f 2` > dumpedLinks
+    counter=0
+    count=0
+    max="$(cat dumpedLinks| wc -l)"
+    printf '[' > walk.aknet
+    cat dumpedLinks \
+        | while read -r ip || [ -n "$ip" ]
+    do
+        count="$(( $count + 1 ))"
+        _ak_log_debug "Scanning [${count}/${max}] $(publictoip6 $ip)..."
+        node_info="$(curl \
+            --connect-timeout 3 \
+            -A 'akd/0.1.0; https://github.com/arching-kaos' \
+            "http://[$(publictoip6 $ip)]:8610/v0/node_info" 2>/dev/null | jq -c -M)"
+        if [ $? -eq 0 ] && [ $(echo -n "$node_info" | wc -c) -gt 0 ]
+        then
+            if [ "$counter" -ne "0" ]
+            then
+                printf ',' >> walk.aknet
+            fi
+            if [ ! -n "$node_info" ]
+            then
+                node_info="null"
+            fi
+            printf '{"cjdns":{"public_key":"%s","ip":"%s"},"node_info":%s}' \
+                "$ip" "`publictoip6 $ip`" "$node_info" >> walk.aknet
+            counter="`expr $counter + 1`"
+        fi
+    done
+    printf ']' >> walk.aknet
+    mv walk.aknet $AK_ZPEERSFILE.hyperboria
+    rm -rf $TEMPDIR
+}
+
+function _ak_network_cjdns_scan_full(){
+    # This scan is using HIA resources to scan the whole cjdns network for peers
+    #
+    # Ref:
+    #  - https://github.com/ircerr/hia/
+    #  - http://hia.cjdns.ca/watchlist/c/walk.pubkey
+    #  - http://hia.cjdns.ca/watchlist/hia.iplist
+    #
+    TEMPDIR="$(_ak_make_temp_directory)"
+    cd $TEMPDIR
+    pubkeys_ips="$TEMPDIR/pi"
+    online_ips="$TEMPDIR/oi"
+    filtered_online_pubkeys_ips="$TEMPDIR/fopi"
+    curl -s \
+        --connect-timeout 5 \
+        "http://hia.cjdns.ca/watchlist/c/walk.pubkey" > $pubkeys_ips
+    if [ $? -ne 0 ]
+    then
+        _ak_log_error "Couldn't fetch DB from HIA"
+        exit 1
+    fi
+    curl -s \
+        --connect-timeout 5 \
+        "http://hia.cjdns.ca/watchlist/hia.iplist" > $online_ips
+    if [ $? -ne 0 ]
+    then
+        _ak_log_error "Couldn't fetch iplist from HIA"
+        exit 1
+    fi
+    cat $online_ips | while read line
+    do
+        grep -F "$line" $pubkeys_ips >> $filtered_online_pubkeys_ips
+    done
+    counter=0
+    count=0
+    max="$(cat $filtered_online_pubkeys_ips|wc -l)"
+    printf '[' > walk.aknet
+    cat $filtered_online_pubkeys_ips \
+        | sort \
+        | uniq \
+        | while read -r pkey ip || [ -n "$ip" ]
+    do
+        count="$(( $count + 1 ))"
+        _ak_log_debug "Scanning [${count}/${max}] $ip..."
+        node_info="$(curl \
+            --connect-timeout 3 \
+            -A 'akd/0.1.0; https://github.com/arching-kaos' \
+            "http://[$ip]:8610/v0/node_info" 2>/dev/null | jq -c -M)"
+        if [ $? -eq 0 ] && [ $(echo -n "$node_info" | wc -c) -gt 0 ]
+        then
+            if [ "$counter" -ne "0" ]
+            then
+                printf ',' >> walk.aknet
+            fi
+            if [ ! -n "$node_info" ]
+            then
+                node_info="null"
+            fi
+            printf '{"cjdns":{"public_key":"%s","ip":"%s"},"node_info":%s}' \
+                "$pkey" "$ip" "$node_info" >> walk.aknet
+            counter="`expr $counter + 1`"
+        fi
+    done
+    printf ']' >> walk.aknet
+    mv walk.aknet $AK_ZPEERSFILE.hyperboria
+    rm -rf $TEMPDIR
+}
+
+function _ak_network_cjdns_scan(){
+    if [ ! -z $1 ] && [ -n "$1" ]
+    then
+        case $1 in
+            -w | --whole) _ak_network_cjdns_scan_full; exit;;
+            -d | --dump) _ak_network_cjdns_scan_dump; exit;;
+            *) _ak_network_cjdns_scan_dump; exit;;
+        esac
+    else
+        _ak_network_cjdns_scan_dump
+    fi
+}
+
+function _ak_network_yggdrasil_scan(){
+    if [ ! -z $1 ] && [ -n "$1" ]
+    then
+        case $1 in
+            *) _ak_network_yggdrasil_scan_full; exit;;
+        esac
+    else
+        _ak_network_yggdrasil_scan_full
+    fi
+}
+
+function _ak_network_cjdns_show_peers(){
+    if [ -f $AK_ZPEERSFILE.hyperboria ]
+    then
+        cat $AK_ZPEERSFILE.hyperboria | jq
+    else
+        _ak_log_debug "No hyperboria peers found"
+    fi
+}
+
+function _ak_network_cjdns_connect(){
+    if [ ! -z $1 ] && [ -n "$1" ] && [ -f $1 ]
+    then
+        peersfile="$1"
+    else
+        peersfile="$(_ak_make_temp_file)"
+        tmpon="yes"
+        curl -s "https://arching-kaos.net/files/ak_cjdns_bootstrap_peers" > $peersfile
+    fi
+    totalpeers="$(jq '. | length' < $peersfile)"
+    number="0"
+    interface="0"
+    while [ $number -lt $totalpeers ]
+    do
+        address="$(jq -r '.['$number'].address' < $peersfile)"
+        login="$(jq -r '.['$number'].login' < $peersfile)"
+        password="$(jq -r '.['$number'].password' < $peersfile)"
+        publicKey="$(jq -r '.['$number'].publicKey' < $peersfile)"
+        peerName="$(jq -r '.['$number'].peerName' < $peersfile)"
+        if [ $(echo $address | grep '\[') ]
+        then
+            interface="1"
+        else
+            interface="0"
+        fi
+        $cjdnstoolspath/cexec 'UDPInterface_beginConnection("'$publicKey'", "'$address'", "'$peerName'", "'$password'", "'$login'", '$interface')'
+        number="$(( $number + 1 ))"
+    done
+    if [ "$tmpon" == "yes" ]
+    then
+        rm $peersfile
+    fi
+}
+
+function _ak_network_cjdns_connect_bootstrap(){
+    _ak_network_cjdns_connect
+}

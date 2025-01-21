@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+###
+### arching-kaos-tools
+### Tools to interact and build an Arching Kaos Infochain
+### Copyright (C) 2021 - 2025  kaotisk
+###
+### This program is free software: you can redistribute it and/or modify
+### it under the terms of the GNU General Public License as published by
+### the Free Software Foundation, either version 3 of the License, or
+### (at your option) any later version.
+###
+### This program is distributed in the hope that it will be useful,
+### but WITHOUT ANY WARRANTY; without even the implied warranty of
+### MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+### GNU General Public License for more details.
+###
+### You should have received a copy of the GNU General Public License
+### along with this program.  If not, see <http://www.gnu.org/licenses/>.
+###
+source $AK_LIBDIR/_ak_log
+
+function _ak_network_yggdrasil_scan_full(){
+    # This scan is using HIA resources to scan the whole cjdns network for peers
+    #
+    # Ref:
+    #  - https://github.com/ircerr/yia/
+    #  - http://yia.yggdrasil-network.ca/watchlist/yia.iplist
+    #
+    TEMPDIR="$(_ak_make_temp_directory)"
+    cd $TEMPDIR
+    pubkeys_ips="$TEMPDIR/pi"
+    online_ips="$TEMPDIR/oi"
+    filtered_online_pubkeys_ips="$TEMPDIR/fopi"
+    curl -s \
+        --connect-timeout 5 \
+        "http://yia.yggdrasil-network.ca/crawler/crawler-yia.pubkey" > $pubkeys_ips
+    if [ $? -ne 0 ]
+    then
+        _ak_log_error "Couldn't fetch DB from YIA"
+        exit 1
+    fi
+    counter=0
+    count=0
+    max="$(cat $pubkeys_ips|wc -l)"
+    printf '[' > walk.aknet
+    cat $pubkeys_ips \
+        | sort \
+        | uniq \
+        | while read -r pkey ip || [ -n "$ip" ]
+    do
+        count="$(( $count + 1 ))"
+        _ak_log_debug "Scanning [${count}/${max}] $ip..."
+        node_info="$(curl \
+            --connect-timeout 3 \
+            -A 'akd/0.1.0; https://github.com/arching-kaos' \
+            "http://[$ip]:8610/v0/node_info" 2>/dev/null | jq -c -M)"
+        if [ $? -eq 0 ] && [ $(echo -n "$node_info" | wc -c) -gt 0 ]
+        then
+            if [ "$counter" -ne "0" ]
+            then
+                printf ',' >> walk.aknet
+            fi
+            if [ ! -n "$node_info" ]
+            then
+                node_info="null"
+            fi
+            printf '{"yggdrasil":{"public_key":"%s","ip":"%s"},"node_info":%s}' \
+                "$pkey" "$ip" "$node_info" >> walk.aknet
+            counter="`expr $counter + 1`"
+        fi
+    done
+    printf ']' >> walk.aknet
+    mv walk.aknet $AK_ZPEERSFILE.yggdrasil
+    rm -rf $TEMPDIR
+}
+
+function _ak_network_yggdrasil_show_peers(){
+    if [ -f $AK_ZPEERSFILE.yggdrasil ]
+    then
+        cat $AK_ZPEERSFILE.yggdrasil | jq
+    else
+        _ak_log_debug "No yggdrasil peers found"
+    fi
+}
