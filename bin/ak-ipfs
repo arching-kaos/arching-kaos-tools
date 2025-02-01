@@ -24,6 +24,7 @@
 ##
 ##    -h, --help                  Prints this help message
 ##    -d, --daemon                Starts IPFS daemon for AK
+##    -r, --run                   Runs an IPFS command for AK
 ##
 fullprogrampath="$(realpath $0)"
 PROGRAM=$(basename $0)
@@ -39,6 +40,7 @@ then
     case $1 in
         -h | --help) _ak_usage; exit;;
         -d | --daemon) _ak_ipfs_starter; exit;;
+        -r | --run) shift; _ak_ipfs_runner $*; exit;;
         * ) _ak_usage;;
     esac
 else _ak_usage

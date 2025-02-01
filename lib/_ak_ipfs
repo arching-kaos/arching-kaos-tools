@@ -34,6 +34,15 @@ function _ak_ipfs(){
     fi
 }
 
+function _ak_ipfs_runner(){
+    export IPFS_PATH=$AK_IPFS_REPO; kubo $*
+    if [ $? -ne 0 ]
+    then
+        _ak_log_error "Some error occured when running: kubo $*"
+        #exit 1
+    fi
+}
+
 function _ak_ipfs_daemon(){
     _ak_ipfs daemon --routing=dht --migrate &
     printf '%s' "$!" > $AK_WORKDIR/akipfsd.pid
