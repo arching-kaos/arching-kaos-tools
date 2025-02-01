@@ -74,7 +74,7 @@ if [ ! -z $1 ]; then
         --crawl-self) _ak_zchain_crawl_self; exit;;
         --crawl-remote-ipfs) _ak_zchain_crawl_remote_ipfs $2; exit;;
         --crawl-remote-ipns) _ak_zchain_crawl_remote_ipns $2; exit;;
-        --get-latest) _ak_zchain_get_latest; exit;;
+        --get-latest) _ak_zchain_get_latest && printf '\n'; exit;;
         * ) _ak_usage;;
     esac
 else _ak_usage

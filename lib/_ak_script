@@ -44,12 +44,7 @@ function _ak_exit_program(){
 function _ak_help(){
     if [ ! -z $fullprogrampath ] && [ -n "$fullprogrampath" ]
     then
-        cat $fullprogrampath | grep -v '^###' | grep '^##'| sed 's/^##//g;s/^ //g' >&2 #| \
-        # cat | while read line
-        # do
-        #     echo -n "$line" | xxd
-        #     _ak_log_info "$line"
-        # done
+        cat $fullprogrampath | grep -v '^###' | grep '^##'| sed 's/^##//g;s/^ //g' >&2
         exit 1
     else
         _ak_log_error "fullprogrampath was not set"
@@ -94,7 +89,7 @@ function _ak_usage(){
         _ak_title_description 2>&1
         _ak_license 2>&1
         _ak_help 2>&1
-    ) | sed 's/^/# /g' | while read line; do  _ak_log_info "$line"; done
+    ) | sed 's/^/# /g' | while read line; do _ak_log_info "${line}"; done
 }
 
 function _ak_print_version(){

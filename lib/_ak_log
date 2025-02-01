@@ -79,29 +79,33 @@ function _ak_log_message(){
     TS="$(date -u +%s)"
     if [ ! -z $1 ] && [ -n "$1" ]
     then
-        if [ ! -z "$2" ] && [ -n "$2" ]
+        prg="$1"
+        shift
+        if [ ! -z "$1" ] && [ -n "$1" ]
         then
-            if [ ! -z "$3" ] && [ -n "$3" ]
+            tp="$1"
+            shift
+            if [ ! -z "$*" ] && [ -n "$*" ]
             then
-                msg="$(echo -n $*| cut -d ' ' -f 3-)"
-                echo "$TS" "<$1>" "[$2]" "$msg" >> $AK_LOGSFILE
+                msg="$*"
+                echo "$TS" "<$prg>" "[$tp]" "$msg" >> $AK_LOGSFILE
                 if [ ! -z $AK_DEBUG ] && [ -n "$AK_DEBUG" ] && [ "$AK_DEBUG" == "yes" ]
                 then
-                    _ak_log_print_log_line "$TS <$1> [$2] $msg" >&2
+                    _ak_log_print_log_line "$TS <$prg> [$tp] $msg" >&2
                 fi
             else
-                echo "$TS" "<$1>" "[ERROR]" "No message" >> $AK_LOGSFILE
+                echo "$TS" "<$prg>" "[ERROR]" "No message" >> $AK_LOGSFILE
                 if [ "$AK_DEBUG" == "yes" ]
                 then
-                    echo "$TS" "<$1>" "[ERROR]" "No message" >&2
+                    echo "$TS" "<$prg>" "[ERROR]" "No message" >&2
                 fi
                 return 1
             fi
         else
-            echo "$TS" "<$1>" "[ERROR]" "No type and message" >> $AK_LOGSFILE
+            echo "$TS" "<$prg>" "[ERROR]" "No type and message" >> $AK_LOGSFILE
             if [ "$AK_DEBUG" == "yes" ]
             then
-                echo "$TS" "<$1>" "[ERROR]" "No type and message" >&2
+                echo "$TS" "<$prg>" "[ERROR]" "No type and message" >&2
             fi
             return 1
         fi
@@ -116,23 +120,23 @@ function _ak_log_message(){
 }
 
 function _ak_log_exit(){
-    _ak_log_message "$PROGRAM" "EXIT" "$1"
+    _ak_log_message "$PROGRAM" "EXIT" "$*"
 }
 
 function _ak_log_warning(){
-    _ak_log_message "$PROGRAM" "WARNING" "$1"
+    _ak_log_message "$PROGRAM" "WARNING" "$*"
 }
 
 function _ak_log_debug(){
-    _ak_log_message "$PROGRAM" "DEBUG" "$1"
+    _ak_log_message "$PROGRAM" "DEBUG" "$*"
 }
 
 function _ak_log_error(){
-    _ak_log_message "$PROGRAM" "ERROR" "$1"
+    _ak_log_message "$PROGRAM" "ERROR" "$*"
 }
 
 function _ak_log_info(){
-    _ak_log_message "$PROGRAM" "INFO" "$1"
+    _ak_log_message "$PROGRAM" "INFO" "$*"
 }
 
 # vim: set syntax=bash
