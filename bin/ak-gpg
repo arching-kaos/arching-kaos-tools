@@ -63,7 +63,7 @@ if [ ! -z $1 ]; then
         --example) example; exit;;
         --get-key-self-as-ipfs) _ak_gpg_key_self_get_fingerprint_from_config; exit;;
         --get-key-self-as-fingerprint) _ak_gpg_key_self_get_fingerprint; exit;;
-        --get-key-fingerprint-from-ipfs) _ak_gpg_key_get_fingerprint_from_ipfs $1; exit;;
+        --get-key-fingerprint-from-ipfs) shift; _ak_gpg_key_get_fingerprint_from_ipfs $1; exit;;
         --export-key-self-to-file) _ak_gpg_key_self_export 'self.pub'; exit;;
         --clear-sign) shift; _ak_gpg_sign_clear "$2" "$1"; exit;;
         --verify-file) shift; _ak_gpg_verify_clear_signature "$1"; exit;;

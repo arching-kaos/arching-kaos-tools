@@ -73,6 +73,7 @@ if [ ! -f $AK_ZGENESISASC ] ; then printf "%s" "$(_ak_ipfs add -q $AK_GENESISASC
 if [ ! -f $AK_ZBLOCKSFILE ] ; then printf "[]" > $AK_ZBLOCKSFILE;fi
 if [ ! -f $AK_ZPAIRSFILE ] ; then printf "[]" > $AK_ZPAIRSFILE;fi
 if [ ! -f $AK_ZPEERSFILE ] ; then printf "[]" > $AK_ZPEERSFILE;fi
+if [ ! -d $AK_ZPEERSDIR ] ; then mkdir $AK_ZPEERSDIR;fi
 
 ipfs_zarchive_check_or_mkdir
 

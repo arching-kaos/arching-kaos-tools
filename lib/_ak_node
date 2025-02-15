@@ -28,5 +28,5 @@ function _ak_node_info_ipfs_hash(){
 # Finds ak-config ipns key
 # Returns IPNS key
 function _ak_node_info_ipns_key(){
-    _ak_ipfs_key_list_full | grep ak-config | awk '{print $1}'
+    _ak_ipfs_key_list_full | grep 'ak-config' | awk '{print $1}'
 }

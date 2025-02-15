@@ -45,7 +45,12 @@ while IFS="" read -r p || [ -n "$p" ]
 do
     peer="$(echo "$p" | sed -e 's/^.*\///')"
     _ak_log_info "Peer $peer found! Examining..."
-    _ak_ipfs_cat /ipns/$peer/zlatest
+    resolved_peer_ns="$(_ak_ipns_resolve /ipns/${peer})"
+    if [ -n "${resolved_peer_ns}" ]
+    then
+        _ak_log_info "Resolved peer: ${resolved_peer_ns}"
+        _ak_ipfs_cat $resolved_peer_ns/zlatest
+    fi
 done < tmp_peers
 
 rm tmp_peers

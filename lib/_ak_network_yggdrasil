@@ -28,32 +28,54 @@ function _ak_network_yggdrasil_scan_full(){
     #
     TEMPDIR="$(_ak_make_temp_directory)"
     cd $TEMPDIR
+    last_seen="$TEMPDIR/ls"
     pubkeys_ips="$TEMPDIR/pi"
     online_ips="$TEMPDIR/oi"
+    online_pairs="$TEMPDIR/op"
     filtered_online_pubkeys_ips="$TEMPDIR/fopi"
+    curl -s \
+        --connect-timeout 5 \
+        "http://yia.yggdrasil-network.ca/crawler/crawler-yia.peers.$(date -u +%Y%m%d)" > $last_seen
+    if [ $? -ne 0 ]
+    then
+        _ak_log_error "Couldn't fetch active peers from YIA"
+        exit 1
+    fi
     curl -s \
         --connect-timeout 5 \
         "http://yia.yggdrasil-network.ca/crawler/crawler-yia.pubkey" > $pubkeys_ips
     if [ $? -ne 0 ]
     then
-        _ak_log_error "Couldn't fetch DB from YIA"
+        _ak_log_error "Couldn't fetch public key DB from YIA"
         exit 1
     fi
+    cat $last_seen | tr ' ' '\n' | sort | uniq | while read key
+    do
+        grep ${key} ${pubkeys_ips} >> ${online_pairs}
+    done
     counter=0
     count=0
-    max="$(cat $pubkeys_ips|wc -l)"
+    max="$(cat $online_pairs|wc -l)"
     printf '[' > walk.aknet
-    cat $pubkeys_ips \
+    cat $online_pairs \
         | sort \
         | uniq \
         | while read -r pkey ip || [ -n "$ip" ]
     do
         count="$(( $count + 1 ))"
         _ak_log_debug "Scanning [${count}/${max}] $ip..."
-        node_info="$(curl \
+        node_fs_path="$AK_ZPEERSDIR/ygg/$(echo -n $ip| sed 's/://g')"
+        scan_ts="$(date -u +%s)"
+        if [ ! -d ${node_fs_path} ]
+        then
+            mkdir -p ${node_fs_path}
+        fi
+        node_fs_pathname="${node_fs_path}/${scan_ts}"
+        curl \
             --connect-timeout 3 \
             -A 'akd/0.1.0; https://github.com/arching-kaos' \
-            "http://[$ip]:8610/v0/node_info" 2>/dev/null | jq -c -M)"
+            "http://[$ip]:8610/v0/node_info" 2>/dev/null | jq -c -M > ${node_fs_pathname}
+        node_info="$(cat ${node_fs_pathname})"
         if [ $? -eq 0 ] && [ $(echo -n "$node_info" | wc -c) -gt 0 ]
         then
             if [ "$counter" -ne "0" ]
@@ -80,5 +102,14 @@ function _ak_network_yggdrasil_show_peers(){
         cat $AK_ZPEERSFILE.yggdrasil | jq
     else
         _ak_log_debug "No yggdrasil peers found"
+    fi
+}
+
+function _ak_network_yggdrasil_scan(){
+    if [ ! -z $1 ] && [ -n "$1" ]
+    then
+        _ak_network_yggdrasil_scan_specific $1
+    else
+        _ak_network_yggdrasil_scan_full
     fi
 }

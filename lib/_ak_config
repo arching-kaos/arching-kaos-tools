@@ -31,7 +31,10 @@ function _ak_config_show(){
 {
     "profile":'$profile',
     "genesis":"'$(cat $AK_WORKDIR/config/zgenesis)'",
-    "gpg":"'$GPG_PUB_KEY'",
+    "gpg":{
+        "ipfs":"'$GPG_PUB_KEY'",
+        "fingerprint":"'$(ak gpg --get-key-fingerprint-from-ipfs $GPG_PUB_KEY)'"
+    },
     "zchain":"'$(cat $AK_WORKDIR/config/zchain)'",
     "zlatest":"'$(ak zchain --get-latest)'"
 }'| jq;
@@ -43,8 +46,9 @@ function _ak_config_publish(){
     _ak_ipfs_config_publish $ipfs_hash
     if [ $? != 0 ]
     then
-        echo -e "\033[0;34mError on publishing\033[0;0m\nYour information:\n"
-        cat tmpfile
+        _ak_log_error "Error on publishing"
+        _ak_log_debug "Your information:"
+        cat tmpfile | while read line; do _ak_log_debug "$line"; done
         exit 1
     fi
     rm tmpfile

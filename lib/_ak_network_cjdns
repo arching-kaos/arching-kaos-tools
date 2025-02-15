@@ -166,17 +166,6 @@ function _ak_network_cjdns_scan(){
     fi
 }
 
-function _ak_network_yggdrasil_scan(){
-    if [ ! -z $1 ] && [ -n "$1" ]
-    then
-        case $1 in
-            *) _ak_network_yggdrasil_scan_full; exit;;
-        esac
-    else
-        _ak_network_yggdrasil_scan_full
-    fi
-}
-
 function _ak_network_cjdns_show_peers(){
     if [ -f $AK_ZPEERSFILE.hyperboria ]
     then
