@@ -8,18 +8,21 @@ Arching Kaos Tools
 
 Introduction
 ------------
-Tools that help you to create a blockchain called `zchain` by preparing small
-JSON objects that are pointing one to another in the following way:
+Tools that help to create a blockchain called `zchain` by preparing small JSON
+objects that are pointing one to another in the following way:
 ```
 ZBLOCK = BLOCK + SIGNATURE
 BLOCK = ACTION + DATA + DATA_SIGNATURE + TIMESTAMP + GPG + PREVIOUS_ZBLOCK
 DATA = IPFS_CID + SIGNATURE ( + key-pair values that are based on ACTION )
 ```
-Most of the times, IPFS_CID in DATA is expected to be a file. And the module
-is responsible for handling it properly.
+Most of the times, `IPFS_CID` in `DATA` is expected to be a file. The module
+that is embedded inside the `ACTION` field is responsible for handling it
+properly.
 
 For the zchain to be valid, all the signatures must be verifiable against the
-provided GPG key that is included in the BLOCK.
+provided `GPG` key that is included in the `BLOCK`.
+
+For more information, refer to the `arching-kaos-infochain` repository.
 
 Previous developments
 ---------------------
@@ -78,7 +81,6 @@ programs used are:
 
 How to install the repository
 -----------------------------
-
 Write on your terminal:
 ```
 git clone https://github.com/arching-kaos/arching-kaos-tools
@@ -93,16 +95,15 @@ file.
 
 Update
 ------
-
 Navigate to your cloned repository and execute the following commands:
 
 ```
 git pull
 ./update.sh
 ```
+
 Uninstall
 ---------
-
 Navigate to your cloned repository and execute the following command:
 
 ```
@@ -114,7 +115,6 @@ It will NOT remove your IPFS repository, neither is going to clean it.
 
 Podman (or Docker)
 ------------------
-
 There is a ContainerFile that you can use to build an image which you can then
 deploy in a container.
 
@@ -138,7 +138,6 @@ More over there are two scripts for testing with podman:
 
 TODO
 ----
-
 Next things to come are:
 - [ ] - zblock manipulator to fix wrong previous block references and repack
         zblocks.
@@ -152,7 +151,6 @@ Next things to come are:
 
 Concepts under thought
 ----------------------
-
 - Base chain, derived from personal ones.
 - Daemon to monitor chains' states, update and sign new zblocks.
 - Find a minimum agreement of what is valid or not. (important)
@@ -178,23 +176,24 @@ Utilities
 
 Modules
 -------
- - articles                 PROTO Adds an article to your ZCHAIN
- - categories               PROTO Adds or references categories to the ZCHAIN
  - comments                     # References a comment to a ZBLOCK
  - files                        # Adds a file to the ZCHAIN
- - folders                  PROTO Adds a folder to the ZCHAIN
  - mixtapes                     # Adds a mixtape to the ZCHAIN
  - news                         # Adds a news article to the ZCHAIN
  - profile                      # Adds key-value pairs to the ZCHAIN
  - reference                    # Adds references to the ZCHAIN
  - repositories                 # Adds repositories to the ZCHAIN
- - roadmap                  PROTO Adds a roadmap to the ZCHAIN
  - transactions                 # Prototype of transactions in the ZCHAIN
  - smfiles                      # Adds a split file's map to the ZCHAIN
+ - articles                 PROTO Adds an article to your ZCHAIN
+ - categories               PROTO Adds or references categories to the ZCHAIN
+ - folders                  PROTO Adds a folder to the ZCHAIN
+ - roadmap                  PROTO Adds a roadmap to the ZCHAIN
  - todos                    PROTO Adds todo list to the ZCHAIN
  - follow                   PROTO Follow IPNS keys of ZCHAIN for changes
 
- Read more at the `./MODULES` file
+PROTO refers to a prototype implementation of the module
+Read more at the `./MODULES` file
 
 Experimental
 ------------
@@ -216,10 +215,7 @@ Libraries
 IPFS Wrappers
 -------------
  - ak-ipfs-starter
- - ak-ipfs-daemon
-
-Not completed or just odd
--------------------------
+ - ak-ipfs
 
 Deprecated
 ----------
@@ -228,7 +224,6 @@ Deprecated
 
 Debugging
 ---------
-
 Setting `AK_DEBUG` shell variable to `"yes"` will make all log messages to
 appear on your stderr (file descriptor 2). After setting this variable, run the
 tools you want.
@@ -240,7 +235,6 @@ AK_DEBUG="yes"; ak zchain --crawl -l 1
 
 Examples
 --------
-
 ### Add a news article ( `ak -m news --add` )
 
 You could use ZCHAIN with NEWS model. Or MIXTAPE model, or make your own.
