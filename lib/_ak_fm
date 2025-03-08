@@ -18,6 +18,8 @@
 ### along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
+source $AK_LIBDIR/_ak_script
+
 function _ak_fm_remove_line_from_file(){
     tempfile="$(_ak_make_temp_file)"
     if [ ! -f "$2" ]
