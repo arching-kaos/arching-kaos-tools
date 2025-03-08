@@ -108,7 +108,7 @@ function _ak_data_expand(){
         _ak_gpg_verify_signature $TEMP/$DATA.asc $AK_IPFS_ARTIFACTS/$DATA # > /dev/null 2>&1
         if [ $? -ne 0 ]
         then
-            _ak_log_error "Error while verifying signature for $DATA"
+            _ak_log_error "Error while verifying signature for $DATA [ $AK_IPFS_ARTIFACTS/$DATA ] against $DETACH [ $TEMP/$DATA.asc ]"
             exit 1
         fi
         # ln -s $AK_IPFS_ARTIFACTS/$DATA $AK_WORKDIR/ipfs
@@ -695,9 +695,9 @@ function _ak_zblock_pack(){
             # Acquire last block of information, to chain this one with previous posted
             PREVIOUS="$(cat $AK_ZLATEST)"
             # We create a block of json like this:
-            printf '{"timestamp":"%s","action":"%s","data":"%s","detach":"%s","gpg":"%s","previous":"%s"}' $(date -u +%s) $ACTION $MESSAGE_HASH $MESSAGE_SIGNATURE $GPG_PUB_KEY $PREVIOUS > block
+            printf '{"timestamp":"%s","action":"%s","data":"%s","detach":"%s","gpg":"%s","previous":"%s"}' "$(date -u +%s)" "$ACTION" "$MESSAGE_HASH" "$MESSAGE_SIGNATURE" "$GPG_PUB_KEY" "$PREVIOUS" > block
             BLOCK="block"
-            BLOCK_SIG=$BLOCK".asc"
+            BLOCK_SIG="${BLOCK}.asc"
             # We have a block now, so we sign it
             _ak_gpg_sign_detached $BLOCK_SIG $BLOCK
             # We now add the signature to IPFS
