@@ -1,5 +1,5 @@
 FROM fedora:latest
-RUN dnf update -y && dnf install which git screen pinentry make gcc -y
+RUN dnf update -y && dnf install which git screen pinentry make gcc procps-ng -y
 RUN dnf install -y curl jq nodejs
 RUN dnf install -y nano
 COPY . /root/arching-kaos-tools
