@@ -458,7 +458,7 @@ function _ak_ipfs_init(){
 }
 
 function _ak_ipfs_download(){
-    _ak_log_info "Attempting to install IPFS..."
+    _ak_log_info "Figuring latest compatible version of kubo (IPFS)..."
     IPFS_VERSION="$(curl \
         --connect-timeout 3 \
         -s https://dist.ipfs.tech/kubo/versions | tail -1)"
@@ -486,6 +486,43 @@ function _ak_ipfs_download(){
     else
         _ak_log_info "Already have the latest version"
         exit 0
+    fi
+}
+
+_ak_ipfs_install(){
+    _ak_log_info "Making temp files"
+    pwd > pwd
+    mktemp -d > tempassin
+    ak_curdir=$(cat pwd)
+    TEMPASSIN=$(cat tempassin)
+    cd $TEMPASSIN
+    tar xf $AK_ARCHIVESDIR/$IPFS_TARGET_FILE
+    cp kubo/ipfs $AK_BINDIR/kubo
+    cd $ak_curdir
+    rm -rf $TEMPASSIN
+    _ak_log_info "ipfs installed on $AK_BINDIR"
+}
+
+function _ak_ipfs_check_and_install(){
+    which kubo > /dev/null 2>&1
+    if [ $? -ne 0 ]
+    then
+        _ak_ipfs_download
+        _ak_ipfs_install
+        _ak_ipfs init
+        _ak_ipfs_swarm_install
+    else
+        _ak_log_info "Found IPFS! Skipping downloading..."
+        _ak_ipfs_swarm_install
+    fi
+    if [ ! -d $AK_IPFS_REPO ]
+    then
+        _ak_ipfs init
+        _ak_ipfs_swarm_install
+    fi
+    if [ ! -f $AK_ZGENESIS ]
+    then
+        _ak_ipfs add -Q $AK_GENESIS > $AK_ZGENESIS
     fi
 }
 

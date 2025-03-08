@@ -140,7 +140,7 @@ function _ak_make_temp_file(){
 }
 
 function _ak_check_and_create_dir(){
-    if [ ! -d "$1" ]
+    if [ ! -z "$1" ] && [ -n "$1" ] && [ ! -d "$1" ]
     then
         mkdir -p "$1"
         if [ $? -eq 0 ]
@@ -169,4 +169,52 @@ function _ak_let_there_be_file(){
     else
         _ak_log_debug "$1 file found"
     fi
+}
+
+function _ak_init_file_as_json_array(){
+    if [ ! -f "$1" ]
+    then
+        printf "[]" > $1
+        if [ $? -eq 0 ]
+        then
+            _ak_log_info "File $1 created!"
+        else
+            _ak_log_error "Problem occured while creating $1"
+            exit 1
+        fi
+    else
+        _ak_log_debug "$1 file found"
+    fi
+}
+
+function _ak_countdown_seconds(){
+    default_countdown=5
+    if [ ! -z "$1" ] && [ -n "$1" ]
+    then
+        if [ "$(echo -n $1 | sed -e 's/^[0-9]*$//g')" == "" ]
+        then
+            countdown=$1
+        else
+            countdown=${default_countdown}
+        fi
+    else
+        countdown=${default_countdown}
+    fi
+    printf " %s" "$countdown"
+    countdown="$(expr $countdown - 1)"
+    sleep 1
+    while [ $countdown -gt 0 ]
+    do
+        if [ $countdown -lt 10 ]
+        then
+            printf "\b\b %s" "$countdown"
+        else
+            printf "\b\b%s" "$countdown"
+        fi
+        countdown="$(expr $countdown - 1)"
+        sleep 1
+    done
+    printf "\b\b starting!!!"
+    sleep 1
+    printf "\n"
 }

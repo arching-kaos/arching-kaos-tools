@@ -2,6 +2,7 @@
 #set -x
 source lib/_ak_ipfs
 source lib/_ak_settings
+source lib/_ak_gpg
 
 # TODO GPG/PGP setup:: possibly done
 # eg gpg2 --full-key-generate and/or gpg2 --set-default key
@@ -65,15 +66,16 @@ then
         printf "%s" "$(_ak_ipfs key list -l | grep zchain | awk '{ print $1 }')" > $AK_ZCHAIN
     fi
 fi
+
 if [ ! -f $AK_ZLATEST ] ; then cp $AK_ZGENESIS $AK_ZLATEST;fi
 if [ ! -f $AK_ZCHAINASC ] ; then gpg2 --homedir $AK_GPGHOME -bao $AK_ZCHAINASC $AK_ZCHAIN;fi
 if [ ! -f $AK_ZZCHAIN ] ; then printf "%s" "$(_ak_ipfs add -q $AK_ZCHAINASC)" > $AK_ZZCHAIN;fi
 if [ ! -f $AK_GENESISASC ] ; then gpg2 --homedir $AK_GPGHOME -bao $AK_GENESISASC $AK_GENESIS;fi
 if [ ! -f $AK_ZGENESISASC ] ; then printf "%s" "$(_ak_ipfs add -q $AK_GENESISASC)" > $AK_ZGENESISASC;fi
-if [ ! -f $AK_ZBLOCKSFILE ] ; then printf "[]" > $AK_ZBLOCKSFILE;fi
-if [ ! -f $AK_ZPAIRSFILE ] ; then printf "[]" > $AK_ZPAIRSFILE;fi
-if [ ! -f $AK_ZPEERSFILE ] ; then printf "[]" > $AK_ZPEERSFILE;fi
-if [ ! -d $AK_ZPEERSDIR ] ; then mkdir $AK_ZPEERSDIR;fi
+
+_ak_init_file_as_json_array $AK_ZPAIRSFILE
+_ak_init_file_as_json_array $AK_ZPEERSFILE
+_ak_init_file_as_json_array $AK_ZBLOCKSFILE
 
 ipfs_zarchive_check_or_mkdir
 

@@ -69,40 +69,8 @@ _ak_usage
 
 printf "Installation starts in..."
 
-countdown_seconds(){
-    default_countdown=5
-    if [ ! -z "$1" ] && [ -n "$1" ]
-    then
-        if [ "$(echo -n $1 | sed -e 's/^[0-9]*$//g')" == "" ]
-        then
-            countdown=$1
-        else
-            countdown=${default_countdown}
-        fi
-    else
-        countdown=${default_countdown}
-    fi
-    printf " %s" "$countdown"
-    countdown="$(expr $countdown - 1)"
-    sleep 1
-    while [ $countdown -gt 0 ]
-    do
-        if [ $countdown -lt 10 ]
-        then
-            printf "\b\b %s" "$countdown"
-        else
-            printf "\b\b%s" "$countdown"
-        fi
-        countdown="$(expr $countdown - 1)"
-        sleep 1
-    done
-    printf "\b\b starting!!!"
-    sleep 1
-    printf "\n"
-}
 
-countdown_seconds 5
-
+_ak_countdown_seconds 5
 
 _ak_check_and_create_dir $AK_CONFIGDIR
 _ak_check_and_create_dir $AK_BINDIR
@@ -119,6 +87,7 @@ _ak_check_and_create_dir $AK_CHUNKSDIR
 _ak_check_and_create_dir $AK_LEAFSDIR
 _ak_check_and_create_dir $AK_MAPSDIR
 _ak_check_and_create_dir $AK_GPGHOME
+_ak_check_and_create_dir $AK_ZPEERSDIR
 chmod 700 $AK_GPGHOME
 _ak_let_there_be_file $AK_ZLATEST_HISTORY
 _ak_let_there_be_file $AK_GENESIS
@@ -226,7 +195,7 @@ then
     if [ $? -eq 0 ]
     then
         _ak_log_debug "Making a gpg2 link"
-        $sudoBin ln -s `which gpg` /usr/bin/gpg2
+        ln -s `which gpg` $AK_BINDIR/gpg2
     fi
 fi
 
@@ -270,7 +239,8 @@ else
 fi
 
 bash update.sh
-bash ipfs-check-install-setup-init-update
+source ./lib/_ak_ipfs
+_ak_ipfs_check_and_install
 source ./config.sh
 source $HOME/$SHELLRC
 bash init.sh
