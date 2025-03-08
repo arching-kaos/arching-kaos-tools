@@ -31,6 +31,7 @@ export AK_CACHEDIR="$AK_WORKDIR/cache"
 export AK_CHUNKSDIR="$AK_WORKDIR/akfs/chunks"
 export AK_LEAFSDIR="$AK_WORKDIR/akfs/leafs"
 export AK_MAPSDIR="$AK_WORKDIR/akfs/maps"
+export AK_ZLATEST_HISTORY="$AK_WORKDIR/zlatest_history"
 
 #source $AK_LIBDIR/_ak_settings
 #export AK_FINGERPRINT="$(_ak_settings_get gpg.fingerprint)"

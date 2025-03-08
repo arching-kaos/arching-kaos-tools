@@ -120,6 +120,7 @@ _ak_check_and_create_dir $AK_LEAFSDIR
 _ak_check_and_create_dir $AK_MAPSDIR
 _ak_check_and_create_dir $AK_GPGHOME
 chmod 700 $AK_GPGHOME
+_ak_let_there_be_file $AK_ZLATEST_HISTORY
 _ak_let_there_be_file $AK_GENESIS
 _ak_let_there_be_file $AK_ZBLOCKSFILE
 _ak_let_there_be_file $AK_ZPAIRSFILE
