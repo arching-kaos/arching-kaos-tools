@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+###
+### arching-kaos-tools
+### Tools to interact and build an Arching Kaos Infochain
+### Copyright (C) 2021 - 2025  kaotisk
+###
+### This program is free software: you can redistribute it and/or modify
+### it under the terms of the GNU General Public License as published by
+### the Free Software Foundation, either version 3 of the License, or
+### (at your option) any later version.
+###
+### This program is distributed in the hope that it will be useful,
+### but WITHOUT ANY WARRANTY; without even the implied warranty of
+### MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+### GNU General Public License for more details.
+###
+### You should have received a copy of the GNU General Public License
+### along with this program.  If not, see <http://www.gnu.org/licenses/>.
+###
+source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_script
+
+function _ak_backup(){
+    if [ -n "${AK_WORKDIR}" ] && [ -d "${AK_WORKDIR}" ]
+    then
+        if [ -n "${AK_ROOT}" ] && [ -d "${AK_ROOT}" ]
+        then
+            archiveName="${_ak_datetime_unix}_ak_backup.tar.gz"
+            cd "${AK_ROOT}"
+            tar cvzf ${archiveName} $(basename ${AK_WORKDIR})
+            if [ $? -eq 0 ]
+            then
+                _ak_log_info "Backup to $archiveName was successful"
+            else
+                _ak_log_info "Failed to backup to $archiveName"
+                exit 1
+            fi
+        else
+            _ak_log_error "AK_ROOT variable isn't set. Aborting..."
+            exit 1
+        fi
+    else
+        _ak_log_error "No AK_WORKDIR found or it does not exist"
+    fi
+}
+
+function _ak_restore(){
+    if [ -n "${AK_WORKDIR}" ] && [ -d "${AK_WORKDIR}" ]
+    then
+        _ak_log_error "${AK_WORKDIR} already exists! Aborting..."
+        exit 1
+    else
+        if [ ! -z "$1" ] && [ -n "$1" ] && [ -f "$1" ]
+        then
+            if [ -n "${AK_ROOT}" ]
+            then
+                cd "${AK_ROOT}"
+                tar xf "$1"
+                if [ $? -eq 0 ]
+                then
+                    _ak_log_info "Restored from $1 successfully"
+                else
+                    _ak_log_info "Failed to restore from $1"
+                    exit 1
+                fi
+            else
+                _ak_log_error "AK_ROOT variable isn't set. Aborting..."
+                exit 1
+            fi
+        else
+            _ak_log_error "No input file was given, or the file does not exist"
+            exit 1
+        fi
+    fi
+}

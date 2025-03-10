@@ -18,6 +18,8 @@
 ### along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
+source $AK_LIBDIR/_ak_script
+
 function _ak_log_print_log_line(){
     if [ -n "$1" ]
     then
@@ -65,18 +67,18 @@ function _ak_log_grep(){
 function _ak_log_rotate(){
     if [ -f $AK_LOGSFILE ]
     then
-        tar cvfz $AK_ARCHIVESDIR/logs_$(date -u +%s).tar.gz $AK_WORKDIR/logs
+        tar cvfz $AK_ARCHIVESDIR/logs_$(_ak_datetime_unix).tar.gz $AK_WORKDIR/logs
         cat /dev/null > $AK_WORKDIR/logs
     fi
     if [ -f $AK_WORKDIR/akd.log ]
     then
-        tar cvfz $AK_ARCHIVESDIR/akd-logs_$(date -u +%s).tar.gz $AK_WORKDIR/akd.log
+        tar cvfz $AK_ARCHIVESDIR/akd-logs_$(_ak_datetime_unix).tar.gz $AK_WORKDIR/akd.log
         cat /dev/null > $AK_WORKDIR/akd.log
     fi
 }
 
 function _ak_log_message(){
-    TS="$(date -u +%s)"
+    TS="$(_ak_datetime_unix)"
     if [ ! -z $1 ] && [ -n "$1" ]
     then
         prg="$1"
