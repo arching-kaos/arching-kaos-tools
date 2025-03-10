@@ -20,7 +20,7 @@
 source $AK_LIBDIR/_ak_log
 source $AK_LIBDIR/_ak_script
 
-function _ak_backup(){
+function _ak_maintainance_backup(){
     if [ -n "${AK_WORKDIR}" ] && [ -d "${AK_WORKDIR}" ]
     then
         if [ -n "${AK_ROOT}" ] && [ -d "${AK_ROOT}" ]
@@ -44,7 +44,7 @@ function _ak_backup(){
     fi
 }
 
-function _ak_restore(){
+function _ak_maintainance_restore(){
     if [ -n "${AK_WORKDIR}" ] && [ -d "${AK_WORKDIR}" ]
     then
         _ak_log_error "${AK_WORKDIR} already exists! Aborting..."
@@ -71,5 +71,14 @@ function _ak_restore(){
             _ak_log_error "No input file was given, or the file does not exist"
             exit 1
         fi
+    fi
+}
+
+function _ak_maintainance_nuke_all_but_core(){
+    if [ -n "${AK_WORKDIR}" ] && [ -d "${AK_WORKDIR}" ]
+    then
+        export | grep '^AK_'
+    else
+        _ak_log_error "No AK_WORKDIR found or it does not exist"
     fi
 }

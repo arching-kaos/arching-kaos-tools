@@ -30,6 +30,8 @@ export AK_DEBUG="yes"
 ##
 ##    -h, --help                  Prints this help message
 ##
+##    -s, --shell                 Starts an interactive shell
+##
 ##    -m, --module [module]       Run a specified module. If no module provided
 ##                                the list of available modules will be printed.
 ##

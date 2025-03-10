@@ -41,8 +41,9 @@ if [ ! -z $1 ]
 then
     case $1 in
         -h | --help) _ak_usage; exit;;
-        -r | --restore) _ak_restore $2; exit;;
-        -b | --backup) _ak_backup; exit;;
+        -r | --restore) _ak_maintainance_restore $2; exit;;
+        -b | --backup) _ak_maintainance_backup; exit;;
+        -n | --nuke) _ak_maintainance_nuke_all_but_core; exit;;
         * ) _ak_usage;;
     esac
 else _ak_usage
