@@ -486,3 +486,56 @@ function _ak_zchain_get_latest(){
 #         fi
 #     done
 # }
+
+function _ak_zchain_output_types(){
+    if [ -z $1 ] || [ ! -n "$1" ]
+    then
+        zblock="$(ak zchain --get-latest)"
+    else
+        zblock="$1"
+    fi
+    seed="$(cat $AK_ZGENESIS)"
+    previous="$(_ak_zblock_show "$zblock" | jq -r '.previous')"
+    timestamp="$(_ak_zblock_show "$zblock" | jq -r '.timestamp')"
+    block="$(_ak_zblock_show "$zblock" | jq -r '.block')"
+    data="$(_ak_zblock_show "$zblock" | jq -r '.data')"
+    ak zblock --show $zblock | jq -r '.zblock,.module' | tr $'\n' ' ' | sed -e 's/ $/\n/' | while read zblock module
+    do
+        if [ "$module" == "mixtape" ]
+        then
+            ipfs="$(_ak_ipfs_cat $data | jq -r '.ipfs')"
+            file $AK_IPFS_ARTIFACTS/$ipfs | grep 'Ogg' > /dev/null
+            if [ $? -eq 0 ]
+            then
+                fdur="$(ogginfo $AK_IPFS_ARTIFACTS/$ipfs | grep 'Playback length' | cut -d ':' -f 2-)"
+                mins="$(echo -n $fdur | cut -d 'm' -f 1)"
+                secs="$(echo -n $fdur | cut -d ':' -f 2|cut -d '.' -f 1)"
+                msecs="$(echo -n $fdur | cut -d ':' -f 2|cut -d '.' -f 2 | cut -d 's' -f 1)"
+                smins="$(($mins * 60))"
+                #echo "$mins => $smins"
+                #echo "Duration is $mins minutes, $secs seconds and $msecs milliseconds"
+                if [ $msecs -gt 0 ]
+                then
+                    sdur="$(( $smins + $secs + 1))"
+                else
+                    sdur="$(( $smins + $secs))"
+                fi
+                #echo "Zblock: $zblock is a $module type added on $timestamp with duration $sdur seconds"
+                #echo "Output to file would be:"
+                echo "$timestamp $zblock $block $data $ipfs $sdur" >> $AK_WORKDIR/mixtapes_index
+                tmpfile="$(_ak_make_temp_file)"
+                cat $AK_WORKDIR/mixtapes_index | sort -n | uniq > $tmpfile
+                cat $tmpfile > $AK_WORKDIR/mixtapes_index
+                rm $tmpfile
+            fi
+        else
+            echo "Zblock: $zblock is a $module type added on $timestamp"
+        fi
+    done
+    if [ "$seed" == "$previous" ]
+    then
+        _ak_log_info "Reached genesis, exiting..."
+        exit 0
+    fi
+    _ak_zchain_output_types $previous
+}
