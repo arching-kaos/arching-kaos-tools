@@ -13,3 +13,5 @@ src/bin
 
 tmp*
 *tags
+docs/
+src/examples
