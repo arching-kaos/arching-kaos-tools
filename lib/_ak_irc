@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_script
+
+function _ak_irc_connect(){
+    _ak_not_implemented "LOL"
+}
