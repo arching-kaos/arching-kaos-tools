@@ -20,8 +20,8 @@ module.exports = (type, message) => {
         console.log(`error: ${error.message}`);
     });
 
-    command.on("close", code => {
-        // res.send(JSON.parse(buffer));
+    command.on("close", (code) => {
+        console.log(buffer);
         if (config.printDebug === "yes") console.log(buffer);
         console.log(`child process exited with code ${code}`);
     });

@@ -282,7 +282,7 @@ function _ak_zchain_crawl_remote_ipns(){
 }
 
 function _ak_zchain_get_latest(){
-    _ak_ipfs_files_stat /zlatest | head -n 1| tr -d '\n'
+    cat $AK_ZLATEST
 }
 
 # _ak_zchain_announce(){}

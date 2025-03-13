@@ -14,12 +14,14 @@ const getRemoteNodeInfo = require('./routes/getRemoteNodeInfo/index.js');
 const getRemotePeers = require('./routes/getRemotePeers/index.js');
 
 const akLogMessage = require('./lib/akLogMessage');
+akLogMessage('INFO', 'akLogMessage loaded');
 
 const serverOptions = { keepAliveTimeout: 60000 };
 
 function printRequest(req)
 {
     console.log(req.connection.remoteAddress);
+    console.log(req.headers.host);
     console.log(req.headers);
     console.log(req.method, req.url);
     console.log('HTTP/' + req.httpVersion);

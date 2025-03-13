@@ -6,6 +6,7 @@ module.exports = (req, res) => {
     const command = spawn("ak-config", ["--get-published"]);
     var buffer = "";
     command.stdout.on("data", data => {
+        console.log(`stdout: ${data}`);
         buffer = buffer + data;
     });
 
