@@ -35,6 +35,8 @@ export AK_DEBUG="yes"
 ##    -m, --module [module]       Run a specified module. If no module provided
 ##                                the list of available modules will be printed.
 ##
+##    -f, --function [function]   Get the list of available functions
+##
 ##    [command] [args]            Run a command. If none provided a list of
 ##                                commands will be printed.
 ##
