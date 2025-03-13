@@ -11,5 +11,6 @@ void ak_log_warning(const char* program, char* message);
 void ak_log_debug(const char* program, char* message);
 void ak_log_error(const char* program, char* message);
 void ak_log_info(const char* program, char* message);
+void ak_log_write_to_file(char* message);
 
 #endif // AKLOG
