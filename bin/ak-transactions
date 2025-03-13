@@ -32,6 +32,22 @@ source $AK_LIBDIR/_ak_zblock
 
 _ak_modules_transactions_main(){
     _ak_log_info "$FROM_ADDRESS to $TO_ADDRESS value sent: $AMOUNT"
+    echo "Select an address to send from:"
+    select FROM_ADDRESS in $(_ak_gpg_list_secret_keys)
+    do
+        echo $FROM_ADDRESS
+        break
+    done
+    echo "Select an address to send to:"
+    select TO_ADDRESS in $(_ak_gpg_list_keys)
+    do
+        echo $TO_ADDRESS
+        break
+    done
+    total="$(ak get balances | grep $FROM_ADDRESS)"
+    printf 'Enter amount (max : %s):\n' "$total"
+    read -r AMOUNT
+    FEE="$(printf '%s%s%s' "$FROM_ADDRESS" "$TO_ADDRESS" "$AMOUNT" | wc -c)"
     cat > transaction_file <<EOF
 $FROM_ADDRESS
 $TO_ADDRESS
@@ -59,8 +75,8 @@ EOF
 
 }
 
-if [ ! -z $3 ];
-then
+#if [ ! -z $3 ];
+#then
     PWD="$(pwd)"
     FROM_ADDRESS="$1"
     TO_ADDRESS="$2"
@@ -68,5 +84,5 @@ then
     _ak_modules_transactions_main
     cat $PWD/data | jq -M
     _ak_zblock_pack transaction/add $PWD/data
-else _ak_usage
-fi
+#else _ak_usage
+#fi
