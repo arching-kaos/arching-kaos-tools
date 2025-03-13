@@ -18,7 +18,7 @@
 ### along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
-source $AK_LIBDIR/_ak_script
+source $AK_LIBDIR/_ak_utils
 
 function _ak_log_print_log_line(){
     if [ -n "$1" ]

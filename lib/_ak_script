@@ -218,7 +218,3 @@ function _ak_countdown_seconds(){
     sleep 1
     printf "\n"
 }
-
-function _ak_datetime_unix(){
-    date -u +%s | tr -d '\n'
-}

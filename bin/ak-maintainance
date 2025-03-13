@@ -26,6 +26,7 @@
 ##    -h, --help                  Prints this help message
 ##    -b, --backup                Backs up to a file
 ##    -r, --restore <filename>    Restores from a file
+##    -n, --nuke                  Nuke all but core
 ##
 fullprogrampath="$(realpath $0)"
 PROGRAM=$(basename $0)

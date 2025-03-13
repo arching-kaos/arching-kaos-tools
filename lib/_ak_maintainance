@@ -18,7 +18,6 @@
 ### along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 source $AK_LIBDIR/_ak_log
-source $AK_LIBDIR/_ak_script
 
 function _ak_maintainance_backup(){
     if [ -n "${AK_WORKDIR}" ] && [ -d "${AK_WORKDIR}" ]
@@ -77,7 +76,7 @@ function _ak_maintainance_restore(){
 function _ak_maintainance_nuke_all_but_core(){
     if [ -n "${AK_WORKDIR}" ] && [ -d "${AK_WORKDIR}" ]
     then
-        export | grep '^AK_'
+        export | grep '^declare -x AK_' | grep -v 'BINDIR' | grep -v 'LIBDIR' | grep -v 'MODULESDIR'
     else
         _ak_log_error "No AK_WORKDIR found or it does not exist"
     fi
