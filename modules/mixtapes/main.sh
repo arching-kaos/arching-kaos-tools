@@ -44,6 +44,7 @@ if [ ! -z $1 ]; then
         -r | --read) _ak_modules_mixtapes_read $2; exit;;
         -s | --specs) _ak_modules_mixtapes_specs $2; exit;;
         -x | --html) _ak_modules_mixtapes_html $2; exit;;
+        -f | --find-now) _ak_modules_mixtapes_find_now; exit;;
         * ) _ak_usage;;
     esac
 else _ak_usage
