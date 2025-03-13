@@ -53,6 +53,8 @@ then
         --list) _ak_fs_list; exit;;
         --cfm) _ak_fs_cat_from_map_hash $2; exit;;
         --gfm) _ak_fs_get_from_map_hash $2; exit;;
+        --rhd) _ak_fs_return_hash_dir $2; echo ;exit;;
+        --rhp) _ak_fs_return_hash_path $2; echo ; exit;;
         * ) _ak_usage;;
     esac
 else
