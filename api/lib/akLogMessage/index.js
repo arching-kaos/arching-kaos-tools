@@ -3,8 +3,8 @@ const config = require('../../config')
 
 module.exports = (type, message) => {
     const command = spawn(
-        "ak",
-        ["log", "-m", "ak-daemon", type, message]
+        "ak-log",
+        ["-m", "ak-daemon", type, message]
     );
 
     var buffer = "";

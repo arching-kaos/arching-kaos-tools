@@ -18,7 +18,24 @@
 ### along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
-source $AK_LIBDIR/_ak_utils
+source $AK_LIBDIR/_ak_utils 2>/dev/null || source ./lib/_ak_utils 2>/dev/null
+
+if [ -n "${AK_WORKDIR}" ]
+then
+    export AK_LOGSDIR="$AK_WORKDIR/logs"
+    if [ ! -d $AK_LOGSDIR ]
+    then
+        mkdir -p $AK_LOGSDIR
+    fi
+    export AK_LOGSFILE="$AK_LOGSDIR/log"
+    if [ ! -f $AK_LOGSFILE ]
+    then
+        touch $AK_LOGSFILE
+    fi
+else
+    printf "Can't find AK_WORKDIR to work upon.\n"
+    exit 1
+fi
 
 function _ak_log_print_log_line(){
     if [ -n "$1" ]
@@ -28,7 +45,7 @@ function _ak_log_print_log_line(){
         messagetype="$(echo "$*" | awk '{print $3}')"
         message="$(echo "$*" | cut -d ' ' -f4-)"
         printf '%s \033[1;32m%s\033[0;00m \033[1;31m%s\033[0;00m %s\n' \
-            "$(date --date=@$timestamp +%Y%m%d_%H%M%S 2>/dev/null || date -r $timestamp +%Y%m%d_%H%M%S 2>/dev/null)" \
+            "$(_ak_datetime_unix_to_human $timestamp)" \
             "$program" \
             "$messagetype" \
             "$message"
@@ -65,15 +82,15 @@ function _ak_log_grep(){
 }
 
 function _ak_log_rotate(){
-    cd $AK_WORKDIR
+    cd $AK_WORKDIR/$AK_LOGSDIR
     if [ -f $AK_LOGSFILE ]
     then
-        tar cvfz $AK_ARCHIVESDIR/logs_$(_ak_datetime_unix).tar.gz logs
-        cat /dev/null > $AK_WORKDIR/logs
+        gzip -c logs > $(_ak_datetime_unix)_logs.gz
+        cat /dev/null > logs
     fi
-    if [ -f $AK_WORKDIR/akd.log ]
+    if [ -f $AK_LOGSDIR/akd.log ]
     then
-        tar cvfz $AK_ARCHIVESDIR/akd-logs_$(_ak_datetime_unix).tar.gz akd.log
+        gzip -c akd.log > $(_ak_datetime_unix)_akd-logs.gz
         cat /dev/null > akd.log
     fi
 }

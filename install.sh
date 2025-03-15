@@ -61,8 +61,6 @@ else
     exit 3
 fi
 
-touch $AK_LOGSFILE
-
 source ./lib/_ak_log
 source ./lib/_ak_script
 _ak_usage

@@ -126,7 +126,6 @@ function _ak_data_expand(){
 # ak-zblock [IPFS CID]
 #
 # Returns a JSON array representing the chain retrieved.
-# Logs messages to $LOGSFILE.
 function _ak_zblock_show(){
     verify=1
     if [ ! -z $1 ] && [ -n "$1" ]
