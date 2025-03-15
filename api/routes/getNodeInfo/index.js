@@ -1,8 +1,6 @@
 const { spawn } = require('child_process');
-const akLogMessage = require('../../lib/akLogMessage');
 
 module.exports = (req, res) => {
-    akLogMessage('INFO', `Incoming from [${req.connection.remoteAddress}]:${req.socket._peername.port} @ ${req.url}`);
     const command = spawn("ak-config", ["--get-published"]);
     var buffer = "";
     command.stdout.on("data", data => {
