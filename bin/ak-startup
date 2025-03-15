@@ -42,7 +42,7 @@ _ak_start_up_sequence(){
     _ak_ipfs_starter
     _ak_log_rotate
 
-    ak-daemon > $AK_WORKDIR/akd.log 2>&1 & printf '%s' "$!" > $AK_WORKDIR/akd.pid
+    ak-daemon > $AK_LOGSDIR/akd.log 2>&1 & printf '%s' "$!" > $AK_WORKDIR/akd.pid
     if [ ! -z $1 ] && [ -n "$1" ] && [ "$1" == "--podman" ]
     then
         _ak_log_follow

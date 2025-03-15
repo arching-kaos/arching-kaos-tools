@@ -82,15 +82,15 @@ function _ak_log_grep(){
 }
 
 function _ak_log_rotate(){
-    cd $AK_WORKDIR/$AK_LOGSDIR
+    cd $AK_LOGSDIR
     if [ -f $AK_LOGSFILE ]
     then
-        gzip -c logs > $(_ak_datetime_unix)_logs.gz
-        cat /dev/null > logs
+        gzip -c log > $(_ak_datetime_unix)_log.gz
+        cat /dev/null > log
     fi
     if [ -f $AK_LOGSDIR/akd.log ]
     then
-        gzip -c akd.log > $(_ak_datetime_unix)_akd-logs.gz
+        gzip -c akd.log > $(_ak_datetime_unix)_akd-log.gz
         cat /dev/null > akd.log
     fi
 }
