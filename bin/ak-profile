@@ -45,6 +45,7 @@ ZPROFILEDIR="$AK_WORKDIR/profile"
 
 source $AK_LIBDIR/_ak_log
 source $AK_LIBDIR/_ak_script
+source $AK_LIBDIR/_ak_utils
 source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_gpg
 source $AK_LIBDIR/_ak_zblock
@@ -202,7 +203,7 @@ _ak_modules_profile_add(){
         FILE_SIGNATURE=$(_ak_ipfs_add $FILE_SIGN_FILE)
         cat > data <<EOF
 {
-   "datetime":"$(date -u +%s)",
+   "datetime":"$(_ak_datetime_unix)",
    "ipfs":"$FILE_IPFS_HASH",
    "detach":"$FILE_SIGNATURE"
 }

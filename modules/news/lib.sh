@@ -22,6 +22,7 @@ source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_gpg
 source $AK_LIBDIR/_ak_zblock
 source $AK_LIBDIR/_ak_zchain
+source $AK_LIBDIR/_ak_utils
 
 ZNEWSDIR="$AK_WORKDIR/news"
 
@@ -45,7 +46,7 @@ _ak_modules_news_create(){
     cd $TEMP
     cd
     curpath="$(pwd)"
-    export NEWS_FILE="$(date +%Y%m%d_%H%M%S)"
+    export NEWS_FILE="$(_ak_datetime_human)"
     vi $NEWS_FILE
     echo "Renaming..."
     TITLE="$(head -n 1 $NEWS_FILE)"

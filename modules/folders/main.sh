@@ -33,6 +33,7 @@ source $AK_LIBDIR/_ak_log
 source $AK_LIBDIR/_ak_script
 source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_zblock
+source $AK_LIBDIR/_ak_utils
 
 if [ ! -d $ZFOLDERSDIR ]; then
     mkdir $ZFOLDERSDIR
@@ -75,7 +76,7 @@ _ak_modules_folders_main(){
     fi
     _ak_log_warning "Folders are not signing..."
 
-    printf '{"timestamp":"%s","foldername":"%s","ipfs":"%s"}' $(date -u +%s) $FOLDERNAME $FOLDER_IPFS_HASH
+    printf '{"timestamp":"%s","foldername":"%s","ipfs":"%s"}' $(_ak_datetime_unix) $FOLDERNAME $FOLDER_IPFS_HASH
 
     echo "Printing data..."
     cat data

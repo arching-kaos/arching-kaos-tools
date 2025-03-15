@@ -31,6 +31,7 @@ descriptionString="Sblock mining"
 
 source $AK_LIBDIR/_ak_log
 source $AK_LIBDIR/_ak_script
+source $AK_LIBDIR/_ak_utils
 
 gather_zblocks(){
     if [ "$(cat $AK_ZBLOCKSFILE | jq -r '.[].zblock' | wc -l)" -ne 0 ]
@@ -56,7 +57,7 @@ proofofwork(){
     i=1
     l=1; while [ $l = 1 ]
     do
-        TIMESTAMP="$(date -u +%s)"
+        TIMESTAMP="$(_ak_datetime_unix)"
         SHA="$(echo -n $TEST'"nonce":"'$i'","previous":"'$PRE'","timestamp":"'$TIMESTAMP'","miner":"'$MINER'","reward":"40"}' | sha512sum | awk '{ print $1 }')"
         # Static difficulty for securing the sblock
         echo $SHA | grep -e '^000'

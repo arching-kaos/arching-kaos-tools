@@ -34,6 +34,7 @@ source $AK_LIBDIR/_ak_script
 source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_gpg
 source $AK_LIBDIR/_ak_zblock
+source $AK_LIBDIR/_ak_utils
 
 if [ ! -d $AK_CATEGORIES ]; then
     mkdir $AK_CATEGORIES
@@ -46,7 +47,7 @@ fi
 _ak_modules_categories_create(){
     TEMP="$(_ak_make_temp_directory)"
     cd $TEMP
-    export NEWS_FILE="$(date +%Y%m%d_%H%M%S)"
+    export NEWS_FILE="$(_ak_datetime_human)"
     vi $NEWS_FILE
     _ak_log_info "Renaming..."
     TITLE="$(head -n 1 $NEWS_FILE)"

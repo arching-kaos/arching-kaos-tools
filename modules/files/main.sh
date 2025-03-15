@@ -32,6 +32,7 @@ source $AK_LIBDIR/_ak_log
 source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_gpg
 source $AK_LIBDIR/_ak_zblock
+source $AK_LIBDIR/_ak_utils
 
 if [ ! -d $ZFILESDIR ]; then
     mkdir $ZFILESDIR
@@ -103,7 +104,7 @@ main(){
 
     cat > $TEMPASSIN/data <<EOF
 {
-    "timestamp":"$(date -u +%s)",
+    "timestamp":"$(_ak_datetime_unix)",
     "filename":"$FILENAME",
     "ipfs":"$FILE_IPFS_HASH",
     "detach":"$SIGNATURE"

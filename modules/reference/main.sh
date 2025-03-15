@@ -38,6 +38,7 @@ source $AK_LIBDIR/_ak_script
 source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_gpg
 source $AK_LIBDIR/_ak_zblock
+source $AK_LIBDIR/_ak_utils
 
 if [ ! -d $ZREFERENCESDIR ]; then
     mkdir $ZREFERENCESDIR
@@ -50,10 +51,10 @@ fi
 _ak_modules_reference_create(){
     TEMP="$(_ak_make_temp_directory)"
     cd $TEMP
-    export REFERENCEFILE="$(date -u +%s)"
+    export REFERENCEFILE="$(_ak_datetime_unix)"
     if [ ! -z $1 ] && [ ! -z $2 ]
     then
-        TO_FILE="$(date -u +%s)-$1-$2"
+        TO_FILE="$(_ak_datetime_unix)-$1-$2"
         cat > $REFERENCEFILE << EOF
 $1
 $2
@@ -125,7 +126,7 @@ _ak_modules_reference_add(){
     FILE_SIGNATURE=$(_ak_ipfs_add $FILE_SIGN_FILE)
     cat > data <<EOF
 {
-   "datetime":"$(date -u +%s)",
+   "datetime":"$(_ak_datetime_unix)",
    "reference":"$REFERENCE",
    "refer_to":"$REFER_TO",
    "ipfs":"$FILE_IPFS_HASH",

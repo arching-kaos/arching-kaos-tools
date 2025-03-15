@@ -17,6 +17,7 @@
 ### You should have received a copy of the GNU General Public License
 ### along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
+source $AK_LIBDIR/_ak_utils
 source $AK_LIBDIR/_ak_log
 source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_zblock
@@ -48,7 +49,7 @@ function _ak_zchain_reset(){
     if [ $? -eq 0 ]
     then
         _ak_log_info "Archive the previous AK_ZLATEST"
-        _ak_ipfs_files_cp /zlatest /zarchive/$(date -u +%s)-$(_ak_ipfs_files_stat /zlatest | head -n 1)
+        _ak_ipfs_files_cp /zlatest /zarchive/$(_ak_datetime_unix)-$(_ak_ipfs_files_stat /zlatest | head -n 1)
         if [ $? -ne 0 ]
         then
             _ak_log_error "Failed to copy /zlatest to /zarchive"
@@ -99,7 +100,7 @@ function _ak_zchain_rebase(){
     _ak_ipfs_files_mkdir /zarchive
     if [ $? != 0 ]; then echo "Folder already there"; fi
     echo "Archive the previous ZLATEST"
-    _ak_ipfs_files_cp /zlatest /zarchive/$(date -u +%s)-$(_ak_ipfs_files_stat /zlatest | head -n 1)
+    _ak_ipfs_files_cp /zlatest /zarchive/$(_ak_datetime_unix)-$(_ak_ipfs_files_stat /zlatest | head -n 1)
     if [ $? != 0 ]; then exit 1; fi
     echo "Removing previous /zlatest entry"
     _ak_ipfs_files_rm /zlatest

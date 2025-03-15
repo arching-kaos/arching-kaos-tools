@@ -25,6 +25,7 @@ PROGRAM=$(basename $0)
 descriptionString="Transactions module"
 
 source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_utils
 source $AK_LIBDIR/_ak_script
 source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_gpg
@@ -64,7 +65,7 @@ EOF
 
     cat > data <<EOF
 {
-    "timestamp":"$(date -u +%s)",
+    "timestamp":"$(_ak_datetime_unix)",
     "input":"$FROM_ADDRESS",
     "output":"$TO_ADDRESS",
     "amount":"$AMOUNT",

@@ -23,6 +23,7 @@ source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_gpg
 source $AK_LIBDIR/_ak_zblock
 source $AK_LIBDIR/_ak_smfiles
+source $AK_LIBDIR/_ak_utils
 
 _ak_sm_files_add(){
     FILENAME="$1"
@@ -103,7 +104,7 @@ _ak_sm_files_main(){
 
     cat > data <<EOF
 {
-    "timestamp":"$(date -u +%s)",
+    "timestamp":"$(_ak_datetime_unix)",
     "filename":"$FILENAME",
     "shamap":"$FILEMAP_SHA512_HASH",
     "shamapsig":"$SHAMAPSIGMAP",

@@ -18,6 +18,7 @@
 ### along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 source $AK_LIBDIR/_ak_zblock
+source $AK_LIBDIR/_ak_utils
 PROGRAM="ak-module-$(realpath $0 | rev |cut -d '/' -f 2 | rev)"
 REPODIR="$HOME/projects"
 BAREDIR="$HOME/bare"

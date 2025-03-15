@@ -21,6 +21,18 @@ function _ak_datetime_unix(){
     date -u +%s | tr -d '\n'
 }
 
+function _ak_datetime_unix_nanosecs(){
+    date -u +%s.%N | tr -d '\n'
+}
+
+function _ak_datetime_human(){
+    date -u +%Y%m%d_%H%M%S
+}
+
+function _ak_datetime_human_date_only(){
+    date -u +%Y%m%d
+}
+
 function _ak_datetime_unix_to_human(){
     if [ ! -z $1 ] && [ -n "$1" ] && [ "$(echo $1 | sed -e 's/[0-9]\{10\}//g')" == "" ]
     then

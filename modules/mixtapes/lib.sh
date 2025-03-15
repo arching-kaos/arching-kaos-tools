@@ -25,7 +25,7 @@ source $AK_LIBDIR/_ak_zblock
 
 # Should return current playlist, current mixtape and seek time on the mixtape
 _ak_modules_mixtapes_find_now(){
-    current_timestamp="$(date -u +%s)"
+    current_timestamp="$(_ak_datetime_unix)"
     mixtapes_ord=$AK_WORKDIR/mixtapes_ord
     if [ ! -d $mixtapes_ord ]
     then
@@ -61,7 +61,7 @@ _ak_modules_mixtapes_find_now(){
         cat $AK_WORKDIR/mixtapes_index | while read TS ZB BL DB IF DUR
         do
             echo "$IF" > $mixtapes_playlists/1
-            seek=$(( ($(date -u +%s) - $TS) % $DUR ))
+            seek=$(( ($(_ak_datetime_unix) - $TS) % $DUR ))
             index=$counter
             echo "$counter $index $seek"
             exit 0
@@ -70,8 +70,8 @@ _ak_modules_mixtapes_find_now(){
     # watch -n 1 '
     # TS=$(cat mixtapes_index | cut -d\  -f 1,6 | head -n 1 | cut -d\  -f 1)
     # DUR=$(cat mixtapes_index | cut -d\  -f 1,6 | head -n 1 | cut -d\  -f 2)
-    # echo $(( ($(date -u +%s) - $TS) / $DUR )) # Times played
-    # echo $(( ($(date -u +%s) - $TS) % $DUR )) # Seek time
+    # echo $(( ($(_ak_datetime_unix) - $TS) / $DUR )) # Times played
+    # echo $(( ($(_ak_datetime_unix) - $TS) % $DUR )) # Seek time
     # '
 
     mixtapes_counter=1
@@ -79,7 +79,7 @@ _ak_modules_mixtapes_find_now(){
     while [ $mixtapes_counter -le $total_number_of_mixtapes ]
     do
         _ak_log_debug "Counter: $mixtapes_counter"
-        # current_timestamp="$(date -u +%s)"
+        # current_timestamp="$(_ak_datetime_unix)"
         current_timestamp="$(cat $mixtapes_ord/$mixtapes_counter | cut -d ' ' -f 1)"
         current_duration="$(cat $mixtapes_ord/$mixtapes_counter | cut -d ' ' -f 6)"
         # diff_ts="$(( $current_timestamp  - $timestamp ))"
@@ -90,7 +90,7 @@ _ak_modules_mixtapes_find_now(){
         then
             cat $mixtapes_ord/$mixtapes_counter > $mixtapes_playlists/$playlists_counter
             # Return playlist number, mixtape number and seek time
-            time_difference=$(( $(date -u +%s) - $current_timestamp))
+            time_difference=$(( $(_ak_datetime_unix) - $current_timestamp))
             seek_time=$(( $time_difference % $current_duration ))
             echo $playlists_counter $mixtapes_counter $seek_time
             # For this particular instance we would loop for ever in the
@@ -151,7 +151,7 @@ _ak_modules_mixtapes_find_now(){
 
         elif [ $mixtapes_counter -eq $total_number_of_mixtapes ]
         then
-            echo $(( ($(date -u +%s) - $current_timestamp) % $current_duration )) # Seek time
+            echo $(( ($(_ak_datetime_unix) - $current_timestamp) % $current_duration )) # Seek time
         fi
         mixtapes_counter=$(($mixtapes_counter + 1))
     done
@@ -197,7 +197,7 @@ _ak_modules_mixtapes_main(){
 
     cat > data <<EOF
 {
-    "timestamp":"$(date -u +%s)",
+    "timestamp":"$(_ak_datetime_unix)",
     "artist":"$MIXTAPE_ARTIST",
     "title":"$MIXTAPE_TITLE",
     "ipfs":"$MIXTAPE_IPFS_HASH",

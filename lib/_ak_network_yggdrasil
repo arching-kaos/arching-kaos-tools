@@ -18,6 +18,7 @@
 ### along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_utils
 
 function _ak_network_yggdrasil_scan_full(){
     # This scan is using HIA resources to scan the whole cjdns network for peers
@@ -65,7 +66,7 @@ function _ak_network_yggdrasil_scan_full(){
         count="$(( $count + 1 ))"
         _ak_log_debug "Scanning [${count}/${max}] $ip..."
         node_fs_path="$AK_ZPEERSDIR/ygg/$(echo -n $ip| sed 's/://g')"
-        scan_ts="$(date -u +%s)"
+        scan_ts="$(_ak_datetime_unix)"
         if [ ! -d ${node_fs_path} ]
         then
             mkdir -p ${node_fs_path}

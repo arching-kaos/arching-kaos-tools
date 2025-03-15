@@ -33,6 +33,7 @@ source $AK_LIBDIR/_ak_script
 source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_gpg
 source $AK_LIBDIR/_ak_zblock
+source $AK_LIBDIR/_ak_utils
 
 ZCOMMENTSDIR="$AK_WORKDIR/comments"
 TEMP="/tmp/aktmp"
@@ -55,7 +56,7 @@ _ak_modules_comments_create(){
     fi
     TEMP="$(_ak_make_temp_directory)"
     cd $TEMP
-    export COMMENTS_FILE="$(date -u +%s)"
+    export COMMENTS_FILE="$(_ak_datetime_unix)"
     vi $COMMENTS_FILE
     echo "Renaming..."
     TO_FILE=$COMMENTS_FILE

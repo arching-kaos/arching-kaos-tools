@@ -31,6 +31,7 @@ descriptionString="Articles module for Arching Kaos"
 
 source $AK_LIBDIR/_ak_log
 source $AK_LIBDIR/_ak_script
+source $AK_LIBDIR/_ak_utils
 source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_gpg
 source $AK_LIBDIR/_ak_zblock
@@ -48,7 +49,7 @@ fi
 _ak_modules_articles_create(){
     TEMP="$(_ak_make_temp_directory)"
     cd $TEMP
-    export ARTICLES_FILE="$(date +%Y%m%d_%H%M%S)"
+    export ARTICLES_FILE="$(_ak_datetime_human)"
     if [ -z $EDITOR ]
     then
         _ak_log_error "No $EDITOR found. Exiting..."
