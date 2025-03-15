@@ -65,15 +65,16 @@ function _ak_log_grep(){
 }
 
 function _ak_log_rotate(){
+    cd $AK_WORKDIR
     if [ -f $AK_LOGSFILE ]
     then
-        tar cvfz $AK_ARCHIVESDIR/logs_$(_ak_datetime_unix).tar.gz $AK_WORKDIR/logs
+        tar cvfz $AK_ARCHIVESDIR/logs_$(_ak_datetime_unix).tar.gz logs
         cat /dev/null > $AK_WORKDIR/logs
     fi
     if [ -f $AK_WORKDIR/akd.log ]
     then
-        tar cvfz $AK_ARCHIVESDIR/akd-logs_$(_ak_datetime_unix).tar.gz $AK_WORKDIR/akd.log
-        cat /dev/null > $AK_WORKDIR/akd.log
+        tar cvfz $AK_ARCHIVESDIR/akd-logs_$(_ak_datetime_unix).tar.gz akd.log
+        cat /dev/null > akd.log
     fi
 }
 
