@@ -44,6 +44,7 @@
 ##    -d, --delete-key                    Delete GPG keys from your keyring
 ##    -ds, --delete-secret-key <fingerprint>
 ##                                        Delete GPG keys from your keyring
+##    -r, --run                           Runs a command with gpg2
 ##
 fullprogrampath="$(realpath $0)"
 PROGRAM=$(basename $0)
@@ -77,6 +78,7 @@ if [ ! -z $1 ]; then
         --select-key | -s) _ak_gpg_select_key; exit;;
         --delete-key | -d) _ak_gpg_delete_key; exit;;
         --delete-secret-key | -ds) shift; _ak_gpg_delete_secret_key $1; exit;;
+        --run | -r) shift; _ak_gpg $*; exit;;
         * ) _ak_usage;;
     esac
 else _ak_usage

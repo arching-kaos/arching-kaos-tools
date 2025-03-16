@@ -136,7 +136,7 @@ function _ak_gpg_sign_clear(){
 function _ak_gpg_encrypt_sign(){
     if [ ! -z $1 ] && [ -n "$1" ] && [ ! -z $2 ] && [ -n "$2" ] && [ ! -z $3 ] && [ -n "$3" ]
     then
-        _ak_gpg --sign-with $AK_FINGERPRINT --encypt -r $3 --armor --output $1 $2
+        _ak_gpg --sign-with $AK_FINGERPRINT --encrypt -r $3 --armor --output $1 $2
     else
         exit 1
     fi
@@ -145,7 +145,7 @@ function _ak_gpg_encrypt_sign(){
 function _ak_gpg_encrypt_sign_for_self(){
     if [ ! -z $1 ] && [ -n "$1" ] && [ ! -z $2 ] && [ -n "$2" ]
     then
-        _ak_gpg --sign-with $AK_FINGERPRINT --encypt -r $AK_FINGERPRINT --armor --output $1 $2
+        _ak_gpg --sign-with $AK_FINGERPRINT --encrypt -r $AK_FINGERPRINT --armor --output $1 $2
     else
         exit 1
     fi
@@ -154,7 +154,7 @@ function _ak_gpg_encrypt_sign_for_self(){
 function _ak_gpg_encrypt(){
     if [ ! -z $1 ] && [ -n "$1" ] && [ ! -z $2 ] && [ -n "$2" ] && [ ! -z $3 ] && [ -n "$3" ]
     then
-        _ak_gpg --encypt -r $3 --armor --output $1 $2
+        _ak_gpg --encrypt -r $3 --armor --output $1 $2
     else
         exit 1
     fi
@@ -163,7 +163,7 @@ function _ak_gpg_encrypt(){
 function _ak_gpg_encrypt_for_self(){
     if [ ! -z $1 ] && [ -n "$1" ] && [ ! -z $2 ] && [ -n "$2" ]
     then
-        _ak_gpg --encypt -r $AK_FINGERPRINT --armor --output $1 $2
+        _ak_gpg --encrypt -r $AK_FINGERPRINT --armor --output $1 $2
     else
         exit 1
     fi
