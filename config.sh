@@ -1,7 +1,6 @@
 export AK_ROOT=$HOME
 export AK_WORKDIR="$AK_ROOT/.arching-kaos"
 export AK_CONFIGDIR="$AK_WORKDIR/config"
-export AK_SETTINGS="$AK_WORKDIR/settings"
 export AK_BINDIR="$AK_WORKDIR/bin"
 export AK_LIBDIR="$AK_WORKDIR/lib"
 export PATH=$PATH:$AK_BINDIR

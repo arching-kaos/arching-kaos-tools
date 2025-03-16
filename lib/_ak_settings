@@ -20,6 +20,15 @@
 
 source $AK_LIBDIR/_ak_script
 
+if [ ! -d "${AK_WORKDIR}" ]
+then
+    _ak_log_error "No workdir"
+    exit 4
+fi
+
+export AK_SETTINGS="$AK_WORKDIR/settings"
+_ak_check_and_create_dir $AK_SETTINGS
+
 function _ak_settings_get(){
     if [ ! -z "$1" ] && [ -n "$1" ]
     then

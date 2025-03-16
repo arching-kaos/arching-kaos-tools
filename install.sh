@@ -72,7 +72,6 @@ _ak_countdown_seconds 5
 
 _ak_check_and_create_dir $AK_CONFIGDIR
 _ak_check_and_create_dir $AK_BINDIR
-_ak_check_and_create_dir $AK_SETTINGS
 _ak_check_and_create_dir $AK_LIBDIR
 _ak_check_and_create_dir $AK_MODULESDIR
 _ak_check_and_create_dir $AK_ZBLOCKDIR
