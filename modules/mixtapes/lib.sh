@@ -24,7 +24,7 @@ source $AK_LIBDIR/_ak_gpg
 source $AK_LIBDIR/_ak_zblock
 
 # Should return current playlist, current mixtape and seek time on the mixtape
-_ak_modules_mixtapes_find_now(){
+function _ak_modules_mixtapes_find_now(){
     current_timestamp="$(_ak_datetime_unix)"
     mixtapes_ord=$AK_WORKDIR/mixtapes_ord
     if [ ! -d $mixtapes_ord ]
@@ -157,7 +157,7 @@ _ak_modules_mixtapes_find_now(){
     done
 }
 
-_ak_modules_mixtapes_specs(){
+function _ak_modules_mixtapes_specs(){
     datetime_mask=$(printf '^[0-9]\{8\}_[0-9]\{6\}$' | xxd -p)
     ipfs_mask=$(printf '^Qm[a-zA-Z0-9]\{44\}$' | xxd -p)
     text_dash_underscore_space_mask=$(printf '^[a-zA-Z0-9][a-zA-Z0-9[:space:]\_]\{1,128\}$' | xxd -p -c 64)
@@ -171,7 +171,7 @@ _ak_modules_mixtapes_specs(){
         }' | jq
 }
 
-_ak_modules_mixtapes_add(){
+function _ak_modules_mixtapes_add(){
     if [ ! -z $3 ];
     then
         echo $1
@@ -185,7 +185,7 @@ _ak_modules_mixtapes_add(){
     fi
 }
 
-_ak_modules_mixtapes_main(){
+function _ak_modules_mixtapes_main(){
     echo $MIXTAPE_FILE "by" $MIXTAPE_ARTIST "named as" $MIXTAPE_TITLE
 
     MIXTAPE_IPFS_HASH=$(_ak_ipfs_add $MIXTAPE_FILE)
@@ -207,7 +207,7 @@ EOF
 
 }
 
-_ak_modules_mixtapes_get_local_latest(){
+function _ak_modules_mixtapes_get_local_latest(){
     tempdir=$(_ak_make_temp_directory)
     cd $tempdir
     if [ -z "$1" ]

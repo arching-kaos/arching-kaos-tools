@@ -73,7 +73,7 @@ fi
 TEMP="$(_ak_make_temp_directory)"
 cd $TEMP
 
-_ak_get_zblocks_from_sblock(){
+function _ak_get_zblocks_from_sblock(){
     if [ "$(_ak_sblock_show $1 | jq 'has("zblocks")')" == "true" ]
     then
         mkdir $1 && cd $1
@@ -85,7 +85,7 @@ _ak_get_zblocks_from_sblock(){
     fi
 }
 
-_ak_verify_zblocks_found(){
+function _ak_verify_zblocks_found(){
     if [ -d $1 ]
     then
         cd $1
@@ -119,7 +119,7 @@ _ak_verify_zblocks_found(){
     fi
 }
 
-_ak_balances_from_sblock(){
+function _ak_balances_from_sblock(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
         _ak_log_error "No sblock provided $1"
@@ -155,7 +155,7 @@ _ak_balances_from_sblock(){
     fi
 }
 
-_ak_rewards_from_sblock(){
+function _ak_rewards_from_sblock(){
     if [ ! -z $1 ] && [ -n "$1" ]
     then
         CUR_TARGET="$1"
@@ -191,7 +191,7 @@ _ak_rewards_from_sblock(){
     fi
 }
 
-_ak_sblock_get_previous(){
+function _ak_sblock_get_previous(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
         _ak_log_error "No sblock provided !!"
@@ -207,7 +207,7 @@ _ak_sblock_get_previous(){
     echo -n $PREVIOUS
 }
 
-_ak_balances_calculate(){
+function _ak_balances_calculate(){
     if [ ! -z $1 ] && [ -n "$1" ]
     then
         _ak_log_info "Calculating balance for $1"
@@ -237,7 +237,7 @@ _ak_balances_calculate(){
     fi
 }
 
-_ak_balances_print(){
+function _ak_balances_print(){
     if [ ! -z $1 ] && [ -n "$1" ]
     then
         CUR_TARGET="$1"
@@ -255,7 +255,7 @@ _ak_balances_print(){
     fi
 }
 
-_ak_schain_counting_balances(){
+function _ak_schain_counting_balances(){
     if [ ! -z $1 ] && [ -n "$1" ]
     then
         CUR_TARGET="$1"

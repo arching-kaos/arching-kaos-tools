@@ -489,7 +489,7 @@ function _ak_ipfs_download(){
     fi
 }
 
-_ak_ipfs_install(){
+function _ak_ipfs_install(){
     _ak_log_info "Making temp files"
     pwd > pwd
     mktemp -d > tempassin

@@ -41,7 +41,7 @@ fi
 
 cd $ZMARKDOWNDIR
 
-_ak_modules_markdown_create(){
+function _ak_modules_markdown_create(){
     TEMP="$(_ak_make_temp_directory)"
     cd $TEMP
     export MARKDOWN_FILE="$(_ak_datetime_human)"
@@ -56,7 +56,7 @@ _ak_modules_markdown_create(){
     rm -rf $TEMP
 }
 
-_ak_modules_markdown_index(){
+function _ak_modules_markdown_index(){
     FILES="$(ls -1 $ZMARKDOWNDIR)"
     i=0
     _ak_zchain_extract_cids | sort | uniq > temp
@@ -78,7 +78,7 @@ _ak_modules_markdown_index(){
     rm temp
 }
 
-_ak_modules_markdown_import(){
+function _ak_modules_markdown_import(){
     echo "#TODO"
     if [ ! -z $1 ]
     then
@@ -103,7 +103,7 @@ _ak_modules_markdown_import(){
     exit 224
 }
 
-_ak_modules_markdown_add_from_file(){
+function _ak_modules_markdown_add_from_file(){
     TEMP="$(_ak_make_temp_directory)"
     if [ -f "$1" ]; then
         FILE="$(realpath $1)"
@@ -142,7 +142,7 @@ EOF
     rm -rf $TEMP
 }
 
-_ak_modules_markdown_add(){
+function _ak_modules_markdown_add(){
     TEMP="$(_ak_make_temp_directory)"
     cd $TEMP
     if [ ! -z $1 ] && [ -n "$1" ] && [ -f $ZMARKDOWNDIR/$1 ]
@@ -178,7 +178,7 @@ EOF
     fi
 }
 
-_ak_modules_markdown_read(){
+function _ak_modules_markdown_read(){
     if [ ! -z $1 ] && [ -n "$1" ] && [ "$1" == "local_latest" ]
     then
         _ak_modules_markdown_read_latest_local_markdown
@@ -208,7 +208,7 @@ _ak_modules_markdown_read(){
     rm temp
 }
 
-_ak_modules_markdown_html(){
+function _ak_modules_markdown_html(){
     _ak_zchain_crawl -l 1 $1 > temp
     if [ $? -ne 0 ]
     then
@@ -285,7 +285,7 @@ _ak_modules_markdown_html(){
     rm temp
 }
 
-_ak_modules_markdown_specs(){
+function _ak_modules_markdown_specs(){
     datetime_mask=$(printf '^[0-9]\{8\}_[0-9]\{6\}$' | xxd -p)
     ipfs_mask=$(printf '^Qm[a-zA-Z0-9]\{44\}$' | xxd -p)
     text_mask=$(printf '^[a-zA-Z0-9_\-]\{1,128\}$' | xxd -p)
@@ -299,7 +299,7 @@ _ak_modules_markdown_specs(){
         }' | jq
 }
 
-_ak_modules_markdown_read_latest_local_markdown(){
+function _ak_modules_markdown_read_latest_local_markdown(){
     TEMP="$(_ak_make_temp_directory)"
     cd $TEMP
     if [ -z "$1" ]

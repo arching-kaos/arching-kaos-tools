@@ -49,7 +49,7 @@ else
     _ak_log_info "$ZFILESDIR found!"
 fi
 
-_ak_modules_files_add(){
+function _ak_modules_files_add(){
     CRP="$(pwd)"
     FILENAME="$1"
     main $FILENAME $CRP

@@ -49,7 +49,7 @@ else
     _ak_log_info "ztodosdir found"
 fi
 
-_ak_modules_todos_create(){
+function _ak_modules_todos_create(){
     TEMP="$(_ak_make_temp_directory)"
     cd $TEMP
     export TODOS_FILE="$(_ak_datetime_unix)"
@@ -65,7 +65,7 @@ _ak_modules_todos_create(){
     # rm -rf $TEMP
 }
 
-_ak_modules_todos_index(){
+function _ak_modules_todos_index(){
     FILES="$(ls -1 $ZTODOSDIR)"
     i=0
     for FILE in $FILES
@@ -77,7 +77,7 @@ _ak_modules_todos_index(){
     done
 }
 
-_ak_modules_todos_import(){
+function _ak_modules_todos_import(){
     echo "#TODO"
     if [ ! -z $1 ]
     then
@@ -100,7 +100,7 @@ _ak_modules_todos_import(){
     exit 224
 }
 
-_ak_modules_todos_add(){
+function _ak_modules_todos_add(){
     TEMP="$(_ak_make_temp_directory)"
     cd $TEMP
     if [ -f $1 ]; then

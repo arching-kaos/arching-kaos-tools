@@ -45,7 +45,7 @@ else
     _ak_log_info "zcommentsdir found"
 fi
 
-_ak_modules_comments_create(){
+function _ak_modules_comments_create(){
     if [ ! -z $1 ]
     then
         REFER_TO="$1"
@@ -71,7 +71,7 @@ _ak_modules_comments_create(){
     fi
 }
 
-_ak_modules_comments_index(){
+function _ak_modules_comments_index(){
     FILES="$(ls -1 $ZCOMMENTSDIR)"
     i=0
     for FILE in $FILES
@@ -83,7 +83,7 @@ _ak_modules_comments_index(){
     done
 }
 
-_ak_modules_comments_add(){
+function _ak_modules_comments_add(){
     TEMP="$(_ak_make_temp_directory)"
     cd $TEMP
     if [ -f "$ZCOMMENTSDIR/$1" ]; then

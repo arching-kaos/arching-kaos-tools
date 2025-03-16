@@ -41,35 +41,32 @@ fi
 
 cd $ZNEWSDIR
 
-_ak_modules_news_create(){
+function _ak_modules_news_create(){
     TEMP="$(_ak_make_temp_directory)"
     cd $TEMP
-    cd
-    curpath="$(pwd)"
     export NEWS_FILE="$(_ak_datetime_human)"
     vi $NEWS_FILE
     echo "Renaming..."
     TITLE="$(head -n 1 $NEWS_FILE)"
-    TO_FILE=$NEWS_FILE-$(echo $TITLE | tr '[:upper:]' '[:lower:]' | sed -e 's/ /\_/g' )
+    TO_FILE=$NEWS_FILE-$(echo $TITLE | tr '[:upper:]' '[:lower:]' | sed -e 's/[[:punct:]]/\_/g;s/ /\_/g' )
     IPFS_FILE=$(_ak_ipfs_add $NEWS_FILE)
     mv $NEWS_FILE $ZNEWSDIR/$TO_FILE
-    sed -i -e 's,Qm.*,'"$IPFS_FILE"',g' $ZNEWSDIR/README
     _ak_modules_news_add $TO_FILE
-    cd $ZNEWSDIR
-    # rm -rf $TEMP
+    cd && rm -rf $TEMP
 }
 
-_ak_modules_news_index(){
+function _ak_modules_news_index(){
     FILES="$(ls -1 $ZNEWSDIR)"
+    temp="$(_ak_make_temp_file)"
     i=0
-    _ak_zchain_extract_cids | sort | uniq > temp
+    _ak_zchain_extract_cids | sort | uniq > $temp
     for FILE in $FILES
     do
         DATE="$(echo $FILE | cut -d - -f 1 | awk '{print $1}')"
         TITLE="$(head -n 1 $ZNEWSDIR/$FILE)"
         IPFS_HASH="$(ipfs add -nQ $ZNEWSDIR/$FILE)"
         ONLINE="offzchain"
-        grep "$IPFS_HASH" temp > /dev/null 2>&1
+        grep "$IPFS_HASH" $temp > /dev/null 2>&1
         if [ $? -eq 0 ]
         then
             ONLINE="on-zchain"
@@ -78,10 +75,10 @@ _ak_modules_news_index(){
             "$i" "$ONLINE" "$IPFS_HASH" "$DATE" "$TITLE"
         let i+=1
     done
-    rm temp
+    rm $temp
 }
 
-_ak_modules_news_import(){
+function _ak_modules_news_import(){
     echo "#TODO"
     if [ ! -z $1 ]
     then
@@ -106,7 +103,7 @@ _ak_modules_news_import(){
     exit 224
 }
 
-_ak_modules_news_add_from_file(){
+function _ak_modules_news_add_from_file(){
     TEMP="$(_ak_make_temp_directory)"
     if [ -f "$1" ]; then
         FILE="$(realpath $1)"
@@ -145,7 +142,7 @@ EOF
     rm -rf $TEMP
 }
 
-_ak_modules_news_add(){
+function _ak_modules_news_add(){
     TEMP="$(_ak_make_temp_directory)"
     cd $TEMP
     if [ -f $ZNEWSDIR/$1 ]; then
@@ -180,7 +177,7 @@ EOF
     fi
 }
 
-_ak_modules_news_read(){
+function _ak_modules_news_read(){
     if [ ! -z $1 ] && [ -n "$1" ] && [ "$1" == "local_latest" ]
     then
         _ak_modules_news_read_latest_local_news
@@ -210,7 +207,7 @@ _ak_modules_news_read(){
     rm temp
 }
 
-_ak_modules_news_html(){
+function _ak_modules_news_html(){
     _ak_zchain_crawl -l 1 $1 > temp
     if [ $? -ne 0 ]
     then
@@ -287,7 +284,7 @@ _ak_modules_news_html(){
     rm temp
 }
 
-_ak_modules_news_specs(){
+function _ak_modules_news_specs(){
     datetime_mask=$(printf '^[0-9]\{8\}_[0-9]\{6\}$' | xxd -p)
     ipfs_mask=$(printf '^Qm[a-zA-Z0-9]\{44\}$' | xxd -p)
     text_mask=$(printf '^[a-zA-Z0-9_\-]\{1,128\}$' | xxd -p)
@@ -301,7 +298,7 @@ _ak_modules_news_specs(){
         }' | jq
 }
 
-_ak_modules_news_read_latest_local_news(){
+function _ak_modules_news_read_latest_local_news(){
     TEMP="$(_ak_make_temp_directory)"
     cd $TEMP
     if [ -z "$1" ]

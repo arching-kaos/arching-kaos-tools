@@ -26,7 +26,7 @@ REPOSTORE="$HOME/.arching-kaos/repostore"
 if [ ! -d $BAREDIR ]; then mkdir $BAREDIR; fi
 if [ ! -d $REPODIR ]; then echo "no $REPODIR" && exit; fi
 if [ ! -f $REPOSTORE ]; then touch $REPOSTORE; fi
-_ak_modules_repositories_import(){
+function _ak_modules_repositories_import(){
     REPOS="$(ls -1 $REPODIR)"
     for PROJECT in $REPOS
     do
@@ -49,7 +49,7 @@ _ak_modules_repositories_import(){
     done
 }
 
-_ak_modules_repositories_update(){
+function _ak_modules_repositories_update(){
     if [ ! -z $1 ]
     then
         USING="$1"
@@ -109,7 +109,7 @@ append-if-needed(){
     fi
 }
 
-_ak_modules_repositories_add(){
+function _ak_modules_repositories_add(){
     PROJECT="$1"
     PROJECTDIR="$REPODIR/$PROJECT"
     BAREGITDIR="$BAREDIR/$PROJECT.git"
@@ -136,11 +136,11 @@ _ak_modules_repositories_add(){
     fi
 }
 
-_ak_modules_repositories_index(){
+function _ak_modules_repositories_index(){
     _ak_ipfs_key_list_full | grep -e '\.git'
 }
 
-set-as-profile(){
+function _ak_modules_repositories_set_as_profile(){
     IPFS=$(_ak_ipfs_add $REPOSTORE)
     if [ $? == 0 ]
     then
@@ -150,16 +150,16 @@ set-as-profile(){
     fi
 }
 
-_ak_modules_repositories_publish(){
+function _ak_modules_repositories_publish(){
     if [ ! -z $1 ]
     then
         echo "Filtering for $1..."
         index | grep "$1" > $REPOSTORE
-        set-as-profile
+        _ak_modules_repositories_set_as_profile
     else
         echo "Publishing all..."
         index > $REPOSTORE
-        set-as-profile
+        _ak_modules_repositories_set_as_profile
     fi
 }
 

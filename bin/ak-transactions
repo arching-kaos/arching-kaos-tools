@@ -31,7 +31,7 @@ source $AK_LIBDIR/_ak_ipfs
 source $AK_LIBDIR/_ak_gpg
 source $AK_LIBDIR/_ak_zblock
 
-_ak_modules_transactions_main(){
+function _ak_modules_transactions_main(){
     _ak_log_info "$FROM_ADDRESS to $TO_ADDRESS value sent: $AMOUNT"
     echo "Select an address to send from:"
     select FROM_ADDRESS in $(_ak_gpg_list_secret_keys)

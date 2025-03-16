@@ -48,7 +48,7 @@ else
     _ak_log_info "zreferencesdir found"
 fi
 
-_ak_modules_reference_create(){
+function _ak_modules_reference_create(){
     TEMP="$(_ak_make_temp_directory)"
     cd $TEMP
     export REFERENCEFILE="$(_ak_datetime_unix)"
@@ -74,7 +74,7 @@ EOF
     cd $ZREFERENCESDIR
 }
 
-_ak_modules_reference_index(){
+function _ak_modules_reference_index(){
     FILES="$(ls -1 $ZREFERENCESDIR)"
     i=0
     for FILE in $FILES
@@ -87,7 +87,7 @@ _ak_modules_reference_index(){
     done
 }
 
-_ak_modules_reference_import(){
+function _ak_modules_reference_import(){
     echo "#TODO"
     if [ ! -z $1 ]
     then
@@ -110,7 +110,7 @@ _ak_modules_reference_import(){
     exit 224
 }
 
-_ak_modules_reference_add(){
+function _ak_modules_reference_add(){
     TEMP="$(_ak_make_temp_directory)"
     cd $TEMP
     if [ ! -f $1 ]; then

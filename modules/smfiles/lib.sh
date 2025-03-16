@@ -25,12 +25,12 @@ source $AK_LIBDIR/_ak_zblock
 source $AK_LIBDIR/_ak_smfiles
 source $AK_LIBDIR/_ak_utils
 
-_ak_sm_files_add(){
+function _ak_sm_files_add(){
     FILENAME="$1"
     _ak_sm_files_main $FILENAME $CRD
     cat data | jq -M
 }
-_ak_sm_files_main(){
+function _ak_sm_files_main(){
     FILENAME="$1"
     CRP="$2"
 
@@ -127,11 +127,11 @@ EOF
     fi
 }
 
-_ak_sm_files_index(){
+function _ak_sm_files_index(){
     tail -n1 $AK_WORKDIR/fmp/* | grep '^[abcdef1234567890]' | awk '{ print $2 }'
 }
 
-_ak_sm_files_ls_mapfiles(){
+function _ak_sm_files_ls_mapfiles(){
     cd $AK_WORKDIR/fmp
     for f in `find . -type f | sed -e 's/\.\///g'`
     do
@@ -142,7 +142,7 @@ _ak_sm_files_ls_mapfiles(){
     done
 }
 
-_ak_sm_files_full_index(){
+function _ak_sm_files_full_index(){
     tail -n 1 $AK_WORKDIR/fmp/* | grep '^[abcdef1234567890]'
 }
 

@@ -38,7 +38,7 @@ source $AK_LIBDIR/_ak_log
 source $AK_LIBDIR/_ak_script
 source $AK_LIBDIR/_ak_ipfs
 
-_ak_start_up_sequence(){
+function _ak_start_up_sequence(){
     _ak_ipfs_starter
     _ak_log_rotate
 

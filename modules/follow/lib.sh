@@ -22,7 +22,7 @@ source $AK_LIBDIR/_ak_ipfs
 
 FOLLOWING="$AK_WORKDIR/following"
 
-_ak_follow_follow(){
+function _ak_follow_follow(){
     if [ ! -z $1 ]
     then
         grep $1 $FOLLOWING
@@ -45,7 +45,7 @@ _ak_follow_follow(){
     exit 1
 }
 
-_ak_follow_list(){
+function _ak_follow_list(){
     if [ -f $FOLLOWING ]
     then
         cat $FOLLOWING
@@ -56,7 +56,7 @@ _ak_follow_list(){
     fi
 }
 
-_ak_follow_unfollow(){
+function _ak_follow_unfollow(){
     FOLLOWING="$HOME/.arching-kaos/following"
     fentries="$(cat $FOLLOWING)"
     if [ ! -z $1 ]

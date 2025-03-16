@@ -37,7 +37,7 @@ descriptionString="Cleans ak temp files"
 
 source $AK_LIBDIR/_ak_script
 
-_ak_tmp_cleanup(){
+function _ak_tmp_cleanup(){
     ls -1 /tmp/aktmp* > /dev/null 2>&1
     if [ $? -ne 0 ]
     then

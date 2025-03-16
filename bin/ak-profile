@@ -67,7 +67,7 @@ cd $ZPROFILEDIR
 # The profile settings/configuration is part of the blockchain produced.
 # Hence, we need a specific DATA block that actually has the announcement of a
 # {"key":"value"} pair.
-_ak_modules_profile_show(){
+function _ak_modules_profile_show(){
     if [ ! -z $1 ]
     then
         _ak_log_info "Working with $1"
@@ -80,7 +80,7 @@ _ak_modules_profile_show(){
 
 # This should retrieve a specific value from our profile otherwise it dumps the
 # whole profile values.
-_ak_modules_profile_propget(){
+function _ak_modules_profile_propget(){
     if [ ! -z $1 ]
     then
         if [ ! -f $ZPROFILEDIR/$1 ]
@@ -95,7 +95,7 @@ _ak_modules_profile_propget(){
     fi
 }
 
-_ak_modules_profile_propwrite(){
+function _ak_modules_profile_propwrite(){
     cat > $ZPROPERTY_FILE << EOF
 {
     "$ZPROPERTY_KEY":"${ZPROPERTY_VALUE}"
@@ -114,7 +114,7 @@ EOF
     fi
 }
 
-_ak_modules_profile_propset(){
+function _ak_modules_profile_propset(){
     if [ ! -z $1 ]
     then
         ZPROPERTY_FILE="$ZPROFILEDIR/$1"
@@ -149,7 +149,7 @@ _ak_modules_profile_propset(){
         exit 244
     fi
 }
-_ak_modules_profile_index(){
+function _ak_modules_profile_index(){
     FILES="$(ls -1 $ZPROFILEDIR)"
     i=0
     echo -n "{"
@@ -168,7 +168,7 @@ _ak_modules_profile_index(){
     echo "}"
 }
 
-_ak_modules_profile_import(){
+function _ak_modules_profile_import(){
     if [ ! -z $1 ]
     then
         if [ ! -d $1 ]
@@ -191,7 +191,7 @@ _ak_modules_profile_import(){
 }
 
 # Adds a file as a profile/add ACTION on the zchain.
-_ak_modules_profile_add(){
+function _ak_modules_profile_add(){
     TEMPASSIN="$(_ak_make_temp_directory)"
     cd $TEMPASSIN
     if [ -f $ZPROFILEDIR/$1 ]; then

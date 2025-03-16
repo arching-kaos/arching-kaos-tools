@@ -44,7 +44,7 @@ else
     _ak_log_info "AK_CATEGORIES found"
 fi
 
-_ak_modules_categories_create(){
+function _ak_modules_categories_create(){
     TEMP="$(_ak_make_temp_directory)"
     cd $TEMP
     export NEWS_FILE="$(_ak_datetime_human)"
@@ -58,7 +58,7 @@ _ak_modules_categories_create(){
     _ak_modules_categories_add $AK_CATEGORIES/$TO_FILE
     cd $AK_CATEGORIES
 }
-_ak_modules_categories_index(){
+function _ak_modules_categories_index(){
     FILES="$(ls -1 $AK_CATEGORIES)"
     i=0
     for FILE in $FILES
@@ -70,7 +70,7 @@ _ak_modules_categories_index(){
     done
 }
 
-_ak_modules_categories_import(){
+function _ak_modules_categories_import(){
     echo "#TODO"
     if [ ! -z $1 ]
     then
@@ -92,7 +92,7 @@ _ak_modules_categories_import(){
     fi
     exit 224
 }
-_ak_modules_categories_add(){
+function _ak_modules_categories_add(){
     TEMP="$(_ak_make_temp_directory)"
     cd $TEMP
     if [ -f $1 ]; then

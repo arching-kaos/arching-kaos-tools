@@ -46,14 +46,14 @@ TEMPASSIN="$(_ak_make_temp_directory)"
 cd $TEMPASSIN
 
 
-_ak_modules_folders_add(){
+function _ak_modules_folders_add(){
     CRP="$(pwd)"
     FOLDERNAME="$1"
     _ak_modules_folders_main $FOLDERNAME $CRP
     cat data | jq -M
 }
 
-_ak_modules_folders_main(){
+function _ak_modules_folders_main(){
     FOLDERNAME="$1"
     CRP="$2"
     echo "Adding $FOLDERNAME"
@@ -92,7 +92,7 @@ _ak_modules_folders_main(){
     fi
 }
 
-_ak_modules_folders_title(){
+function _ak_modules_folders_title(){
     echo "$PROGRAM - Folder block creator"
 }
 
