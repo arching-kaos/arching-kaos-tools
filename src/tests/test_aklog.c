@@ -50,6 +50,11 @@ void test_info()
     ak_log_info(__func__, "test message info");
 }
 
+void test_write()
+{
+    ak_log_info(__func__, "test message info");
+}
+
 int main (void)
 {
     test_follow();
@@ -62,5 +67,6 @@ int main (void)
     test_log_message();
     test_rotate();
     test_grep();
+    test_write();
     return 0;
 }

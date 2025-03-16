@@ -5,6 +5,22 @@
 #include <time.h>
 
 #define AK_DEBUG true
+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
+
+int ak_log_write_to_file(char* message)
+{
+    FILE *fp;
+    fp = fopen("/home/kaotisk/.arching-kaos/logs/log", "ab");
+    if (!fp)
+    {
+        perror("fopen");
+        return EXIT_FAILURE;
+    }
+    fwrite(message, strlen(message),1,fp);
+    fwrite("\n", strlen("\n"),1,fp);
+    fclose(fp);
+    return 0;
+}
 
 void ak_log_print_log_line(char* line)
 {
@@ -207,6 +223,7 @@ void ak_log_message(char* program, char* type, char* message)
                 {
                     asprintf(&some_string, "%ld <%s> [%s] %s", ts, program, type, message);
                     ak_log_print_log_line(some_string);
+                    ak_log_write_to_file(some_string);
                     // fprintf(stderr, "%ld <%s> [%s] %s\n", ts, program, type, message);
                 }
             }
