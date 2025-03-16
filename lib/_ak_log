@@ -20,17 +20,24 @@
 
 source $AK_LIBDIR/_ak_utils 2>/dev/null || source ./lib/_ak_utils 2>/dev/null
 
-if [ -n "${AK_WORKDIR}" ]
+if [ -n "${AK_WORKDIR}" ] && [ -d "${AK_WORKDIR}" ]
 then
     export AK_LOGSDIR="$AK_WORKDIR/logs"
     if [ ! -d $AK_LOGSDIR ]
     then
-        mkdir -p $AK_LOGSDIR
-    fi
     export AK_LOGSFILE="$AK_LOGSDIR/log"
-    if [ ! -f $AK_LOGSFILE ]
-    then
-        touch $AK_LOGSFILE
+        if [ -f $AK_LOGSDIR ]
+        then
+            TEMP="$(mktemp)"
+            mv $AK_LOGSDIR $TEMP
+            mkdir -p $AK_LOGSDIR
+            mv $TEMP $AK_LOGSFILE
+            _ak_log_info 'Migration of logs was successful!'
+        else
+            mkdir -p $AK_LOGSDIR
+            touch $AK_LOGSFILE
+            _ak_log_info 'Update was successful!'
+        fi
     fi
 else
     printf "Can't find AK_WORKDIR to work upon.\n"
