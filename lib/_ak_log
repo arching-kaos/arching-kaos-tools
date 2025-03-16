@@ -23,6 +23,19 @@ source $AK_LIBDIR/_ak_utils 2>/dev/null || source ./lib/_ak_utils 2>/dev/null
 export AK_LOGSDIR="$AK_WORKDIR/logs"
 export AK_LOGSFILE="$AK_LOGSDIR/log"
 export AK_LOGTOFILE="no"
+if [ -d $AK_SETTINGS ]
+then
+    if [ ! -d $AK_SETTINGS/logging ]
+    then
+        mkdir -p $AK_SETTINGS/logging
+    fi
+    if [ -f $AK_SETTINGS/logging/logToFile ]
+    then
+        export AK_LOGTOFILE="$(cat $AK_SETTINGS/logging/logToFile)"
+    else
+        echo -n $AK_LOGTOFILE > $AK_SETTINGS/logging/logToFile
+    fi
+fi
 
 if [ -n "${AK_WORKDIR}" ] && [ -d "${AK_WORKDIR}" ]
 then
