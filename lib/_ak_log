@@ -20,12 +20,14 @@
 
 source $AK_LIBDIR/_ak_utils 2>/dev/null || source ./lib/_ak_utils 2>/dev/null
 
+export AK_LOGSDIR="$AK_WORKDIR/logs"
+export AK_LOGSFILE="$AK_LOGSDIR/log"
+export AK_LOGTOFILE="no"
+
 if [ -n "${AK_WORKDIR}" ] && [ -d "${AK_WORKDIR}" ]
 then
-    export AK_LOGSDIR="$AK_WORKDIR/logs"
     if [ ! -d $AK_LOGSDIR ]
     then
-    export AK_LOGSFILE="$AK_LOGSDIR/log"
         if [ -f $AK_LOGSDIR ]
         then
             TEMP="$(mktemp)"
@@ -115,13 +117,16 @@ function _ak_log_message(){
             if [ ! -z "$*" ] && [ -n "$*" ]
             then
                 msg="$*"
-                echo "$TS" "<$prg>" "[$tp]" "$msg" >> $AK_LOGSFILE
+                if [ ! -z $AK_LOGTOFILE ] && [ -n "$AK_LOGTOFILE" ] && [ "$AK_LOGTOFILE" == "yes" ]
+                then
+                    echo "$TS" "<$prg>" "[$tp]" "$msg" >> $AK_LOGSFILE
+                fi
                 if [ ! -z $AK_DEBUG ] && [ -n "$AK_DEBUG" ] && [ "$AK_DEBUG" == "yes" ]
                 then
                     _ak_log_print_log_line "$TS <$prg> [$tp] $msg" >&2
                 fi
             else
-                echo "$TS" "<$prg>" "[ERROR]" "No message" >> $AK_LOGSFILE
+                    echo "$TS" "<$prg>" "[ERROR]" "No message" >> $AK_LOGSFILE
                 if [ "$AK_DEBUG" == "yes" ]
                 then
                     echo "$TS" "<$prg>" "[ERROR]" "No message" >&2
@@ -129,7 +134,10 @@ function _ak_log_message(){
                 return 1
             fi
         else
-            echo "$TS" "<$prg>" "[ERROR]" "No type and message" >> $AK_LOGSFILE
+            if [ ! -z $AK_LOGTOFILE ] && [ -n "$AK_LOGTOFILE" ] && [ "$AK_LOGTOFILE" == "yes" ]
+            then
+                echo "$TS" "<$prg>" "[ERROR]" "No type and message" >> $AK_LOGSFILE
+            fi
             if [ "$AK_DEBUG" == "yes" ]
             then
                 echo "$TS" "<$prg>" "[ERROR]" "No type and message" >&2
@@ -137,7 +145,10 @@ function _ak_log_message(){
             return 1
         fi
     else
-        echo "$TS" "<$(basename $0)>" "[ERROR]" "No arguments given" >> $AK_LOGSFILE
+        if [ ! -z $AK_LOGTOFILE ] && [ -n "$AK_LOGTOFILE" ] && [ "$AK_LOGTOFILE" == "yes" ]
+        then
+            echo "$TS" "<$(basename $0)>" "[ERROR]" "No arguments given" >> $AK_LOGSFILE
+        fi
         if [ "$AK_DEBUG" == "yes" ]
         then
             echo "$TS" "<$(basename $0)>" "[ERROR]" "No arguments given" >&2
