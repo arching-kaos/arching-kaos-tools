@@ -6,6 +6,7 @@
 
 const { spawn } = require('child_process');
 const config = require("../../config.js");
+const checkIfAllowedIP = require('../../lib/checkIfAllowedIP/index.js');
 
 module.exports = (req, res) => {
     var args = req.url.split("/");
@@ -14,8 +15,7 @@ module.exports = (req, res) => {
     {
         ip = args[3];
     }
-    var test = /^fc[0-9a-z]{1,2}:([0-9a-z]{1,4}:){1,6}[0-9a-z]{1,4}/
-    if (test.test(ip))
+    if (checkIfAllowedIP(ip))
     {
         const command = spawn("curl", ["--retry-max-time","3","-s",`http://[${ip}]:8610/v0/peers`]);
         var buffer = "";

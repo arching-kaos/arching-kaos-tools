@@ -14,6 +14,7 @@ const getRemoteNodeInfo = require('./routes/getRemoteNodeInfo/index.js');
 const getRemotePeers = require('./routes/getRemotePeers/index.js');
 
 const akLogMessage = require('./lib/akLogMessage');
+const checkIfAllowedIP = require('./lib/checkIfAllowedIP/index.js');
 akLogMessage('INFO', 'akLogMessage loaded');
 
 const serverOptions = { keepAliveTimeout: 60000 };
@@ -97,14 +98,6 @@ function processMethod(req, res)
         case 'POST': postRoutes(req, res); break;
         default: notImplemented(req, res);
     }
-}
-
-function checkIfAllowedIP(address)
-{
-    var test_cjdns = /^fc[0-9a-z]{1,2}:([0-9a-z]{1,4}:){1,6}[0-9a-z]{1,4}/
-    var test_yggdrasil = /^2[0-9a-z]{1,2}:([0-9a-z]{1,4}:){1,6}[0-9a-z]{1,4}/
-    var test_yggdrasil_sub = /^3[0-9a-z]{1,2}:([0-9a-z]{1,4}:){1,6}[0-9a-z]{1,4}/
-    return (test_cjdns.test(address) || test_yggdrasil.test(address) || test_yggdrasil_sub.test(address)) ? true : false;
 }
 
 function requestParser(req, res)
