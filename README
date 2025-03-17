@@ -146,8 +146,8 @@ Next things to come are:
 - [x] - Clean up installation and filesystem usage
 - [x] - Log rotate to gzip archives
 - [ ] - Filters for log searching for IPFS hashes or names
-- [ ] - Use of IPFS file system to store/pin sub chains, previous chains or
-        other chains
+- [ ] - ~~Use of IPFS file system to store/pin sub chains, previous chains or~~
+        ~~other chains~~
 
 Concepts under thought
 ----------------------
