@@ -617,6 +617,21 @@ function _ak_fs_net_cat(){
     fi
 }
 
+function _ak_fs_net_get(){
+    if [ -z $1 ]
+    then
+        echo "Please provide a SHA512 hash"
+        exit 1
+    fi
+    echo $1 | grep "[0123456789abcdef]\{128\}" > /dev/null 2>&1
+    if [ $? -ne 0 ]
+    then
+        echo "Look, I asked for a SHA512 hash, please try again"
+        exit 1
+    fi
+    _ak_fs_net_cat $1 $2 > $3
+}
+
 function _ak_fs_from_map_net_get_original_hash(){
     TEMPDIR=$(_ak_make_temp_directory)
     cd $TEMPDIR
@@ -649,6 +664,44 @@ function _ak_fs_from_map_net_get_original_hash(){
                     exit 1
                 fi
                 cat ${reply} | head -n 1 | awk '{print $1}'
+                break
+            fi
+        done
+    fi
+}
+
+function _ak_fs_from_map_net_get_original_filename(){
+    TEMPDIR=$(_ak_make_temp_directory)
+    cd $TEMPDIR
+    if _ak_fs_verify_input_is_hash "$1"
+    then
+        _ak_he_list_peers | while read peer
+        do
+            _ak_log_debug "Trying $(_ak_he_url_request_map_hash_from_peer ${peer} $1)..."
+            curl -s --connect-timeout 3 -o ${TEMPDIR}/peer_${peer}.reply $(_ak_he_url_request_map_hash_from_peer ${peer} $1)
+        done
+        find . -type f | while read reply
+        do
+            cat ${reply} | jq >/dev/null 2>&1
+            if [ $? -eq 0 ]
+            then
+                _ak_log_error "Found error in reply: $(cat ${reply} | jq -r '.error')"
+            else
+                if [ $(cat ${reply} | wc -l) -ne 2 ]
+                then
+                    _ak_log_error "${reply} is not two lines long"
+                    exit 1
+                else
+                    _ak_log_info "${reply} is two lines long"
+                fi
+                if [ $(cat ${reply} | grep '^[0-9a-z]\{128\}  ' | wc -l) -eq 2 ]
+                then
+                    _ak_log_info "${reply} contains two hashes"
+                else
+                    _ak_log_error "${reply} doesn't contain the appropriate info"
+                    exit 1
+                fi
+                cat ${reply} | head -n 1 | awk '{print $2}'
                 break
             fi
         done
@@ -690,6 +743,13 @@ function _ak_fs_from_map_net_get_root_hash(){
                 break
             fi
         done
+    fi
+}
+
+function _ak_fs_net_get_from_map_hash(){
+    if _ak_fs_verify_input_is_hash "$1"
+    then
+        _ak_fs_net_get `_ak_fs_from_map_net_get_root_hash $1` `_ak_fs_from_map_net_get_original_hash $1` `_ak_fs_from_map_get_original_filename $1`
     fi
 }
 
