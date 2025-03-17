@@ -188,7 +188,7 @@ function _ak_fs_import(){
     done
     if [ -f level.1.map ]
     then
-        sha512sum level.1.map
+        # sha512sum level.1.map
         sha512sum level.1.map >> $TEMPDIR/3rd_gen_map
     else
         ak_log_error "Got error an error, level.1.map is missing"
@@ -428,7 +428,7 @@ function _ak_net_try_leaf(){
                             if [ "$(cat $1 | grep '^[0-9a-z]\{128\}$' | wc -l)" == 2 ]
                             then
                                 _ak_log_info "File has two lines which are 2 hashes"
-                                cat $1
+                                # cat $1
                                 cp $1 ${AK_LEAFSDIR}/$1
                                 exit
                                 break
@@ -441,7 +441,7 @@ function _ak_net_try_leaf(){
                             rm $1
                         fi
                     else
-                        cat $1 | jq >&2
+                        # cat $1 | jq >&2
                         _ak_log_warning "File $1 doesn't match expected hash: $(sha512sum $1 | awk '{print $1}')"
                         rm $1
                     fi
@@ -476,7 +476,7 @@ function _ak_net_try_chunk(){
                         if [ "$(cat $1 | grep -v '^[-A-Za-z0-9+/]*=\{0,3\}$')" == "" ]
                         then
                             _ak_log_info "File is base64"
-                            cat $1
+                            # cat $1
                             cp $1 ${AK_CHUNKSDIR}/$1
                             exit
                             break
@@ -485,7 +485,7 @@ function _ak_net_try_chunk(){
                             rm $1
                         fi
                     else
-                        cat $1 | jq >&2
+                        # cat $1 | jq >&2
                         _ak_log_warning "File $1 doesn't match expected hash: $(sha512sum $1 | awk '{print $1}')"
                         rm $1
                     fi
