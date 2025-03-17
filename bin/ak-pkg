@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+###
+### arching-kaos-tools
+### Tools to interact and build an Arching Kaos Infochain
+### Copyright (C) 2021 - 2025  kaotisk
+###
+### This program is free software: you can redistribute it and/or modify
+### it under the terms of the GNU General Public License as published by
+### the Free Software Foundation, either version 3 of the License, or
+### (at your option) any later version.
+###
+### This program is distributed in the hope that it will be useful,
+### but WITHOUT ANY WARRANTY; without even the implied warranty of
+### MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+### GNU General Public License for more details.
+###
+### You should have received a copy of the GNU General Public License
+### along with this program.  If not, see <http://www.gnu.org/licenses/>.
+###
+##
+## Brief description
+##
+## Usage:
+##
+##    -h, --help                           Prints this help message
+##    --make-releases-from-local           Makes releases from all local installation's module
+##    --make-release-from-local            Makes release from a local installation's module
+##    --install-from-zblock <zblock>       Installs from a zblock
+##    --install-from-akfs <maphash>        Installs from an AKFS map
+##    --uninstall                          Uninstalls a module selected from a menu
+##
+fullprogrampath="$(realpath $0)"
+PROGRAM=$(basename $0)
+descriptionString="Quick description"
+
+# At least these
+source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_pkg
+source $AK_LIBDIR/_ak_script
+
+
+# Flags to run
+if [ ! -z $1 ]
+then
+    case $1 in
+        -h | --help) _ak_usage; exit;;
+        --make-releases-from-local) shift; _ak_pkg_all_modules_make_releases_from_local_installation; exit;;
+        --make-release-from-local) _ak_pkg_all_modules_make_release_from_local_installation $1; exit;;
+        --install-from-zblock) shift; _ak_pkg_install_from_zblock $1; exit;;
+        --install-from-akfs) shift; _ak_pkg_install_from_akfsmap $1; exit;;
+        --uninstall) _ak_pkg_uninstall; exit;;
+        * ) _ak_usage;;
+    esac
+else _ak_usage
+fi

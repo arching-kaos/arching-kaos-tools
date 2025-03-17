@@ -1,0 +1,177 @@
+#!/usr/bin/env bash
+###
+### arching-kaos-tools
+### Tools to interact and build an Arching Kaos Infochain
+### Copyright (C) 2021 - 2025  kaotisk
+###
+### This program is free software: you can redistribute it and/or modify
+### it under the terms of the GNU General Public License as published by
+### the Free Software Foundation, either version 3 of the License, or
+### (at your option) any later version.
+###
+### This program is distributed in the hope that it will be useful,
+### but WITHOUT ANY WARRANTY; without even the implied warranty of
+### MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+### GNU General Public License for more details.
+###
+### You should have received a copy of the GNU General Public License
+### along with this program.  If not, see <http://www.gnu.org/licenses/>.
+###
+
+source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_script
+source $AK_LIBDIR/_ak_fs
+source $AK_LIBDIR/_ak_gpg
+source $AK_LIBDIR/_ak_zblock
+
+function _ak_pkg_all_modules_make_release_from_local_installation(){
+    outdir="$(pwd)"
+    find $AK_MODULESDIR -type l | xargs ls -l  | rev | cut -d ' ' -f 1 | rev | while read mod
+    do
+        mod_root="$(echo $mod | rev | cut -d '/' -f 2- | rev)"
+        mod_name="$(basename $mod)"
+        cd ${mod_root}/${mod_name}
+        if [ ! -f version ]
+        then
+            echo -n 'v0.0.0' > version
+        fi
+        mod_version="$(cat version)"
+        if [ ! -f ${outdir}/${mod_name}-${mod_version}.tar.gz ]
+        then
+            tar cfz ${outdir}/${mod_name}-${mod_version}.tar.gz *
+        fi
+    done
+}
+
+function _ak_pkg_all_modules_make_release_from_local_installation(){
+    outdir="$(pwd)"
+    select mod in $(find $AK_MODULESDIR -type l | xargs ls -l  | rev | cut -d ' ' -f 1 | rev | tr '\n' ' ') # | while read mod
+    do
+        mod_root="$(echo $mod | rev | cut -d '/' -f 2- | rev)"
+        mod_name="$(basename $mod)"
+        cd ${mod_root}/${mod_name}
+        if [ ! -f version ]
+        then
+            echo -n 'v0.0.0' > version
+        fi
+        mod_version="$(cat version)"
+        outfile="${mod_name}-${mod_version}.tar.gz"
+        fout="${outdir}/${outfile}"
+        if [ ! -f ${fout} ]
+        then
+            tar cfz ${fout} *
+            cd ${outdir}
+            _ak_gpg_sign_detached ${outfile}.asc ${outfile}
+            akfsmap="$(_ak_fs_import ${outfile})"
+            akfsmapsig="$(_ak_fs_import ${outfile}.asc)"
+            cat > data << EOF
+{
+    "package":"$mod_name",
+    "version":"$mod_version",
+    "akfsmap":"$akfsmap",
+    "detach":"$akfsmapsig"
+}
+EOF
+            _ak_zblock_pack pkg/add data
+        else
+            tfile="$(_ak_make_temp_file).tar.gz"
+            tar cfz ${tfile} *
+            hasht="$(sha512sum ${tfile} | cut -d ' ' -f 1)"
+            hashf="$(sha512sum ${fout} | cut -d ' ' -f 1)"
+            if [ "$hashf" != "$hasht" ]
+            then
+                _ak_log_warning "Please manually pick-up your archive from ${tfile} or delete the copy on your directory and rerun."
+                exit 5
+            else
+                _ak_log_info "You already have latest release"
+                exit 0
+            fi
+        fi
+        break
+    done
+}
+
+function _ak_pkg_install_from_akfsmap(){
+    TEMP="$(_ak_make_temp_directory)"
+    cd $TEMP
+    filename="$(_ak_fs_from_map_net_get_original_filename $1)"
+    _ak_fs_net_get_from_map_hash $1
+    module_name="$(echo -n $filename | cut -d '-' -f 1)"
+    module_version="$(echo -n $filename | sed -e 's/\.tar\.gz//g' | rev | cut -d '-' -f 1 | rev)"
+    if [ -d $AK_MODULESDIR/$module_name ] || [ -L $AK_MODULESDIR/$module_name ]
+    then
+        _ak_log_error "$module_name seems already installed"
+        if [ -f $AK_MODULESDIR/$module_name/version ]
+        then
+            imv=$(cat $AK_MODULESDIR/$module_name/version)
+            if [ "$filename" == "${module_name}-${imv}.tar.gz" ]
+            then
+                _ak_log_debug "and in latest version: ${imv}"
+                exit 1
+            else
+                _ak_log_debug "version mismatch: attempted to install $module_version but found $imv installed"
+                exit 1
+            fi
+        fi
+    else
+        _ak_log_error "$module_name doesn't seem installed"
+        mkdir -p $AK_MODULESDIR/$module_name
+        if [ $? -ne 0 ]
+        then
+            _ak_log_error "Something went wrong when making directory"
+            exit 1
+        fi
+        tar -C $AK_MODULESDIR/$module_name -xf $TEMP/$filename
+        if [ $? -ne 0 ]
+        then
+            _ak_log_error "$TEMP Something went wrong while extracting $filename"
+            exit 1
+        fi
+        _ak_log_info "$filename was installed successfully!"
+        _ak_log_info "Enter: ak -m $module_name --help for help"
+        rm -rf $TEMP
+        exit 0
+    fi
+    exit 224
+}
+
+function _ak_pkg_install_from_zblock(){
+    if [ ! -z $1 ] && [ -n "$1" ]
+    then
+        tempzblock="$(_ak_make_temp_file)"
+        _ak_zblock_show $1 | jq > $tempzblock
+        if [ $? -ne 0 ]
+        then
+            _ak_log_error "Something must happened wrong"
+            exit 1
+        fi
+        tzmod="$(cat $tempzblock|jq -r '.module')"
+        tzdata="$(cat $tempzblock|jq -r '.data')"
+        tzakfsmap="$(cat $tempzblock|jq -r '.'$tzdata'.akfsmap')"
+        _ak_pkg_install_from_akfsmap $tzakfsmap
+    else
+        _ak_log_error "No zblock hash provided"
+        exit 1
+    fi
+}
+
+function _ak_pkg_uninstall(){
+    select x in $(ls -1 $AK_MODULESDIR | tr '\n' ' ')
+    do
+        if [ -n "$x" ]
+        then
+            if [ -d $AK_MODULESDIR/$x ] || [ -L $AK_MODULESDIR/$x ]
+            then
+                _ak_log_info "Removing module $x..."
+                rm -rf $AK_MODULESDIR/$x
+                if [ $? -ne 0 ]
+                then
+                    _ak_log_error "Failed to remove module $x"
+                    exit 1
+                fi
+                _ak_log_info "$x module was uninstalled!"
+            fi
+            break
+        fi
+    done
+}
