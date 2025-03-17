@@ -24,12 +24,13 @@
 ##
 ##    -h, --help                                Prints this help message
 ##    --add, --import <file>                    Adds/Imports a file to the AKFS system
-##    --get, --export <hash> <output file>      Exports a file from the AKFS system
-##    --cat <hash>                              Concatenates from given hash
+##    --get, --export <roothash> <output file>  Exports a file from the AKFS system
+##    --cat <roothash>                          Concatenates from given hash
 ##    --list                                    Lists names and roots available
-##    --net-cat-from-map                        Concatenates from map via the network
-##    --cfm <hash map>                          Concatenates from map
-##    --gfm <hash map>                          Get file from map
+##    --net-cat-from-map <maphash>              Concatenates from map via the network
+##    --net-get-from-map <maphash>              Downloads from map via the network
+##    --cfm <maphash>                           Concatenates from map
+##    --gfm <maphash>                           Get file from map
 ##
 fullprogrampath="$(realpath $0)"
 PROGRAM=$(basename $0)
