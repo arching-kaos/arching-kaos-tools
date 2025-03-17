@@ -24,6 +24,7 @@ source $AK_LIBDIR/_ak_utils
 source $AK_LIBDIR/_ak_gpg
 source $AK_LIBDIR/_ak_html
 source $AK_LIBDIR/_ak_ipfs
+source $AK_LIBDIR/_ak_fs
 
 if [ ! -d $AK_WORKDIR/ipfs ]
 then
@@ -52,13 +53,33 @@ function _ak_data_expand(){
         if [ $? -ne 0 ]
         then
             _ak_log_error "_ak_data_expand: No 'ipfs' field in $1"
-            exit 1
+            _ak_log_debug "Looking for akfsmap"
+            _ak_ipfs_cat $1 | jq | grep akfsmap > /dev/null
+            if [ $? -ne 0 ]
+            then
+                _ak_log_error "_ak_data_expand: No 'akfsmap' field in $1"
+                exit 1
+            fi
+            is_data_akfs="yes"
+        else
+            is_data_akfs="no"
         fi
-        DATA="$(_ak_ipfs_cat $1 | jq -r '.ipfs')" #| grep ipfs | sed -e 's/"ipfs": "//g; s/[",]//g; s/ //g')"
-        if [ $? -ne 0 ]
+        if [ "${is_data_akfs}" == "yes" ]
         then
-            _ak_log_error "Error while extracting data from JSON for $1"
-            exit 1
+            DATA=$(_ak_ipfs_cat $1 | jq -r '.akfsmap')
+            if [ $? -ne 0 ]
+            then
+                _ak_log_error "Error while extracting data (akfsmap) from JSON for $1"
+                exit 1
+            fi
+        else
+            DATA="$(_ak_ipfs_cat $1 | jq -r '.ipfs')" #| grep ipfs | sed -e 's/"ipfs": "//g; s/[",]//g; s/ //g')"
+            if [ $? -ne 0 ]
+            then
+                _ak_log_error "Error while extracting data (ipfs) from JSON for $1"
+                exit 1
+            fi
+            # _ak_log_debug "DATA of $1 is: [$DATA]"
         fi
         _ak_ipfs_cat $1 | jq | grep detach > /dev/null
         if [ $? -ne 0 ]
@@ -86,37 +107,82 @@ function _ak_data_expand(){
             _ak_log_error "Could not import GPG key: $gpg"
             exit 1
         fi
-        _ak_ipfs_get $DETACH > /dev/null 2>&1
-        if [ $? -ne 0 ]
+        _ak_log_debug "GPG key from $gpg was imported!"
+        if [ "${is_data_akfs}" == "yes" ]
         then
-            _ak_log_error "Error while getting signature: $DETACH for data: $DATA"
-            exit 1
+            _ak_log_info "DATA is on AKFS"
+            _ak_fs_net_get_from_map_hash $DETACH
+            if [ $? -ne 0 ]
+            then
+                _ak_log_error "Failed to download $DETACH"
+                exit 1
+            fi
+            detach_filename="$(_ak_fs_from_map_net_get_original_filename $DETACH)"
+            _ak_log_info "$DETACH downloaded @ $detach_filename (we are in: $(pwd))"
+            if [ ! -f $TEMP/$detach_filename ]
+            then
+                _ak_log_error "File downloaded from akfs wasn't found: $DETACH $detach_filename"
+                exit 1
+            fi
+            _ak_log_debug "detach filename is $detach_filename"
+            mv $TEMP/$detach_filename $TEMP/$DETACH
+            if [ ! -f $TEMP/$DETACH ]
+            then
+                _ak_log_error "$DETACH was downloaded but not found"
+                exit 1
+            fi
+            mv $TEMP/$DETACH $TEMP/$DATA.asc
+        else
+            _ak_ipfs_get $DETACH > /dev/null 2>&1
+            if [ $? -ne 0 ]
+            then
+                _ak_log_error "Error while getting signature: $DETACH for data: $DATA"
+                exit 1
+            fi
+            _ak_log_debug "$DETACH was downloaded"
+            if [ ! -f $AK_IPFS_ARTIFACTS/$DETACH ]
+            then
+                _ak_log_error "$DETACH was downloaded but not found"
+                exit 1
+            fi
+            ln -s $AK_IPFS_ARTIFACTS/$DETACH $TEMP/$DATA.asc
         fi
-        if [ ! -f $AK_IPFS_ARTIFACTS/$DETACH ]
-        then
-            _ak_log_error "$DETACH was downloaded but not found"
-            exit 1
-        fi
-        ln -s $AK_IPFS_ARTIFACTS/$DETACH $TEMP/$DATA.asc
         _ak_log_debug "DATA_SIGNATURE $DETACH downloaded"
-        _ak_ipfs_get $DATA > /dev/null 2>&1
-        if [ $? -ne 0 ]
+        _ak_log_info "Gonna get $DATA..."
+        if [ "${is_data_akfs}" == "yes" ]
         then
-            _ak_log_error "Error while getting data: $DATA"
-            exit 1
+            _ak_fs_net_cat_from_map_hash $DATA > $TEMP/$DATA
+            if [ $? -ne 0 ]
+            then
+                _ak_log_error "Failed to download $DATA"
+                exit 1
+            fi
+            if [ ! -f $TEMP/$DATA ]
+            then
+                _ak_log_error "$DATA was downloaded but not found"
+                exit 1
+            fi
+        else
+            _ak_ipfs_get $DATA > /dev/null 2>&1
+            if [ $? -ne 0 ]
+            then
+                _ak_log_error "Error while getting data: $DATA"
+                exit 1
+            fi
+            ln -s $AK_IPFS_ARTIFACTS/$DATA $TEMP/$DATA
         fi
         _ak_log_debug "DATA $DATA downloaded"
-        _ak_gpg_verify_signature $TEMP/$DATA.asc $AK_IPFS_ARTIFACTS/$DATA # > /dev/null 2>&1
+        _ak_gpg_verify_signature $TEMP/$DATA.asc $TEMP/$DATA # > /dev/null 2>&1
         if [ $? -ne 0 ]
         then
-            _ak_log_error "Error while verifying signature for $DATA [ $AK_IPFS_ARTIFACTS/$DATA ] against $DETACH [ $TEMP/$DATA.asc ]"
+            _ak_log_error "Error while verifying signature for $DATA [ $TEMP/$DATA ] against $DETACH [ $TEMP/$DATA.asc ]"
             exit 1
         fi
         # ln -s $AK_IPFS_ARTIFACTS/$DATA $AK_WORKDIR/ipfs
-        _ak_log_info "DATA_SIGNATURE $DATA_SIGNATURE verified"
+        _ak_log_info "DATA_SIGNATURE $DETACH verified"
         echo -n '"data":"'$1'","'$1'":'$(_ak_ipfs_cat $1|jq -M -c)','
         cd
-        # rm -rf $TEMP
+        rm -rf $TEMP
     else
         _ak_log_error "_ak_data_expand HASH GPG"
         exit 1
