@@ -364,7 +364,7 @@ function _ak_fs_from_map_get_original_filename(){
     then
         if [ -f "$AK_MAPSDIR/$1" ]
         then
-            cat $AK_MAPSDIR/$1 | tr '\n' ' ' | awk '{ print $2 }'
+            cat $AK_MAPSDIR/$1 | sed -e 's/  / /g;' | tr '\n' ' ' | awk '{ print $2 }'
         else
             _ak_log_error "Map $1 was not found"
         fi
