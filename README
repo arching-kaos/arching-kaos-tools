@@ -192,6 +192,8 @@ Modules
  - roadmap                  PROTO Adds a roadmap to the ZCHAIN
  - todos                    PROTO Adds todo list to the ZCHAIN
  - follow                   PROTO Follow IPNS keys of ZCHAIN for changes
+ - encrypted                    # Encrypts data and publishes to ZCHAIN
+ - markdown                     # Adds markdown documents to ZCHAIN
 
 PROTO refers to a prototype implementation of the module
 Read more at the `./MODULES` file
@@ -204,19 +206,42 @@ Experimental
 
 Libraries
 ---------
- - lib/_ak_ipfs
- - lib/_ak_fs
- - lib/_ak_gpg
- - lib/_ak_newline
- - lib/_ak_network
- - lib/_ak_script
- - lib/_ak_log
+ - lib/_ak_checks
+ - lib/_ak_cjdns
+ - lib/_ak_coin
+ - lib/_ak_sblock
+ - lib/_ak_schain
  - lib/_ak_smfiles
+ - lib/_ak_wallet
+ - lib/_ak_network_stellar
+ - lib/_ak_network_ipfs
+ - lib/_ak_sh
+ - lib/_ak_html
+ - lib/_ak_network
+ - lib/_ak_network_cjdns
+ - lib/_ak_config
+ - lib/_ak_node
+ - lib/_ak_irc
+ - lib/_ak_maintainance
+ - lib/_ak_script
+ - lib/_ak_fm
+ - lib/_ak_yggdrasil
+ - lib/_ak_hash_exchange
+ - lib/_ak_zchain
+ - lib/_ak_network_yggdrasil
+ - lib/_ak_utils
+ - lib/_ak_ipfs
+ - lib/_ak_settings
+ - lib/_ak_gpg
+ - lib/_ak_fs
+ - lib/_ak_pkg
+ - lib/_ak_zblock
+ - lib/_ak_log
 
-IPFS Wrappers
--------------
- - ak-ipfs-starter
- - ak-ipfs
+Wrappers
+--------
+ - `ak-ipfs -r`
+ - `ak-gpg -r`
 
 Deprecated
 ----------
@@ -302,26 +327,23 @@ variable
 ### Connect to networks ( `ak network` )
 ```console
 $ ak network
-ak-network - AK Nettool
-=======================
-
-Network tools
-
-Usage:
-
-   -h, --help                           Prints this help message
-
-   -c, --connect [ipfs|cjdns]           Connect to network(s)
-
-   -p, --peers [ipfs|cjdns|stellar]     Outputs peers found
-
-   -s, --scan [ipfs|cjdns|stellar]      Scan network(s) for peers
-
-Bonus: CJDNS network scanning flags
-
-   -s, --scan cjdns [-w|--whole]        Scan using HIA's knowledge
-
-   -s, --scan cjdns [-d|--dump]         Scan using CJDNS' dumpLinks (default)
+# ak-network - AK Nettool
+# =======================
+#
+# Network tools
+#
+# Usage:
+#
+#    -h, --help                                     Prints this help message
+#    -c, --connect [ipfs|cjdns]                     Connect to network(s)
+#    -p, --peers [ipfs|cjdns|stellar|yggdrasil]     Outputs peers found
+#    -s, --scan [ipfs|cjdns|stellar|yggdrasil]      Scan network(s) for peers
+#
+# Bonus: CJDNS network scanning modes
+#
+#    -s, --scan cjdns [-w|--whole]        Scan using HIA's knowledge
+#    -s, --scan cjdns [-d|--dump]         Scan using CJDNS' dumpLinks (default)
+#
 ```
 
 FS tools
