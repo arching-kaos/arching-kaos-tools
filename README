@@ -169,6 +169,7 @@ Utilities
  - ak-gpg                  # Return your GPG key as IPFS CID
  - ak-network              # Network Tools (connect to, scan for, dump peers)
  - ak-node-info            # Returns IPFS CID or IPNS key for your online config
+ - ak-pkg                  # Package manager
  - ak-sblock               # sblock tools
  - ak-schain               # schain tools
  - ak-zblock               # zblock tools
@@ -329,16 +330,43 @@ FS tools
 
 ```bash
 $ ak fs --help
-
-Tools to add, get and cat files to/from the Arching Kaos File System
-
-Usage:
-
-   -h, --help                                Prints this help message
-
-   --add, --import <file>                    Adds/Imports a file to the AKFS system
-
-   --get, --export <hash> <output file>      Exports a file from the AKFS system
-
-   --cat <hash>                              Concatenates from given hash
+# ak-fs - AKFS tools
+# ==================
+#
+# Tools to add, get and cat files to/from the Arching Kaos File System
+#
+# Usage:
+#
+#    -h, --help                                Prints this help message
+#    --add, --import <file>                    Adds/Imports a file to the AKFS system
+#    --get, --export <roothash> <output file>  Exports a file from the AKFS system
+#    --cat <roothash>                          Concatenates from given hash
+#    --list                                    Lists names and roots available
+#    --net-cat-from-map <maphash>              Concatenates from map via the network
+#    --net-get-from-map <maphash>              Downloads from map via the network
+#    --cfm <maphash>                           Concatenates from map
+#    --gfm <maphash>                           Get file from map
+#
 ```
+
+Package manager
+---------------
+ - ak-pkg
+
+```bash
+$ ak pkg --help
+# ak-pkg - Package Manager
+# ========================
+#
+# Manager of packages that can be installed and run as modules invoking the
+# `ak -m <module>` sequence.
+#
+# Usage:
+#
+#    -h, --help                           Prints this help message
+#    --make-releases-from-local           Makes releases from all local installation's module
+#    --make-release-from-local            Makes release from a local installation's module
+#    --install-from-zblock <zblock>       Installs from a zblock
+#    --install-from-akfs <maphash>        Installs from an AKFS map
+#    --uninstall                          Uninstalls a module selected from a menu
+#

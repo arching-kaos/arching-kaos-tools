@@ -18,7 +18,8 @@
 ### along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 ##
-## Brief description
+## Manager of packages that can be installed and run as modules invoking the
+## `ak -m <module>` sequence.
 ##
 ## Usage:
 ##
@@ -31,7 +32,7 @@
 ##
 fullprogrampath="$(realpath $0)"
 PROGRAM=$(basename $0)
-descriptionString="Quick description"
+descriptionString="Package Manager"
 
 # At least these
 source $AK_LIBDIR/_ak_log
