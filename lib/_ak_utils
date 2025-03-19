@@ -33,6 +33,10 @@ function _ak_datetime_human_date_only(){
     date -u +%Y%m%d
 }
 
+function _ak_datetime_human_date_only_yesterday(){
+    date --date=yesterday -u +%Y%m%d 2>/dev/null || date -v -1d -u +%Y%m%d 2>/dev/null
+}
+
 function _ak_datetime_unix_to_human(){
     if [ ! -z $1 ] && [ -n "$1" ] && [ "$(echo $1 | sed -e 's/[0-9]\{10\}//g')" == "" ]
     then

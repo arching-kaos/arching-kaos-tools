@@ -36,7 +36,7 @@ function _ak_network_yggdrasil_scan_full(){
     filtered_online_pubkeys_ips="$TEMPDIR/fopi"
     curl -s \
         --connect-timeout 5 \
-        "http://yia.yggdrasil-network.ca/crawler/crawler-yia.peers.$(date -u +%Y%m%d)" > $last_seen
+        "http://yia.yggdrasil-network.ca/crawler/crawler-yia.peers.$(_ak_datetime_human_date_only_yesterday)" > $last_seen
     if [ $? -ne 0 ]
     then
         _ak_log_error "Couldn't fetch active peers from YIA"
