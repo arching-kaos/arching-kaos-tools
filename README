@@ -392,3 +392,4 @@ $ ak pkg --help
 #    --install-from-akfs <maphash>        Installs from an AKFS map
 #    --uninstall                          Uninstalls a module selected from a menu
 #
+```
