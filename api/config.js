@@ -18,6 +18,7 @@ const config = {
     blocksFile : env.AK_ZBLOCKSFILE,
     pairsFile : env.AK_ZPAIRSFILE,
     peersFile : env.AK_ZPEERSFILE,
+    peersDir : env.AK_ZPEERSDIR,
     cacheDir : env.AK_CACHEDIR,
     ipfsArtifactsDir: `${env.AK_WORKDIR}/ipfs_artifacts`,
     minedBlocksDir: env.AK_MINEDBLOCKSDIR,
