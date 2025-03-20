@@ -15,12 +15,14 @@ const getRemotePeers = require('./routes/getRemotePeers/index.js');
 
 const akLogMessage = require('./lib/akLogMessage');
 const checkIfAllowedIP = require('./lib/checkIfAllowedIP/index.js');
+const storeIncomingIP = require("./lib/storeIncomingIP/index.js");
 akLogMessage('INFO', 'akLogMessage loaded');
 
 const serverOptions = { keepAliveTimeout: 60000 };
 
 function printRequest(req)
 {
+    storeIncomingIP(req.connection.remoteAddress);
     console.log(req.connection.remoteAddress);
     console.log(req.headers.host);
     console.log(req.headers);
