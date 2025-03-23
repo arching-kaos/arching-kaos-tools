@@ -22,6 +22,7 @@ source $AK_LIBDIR/_ak_network_ipfs
 source $AK_LIBDIR/_ak_network_cjdns
 source $AK_LIBDIR/_ak_network_yggdrasil
 source $AK_LIBDIR/_ak_network_stellar
+source $AK_LIBDIR/_ak_network_incoming
 
 function _ak_network_scan(){
     if [ ! -z $1 ] && [ -n "$1" ]
@@ -31,6 +32,7 @@ function _ak_network_scan(){
             ipfs) _ak_network_ipfs_scan; exit;;
             cjdns) shift; _ak_network_cjdns_scan $1; exit;;
             yggdrasil) shift; _ak_network_yggdrasil_scan $1; exit;;
+            incoming) shift; _ak_network_incoming_scan; exit;;
             * ) _ak_log_error "Unknown network $1";exit 1;;
         esac
     else

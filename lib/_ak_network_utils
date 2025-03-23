@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+###
+### arching-kaos-tools
+### Tools to interact and build an Arching Kaos Infochain
+### Copyright (C) 2021 - 2025  kaotisk
+###
+### This program is free software: you can redistribute it and/or modify
+### it under the terms of the GNU General Public License as published by
+### the Free Software Foundation, either version 3 of the License, or
+### (at your option) any later version.
+###
+### This program is distributed in the hope that it will be useful,
+### but WITHOUT ANY WARRANTY; without even the implied warranty of
+### MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+### GNU General Public License for more details.
+###
+### You should have received a copy of the GNU General Public License
+### along with this program.  If not, see <http://www.gnu.org/licenses/>.
+###
+source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_utils
+
+##
+# Copied from http://y.yggdrasil-network.ca/yia/crawler/crawler-yia.sh made by
+# ircerr
+# 
+# Changes:
+#   - name of function from padip to _ak_network_utils_pad_ip
+#
+function _ak_network_utils_pad_ip() {  #Pad IP - fill in missing zeros
+    ip=$1
+    if [ "$ip" == "" ]; then return; fi
+    PADIP=""
+    if [ "`echo \"$ip\"|grep '::'`" != "" ]
+    then
+        CC="$((`echo \"$ip\"|sed 's/:://g'|tr ':' '\n'|wc -l`))" #count cols
+        if [ "$CC" != "8" ]
+        then
+            NC=$((7-$CC))
+            RS=""
+            for X in `seq 1 $NC`
+            do
+                if [ "$RS" == "" ]
+                then
+                    RS="0000"
+                else
+                    RS="$RS:0000"
+                fi
+            done
+            ip="`echo \"$ip\"|sed \"s/\:\:/\:$RS\:/g\"`"
+        fi
+    fi
+    SEGIP="`echo $ip|tr ':' ' '`"
+    for S in $SEGIP
+    do
+        while :
+        do
+            if [ "`echo $S|cut -b 4`" == "" ]
+            then
+                S="0$S"
+                continue
+            fi
+            if [ "$PADIP" == "" ]
+            then
+                PADIP="$S"
+            else
+                PADIP="$PADIP:$S"
+            fi
+            break
+        done
+    done
+    if [ "$PADIP" != "" ]
+    then
+        ip="$PADIP"
+    fi
+    echo "$ip"
+    return
+}
+

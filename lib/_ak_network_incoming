@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+###
+### arching-kaos-tools
+### Tools to interact and build an Arching Kaos Infochain
+### Copyright (C) 2021 - 2025  kaotisk
+###
+### This program is free software: you can redistribute it and/or modify
+### it under the terms of the GNU General Public License as published by
+### the Free Software Foundation, either version 3 of the License, or
+### (at your option) any later version.
+###
+### This program is distributed in the hope that it will be useful,
+### but WITHOUT ANY WARRANTY; without even the implied warranty of
+### MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+### GNU General Public License for more details.
+###
+### You should have received a copy of the GNU General Public License
+### along with this program.  If not, see <http://www.gnu.org/licenses/>.
+###
+source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_utils
+source $AK_LIBDIR/_ak_network_utils
+source $AK_LIBDIR/_ak_fm
+
+export AK_ZPEERSINCOMING=$AK_ZPEERSDIR/incomingRequests
+
+function _ak_network_incoming_tidy(){
+    exit 224
+}
+
+function _ak_network_incoming_scan(){
+    if [ -f "${AK_ZPEERSINCOMING}" ]
+    then
+    if [ $(cat ${AK_ZPEERSINCOMING}|wc -l) -gt 0 ]
+    then
+        counter=0
+        count=0
+        _ak_fm_sort_uniq_file ${AK_ZPEERSINCOMING}
+        max="$(cat ${AK_ZPEERSINCOMING}|wc -l)"
+        printf '[' > walk.aknet
+        cat ${AK_ZPEERSINCOMING} \
+            | sort \
+            | uniq \
+            | while read -r uip || [ -n "$uip" ]
+        do
+            ip="$(_ak_network_utils_pad_ip $uip)"
+            count="$(( $count + 1 ))"
+            _ak_log_debug "Scanning [${count}/${max}] $ip..."
+            node_fs_path="$AK_ZPEERSDIR/inc/$(echo -n $ip| sed 's/://g')"
+            scan_ts="$(_ak_datetime_unix)"
+            if [ ! -d ${node_fs_path} ]
+            then
+                mkdir -p ${node_fs_path}
+            fi
+            node_fs_pathname="${node_fs_path}/${scan_ts}"
+            curl \
+                --connect-timeout 3 \
+                -A 'akd/0.1.0; https://github.com/arching-kaos' \
+                "http://[$ip]:8610/v0/node_info" 2>/dev/null | jq -c -M > ${node_fs_pathname}
+            node_info="$(cat ${node_fs_pathname})"
+            if [ $? -eq 0 ] && [ $(echo -n "$node_info" | wc -c) -gt 0 ]
+            then
+                if [ "$counter" -ne "0" ]
+                then
+                    printf ',' >> walk.aknet
+                fi
+                if [ ! -n "$node_info" ]
+                then
+                    node_info="null"
+                fi
+                printf '{"incoming":{"ip":"%s"},"node_info":%s}' \
+                    "$ip" "$node_info" >> walk.aknet
+                counter="`expr $counter + 1`"
+            fi
+        done
+        printf ']' >> walk.aknet
+        mv walk.aknet $AK_ZPEERSFILE.incoming
+        rm -rf $TEMPDIR
+    else
+        _ak_log_info "No incoming requests found."
+    fi
+    fi
+}
