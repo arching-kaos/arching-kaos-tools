@@ -28,6 +28,15 @@ function _ak_network_incoming_tidy(){
     exit 224
 }
 
+function _ak_network_incoming_show_peers(){
+    if [ -f $AK_ZPEERSFILE.incoming ]
+    then
+        cat $AK_ZPEERSFILE.incoming | jq
+    else
+        _ak_log_debug "No incoming peers found"
+    fi
+}
+
 function _ak_network_incoming_scan(){
     if [ -f "${AK_ZPEERSINCOMING}" ]
     then
