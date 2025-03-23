@@ -22,10 +22,10 @@
 ##
 ## Usage:
 ##
-##    -h, --help                                          Prints this help message
-##    -c, --connect [ipfs|cjdns]                          Connect to network(s)
-##    -p, --peers [ipfs|cjdns|stellar|yggdrasil]          Outputs peers found
-##    -s, --scan [ipfs|cjdns|stellar|yggdrasil|incoming]  Scan network(s) for peers
+##    -h, --help                                           Prints this help message
+##    -c, --connect [ipfs|cjdns]                           Connect to network(s)
+##    -p, --peers [ipfs|cjdns|stellar|yggdrasil|incoming]  Outputs peers found
+##    -s, --scan [ipfs|cjdns|stellar|yggdrasil|incoming]   Scan network(s) for peers
 ##
 ## Bonus: CJDNS network scanning modes
 ##
