@@ -55,7 +55,7 @@ function _ak_network_show_peers(){
             * ) _ak_log_error "Unknown network $1";exit 1;;
         esac
     else
-        (_ak_network_stellar_show_peers; _ak_network_cjdns_show_peers; _ak_network_yggdrasil_show_peers; _ak_network_ipfs_show_peers) | \
+        (_ak_network_stellar_show_peers; _ak_network_cjdns_show_peers; _ak_network_yggdrasil_show_peers; _ak_network_incoming_show_peers) | \
             jq -j | \
             sed -e 's/]\[/,/g' | \
             jq

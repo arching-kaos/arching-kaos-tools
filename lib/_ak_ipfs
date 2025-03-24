@@ -116,7 +116,7 @@ function _ak_ipfs_scanner(){
 function _ak_ipfs_add(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
-        _ak_log_error "no argument given"
+        _ak_log_error "_ak_ipfs_add: no argument given"
         exit 1
     fi
     # Receives a file
@@ -132,7 +132,7 @@ function _ak_ipfs_add(){
 function _ak_ipfs_block_stat(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
-        _ak_log_error "no argument given"
+        _ak_log_error "_ak_ipfs_block_stat: no argument given"
         exit 1
     fi
     _ak_ipfs block stat "$1"
@@ -256,7 +256,7 @@ function _ak_ipfs_get(){
 function _ak_ipfs_cat(){
     if [ -z $1 ] || [ ! -n "$1" ]
     then
-        _ak_log_error "no argument given"
+        _ak_log_error "_ak_ipfs_cat: no argument given"
         exit 1
     fi
     if [ ! -f $AK_IPFS_ARTIFACTS/$1 ]

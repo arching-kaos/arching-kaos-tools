@@ -19,6 +19,15 @@
 ###
 source $AK_LIBDIR/_ak_log
 source $AK_LIBDIR/_ak_ipfs
+source $AK_LIBDIR/_ak_script
+
+stellarPeersDir="$AK_ZPEERSDIR/stellar"
+_ak_check_and_create_dir $stellarPeersDir
+
+stellarParticipants="$stellarPeersDir/trustlines"
+_ak_let_there_be_file $stellarParticipants
+stellarParticipantsOnline="$stellarPeersDir/configured.trustlines"
+_ak_let_there_be_file $stellarParticipantsOnline
 
 function _ak_network_stellar_show_ids(){
     i=0
@@ -73,24 +82,8 @@ function _ak_network_stellar_scan(){
     tempdir=`_ak_make_temp_directory`
     tempfile="$tempdir/tmp"
     tempaddr="$tempdir/tmpaddr"
-    stellarParticipants="$AK_WORKDIR/stellar-network-participants"
-    stellarParticipantsOnline="$AK_WORKDIR/stellar-network-participants-online"
-    if [ ! -f "$stellarParticipants" ]
-    then
-        touch $stellarParticipants
-    fi
-    if [ ! -f "$stellarParticipantsOnline" ]
-    then
-        touch $stellarParticipantsOnline
-    fi
-    if [ ! -f "$tempdir" ]
-    then
-        touch $tempdir
-    fi
-    if [ ! -f "$tempaddr" ]
-    then
-        touch $tempaddr
-    fi
+    _ak_let_there_be_file $tempdir
+    _ak_let_there_be_file $tempaddr
     if [ ! -z $1 ] && [ "$1" == "-l" ] && [ ! -z $2 ]
     then
         limit=$2
@@ -135,8 +128,6 @@ function _ak_network_stellar_scan(){
 }
 
 function _ak_network_stellar_show_peers(){
-    stellarParticipants="$AK_WORKDIR/stellar-network-participants"
-    stellarParticipantsOnline="$AK_WORKDIR/stellar-network-participants-online"
     if [ -f "${stellarParticipantsOnline}" ]
     then
     (
@@ -150,10 +141,16 @@ function _ak_network_stellar_show_peers(){
             fi
             counter=$(( $counter + 1 ))
             akConfigHash="$(_ak_ipfs_name_resolve /ipns/$akConfig|cut -d '/' -f 3)"
-            printf '{"stellar":{"address":"%s","config":"%s"},"node_info":%s}' \
+            printf '{"stellar":{"address":"%s","config":"%s"}' \
                 "$stellarAddress" \
-                "$akConfig" \
-                "$(_ak_ipfs_cat $akConfigHash)"
+                "$akConfig"
+            if [ -n "$akConfigHash" ]
+            then
+            printf ',"node_info":%s}' \
+               "$(_ak_ipfs_cat $akConfigHash)"
+            else
+                printf '}'
+            fi
         done
         printf ']'
         ) | sed -e 's/\[]//g' #| jq
