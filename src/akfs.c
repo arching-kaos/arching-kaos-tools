@@ -258,9 +258,8 @@ sha512sum ak_fs_sha512sum_string_to_struct(char* string)
     }
 }
 
-char* ak_fs_sha512sum_struct_to_string(sha512sum hash)
+void ak_fs_sha512sum_struct_to_string(sha512sum hash, char* string)
 {
-    char *string = malloc(129);
 	int counter = 0;
     for (size_t i = 0; i < 8; ++i)
     {
@@ -324,5 +323,4 @@ char* ak_fs_sha512sum_struct_to_string(sha512sum hash)
         }
     }
     string[128] = '\0';
-    return string;
 }

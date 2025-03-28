@@ -19,7 +19,7 @@ int ak_fs_create_dir_for_hash(char*);
 
 sha512sum ak_fs_sha512sum_string_to_struct(char*);
 
-char* ak_fs_sha512sum_struct_to_string(sha512sum);
+void ak_fs_sha512sum_struct_to_string(sha512sum, char*);
 
 #endif // AKFS
 

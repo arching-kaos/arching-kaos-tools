@@ -10,7 +10,8 @@ void correct_string_correct_length()
     // printf("Hash given:\t%s\n", queried_string);
     // printf("Is a hash: %s\n", ak_fs_verify_input_is_hash(queried_string) ? "true": "false");
     sha512sum resulted_hash = ak_fs_sha512sum_string_to_struct(queried_string);
-    char* resulted_string = ak_fs_sha512sum_struct_to_string(resulted_hash);
+    char resulted_string[129] = {0};
+    ak_fs_sha512sum_struct_to_string(resulted_hash, resulted_string);
     // printf("Hash returned:\t%s\n", resulted_string);
     if ( strcmp(queried_string, resulted_string) == 0 )
     {
@@ -20,7 +21,6 @@ void correct_string_correct_length()
     {
         printf("NO PASS :(\n");
     }
-    free(resulted_string);
 }
 
 void bad_string_correct_length()
@@ -30,7 +30,8 @@ void bad_string_correct_length()
     // printf("Hash given:\t%s\n", queried_string);
     // printf("Is a hash: %s\n", ak_fs_verify_input_is_hash(queried_string) ? "true": "false");
     sha512sum resulted_hash = ak_fs_sha512sum_string_to_struct(queried_string);
-    char* resulted_string = ak_fs_sha512sum_struct_to_string(resulted_hash);
+    char resulted_string[129] = {0};
+    ak_fs_sha512sum_struct_to_string(resulted_hash, resulted_string);
     // printf("Hash returned:\t%s\n", resulted_string);
     if ( strcmp(queried_string, resulted_string) != 0 )
     {
@@ -40,7 +41,6 @@ void bad_string_correct_length()
     {
         printf("NO PASS :(\n");
     }
-    free(resulted_string);
 }
 
 void less_than_length()
@@ -50,7 +50,8 @@ void less_than_length()
     // printf("Hash given:\t%s\n", queried_string);
     // printf("Is a hash: %s\n", ak_fs_verify_input_is_hash(queried_string) ? "true": "false");
     sha512sum resulted_hash = ak_fs_sha512sum_string_to_struct(queried_string);
-    char* resulted_string = ak_fs_sha512sum_struct_to_string(resulted_hash);
+    char resulted_string[129] = {0};
+    ak_fs_sha512sum_struct_to_string(resulted_hash, resulted_string);
     // printf("Hash returned:\t%s\n", resulted_string);
     if ( strcmp(queried_string, resulted_string) != 0 )
     {
@@ -60,7 +61,6 @@ void less_than_length()
     {
         printf("\tNO PASS :(\n");
     }
-    free(resulted_string);
 }
 
 void more_than_length()
@@ -70,7 +70,8 @@ void more_than_length()
     // printf("Hash given:\t%s\n", queried_string);
     // printf("Is a hash: %s\n", ak_fs_verify_input_is_hash(queried_string) ? "true": "false");
     sha512sum resulted_hash = ak_fs_sha512sum_string_to_struct(queried_string);
-    char* resulted_string = ak_fs_sha512sum_struct_to_string(resulted_hash);
+    char resulted_string[129] = {0};
+    ak_fs_sha512sum_struct_to_string(resulted_hash, resulted_string);
     // printf("Hash returned:\t%s\n", resulted_string);
     if ( strcmp(queried_string, resulted_string) != 0 )
     {
@@ -80,7 +81,6 @@ void more_than_length()
     {
         printf("\tNO PASS :(\n");
     }
-    free(resulted_string);
 }
 
 void string_is_empty()
@@ -90,7 +90,8 @@ void string_is_empty()
     // printf("Hash given:\t%s\n", queried_string);
     //printf("Is a hash: %s\n", ak_fs_verify_input_is_hash(queried_string) ? "true": "false");
     sha512sum resulted_hash = ak_fs_sha512sum_string_to_struct(queried_string);
-    char* resulted_string = ak_fs_sha512sum_struct_to_string(resulted_hash);
+    char resulted_string[129] = {0};
+    ak_fs_sha512sum_struct_to_string(resulted_hash, resulted_string);
     // printf("Hash returned:\t%s\n", resulted_string);
     if ( strcmp(queried_string, resulted_string) != 0 )
     {
@@ -100,7 +101,6 @@ void string_is_empty()
     {
         printf("\t\tNO PASS :(\n");
     }
-    free(resulted_string);
 }
 
 void hash_path_test()
@@ -119,7 +119,6 @@ void hash_path_test()
     {
         printf("\t\tNO PASS :(\n");
     }
-    free(resulted_string);
 }
 
 void hash_dir_test()
@@ -138,7 +137,6 @@ void hash_dir_test()
     {
         printf("\t\tNO PASS :(\n");
     }
-    free(resulted_string);
 }
 
 void hash_save_to_file()
@@ -156,7 +154,6 @@ void hash_save_to_file()
     }
     fwrite(&resulted_hash, sizeof(sha512sum),1,fd);
     fclose(fd);
-
     sha512sum readone = {0};
     fd = fopen("tmpfile", "rb");
     if ( fd == NULL )
@@ -165,8 +162,8 @@ void hash_save_to_file()
         exit(1);
     }
     fread (&readone, sizeof(sha512sum),1,fd);
-    char* resulted_string = ak_fs_sha512sum_struct_to_string(readone);
-
+    char resulted_string[129] = {0};
+    ak_fs_sha512sum_struct_to_string(resulted_hash, resulted_string);
     if ( strcmp(queried_string, resulted_string) == 0 )
     {
         printf("\tPASS!\n");
