@@ -100,35 +100,30 @@ which is able to reach the whole public network of cjdns.
 - http://hia.cjdns.ca/watchlist/c/walk.sh  (seq)
 - http://hia.cjdns.ca/watchlist/c/walk2.sh (threaded)
 
-TODO: We should be storing the output on a relevant file so it can be reached by
-the API as well or ask for current known nodes without rescanning the network.
+> TODO: We should be storing the output on a relevant file so it can be reached by
+> the API as well or ask for current known nodes without rescanning the network.
 
 Part 5: Update on networking
 ----------------------------
 Great news everyone! `ak-network` is here:
 ```
 $ ak network
-ak-network - AK Nettool
-=======================
-
-Network tools
-
-Usage:
-
-   -h, --help                           Prints this help message
-
-   -c, --connect [ipfs|cjdns]           Connect to network(s)
-
-   -p, --peers [ipfs|cjdns|stellar]     Outputs peers found
-
-   -s, --scan [ipfs|cjdns|stellar]      Scan network(s) for peers
-
-Bonus: CJDNS network scanning flags
-
-   -s, --scan cjdns [-w|--whole]        Scan using HIA's knowledge
-
-   -s, --scan cjdns [-d|--dump]         Scan using CJDNS' dumpLinks (default)
-
+# ak-network - AK Nettool
+# =======================
+#
+# Network tools
+#
+# Usage:
+#
+#    -h, --help                                           Prints this help message
+#    -c, --connect [ipfs|cjdns]                           Connect to network(s)
+#    -p, --peers [ipfs|cjdns|stellar|yggdrasil|incoming]  Outputs peers found
+#    -s, --scan [ipfs|cjdns|stellar|yggdrasil|incoming]   Scan network(s) for peers
+#
+# Bonus: CJDNS network scanning modes
+#
+#    -s, --scan cjdns [-w|--whole]        Scan using HIA's knowledge
+#    -s, --scan cjdns [-d|--dump]         Scan using CJDNS' dumpLinks (default)
 ```
 
 Though:
@@ -137,13 +132,24 @@ $ ak network --scan ipfs
 20240707_065927 <ak-network> [ERROR] Not implemented: _ak_network_scan_ipfs
 ```
 
-Which I think I should not try to do since we use `ak-config` as the key on IPFS
-to publish our `node_info` at and we can not guess keys just in case we found
-one with `node_info`. A work around could be to use the `self` key and publish
-there instead of `ak-config`. Previously, since we were using for `IPFS_REPO`
-the default directory, it was thought that the `self` key could be already in
-use. Now that we do have our own dedicated path for `IPFS_REPO`, it could be
-revisited. But, as mentioned in other places, we are about to drop IPFS in the
-future. Whichever comes first?
+> TODO ^^ maybe
+> Which I think I should not try to do since we use `ak-config` as the key on IPFS
+> to publish our `node_info` at and we can not guess keys just in case we found
+> one with `node_info`. A work around could be to use the `self` key and publish
+> there instead of `ak-config`. Previously, since we were using for `IPFS_REPO`
+> the default directory, it was thought that the `self` key could be already in
+> use. Now that we do have our own dedicated path for `IPFS_REPO`, it could be
+> revisited. But, as mentioned in other places, we are about to drop IPFS in the
+> future. Whichever comes first?
 
-TODO ^^ maybe
+Part 6: Yggdrasil
+-----------------
+In the same way we do the full scan ( -w|--whole ) for cjdns network range, we
+also do the same for Yggdrasil network. The preassumption here is that yggdrasil
+is already installed and peered. We get some IP lists from scans from the YIA
+service running by ircerr.
+
+Part 7: Incoming
+----------------
+Incoming connections' IPs to the API are stored and can be scanned for the known
+API port for peering purposes.
