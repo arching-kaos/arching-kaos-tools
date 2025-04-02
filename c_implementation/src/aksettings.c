@@ -1,15 +1,10 @@
-#include <aksettings.h>
+#include <libaksettings.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
 
 #define MAX_SETTINGS 100
-
-typedef struct {
-    char *key;
-    char *value;
-} AKSetting;
 
 AKSetting settings[MAX_SETTINGS];
 int settings_count = 0;

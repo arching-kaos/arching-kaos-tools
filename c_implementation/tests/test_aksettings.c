@@ -1,5 +1,5 @@
-#include <aksettings.h>
-#include <aklog.h>
+#include <libaksettings.h>
+#include <libaklog.h>
 #include <stdio.h>
 
 int test_ak_settings_read_write_example()
