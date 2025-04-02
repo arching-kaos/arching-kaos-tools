@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <akfs.h>
+#include <libakfs.h>
 
 void test_non_hash_string(){
     char *path = "tes";

@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include "libaklog.h"
 
 #define AK_DEBUG true
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
@@ -175,7 +176,6 @@ void ak_log_grep(char* message)
             exit(1);
         }
     }
-
     printf("The following scripts have entries in the log file.\n");
     printf("Select one of those by entering the number of it below and hit enter:\n");
     //    select x in $(cat $AK_LOGSFILE | cut -d ' ' -f 2 | sort | uniq)
@@ -205,85 +205,83 @@ void ak_log_rotate()
     exit(2);
 }
 
-void ak_log_message(char* program, char* type, char* message)
+void ak_log_message(const char* program, LogMessageType lmtype, char* message)
 {
     time_t ts = time(NULL);
     time(&ts);
     char* some_string = {0};
+    char* type = {0};
     if ( program != NULL )
     {
-        if ( type != NULL )
+        switch(lmtype)
         {
-            if ( message != NULL )
-            {
-                // msg="$(echo -n $*| cut -d ' ' -f 3-)"
-                // echo "$TS" "<$1>" "[$2]" "$msg" >> $AK_LOGSFILE
-                printf( "%ld <%s> [%s] %s\n", ts, program, type, message); // out to file though
-                if ( AK_DEBUG )
-                {
-                    asprintf(&some_string, "%ld <%s> [%s] %s", ts, program, type, message);
-                    ak_log_print_log_line(some_string);
-                    ak_log_write_to_file(some_string);
-                    // fprintf(stderr, "%ld <%s> [%s] %s\n", ts, program, type, message);
-                }
-            }
-            else
-            {
-                // echo "$TS" "<$1>" "[ERROR]" "No message" >> $AK_LOGSFILE
-                printf("%ld <%s> [ERROR] No message\n", ts, program); // out to file
-                if ( AK_DEBUG )
-                {
-                    fprintf(stderr, "%ld <%s> [ERROR] No message\n", ts, program);
-                }
+            case ERROR:
+                type = "ERROR";
+                break;
+            case INFO:
+                type = "INFO";
+                break;
+            case WARNING:
+                type = "WARNING";
+                break;
+            case EXIT:
+                type = "EXIT";
+                break;
+            case DEBUG:
+                type = "DEBUG";
+                break;
+            default:
+                asprintf(&some_string, "%ld <%s> [ERROR] No message type\n", ts, program);
+                ak_log_write_to_file(some_string);
+                if ( AK_DEBUG ) ak_log_print_log_line(some_string);
                 exit(1);
-            }
+        }
+        if ( message != NULL )
+        {
+            asprintf(&some_string, "%ld <%s> [%s] %s", ts, program, type, message);
+            ak_log_write_to_file(some_string);
+            if ( AK_DEBUG ) ak_log_print_log_line(some_string);
         }
         else
         {
-            // echo "$TS" "<$1>" "[ERROR]" "No type and message" >> $AK_LOGSFILE
-
-            printf("%ld <%s> [ERROR] No type and message\n", ts, program); // out to file
-            if ( AK_DEBUG )
-            {
-                fprintf(stderr, "%ld <%s> [ERROR] No type and message\n", ts, program);
-            }
+            asprintf(&some_string, "%ld <%s> [ERROR] No message\n", ts, program);
+            ak_log_write_to_file(some_string);
+            if ( AK_DEBUG ) ak_log_print_log_line(some_string);
             exit(1);
         }
     }
     else
     {
         // echo "$TS" "<$(basename $0)>" "[ERROR]" "No arguments given" >> $AK_LOGSFILE
-        printf("%ld <%s> [ERROR] No arguments given\n", ts, program); // out to file
-        if ( AK_DEBUG )
-        {
-            fprintf(stderr, "%ld <%s> [ERROR] No arguments given\n", ts, program);
-        }
+        asprintf(&some_string, "%ld <%s> [ERROR] No arguments given\n", ts, program);
+        ak_log_write_to_file(some_string);
+        if ( AK_DEBUG ) ak_log_print_log_line(some_string);
         exit(1);
     }
 }
 
-void ak_log_exit(char* program, char* message)
+void ak_log_exit(const char* program, char* message)
 {
-    ak_log_message(program, "EXIT", message);
+    ak_log_message(program, EXIT, message);
 }
 
-void ak_log_warning(char* program, char* message)
+void ak_log_warning(const char* program, char* message)
 {
-    ak_log_message(program, "WARNING", message);
+    ak_log_message(program, WARNING, message);
 }
 
-void ak_log_debug(char* program, char* message)
+void ak_log_debug(const char* program, char* message)
 {
-    ak_log_message(program, "DEBUG", message);
+    ak_log_message(program, DEBUG, message);
 }
 
-void ak_log_error(char* program, char* message)
+void ak_log_error(const char* program, char* message)
 {
-    ak_log_message(program, "ERROR", message);
+    ak_log_message(program, ERROR, message);
 }
 
-void ak_log_info(char* program, char* message)
+void ak_log_info(const char* program, char* message)
 {
-    ak_log_message(program, "INFO", message);
+    ak_log_message(program, INFO, message);
 }
 

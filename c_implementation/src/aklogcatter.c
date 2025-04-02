@@ -1,6 +1,6 @@
 #include <aklogcatter.h>
 #include <stdio.h>
-#include <aklog.h>
+#include <libaklog.h>
 #include <stdlib.h>
 
 int ak_logcatter()

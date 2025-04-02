@@ -1,4 +1,4 @@
-#include <aklog.h>
+#include <libaklog.h>
 
 void test_message_output()
 {
@@ -22,7 +22,7 @@ void test_rotate()
 
 void test_log_message()
 {
-    ak_log_message(__func__, "TEST", "test message info");
+    ak_log_message(__func__, DEBUG, "test message info");
 }
 
 void test_exit()
@@ -50,9 +50,9 @@ void test_info()
     ak_log_info(__func__, "test message info");
 }
 
-void test_write()
+void test_one_word()
 {
-    ak_log_info(__func__, "test message info");
+    ak_log_info(__func__, "test");
 }
 
 int main (void)
@@ -67,6 +67,6 @@ int main (void)
     test_log_message();
     test_rotate();
     test_grep();
-    test_write();
+    test_one_word();
     return 0;
 }

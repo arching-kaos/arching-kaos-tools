@@ -3,7 +3,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
-#include <akfs.h>
+#include <libakfs.h>
 #include <sys/stat.h>
 
 char* ak_fs_return_hash_path(char* string)
@@ -323,4 +323,27 @@ void ak_fs_sha512sum_struct_to_string(sha512sum hash, char* string)
         }
     }
     string[128] = '\0';
+}
+
+int ak_fs_open_map_v3(char* maphash)
+{
+    if ( ak_fs_verify_input_is_hash(maphash) )
+    {
+        //FILE *fd;
+        //char *mapsdir = "/home/kaotisk/.arching-kaos/akfs/maps/";
+        //strncat(mapsdir, maphash);
+        // printf("%s\n", mapsdir);
+        exit(1);
+        return 0;
+    }
+    else
+    {
+        return 1;
+    }
+}
+
+int ak_fs_from_map_v3_to_file(akfs_map_v3 maphash)
+{
+    (void)maphash;
+    return 0;
 }

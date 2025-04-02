@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <akfs.h>
+#include <libakfs.h>
 
 void correct_string_correct_length()
 {
@@ -173,8 +173,13 @@ void hash_save_to_file()
         printf("\tNO PASS :(\n");
     }
     fclose(fd);
-    free(resulted_string);
 }
+
+void test_map_opener()
+{
+    ak_fs_open_map_v3("28bde5fa7aacd8da0ec84b61cf3a69141686906c00f8cff904c9a0b12f5a4cf061da254feb188c32b711b2e1d6a3853d5ac3fb0bcd3564899bae55dd30470392");
+}
+
 
 int main(void)
 {
@@ -201,5 +206,8 @@ int main(void)
 
     // Tempfile test read-write
     hash_save_to_file();
+
+    // Map file opener
+    test_map_opener();
     return 0;
 }
