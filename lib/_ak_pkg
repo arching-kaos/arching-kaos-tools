@@ -91,6 +91,58 @@ EOF
     done
 }
 
+function _ak_pkg_all_modules_make_release_from_local_directory(){
+    outdir="$(pwd)"
+    if [ ! -z $1 ] && [ -n "$1" ] && [ -d "$1" ]
+    then
+        mod="$(realpath $1)"
+        mod_root="$(echo $mod | rev | cut -d '/' -f 2- | rev)"
+        mod_name="$(basename $mod)"
+        cd ${mod_root}/${mod_name}
+        if [ ! -f version ]
+        then
+            echo -n 'v0.0.0' > version
+        fi
+        mod_version="$(cat version)"
+        outfile="${mod_name}-${mod_version}.tar.gz"
+        fout="${outdir}/${outfile}"
+        if [ ! -f ${fout} ]
+        then
+            tar cfz ${fout} *
+            cd ${outdir}
+            _ak_gpg_sign_detached ${outfile}.asc ${outfile}
+            akfsmap="$(_ak_fs_import ${outfile})"
+            akfsmapsig="$(_ak_fs_import ${outfile}.asc)"
+            cat > data << EOF
+{
+    "package":"$mod_name",
+    "version":"$mod_version",
+    "akfsmap":"$akfsmap",
+    "detach":"$akfsmapsig"
+}
+EOF
+            _ak_zblock_pack pkg/add data
+        else
+            tfile="$(_ak_make_temp_file).tar.gz"
+            tar cfz ${tfile} *
+            hasht="$(sha512sum ${tfile} | cut -d ' ' -f 1)"
+            hashf="$(sha512sum ${fout} | cut -d ' ' -f 1)"
+            if [ "$hashf" != "$hasht" ]
+            then
+                _ak_log_warning "Please manually pick-up your archive from ${tfile} or delete the copy on your directory and rerun."
+                exit 5
+            else
+                _ak_log_info "You already have latest release"
+                exit 0
+            fi
+        fi
+        break
+    else
+        _ak_log_error "You need to provide an existing directory as an argument"
+        exit 1
+    fi
+}
+
 function _ak_pkg_install_from_akfsmap(){
     TEMP="$(_ak_make_temp_directory)"
     cd $TEMP

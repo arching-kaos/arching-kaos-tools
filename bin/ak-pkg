@@ -26,6 +26,7 @@
 ##    -h, --help                           Prints this help message
 ##    --make-releases-from-local           Makes releases from all local installation's module
 ##    --make-release-from-local            Makes release from a local installation's module
+##    --make-release-from-directory        Makes release from a local directory 
 ##    --install-from-zblock <zblock>       Installs from a zblock
 ##    --install-from-akfs <maphash>        Installs from an AKFS map
 ##    --uninstall                          Uninstalls a module selected from a menu
@@ -47,6 +48,7 @@ then
         -h | --help) _ak_usage; exit;;
         --make-releases-from-local) shift; _ak_pkg_all_modules_make_releases_from_local_installation; exit;;
         --make-release-from-local) _ak_pkg_all_modules_make_release_from_local_installation $1; exit;;
+        --make-release-from-directory) shift; _ak_pkg_all_modules_make_release_from_local_directory $1; exit;;
         --install-from-zblock) shift; _ak_pkg_install_from_zblock $1; exit;;
         --install-from-akfs) shift; _ak_pkg_install_from_akfsmap $1; exit;;
         --uninstall) _ak_pkg_uninstall; exit;;
