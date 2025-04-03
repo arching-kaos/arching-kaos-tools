@@ -58,3 +58,4 @@ function _ak_config_published(){
     _ak_ipfs_cat $(_ak_node_info_ipfs_hash) | jq
 }
 
+_ak_log_debug "_ak_config loaded $(caller)"

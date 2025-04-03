@@ -540,3 +540,5 @@ function _ak_zchain_output_types(){
     fi
     _ak_zchain_output_types $previous
 }
+
+_ak_log_debug "_ak_zchain loaded $(caller)"

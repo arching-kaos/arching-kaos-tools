@@ -759,3 +759,5 @@ function _ak_fs_net_cat_from_map_hash(){
         _ak_fs_net_cat `_ak_fs_from_map_net_get_root_hash $1` `_ak_fs_from_map_net_get_original_hash $1`
     fi
 }
+
+_ak_log_debug "_ak_fs loaded $(caller)"

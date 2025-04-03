@@ -224,3 +224,5 @@ function _ak_yggdrasil_get_ip(){
         awk '{print $2}' | \
         cut -d'/' -f1
 }
+
+_ak_log_debug "_ak_yggdrasil loaded $(caller)"

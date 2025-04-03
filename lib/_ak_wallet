@@ -24,3 +24,5 @@ source $AK_LIBDIR/_ak_gpg
 function _ak_wallet_generic(){
     _ak_gpg_list_secret_keys_long
 }
+
+_ak_log_debug "_ak_wallet loaded $(caller)"

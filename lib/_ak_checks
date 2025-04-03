@@ -41,3 +41,4 @@ function _ak_checks_example_check_for_base64_strings(){
     fi
 }
 
+_ak_log_debug "_ak_checks loaded $(caller)"

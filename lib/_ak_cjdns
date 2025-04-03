@@ -198,3 +198,5 @@ function _ak_cjdns_get_ip(){
         awk '{print $2}' | \
         cut -d'/' -f1
 }
+
+_ak_log_debug "_ak_cjdns loaded $(caller)"

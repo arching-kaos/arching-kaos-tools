@@ -6,3 +6,5 @@ source $AK_LIBDIR/_ak_script
 function _ak_irc_connect(){
     _ak_not_implemented "LOL"
 }
+
+_ak_log_debug "_ak_irc loaded $(caller)"

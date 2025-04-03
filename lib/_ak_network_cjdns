@@ -212,3 +212,5 @@ function _ak_network_cjdns_connect(){
 function _ak_network_cjdns_connect_bootstrap(){
     _ak_network_cjdns_connect
 }
+
+_ak_log_debug "_ak_network_cjdns loaded $(caller)"

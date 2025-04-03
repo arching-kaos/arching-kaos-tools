@@ -73,3 +73,5 @@ function _ak_he_url_request_map_hash_from_random_peer(){
         _ak_he_url_request_map_hash_from_peer "$(_ak_he_select_random_peer)" "$1"
     fi
 }
+
+_ak_log_debug "_ak_he loaded $(caller)"

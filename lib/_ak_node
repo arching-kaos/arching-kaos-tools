@@ -30,3 +30,5 @@ function _ak_node_info_ipfs_hash(){
 function _ak_node_info_ipns_key(){
     _ak_ipfs_key_list_full | grep 'ak-config' | awk '{print $1}'
 }
+
+_ak_log_debug "_ak_node loaded $(caller)"

@@ -114,3 +114,5 @@ function _ak_network_yggdrasil_scan(){
         _ak_network_yggdrasil_scan_full
     fi
 }
+
+_ak_log_debug "_ak_network_yggdrasil loaded $(caller)"

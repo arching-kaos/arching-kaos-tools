@@ -191,3 +191,5 @@ function _ak_sblock_get_latest_from_haystack_of_sblocks(){
 function _ak_schain_get_latest(){
     _ak_sblock_get_latest_from_haystack_of_sblocks
 }
+
+_ak_log_debug "_ak_schain loaded $(caller)"

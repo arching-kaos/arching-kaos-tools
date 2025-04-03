@@ -51,3 +51,5 @@ function _ak_fm_sort_uniq_file(){
         _ak_log_info "Sorting $1... Done!"
     fi
 }
+
+_ak_log_debug "_ak_fm loaded $(caller)"

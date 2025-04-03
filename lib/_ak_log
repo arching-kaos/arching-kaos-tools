@@ -190,4 +190,5 @@ function _ak_log_info(){
     _ak_log_message "$PROGRAM" "INFO" "$*"
 }
 
+_ak_log_debug "_ak_log loaded $(caller)"
 # vim: set syntax=bash

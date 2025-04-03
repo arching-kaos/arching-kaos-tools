@@ -34,3 +34,5 @@ function _ak_network_ipfs_connect_bootstrap(){
         _ak_ipfs_swarm_connect "$peer"
     done
 }
+
+_ak_log_debug "_ak_network_ipfs loaded $(caller)"

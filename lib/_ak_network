@@ -75,3 +75,5 @@ function _ak_network_connect(){
         _ak_network_ipfs_connect_bootstrap
     fi
 }
+
+_ak_log_debug "_ak_network loaded $(caller)"

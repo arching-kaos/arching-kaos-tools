@@ -218,3 +218,5 @@ function _ak_countdown_seconds(){
     sleep 1
     printf "\n"
 }
+
+_ak_log_debug "_ak_script loaded $(caller)"

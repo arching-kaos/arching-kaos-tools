@@ -63,3 +63,5 @@ function _ak_shell(){
         esac
     done
 }
+
+_ak_log_debug "_ak_sh loaded $(caller)"

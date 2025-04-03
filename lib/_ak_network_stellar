@@ -158,3 +158,5 @@ function _ak_network_stellar_show_peers(){
         _ak_log_debug "No stellar peers found"
     fi
 }
+
+_ak_log_debug "_ak_network_stellar loaded $(caller)"

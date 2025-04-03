@@ -30,3 +30,5 @@ function _ak_coin_stats(){
     echo "Coinbase: $COINBASE"
     echo "Genesis: $GENESIS"
 }
+
+_ak_log_debug "_ak_coin loaded $(caller)"

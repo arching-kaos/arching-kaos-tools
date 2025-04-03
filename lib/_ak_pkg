@@ -227,3 +227,5 @@ function _ak_pkg_uninstall(){
         fi
     done
 }
+
+_ak_log_debug "_ak_pkg loaded $(caller)"

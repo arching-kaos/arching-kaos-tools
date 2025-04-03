@@ -564,3 +564,5 @@ function _ak_ipfs_swarm_install(){
 function _ak_ipfs_get_config_ipns_key(){
     _ak_ipfs_key_list_full | grep 'ak-config' | cut -d ' ' -f 1
 }
+
+_ak_log_debug "_ak_ipfs loaded $(caller)"

@@ -305,3 +305,5 @@ function _ak_generate_html_zblock(){
         printf '    </table>\n'
     fi
 }
+
+_ak_log_debug "_ak_html loaded $(caller)"

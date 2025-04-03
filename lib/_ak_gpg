@@ -299,3 +299,5 @@ function _ak_gpg_delete_secret_key(){
         fi
     fi
 }
+
+_ak_log_debug "_ak_gpg loaded $(caller)"

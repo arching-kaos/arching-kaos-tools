@@ -864,3 +864,5 @@ function _ak_zblock_announce(){
         fi
     fi
 }
+
+_ak_log_debug "_ak_zblock loaded $(caller)"

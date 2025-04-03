@@ -190,3 +190,5 @@ function _ak_sm_file_splitter(){
     # and print the MAPFILEHASH
     echo "$MAPFILEHASH"
 }
+
+_ak_log_debug "_ak_smfiles loaded $(caller)"

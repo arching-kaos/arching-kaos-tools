@@ -28,3 +28,5 @@ function _ak_sblock_show(){
         _ak_log_error "No sblock hash input"
     fi
 }
+
+_ak_log_debug "_ak_sblock loaded $(caller)"

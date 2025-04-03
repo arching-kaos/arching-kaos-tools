@@ -81,3 +81,5 @@ function _ak_maintainance_nuke_all_but_core(){
         _ak_log_error "No AK_WORKDIR found or it does not exist"
     fi
 }
+
+_ak_log_debug "_ak_maintainance loaded $(caller)"
