@@ -1,27 +1,22 @@
 ACLOCAL_AMFLAGS = -I m4
 AM_CPPFLAGS = -I$(top_srcdir)/include
 
-
-# Link each test to the library
-#$(test_programs): % : %.c
-# 	$(CC) $(AM_CPPFLAGS) $(CPPFLAGS) $(CFLAGS) -o $@ $< $(LDFLAGS) libmylib.la
-#
-#
-# Build shared library from root dir sources
-
-lib_LTLIBRARIES = libaklog.la
+lib_LTLIBRARIES = libaklog.la libaksettings.la
 libaklog_la_SOURCES = $(top_srcdir)/src/aklog.c
-include_HEADERS = include/libaklog.h
+libaksettings_la_SOURCES = $(top_srcdir)/src/aksettings.c
+include_HEADERS = include/libaklog.h include/libaksettings.h
 
-## Build tests (no SUBDIRS needed)
+bin_PROGRAMS = ak
+ak_LDADD = libaklog.la
+ak_SOURCES = src/ak.c
+
 check_PROGRAMS = test_aklog
 test_aklog_SOURCES = ./tests/test_aklog.c
 test_aklog_LDADD = libaklog.la
-tests_test_main_CPPFLAGS = -I$(top_srcdir)/include  # For tests too
 
-# Enable 'make check' to run tests
+tests_test_main_CPPFLAGS = -I$(top_srcdir)/include
+
 TESTS = $(check_PROGRAMS)
 
-# Optional: Clean test binaries aggressively
 CLEANFILES = $(TESTS)
 
