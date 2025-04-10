@@ -17,9 +17,10 @@
 ### You should have received a copy of the GNU General Public License
 ### along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
+source $AK_LIBDIR/_ak_lib_load
+_ak_lib_load _ak_log
+_ak_lib_load _ak_network
 
-source $AK_LIBDIR/_ak_log
-source $AK_LIBDIR/_ak_network
 rust_sh_install_url="https://sh.rustup.rs"
 cjdns_src_git_repo_url="https://github.com/cjdelisle/cjdns"
 cjdnstoolspath="$HOME/cjdns/tools"

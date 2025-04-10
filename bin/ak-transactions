@@ -24,12 +24,13 @@ fullprogrampath="$(realpath $0)"
 PROGRAM=$(basename $0)
 descriptionString="Transactions module"
 
-source $AK_LIBDIR/_ak_log
-source $AK_LIBDIR/_ak_utils
-source $AK_LIBDIR/_ak_script
-source $AK_LIBDIR/_ak_ipfs
-source $AK_LIBDIR/_ak_gpg
-source $AK_LIBDIR/_ak_zblock
+source $AK_LIBDIR/_ak_lib_load
+_ak_lib_load _ak_log
+_ak_lib_load _ak_script
+_ak_lib_load _ak_utils
+_ak_lib_load _ak_ipfs
+_ak_lib_load _ak_gpg
+_ak_lib_load _ak_zblock
 
 function _ak_modules_transactions_main(){
     _ak_log_info "$FROM_ADDRESS to $TO_ADDRESS value sent: $AMOUNT"

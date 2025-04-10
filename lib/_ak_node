@@ -17,7 +17,9 @@
 ### You should have received a copy of the GNU General Public License
 ### along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
-source $AK_LIBDIR/_ak_ipfs
+source $AK_LIBDIR/_ak_lib_load
+_ak_lib_load _ak_log
+_ak_lib_load _ak_ipfs
 
 # Resolves the IPNS key "ak-config" to its current IPFS value
 # Return IPFS CIDv0 without /ipfs/ prefix

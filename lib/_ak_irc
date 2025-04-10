@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-
-source $AK_LIBDIR/_ak_log
-source $AK_LIBDIR/_ak_script
+source $AK_LIBDIR/_ak_lib_load
+_ak_lib_load _ak_log
+_ak_lib_load _ak_script
 
 function _ak_irc_connect(){
     _ak_not_implemented "LOL"

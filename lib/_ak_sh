@@ -17,8 +17,8 @@
 ### You should have received a copy of the GNU General Public License
 ### along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
-
-source $AK_LIBDIR/_ak_log
+source $AK_LIBDIR/_ak_lib_load
+_ak_lib_load _ak_log
 
 function _ak_shell_help(){
     _ak_log_info "# AK shell commands:"

@@ -17,7 +17,8 @@
 ### You should have received a copy of the GNU General Public License
 ### along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
-source ./lib/_ak_log > /dev/null 2>&1 || source $AK_LIBDIR/_ak_log > /dev/null 2>&1
+source $AK_LIBDIR/_ak_lib_load
+_ak_lib_load _ak_log
 
 # Wanna talk about it?
 function _ak_new_line(){
@@ -219,4 +220,4 @@ function _ak_countdown_seconds(){
     printf "\n"
 }
 
-_ak_log_debug "_ak_script loaded $(caller)"
+# _ak_log_debug "_ak_script loaded $(caller)"

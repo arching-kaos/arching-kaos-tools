@@ -19,8 +19,9 @@
 ###
 PROGRAM="$(basename $0)"
 
-source $AK_LIBDIR/_ak_log
-source $AK_LIBDIR/_ak_ipfs
+source $AK_LIBDIR/_ak_lib_load
+_ak_lib_load _ak_log
+_ak_lib_load _ak_ipfs
 
 screen -dmS akipfsd _ak_ipfs_daemon
 if [ $? -ne 0 ]

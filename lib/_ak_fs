@@ -18,8 +18,9 @@
 ### along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
-source $AK_LIBDIR/_ak_log
-source $AK_LIBDIR/_ak_hash_exchange
+source $AK_LIBDIR/_ak_lib_load
+_ak_lib_load _ak_log
+_ak_lib_load _ak_hash_exchange
 
 function _ak_fs_dir_init_setup(){
     _ak_check_and_create_dir $AK_MAPSDIR

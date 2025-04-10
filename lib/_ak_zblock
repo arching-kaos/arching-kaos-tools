@@ -18,13 +18,14 @@
 ### along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 #set -x
-source $AK_LIBDIR/_ak_log
-source $AK_LIBDIR/_ak_script
-source $AK_LIBDIR/_ak_utils
-source $AK_LIBDIR/_ak_gpg
-source $AK_LIBDIR/_ak_html
-source $AK_LIBDIR/_ak_ipfs
-source $AK_LIBDIR/_ak_fs
+source $AK_LIBDIR/_ak_lib_load
+_ak_lib_load _ak_log
+_ak_lib_load _ak_script
+_ak_lib_load _ak_datetime
+_ak_lib_load _ak_gpg
+_ak_lib_load _ak_html
+_ak_lib_load _ak_ipfs
+_ak_lib_load _ak_fs
 
 if [ ! -d $AK_WORKDIR/ipfs ]
 then

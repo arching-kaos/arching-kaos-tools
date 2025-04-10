@@ -17,12 +17,13 @@
 ### You should have received a copy of the GNU General Public License
 ### along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
-source $AK_LIBDIR/_ak_log
-source $AK_LIBDIR/_ak_network_ipfs
-source $AK_LIBDIR/_ak_network_cjdns
-source $AK_LIBDIR/_ak_network_yggdrasil
-source $AK_LIBDIR/_ak_network_stellar
-source $AK_LIBDIR/_ak_network_incoming
+source $AK_LIBDIR/_ak_lib_load
+_ak_lib_load _ak_log
+_ak_lib_load _ak_network_ipfs
+_ak_lib_load _ak_network_cjdns
+_ak_lib_load _ak_network_yggdrasil
+_ak_lib_load _ak_network_stellar
+_ak_lib_load _ak_network_incoming
 
 function _ak_network_scan(){
     if [ ! -z $1 ] && [ -n "$1" ]

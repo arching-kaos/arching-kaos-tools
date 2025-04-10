@@ -45,8 +45,9 @@ PROGRAM="$(basename $0)"
 descriptionString="Arching Kaos CLI"
 
 source $HOME/.arching-kaos/rc
-source $AK_LIBDIR/_ak_log
-source $AK_LIBDIR/_ak_script
+source $AK_LIBDIR/_ak_lib_load
+_ak_lib_load _ak_log
+_ak_lib_load _ak_script
 
 if [ $# -eq 0 ]
 then

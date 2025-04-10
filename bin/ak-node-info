@@ -29,9 +29,10 @@
 fullprogrampath="$(realpath $0)"
 PROGRAM=$(basename $0)
 descriptionString="Quick description"
-source $AK_LIBDIR/_ak_log
-source $AK_LIBDIR/_ak_script
-source $AK_LIBDIR/_ak_node
+source $AK_LIBDIR/_ak_lib_load
+_ak_lib_load _ak_log
+_ak_lib_load _ak_script
+_ak_lib_load _ak_node
 
 if [ ! -z "$1" ]
 then

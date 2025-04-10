@@ -30,9 +30,10 @@ fullprogrampath="$(realpath $0)"
 PROGRAM="$(basename $0)"
 descriptionString="Arching Kaos Configuration Tool"
 
-source $AK_LIBDIR/_ak_script
-source $AK_LIBDIR/_ak_config
-source $AK_LIBDIR/_ak_ipfs
+source $AK_LIBDIR/_ak_lib_load
+_ak_lib_load _ak_script
+_ak_lib_load _ak_config
+_ak_lib_load _ak_ipfs
 
 if [ ! -z $1 ] && [ -n "$1" ]
 then

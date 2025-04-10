@@ -29,9 +29,10 @@ PROGRAM=$(basename $0)
 descriptionString="IRC"
 
 # At least these
-source $AK_LIBDIR/_ak_log
-source $AK_LIBDIR/_ak_script
-source $AK_LIBDIR/_ak_irc
+source $AK_LIBDIR/_ak_lib_load
+_ak_lib_load _ak_log
+_ak_lib_load _ak_script
+_ak_lib_load _ak_irc
 
 # Your stuff here...
 example(){

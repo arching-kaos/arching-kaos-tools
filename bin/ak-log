@@ -35,8 +35,9 @@ PROGRAM=$(basename $0)
 descriptionString="Log file handler"
 
 # At least these
-source $AK_LIBDIR/_ak_log
-source $AK_LIBDIR/_ak_script
+source $AK_LIBDIR/_ak_lib_load
+_ak_lib_load _ak_log
+_ak_lib_load _ak_script
 
 # Your stuff here...
 example(){

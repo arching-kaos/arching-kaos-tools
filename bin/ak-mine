@@ -29,9 +29,10 @@ fullprogrampath="$(realpath $0)"
 PROGRAM=$(basename $0)
 descriptionString="Sblock mining"
 
-source $AK_LIBDIR/_ak_log
-source $AK_LIBDIR/_ak_script
-source $AK_LIBDIR/_ak_utils
+source $AK_LIBDIR/_ak_lib_load
+_ak_lib_load _ak_log
+_ak_lib_load _ak_script
+_ak_lib_load _ak_utils
 
 gather_zblocks(){
     if [ "$(cat $AK_ZBLOCKSFILE | jq -r '.[].zblock' | wc -l)" -ne 0 ]

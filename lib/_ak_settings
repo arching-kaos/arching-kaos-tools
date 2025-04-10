@@ -18,7 +18,8 @@
 ### along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
-source $AK_LIBDIR/_ak_script
+source $AK_LIBDIR/_ak_lib_load
+_ak_lib_load _ak_script
 
 if [ ! -d "${AK_WORKDIR}" ]
 then

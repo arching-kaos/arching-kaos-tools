@@ -36,9 +36,10 @@ fullprogrampath="$(realpath $0)"
 PROGRAM=$(basename $0)
 descriptionString="AKFS tools"
 
-source $AK_LIBDIR/_ak_log
-source $AK_LIBDIR/_ak_script
-source $AK_LIBDIR/_ak_fs
+source $AK_LIBDIR/_ak_lib_load
+_ak_lib_load _ak_log
+_ak_lib_load _ak_script
+_ak_lib_load _ak_fs
 
 if [ ! -z $1 ]
 then

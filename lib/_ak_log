@@ -18,7 +18,8 @@
 ### along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
-source $AK_LIBDIR/_ak_datetime 2>/dev/null || source ./lib/_ak_datetime 2>/dev/null
+source $AK_LIBDIR/_ak_lib_load
+_ak_lib_load _ak_datetime
 
 export AK_LOGSDIR="$AK_WORKDIR/logs"
 export AK_LOGSFILE="$AK_LOGSDIR/log"
@@ -190,5 +191,5 @@ function _ak_log_info(){
     _ak_log_message "$PROGRAM" "INFO" "$*"
 }
 
-_ak_log_debug "_ak_log loaded $(caller)"
+# _ak_log_debug "_ak_log loaded $(caller)"
 # vim: set syntax=bash

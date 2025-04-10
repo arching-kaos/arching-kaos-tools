@@ -18,8 +18,6 @@
 ### along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
-source $AK_LIBDIR/_ak_log
-
 function _ak_datetime_unix(){
     date -u +%s | tr -d '\n'
 }

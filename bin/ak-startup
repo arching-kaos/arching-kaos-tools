@@ -34,9 +34,10 @@ descriptionString="AK system starter"
 source $HOME/.arching-kaos/rc
 PATH=$PATH:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:$HOME/bin:$AK_WORKDIR/bin
 
-source $AK_LIBDIR/_ak_log
-source $AK_LIBDIR/_ak_script
-source $AK_LIBDIR/_ak_ipfs
+source $AK_LIBDIR/_ak_lib_load
+_ak_lib_load _ak_log
+_ak_lib_load _ak_script
+_ak_lib_load _ak_ipfs
 
 function _ak_start_up_sequence(){
     _ak_ipfs_starter

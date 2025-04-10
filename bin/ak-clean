@@ -35,7 +35,8 @@ fullprogrampath="$(realpath $0)"
 PROGRAM="$(basename $0)"
 descriptionString="Cleans ak temp files"
 
-source $AK_LIBDIR/_ak_script
+source $AK_LIBDIR/_ak_lib_load
+_ak_lib_load _ak_script
 
 function _ak_tmp_cleanup(){
     ls -1 /tmp/aktmp* > /dev/null 2>&1

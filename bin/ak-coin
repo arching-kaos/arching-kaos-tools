@@ -30,9 +30,10 @@ PROGRAM=$(basename $0)
 descriptionString="Coin status"
 
 # At least these
-source $AK_LIBDIR/_ak_log
-source $AK_LIBDIR/_ak_script
-source $AK_LIBDIR/_ak_coin
+source $AK_LIBDIR/_ak_lib_load
+_ak_lib_load _ak_log
+_ak_lib_load _ak_script
+_ak_lib_load _ak_coin
 
 # Flags to run
 if [ ! -z $1 ]
