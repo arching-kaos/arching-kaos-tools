@@ -23,6 +23,7 @@ function _ak_lib_load(){
     then
         source $AK_LIBDIR/$1
     elif [ -f "./lib/$1" ]
+    then
         source ./lib/$1
     else
         printf "Error: Could not load $1 lib"
