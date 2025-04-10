@@ -4,7 +4,7 @@ _ak_lib_load _ak_log
 _ak_lib_load _ak_script
 
 function _ak_irc_connect(){
-    _ak_not_implemented "LOL"
+    _ak_not_implemented "${FUNCNAME}"
 }
 
 _ak_log_debug "_ak_irc loaded $(caller)"

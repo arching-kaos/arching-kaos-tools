@@ -22,11 +22,11 @@ _ak_lib_load _ak_log
 _ak_lib_load _ak_ipfs
 
 function _ak_network_ipfs_scan(){
-    _ak_not_implemented _ak_network_ipfs_scan
+    _ak_not_implemented ${FUNCNAME}
 }
 
 function _ak_network_ipfs_show_peers(){
-    _ak_not_implemented _ak_network_ipfs_show_peers
+    _ak_not_implemented ${FUNCNAME}
 }
 
 function _ak_network_ipfs_connect_bootstrap(){

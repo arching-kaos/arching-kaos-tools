@@ -136,11 +136,11 @@ function _ak_settings_set(){
 }
 
 function _ak_settings_get_sub(){
-    _ak_not_implemented
+    _ak_not_implemented ${FUNCNAME}
 }
 
 function _ak_settings_get_all(){
-    _ak_not_implemented
+    _ak_not_implemented ${FUNCNAME}
 }
 
 _ak_log_debug "_ak_settings loaded $(caller)"
