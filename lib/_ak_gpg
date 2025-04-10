@@ -134,6 +134,15 @@ function _ak_gpg_sign_clear(){
     fi
 }
 
+function _ak_gpg_sign_clear_with_key(){
+    if [ ! -z $1 ] && [ -n "$1" ] && [ ! -z $2 ] && [ -n "$2" ] && [ ! -z $3 ] && [ -n "$3" ]
+    then
+        _ak_gpg --clear-sign --sign-with $3 --armor --output $1 $2
+    else
+        exit 1
+    fi
+}
+
 function _ak_gpg_encrypt_sign(){
     if [ ! -z $1 ] && [ -n "$1" ] && [ ! -z $2 ] && [ -n "$2" ] && [ ! -z $3 ] && [ -n "$3" ]
     then
