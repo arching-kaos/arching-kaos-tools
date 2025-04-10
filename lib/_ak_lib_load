@@ -19,11 +19,13 @@
 ###
 
 function _ak_lib_load(){
-    typeset -F | grep $1 2>/dev/null 1>&2 || if [ -n "$AK_LIBDIR" ]
+    typeset -F | grep $1 2>/dev/null 1>&2 || if [ -f "$AK_LIBDIR/$1" ]
     then
         source $AK_LIBDIR/$1
-    else
+    elif [ -f "./lib/$1" ]
         source ./lib/$1
+    else
+        printf "Error: Could not load $1 lib"
     fi
 
 }
