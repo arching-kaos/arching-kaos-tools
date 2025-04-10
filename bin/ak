@@ -153,7 +153,7 @@ case "$1" in
         _ak_exit_program $? "$subcmd module finished";
         ;;
     -s|--shell)
-        ak sh -s
+        rlwrap ak sh -s
         _ak_exit_program $? "Shell terminated";
         ;;
 esac
