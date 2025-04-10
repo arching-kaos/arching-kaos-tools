@@ -19,5 +19,11 @@
 ###
 
 function _ak_lib_load(){
-    typeset -F | grep $1 2>/dev/null 1>&2 || ( source $AK_LIBDIR/$1 || source ./lib/$1 )
+    typeset -F | grep $1 2>/dev/null 1>&2 || if [ -n "$AK_LIBDIR" ]
+    then
+        source $AK_LIBDIR/$1
+    else
+        source ./lib/$1
+    fi
+
 }
