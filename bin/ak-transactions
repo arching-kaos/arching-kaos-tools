@@ -27,7 +27,7 @@ descriptionString="Transactions module"
 source $AK_LIBDIR/_ak_lib_load
 _ak_lib_load _ak_log
 _ak_lib_load _ak_script
-_ak_lib_load _ak_utils
+_ak_lib_load _ak_datetime
 _ak_lib_load _ak_ipfs
 _ak_lib_load _ak_gpg
 _ak_lib_load _ak_zblock

@@ -32,7 +32,7 @@ descriptionString="Sblock mining"
 source $AK_LIBDIR/_ak_lib_load
 _ak_lib_load _ak_log
 _ak_lib_load _ak_script
-_ak_lib_load _ak_utils
+_ak_lib_load _ak_datetime
 
 gather_zblocks(){
     if [ "$(cat $AK_ZBLOCKSFILE | jq -r '.[].zblock' | wc -l)" -ne 0 ]
