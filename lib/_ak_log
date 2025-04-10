@@ -18,7 +18,7 @@
 ### along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
-source $AK_LIBDIR/_ak_lib_load 2>/dev/null || source ./lib/_ak_lib_load 2>/dev/null
+source ./lib/_ak_lib_load 2>/dev/null || source $AK_LIBDIR/_ak_lib_load 2>/dev/null
 _ak_lib_load _ak_datetime
 
 export AK_LOGSDIR="$AK_WORKDIR/logs"
