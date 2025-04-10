@@ -17,7 +17,7 @@
 ### You should have received a copy of the GNU General Public License
 ### along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
-source $AK_LIBDIR/_ak_lib_load
+source ./lib/_ak_lib_load > /dev/null 2>&1 || source $AK_LIBDIR/_ak_lib_load > /dev/null 2>&1
 _ak_lib_load _ak_log
 
 # Wanna talk about it?
