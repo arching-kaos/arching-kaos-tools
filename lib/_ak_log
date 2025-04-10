@@ -82,6 +82,11 @@ function _ak_log_follow(){
     done
 }
 
+function _ak_log_last_line(){
+    p="$(tail -n 1 $AK_LOGSFILE | tr -d '\n')"
+    _ak_log_print_log_line "$p"
+}
+
 function _ak_log_grep(){
     if [ ! -z $1 ] && [ -n "$1" ]
     then
