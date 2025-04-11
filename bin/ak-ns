@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+###
+### arching-kaos-tools
+### Tools to interact and build an Arching Kaos Infochain
+### Copyright (C) 2021 - 2025  kaotisk
+###
+### This program is free software: you can redistribute it and/or modify
+### it under the terms of the GNU General Public License as published by
+### the Free Software Foundation, either version 3 of the License, or
+### (at your option) any later version.
+###
+### This program is distributed in the hope that it will be useful,
+### but WITHOUT ANY WARRANTY; without even the implied warranty of
+### MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+### GNU General Public License for more details.
+###
+### You should have received a copy of the GNU General Public License
+### along with this program.  If not, see <http://www.gnu.org/licenses/>.
+###
+##
+## AKNS is a name system for Arching Kaos
+##
+## Usage:
+##
+##    -h,  --help                          Prints this help message
+##    -c,  --create <name>                 Creates a new key-pair with name
+##    -l,  --list                          List names
+##    -ll, --list-long                     List names with keys
+##    -rn, --resolve-name <name>           Resolves value from name
+##    -rk, --resolve-key <key>             Resolves value from key
+##    -p,  --publish <key> <value>         Publishes value to key
+##    -pn, --publish2name <name> <value>   Publishes value to name
+##    -pz, --publish-zchain                Publishes zchain
+##    -pc, --publish-config                Publishes config
+##
+fullprogrampath="$(realpath $0)"
+PROGRAM=$(basename $0)
+descriptionString="Name system"
+
+source $AK_LIBDIR/_ak_lib_load
+_ak_lib_load _ak_log
+_ak_lib_load _ak_script
+_ak_lib_load _ak_ns
+
+if [ ! -z $1 ]
+then
+    case $1 in
+        -h | --help) _ak_usage; exit;;
+        -c | --create) shift; _ak_ns_create $1; exit;;
+        -l | --list) shift; _ak_ns_list; exit;;
+        -ll | --list-long) shift; _ak_ns_list_long; exit;;
+        -rn | --resolve-name) shift; _ak_ns_resolve_from_name $1; exit;;
+        -rk | --resolve-key) shift; _ak_ns_resolve_from_key $1; exit;;
+        -p | --publish) shift; _ak_ns_publish $1 $2; exit;;
+        -pn | --publish2name) shift; _ak_ns_publish2name $1 $2; exit;;
+        -pz | --publish-zchain) _ak_ns_publish_zchain; exit;;
+        -pc | --publish-config) _ak_ns_publish_config; exit;;
+        * ) _ak_usage;;
+    esac
+else _ak_usage
+fi

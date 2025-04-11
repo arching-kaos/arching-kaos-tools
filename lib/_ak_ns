@@ -1,0 +1,212 @@
+#!/usr/bin/env bash
+###
+### arching-kaos-tools
+### Tools to interact and build an Arching Kaos Infochain
+### Copyright (C) 2021 - 2025  kaotisk
+###
+### This program is free software: you can redistribute it and/or modify
+### it under the terms of the GNU General Public License as published by
+### the Free Software Foundation, either version 3 of the License, or
+### (at your option) any later version.
+###
+### This program is distributed in the hope that it will be useful,
+### but WITHOUT ANY WARRANTY; without even the implied warranty of
+### MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+### GNU General Public License for more details.
+###
+### You should have received a copy of the GNU General Public License
+### along with this program.  If not, see <http://www.gnu.org/licenses/>.
+###
+source $AK_LIBDIR/_ak_lib_load
+_ak_lib_load _ak_log
+_ak_lib_load _ak_script
+_ak_lib_load _ak_gpg
+_ak_lib_load _ak_zchain
+
+AK_NS_DIR="${AK_WORKDIR}/akns"
+
+_ak_check_and_create_dir ${AK_NS_DIR}
+
+function _ak_ns_create(){
+    if [ -z $1 ] || [ ! -n "$1" ]
+    then
+        _ak_log_error "No key name was given"
+        exit 1
+    fi
+    if [ "$(echo -n $1| tr -d '[:alnum:]')" != "" ]
+    then
+        _ak_log_error "Name $1 is not allowed. Use only letters and numbers"
+        exit 1
+    fi
+    keyname="$1@keynames.kaos.kaos"
+    _ak_log_info "Checking for ${keyname}..."
+    _ak_gpg_list_secret_keys_long | grep ${keyname} > /dev/null 2>&1
+    if [ $? -ne 0 ]
+    then
+        _ak_log_info "Creating ${keyname}"
+        _ak_gpg_create_key ${keyname}
+    else
+        _ak_log_error "Name ${keyname} already exists"
+        exit 1
+    fi
+}
+
+function _ak_ns_list(){
+    _ak_gpg_list_secret_keys_long | grep '@keynames.kaos.kaos' | cut -d ' ' -f 2
+}
+
+function _ak_ns_list_long(){
+    _ak_gpg_list_secret_keys_long | grep '@keynames.kaos.kaos'
+}
+
+function _ak_ns_resolve_from_name(){
+    # $1; exit;;
+    if [ -z $1 ] || [ ! -n "$1" ]
+    then
+        _ak_log_error "No name was given"
+        exit 1
+    fi
+    key_name="$1"
+    _ak_log_info "${key_name} was given"
+    if [ "${key_name}" == "zchain" ] || [ "${key_name}" == "zconfig" ]
+    then
+        _ak_log_info "${key_name} search on local secret keychain"
+        key="$(_ak_gpg_list_secret_keys_long | grep ${key_name}'@keynames.kaos.kaos' | cut -d ' ' -f 1)"
+        if [ ! -n "${key}" ]
+        then
+            _ak_log_error "${key_name} was not found locally"
+            exit 1
+        fi
+        _ak_ns_resolve_from_key ${key}
+    fi
+    _ak_not_implemented "${FUNCNAME}"
+}
+
+function _ak_ns_resolve_from_key(){
+    # $1; exit;;
+    if [ -z $1 ] || [ ! -n "$1" ]
+    then
+        _ak_log_error "No key was given"
+        exit 1
+    fi
+    key="$1"
+    _ak_log_info "${key} was given"
+    if [ ! -f ${AK_NS_DIR}/${key} ]
+    then
+        _ak_log_error "${key} was not found"
+        exit 1
+    fi
+    _ak_gpg_verify_clear_signature ${AK_NS_DIR}/${key}
+    _ak_not_implemented "${FUNCNAME}"
+}
+
+function _ak_ns_publish(){
+    # $1 $2; exit;;
+    if [ -z $1 ] || [ ! -n "$1" ]
+    then
+        _ak_log_error "No key was given"
+        exit 1
+    fi
+    if [ ! -z $2 ] || [ ! -n "$2" ]
+    then
+        _ak_log_error "No value was given"
+        exit 1
+    fi
+    if [ "$(echo -n $1| sed -e 's/[A-F0-9]\{40\}//')" != "" ]
+    then
+        _ak_log_error "$1 is not a valid key"
+        exit 1
+    fi
+    if [ "$(echo -n $2| sed -e 's/[a-f0-9]\{128\}//')" != "" ]
+    then
+        _ak_log_error "$2 is not a valid hash"
+        exit 1
+    fi
+    key="$(_ak_gpg_list_secret_keys | grep $1)"
+    value="$2"
+    if [ ! -n "${key}" ]
+    then
+        _ak_log_error "Key $1 was not found"
+        exit 1
+    fi
+    _ak_log_info "Key $1 was found"
+    if [ ! -z $2 ] || [ -n "$2" ]
+    then
+        _ak_gpg_sign_clear_with_key $key
+    fi
+    _ak_not_implemented "${FUNCNAME}"
+}
+
+function _ak_ns_publish2name(){
+    # $1 $2; exit;;
+    if [ -z $1 ] || [ ! -n "$1" ]
+    then
+        _ak_log_error "No key name was given"
+        exit 1
+    fi
+    if [ "$(echo -n $1| tr -d '[:alnum:]')" != "" ]
+    then
+        _ak_log_error "Name $1 is not allowed. Use only letters and numbers"
+        exit 1
+    fi
+    key="$(_ak_gpg_list_secret_keys_long | grep $1'@keynames.kaos.kaos' | cut -d ' ' -f 1)"
+    if [ ! -n "${key}" ]
+    then
+        _ak_log_error "No key found with name $1"
+        exit 1
+    fi
+    _ak_ns_publish ${key} $2
+    _ak_not_implemented "${FUNCNAME}"
+}
+
+function _ak_ns_publish_zchain(){
+    zlatest="$(_ak_zchain_get_latest)"
+    zchain_key="$(_ak_gpg_list_secret_keys_long | grep 'zchain@keynames.kaos.kaos' | cut -d ' ' -f 1)"
+    if [ ! -n "${zchain_key}" ]
+    then
+        _ak_log_warning "zchain_key not there"
+        _ak_log_info "Creating zchain_key"
+        _ak_ns_create zchain
+    fi
+    zchain_key="$(_ak_gpg_list_secret_keys_long | grep 'zchain@keynames.kaos.kaos' | cut -d ' ' -f 1)"
+    # We need to prepare the file now to be signed
+    # Put the zlatest into a file
+    zlatest_file="$(_ak_make_temp_file)"
+    echo -n ${zlatest} > ${zlatest_file}
+    zlatest_csigned_file="$(_ak_make_temp_file)"
+    _ak_gpg_sign_clear_with_key ${zlatest_csigned_file} ${zlatest_file} ${zchain_key} 
+    # What to do now with the clear signed file?
+    if [ -f ${AK_NS_DIR}/${zchain_key} ]
+    then
+        _ak_gpg_verify_clear_signature ${AK_NS_DIR}/${zchain_key} >> ${AK_NS_DIR}/${zchain_key}.history
+    fi
+    mv ${zlatest_csigned_file} ${AK_NS_DIR}/${zchain_key}
+    # _ak_not_implemented "${FUNCNAME}"
+}
+
+function _ak_ns_publish_config(){
+    zconfig="$(_ak_node_info_ipfs_hash)"
+    zconfig_key="$(_ak_gpg_list_secret_keys_long | grep 'zconfig@keynames.kaos.kaos' | cut -d ' ' -f 1)"
+    if [ ! -n "${zconfig_key}" ]
+    then
+        _ak_log_warning "zconfig_key not there"
+        _ak_log_info "Creating zconfig_key"
+        _ak_ns_create zconfig
+    fi
+    zconfig_key="$(_ak_gpg_list_secret_keys_long | grep 'zconfig@keynames.kaos.kaos' | cut -d ' ' -f 1)"
+    # We need to prepare the file now to be signed
+    # Put the zlatest into a file
+    zconfig_file="$(_ak_make_temp_file)"
+    echo -n ${zconfig} > ${zconfig_file}
+    zconfig_csigned_file="$(_ak_make_temp_file)"
+    _ak_gpg_sign_clear_with_key ${zconfig_csigned_file} ${zconfig_file} ${zconfig_key} 
+    # What to do now with the clear signed file?
+    if [ -f ${AK_NS_DIR}/${zconfig_key} ]
+    then
+        _ak_gpg_verify_clear_signature ${AK_NS_DIR}/${zconfig_key} >> ${AK_NS_DIR}/${zconfig_key}.history
+    fi
+    mv ${zconfig_csigned_file} ${AK_NS_DIR}/${zconfig_key}
+    # _ak_not_implemented "${FUNCNAME}"
+}
+
+_ak_log_debug "_ak_ns loaded $(caller)"
