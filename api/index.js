@@ -59,6 +59,7 @@ function getRoutes(req, res)
             case 'peers': getPeers(req, res); break;
             case 'node_info': getNodeInfo(req, res); break;
             case 'ipfs_hash': getIPFSHash(req, res); break;
+            case 'ipfs': getIPFSHash(req, res); break;
             case 'zlatest': getZlatest(req, res); break;
             case 'sblock': getSblock(req, res); break;
             case 'slatest': getSlatest(req, res); break;

@@ -1,26 +1,29 @@
 const { spawn } = require('child_process');
 const fs = require("fs");
 const config = require("../../config");
+const akLogMessage = require("../../lib/akLogMessage");
+akLogMessage('lol');
 
 /*
- * Returns a cached zblock
+ * Returns a cached ipfs_hash
  *
  * Returns:
  *     - JSON object
  *
  */
-function fetchIPFShash(zblock, res)
+function fetchIPFShash(ipfs_hash, res)
 {
     regex= /Qm[A-Za-z0-9]{44}/;
-    if (regex.test(zblock)){
-        const path = `${config.ipfsArtifactsDir}/${zblock}`;
+    if (regex.test(ipfs_hash)){
+        const path = `${config.ipfsArtifactsDir}/${ipfs_hash}`;
         console.log(path)
         try
         {
             if(fs.existsSync(path))
             {
-                res.writeHead(200, {'Content-Type': 'application/json'});
-                res.end(JSON.stringify(JSON.parse(fs.readFileSync(path))));
+                res.writeHead(200); //, {'Content-Type': 'application/json'});
+                // res.end(JSON.stringify(JSON.parse(fs.readFileSync(path))));
+                res.end(fs.readFileSync(path));
             }
             else
             {
@@ -44,7 +47,7 @@ function fetchIPFShash(zblock, res)
 function getIPFSHash(req, res)
 {
     var args = req.url.split("/");
-    if ( (args[2] === 'ipfs_hash') && args[3] && typeof args[3] === "string" && args[3].length === 46 ){
+    if ( (args[2] === 'ipfs_hash'||args[2] === 'ipfs') && args[3] && typeof args[3] === "string" && args[3].length === 46 ){
         regex= /Qm[A-Za-z0-9]{44}/;
         if (regex.test(args[3]))
         {
@@ -67,7 +70,7 @@ function getIPFSHash(req, res)
     else
     {
         res.writeHead(404, {'Content-Type': 'application/json'});
-        res.end(JSON.stringify({error:"Invalid data: no valid zblock was provided"}));
+        res.end(JSON.stringify({error:"Invalid data: no valid ipfs_hash was provided"}));
     }
 }
 module.exports = getIPFSHash;
