@@ -8,7 +8,8 @@ const { spawn } = require('child_process');
 const config = require("../../config.js");
 const checkIfAllowedIP = require('../../lib/checkIfAllowedIP/index.js');
 
-module.exports = (req, res) => {
+function getRemotePeers(req, res)
+{
     var args = req.url.split("/");
     var ip = "";
     if ( args.length === 4 )
@@ -22,15 +23,12 @@ module.exports = (req, res) => {
         command.stdout.on("data", data => {
             buffer = buffer + data;
         });
-
         command.stderr.on("data", data => {
             console.log(`stderr: ${data}`);
         });
-
         command.on('error', (error) => {
             console.log(`error: ${error.message}`);
         });
-
         command.on("close", code => {
             if ( code === 0 )
             {
@@ -52,3 +50,4 @@ module.exports = (req, res) => {
     }
 }
 
+module.exports = getRemotePeers;

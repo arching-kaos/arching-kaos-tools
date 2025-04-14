@@ -8,7 +8,9 @@ const config = require('../../config');
  *     - the file, it's already in JSON format.
  *
  */
-module.exports = (req, res) => {
+function showEntriesFile(req, res)
+{
     var data = JSON.parse(fs.readFileSync(config.blocksFile));
     res.send(data);
 };
+module.exports = showEntriesFile;

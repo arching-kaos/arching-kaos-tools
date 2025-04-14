@@ -14,7 +14,8 @@
  */
 const getNSvalidity = require('../../validators/ZchainValidator');
 
-module.exports = (req, res) => {
+function announceZChain(req, res)
+{
     console.log(req);
     if ( (req.body.zchain) && typeof req.body.zchain === "string" && req.body.zchain.length === 62 ){
         let zchain = req.body.zchain;
@@ -30,3 +31,4 @@ module.exports = (req, res) => {
         res.end(JSON.stringify({error:"Invalid data"}));
     }
 }
+module.exports = announceZChain;

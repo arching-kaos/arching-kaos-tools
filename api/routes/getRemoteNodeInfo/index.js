@@ -8,7 +8,8 @@ const { spawn } = require('child_process');
 const config = require("../../config.js");
 const checkIfAllowedIP = require('../../lib/checkIfAllowedIP/index.js');
 
-module.exports = (req, res) => {
+function getRemoteNodeInfo(req, res)
+{
     var args = req.url.split("/");
     var ip = "";
     if ( args.length === 4 )
@@ -23,15 +24,12 @@ module.exports = (req, res) => {
         command.stdout.on("data", data => {
             buffer = buffer + data;
         });
-
         command.stderr.on("data", data => {
             console.log(`stderr: ${data}`);
         });
-
         command.on('error', (error) => {
             console.log(`error: ${error.message}`);
         });
-
         command.on("close", code => {
             res.writeHead(200, { 'Content-Type': 'application/json'});
             res.end(buffer);
@@ -44,4 +42,4 @@ module.exports = (req, res) => {
         res.end(JSON.stringify({error:"No IP"}));
     }
 }
-
+module.exports = getRemoteNodeInfo;

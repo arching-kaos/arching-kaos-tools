@@ -13,7 +13,8 @@
  *
  */
 const getvalidity = require('../../validators/ZblockValidator')
-module.exports = (req, res) => {
+function announceZBlock(req, res)
+{
     console.log(req);
     if ( (req.body.zblock) && typeof req.body.zblock === "string" && req.body.zblock.length === 46 ){
         let zblock = req.body.zblock;
@@ -27,3 +28,4 @@ module.exports = (req, res) => {
         res.send({error:"Invalid data"});
     }
 }
+module.exports = announceZBlock;

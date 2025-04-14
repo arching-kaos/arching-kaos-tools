@@ -15,7 +15,8 @@ function fetchZblock(zblock, res){
     res.end(JSON.stringify(JSON.parse(fs.readFileSync(path))));
 };
 
-module.exports = (req, res) => {
+function getInnerIPFSContent(req, res)
+{
     console.log(req.query)
     if ( (req.query.ipfs) && typeof req.query.ipfs === "string" && req.query.ipfs.length === 46 ){
         let ipfs = req.query.ipfs;
@@ -36,3 +37,4 @@ module.exports = (req, res) => {
         res.end(JSON.stringify({error:"Invalid data: no valid zblock was provided"}));
     }
 }
+module.exports = getInnerIPFSContent;

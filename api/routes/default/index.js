@@ -1,7 +1,8 @@
 const rsettings = require('../../settings');
 const settings = rsettings();
 
-module.exports = (req, res) => {
+function welcome(req, res)
+{
     res.writeHead(404, { 'Content-Type': 'application/json'});
     res.end(JSON.stringify({
         message:"Hello! Welcome to Arching Kaos API! See available routes below!",
@@ -36,4 +37,4 @@ module.exports = (req, res) => {
         }
     }));
 }
-
+module.exports = welcome;

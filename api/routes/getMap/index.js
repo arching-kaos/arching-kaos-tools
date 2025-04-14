@@ -7,7 +7,8 @@
 const fs = require('fs');
 const config = require("../../config.js");
 
-module.exports = (req, res) => {
+function getMap(req, res)
+{
     var args = req.url.split("/");
     var hash = args[3];
     regex= /[a-f0-9]{128}/
@@ -39,4 +40,4 @@ module.exports = (req, res) => {
         res.end(JSON.stringify({error:"No hash"}));
     }
 }
-
+module.exports = getMap;

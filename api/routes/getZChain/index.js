@@ -7,7 +7,8 @@ const { spawn } = require('child_process');
  *     - A JSON array representing the nodes' arching-kaos-zchain
  *
  */
-module.exports = (req, res) => {
+function getZChain(req, res)
+{
     const command = spawn("ak", ["zchain", "--crawl"]);
     response_string = "";
     command.stdout.on("data", data => {
@@ -27,3 +28,5 @@ module.exports = (req, res) => {
             console.log(`child process exited with code ${code}`);
     });
 };
+
+module.exports = getZChain;

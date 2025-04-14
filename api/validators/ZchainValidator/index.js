@@ -64,7 +64,8 @@ function continuethings(exitcode,sh,res){
  * We send the data tested and the exit code to continuethings()
  *
  */
-module.exports = (ch, res) => {
+function ZchainValidator(ch, res)
+{
     const command = spawn("ak",["zchain", "--crawl", "-n", ch]);
     response_string = "";
     command.stdout.on("data", data => {
@@ -85,3 +86,5 @@ module.exports = (ch, res) => {
         continuethings(code,ch,res);
     });
 };
+
+module.exports = ZchainValidator;

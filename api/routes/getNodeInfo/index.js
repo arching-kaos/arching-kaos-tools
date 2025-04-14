@@ -1,6 +1,7 @@
 const { spawn } = require('child_process');
 
-module.exports = (req, res) => {
+function getNodeInfo(req, res)
+{
     const command = spawn("ak-config", ["--get-published"]);
     var buffer = "";
     command.stdout.on("data", data => {
@@ -22,3 +23,4 @@ module.exports = (req, res) => {
         console.log(`child process exited with code ${code}`);
     });
 };
+module.exports = getNodeInfo;

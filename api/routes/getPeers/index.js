@@ -1,7 +1,8 @@
 const config = require('../../config');
 const fs = require('fs');
 
-module.exports = (req, res) => {
+function getPeers(req, res)
+{
     const path = config.peersFile;
     if(fs.existsSync(path)){
         res.writeHead(200, {'Content-Type': 'application/json'});
@@ -11,3 +12,4 @@ module.exports = (req, res) => {
         res.end({"error":"No peers :("})
     }
 };
+module.exports = getPeers;

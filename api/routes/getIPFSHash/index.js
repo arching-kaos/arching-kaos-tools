@@ -41,7 +41,8 @@ function fetchIPFShash(zblock, res)
     }
 };
 
-module.exports = (req, res) => {
+function getIPFSHash(req, res)
+{
     var args = req.url.split("/");
     if ( (args[2] === 'ipfs_hash') && args[3] && typeof args[3] === "string" && args[3].length === 46 ){
         regex= /Qm[A-Za-z0-9]{44}/;
@@ -69,3 +70,4 @@ module.exports = (req, res) => {
         res.end(JSON.stringify({error:"Invalid data: no valid zblock was provided"}));
     }
 }
+module.exports = getIPFSHash;

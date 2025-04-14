@@ -7,7 +7,8 @@ const { spawn } = require('child_process');
 const fs = require('fs');
 const config = require("../../config.js");
 
-module.exports = (req, res) => {
+function getSBlock(req, res)
+{
     var args = req.url.split("/");
     var sblock = args[3];
     regex= /[a-f0-9]{128}/
@@ -20,16 +21,13 @@ module.exports = (req, res) => {
             command.stdout.on("data", data => {
                 response_string += data;
             });
-
             command.stderr.on("data", data => {
                 console.log(`stderr: ${data}`);
             });
-
             command.on('error', (error) => {
                 console.log(`error: ${error.message}`);
                 response_string={err:"error.message"};
             });
-
             command.on("close", code => {
                 if ( code === 0 ) {
                     res.writeHead(200, {'Content-Type': 'application/json'});
@@ -49,4 +47,4 @@ module.exports = (req, res) => {
         res.end(JSON.stringify({error:"No hash"}));
     }
 }
-
+module.exports = getSBlock;

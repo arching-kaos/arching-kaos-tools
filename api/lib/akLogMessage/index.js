@@ -1,7 +1,8 @@
 const { spawn } = require('child_process');
 const config = require('../../config')
 
-module.exports = (type, message) => {
+function akLogMessage(type, message)
+{
     const command = spawn(
         "ak-log",
         ["-m", "ak-daemon", type, message]
@@ -26,3 +27,4 @@ module.exports = (type, message) => {
         console.log(`child process exited with code ${code}`);
     });
 };
+module.exports = akLogMessage;
