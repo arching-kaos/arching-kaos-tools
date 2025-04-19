@@ -25,133 +25,79 @@ int ak_log_write_to_file(char* message)
 
 void ak_log_print_log_line(char* line)
 {
-    if ( line )
+    int spaces_found = 0;
+    int last_space = -1;
+    int sa[] = { -1, -1, -1, -1 };
+    long int l = 1000000000;
+    long int ts = 0;
+    struct tm *timeInfo;
+    char ts_string[16]; // %Y%Y%Y%Y%m%m%d%d_%H%H%M%M%S%S
+    for (size_t i = 0; i < strlen(line); ++i)
     {
-        int i = 0;
-        int spaces_found = 0;
-        int last_space = -1;
-        long int l = 1000000000;
-        long int ts = 0;
-        struct tm *timeInfo;
-        char ts_string[16]; // %Y%Y%Y%Y%m%m%d%d_%H%H%M%M%S%S
-        while ( line[i] != '\0' )
+        if ( line[i] == ' ' && spaces_found < 3 )
         {
-            if ( line[i] == ' ' ) //  && spaces_found < 4)
-            {
-                spaces_found++;
-                if (true) //( spaces_found < 4 )
-                {
-                    for ( int k = last_space+1; k < i; k++ )
-                    {
-                        switch(spaces_found){
-                            case 1:
-                                // TS
-                                while (true)
-                                {
-                                    if ( line[k] == ' ' )
-                                    {
-                                        timeInfo = localtime(&ts);
-                                        strftime(ts_string, sizeof(ts_string), "%Y%m%d_%H%M%S", timeInfo);
-                                        printf("%s ", ts_string);
-                                        break;
-                                    }
-                                    else
-                                    {
-                                        switch(line[k])
-                                        {
-                                            case '0':
-                                                ts = 0*l + ts;
-                                                break;
-                                            case '1':
-                                                ts = 1*l + ts;
-                                                break;
-                                            case '2':
-                                                ts = 2*l + ts;
-                                                break;
-                                            case '3':
-                                                ts = 3*l + ts;
-                                                break;
-                                            case '4':
-                                                ts = 4*l + ts;
-                                                break;
-                                            case '5':
-                                                ts = 5*l + ts;
-                                                break;
-                                            case '6':
-                                                ts = 6*l + ts;
-                                                break;
-                                            case '7':
-                                                ts = 7*l + ts;
-                                                break;
-                                            case '8':
-                                                ts = 8*l + ts;
-                                                break;
-                                            case '9':
-                                                ts = 9*l + ts;
-                                                break;
-                                        }
-                                        l = l/10;
-                                    }
-                                    k++;
-                                }
-                                break;
-                            case 2:
-                                // PROGRAM
-                                printf("\033[1;32m");
-                                while (true)
-                                {
-                                    if ( line[k] == ' ' )
-                                    {
-                                        break;
-                                    }
-                                    else
-                                    {
-                                        printf("%c", line[k]);
-                                    }
-                                    k++;
-                                }
-                                break;
-                            case 3:
-                                // TYPE
-                                printf("\033[0;00m \033[1;31m");
-                                while (true)
-                                {
-                                    if ( line[k] == ' ' )
-                                    {
-                                        break;
-                                    }
-                                    else
-                                    {
-                                        printf("%c", line[k]);
-                                    }
-                                    k++;
-                                }
-                                break;
-                            case 4:
-                                // MESSAGE
-                                printf("\033[0;00m ");
-                                while (true)
-                                {
-                                    if ( line[k] == '\0' )
-                                    {
-                                        printf("\n");
-                                        break;
-                                    }
-                                    else
-                                    {
-                                        printf("%c", line[k]);
-                                    }
-                                    k++;
-                                }
-                                break;
-                        }
-                    }
-                    last_space = i;
-                }
-            }
-            i++;
+            spaces_found++;
+            last_space = i;
+            sa[spaces_found] = i;
         }
     }
+    for ( int k = 0; k < sa[1]; ++k)
+    {
+        switch(line[k])
+        {
+            case '0':
+                ts = 0*l + ts;
+                break;
+            case '1':
+                ts = 1*l + ts;
+                break;
+            case '2':
+                ts = 2*l + ts;
+                break;
+            case '3':
+                ts = 3*l + ts;
+                break;
+            case '4':
+                ts = 4*l + ts;
+                break;
+            case '5':
+                ts = 5*l + ts;
+                break;
+            case '6':
+                ts = 6*l + ts;
+                break;
+            case '7':
+                ts = 7*l + ts;
+                break;
+            case '8':
+                ts = 8*l + ts;
+                break;
+            case '9':
+                ts = 9*l + ts;
+                break;
+        }
+        l = l/10;
+    }
+    timeInfo = localtime(&ts);
+    strftime(ts_string, sizeof(ts_string), "%Y%m%d_%H%M%S", timeInfo);
+    printf("%s", ts_string);
+    printf(" \e[1;32m");
+    for ( int k = sa[1]+1; k < sa[2]; ++k)
+    {
+        printf("%c", line[k]);
+    }
+    printf("\e[0m \e[1;31m");
+    for ( int k = sa[2]+1; k < sa[3]; ++k)
+    {
+        printf("%c", line[k]);
+    }
+    printf("\e[0m ");
+    for ( int k = sa[3]+1; k < strlen(line); ++k)
+    {
+        printf("%c", line[k]);
+    }
+    printf("\e[0m");
+    printf("\n");
 }
 
 void ak_log_follow()
