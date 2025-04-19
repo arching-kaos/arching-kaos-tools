@@ -333,7 +333,7 @@ int ak_fs_open_map_v3(char* maphash)
         //char *mapsdir = "/home/kaotisk/.arching-kaos/akfs/maps/";
         //strncat(mapsdir, maphash);
         // printf("%s\n", mapsdir);
-        exit(1);
+        // exit(1);
         return 0;
     }
     else
