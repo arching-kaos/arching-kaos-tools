@@ -8,7 +8,7 @@ typedef struct {
     long unsigned int sum[8];
 } sha512sum;
 
-void shifting_example()
+static void shifting_example()
 {
     long unsigned int X = 0xf;
     for ( long unsigned i = 0; i < 64; i=i+4 )
@@ -17,7 +17,7 @@ void shifting_example()
     }
 }
 
-void structed_sum()
+static void structed_sum()
 {
     sha512sum struct_sample = {
         .sum[0] = 0x921618bc6d9f8059,
@@ -37,12 +37,12 @@ void structed_sum()
     printf("\n");
 }
 
-void long_unsigned_example()
+static void long_unsigned_example()
 {
     printf("hex:\t%#018lx\n",0xffffffffffffffff);
 }
 
-void char_based_sum()
+static void char_based_sum()
 {
     char sum_sample[] = "921618bc6d9f8059437c5e0397b13f973ab7c7a7b81f0ca31b70bf448fd800a460b67efda0020088bc97bf7d9da97a9e2ce7b20d46e066462ec44cf60284f9a7";
 //    printf("Size:\t%08lu\n",sizeof(sum_sample));

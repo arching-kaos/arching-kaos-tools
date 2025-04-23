@@ -2,110 +2,115 @@
 #include <stdlib.h>
 #include <string.h>
 #include <libakfs.h>
+#include <libaklog.h>
 
-void correct_string_correct_length()
+static void test_correct_string_correct_length()
 {
-    printf("%s\t", __func__);
     char queried_string[] = "921618bc6d9f8059437c5e0397b13f973ab7c7a7b81f0ca31b70bf448fd800a460b67efda0020088bc97bf7d9da97a9e2ce7b20d46e066462ec44cf60284f9a7";
     // printf("Hash given:\t%s\n", queried_string);
     // printf("Is a hash: %s\n", ak_fs_verify_input_is_hash(queried_string) ? "true": "false");
-    sha512sum resulted_hash = ak_fs_sha512sum_string_to_struct(queried_string);
+    sha512sum hash = {0};
+    sha512sum *resulted_hash = &hash;
+    ak_fs_sha512sum_string_to_struct(queried_string, resulted_hash);
     char resulted_string[129] = {0};
     ak_fs_sha512sum_struct_to_string(resulted_hash, resulted_string);
     // printf("Hash returned:\t%s\n", resulted_string);
     if ( strcmp(queried_string, resulted_string) == 0 )
     {
-        printf("PASS!\n");
+        ak_log_info(__func__, "PASSED");
     }
     else
     {
-        printf("NO PASS :(\n");
+        ak_log_error(__func__, "FAILED");
     }
 }
 
-void bad_string_correct_length()
+static void test_bad_string_correct_length()
 {
-    printf("%s\t", __func__);
     char queried_string[] = "921618bc6d9f8059437c5e0397b13f973ab7c7a7b81f0ca31b70bf448fd800a460b67efda0020088bc97bf7d9da97a9e2ce7b20d46e066462ec44cf60284f9az";
     // printf("Hash given:\t%s\n", queried_string);
     // printf("Is a hash: %s\n", ak_fs_verify_input_is_hash(queried_string) ? "true": "false");
-    sha512sum resulted_hash = ak_fs_sha512sum_string_to_struct(queried_string);
+    sha512sum hash = {0};
+    sha512sum *resulted_hash = &hash;
+    ak_fs_sha512sum_string_to_struct(queried_string, resulted_hash);
     char resulted_string[129] = {0};
     ak_fs_sha512sum_struct_to_string(resulted_hash, resulted_string);
     // printf("Hash returned:\t%s\n", resulted_string);
     if ( strcmp(queried_string, resulted_string) != 0 )
     {
-        printf("PASS!\n");
+        ak_log_info(__func__, "PASSED");
     }
     else
     {
-        printf("NO PASS :(\n");
+        ak_log_error(__func__, "FAILED");
     }
 }
 
-void less_than_length()
+static void test_less_than_length()
 {
-    printf("%s\t", __func__);
     char queried_string[] = "921618bc6d9f8059437c5e0397b13f973ab7c7a7b81f0ca31b70bf";
     // printf("Hash given:\t%s\n", queried_string);
     // printf("Is a hash: %s\n", ak_fs_verify_input_is_hash(queried_string) ? "true": "false");
-    sha512sum resulted_hash = ak_fs_sha512sum_string_to_struct(queried_string);
+    sha512sum hash = {0};
+    sha512sum *resulted_hash = &hash;
+    ak_fs_sha512sum_string_to_struct(queried_string, resulted_hash);
     char resulted_string[129] = {0};
     ak_fs_sha512sum_struct_to_string(resulted_hash, resulted_string);
     // printf("Hash returned:\t%s\n", resulted_string);
     if ( strcmp(queried_string, resulted_string) != 0 )
     {
-        printf("\tPASS!\n");
+        ak_log_info(__func__, "PASSED");
     }
     else
     {
-        printf("\tNO PASS :(\n");
+        ak_log_error(__func__, "FAILED");
     }
 }
 
-void more_than_length()
+static void test_more_than_length()
 {
-    printf("%s\t", __func__);
     char queried_string[] = "921618bc6d9f8059437c5e0397b13f973ab7c7a7b81f0ca31b70bf448fd800a460b67efda0020088bc97bf7d9da97a9e2ce7b20d46e066462ec44cf60284f9a7aaa";
     // printf("Hash given:\t%s\n", queried_string);
     // printf("Is a hash: %s\n", ak_fs_verify_input_is_hash(queried_string) ? "true": "false");
-    sha512sum resulted_hash = ak_fs_sha512sum_string_to_struct(queried_string);
+    sha512sum hash = {0};
+    sha512sum *resulted_hash = &hash;
+    ak_fs_sha512sum_string_to_struct(queried_string, resulted_hash);
     char resulted_string[129] = {0};
     ak_fs_sha512sum_struct_to_string(resulted_hash, resulted_string);
     // printf("Hash returned:\t%s\n", resulted_string);
     if ( strcmp(queried_string, resulted_string) != 0 )
     {
-        printf("\tPASS!\n");
+        ak_log_info(__func__, "PASSED");
     }
     else
     {
-        printf("\tNO PASS :(\n");
+        ak_log_error(__func__, "FAILED");
     }
 }
 
-void string_is_empty()
+static void test_string_is_empty()
 {
-    printf("%s\t", __func__);
     char queried_string[128] = "";
     // printf("Hash given:\t%s\n", queried_string);
     //printf("Is a hash: %s\n", ak_fs_verify_input_is_hash(queried_string) ? "true": "false");
-    sha512sum resulted_hash = ak_fs_sha512sum_string_to_struct(queried_string);
+    sha512sum hash = {0};
+    sha512sum *resulted_hash = &hash;
+    ak_fs_sha512sum_string_to_struct(queried_string, resulted_hash);
     char resulted_string[129] = {0};
     ak_fs_sha512sum_struct_to_string(resulted_hash, resulted_string);
     // printf("Hash returned:\t%s\n", resulted_string);
     if ( strcmp(queried_string, resulted_string) != 0 )
     {
-        printf("\t\tPASS!\n");
+        ak_log_info(__func__, "PASSED");
     }
     else
     {
-        printf("\t\tNO PASS :(\n");
+        ak_log_error(__func__, "FAILED");
     }
 }
 
-void hash_path_test()
+static void test_hash_path_test()
 {
-    printf("%s\t", __func__);
     char queried_string[] = "921618bc6d9f8059437c5e0397b13f973ab7c7a7b81f0ca31b70bf448fd800a460b67efda0020088bc97bf7d9da97a9e2ce7b20d46e066462ec44cf60284f9a7";
     // printf("Hash given:\t%s\n", queried_string);
     // printf("Is a hash: %s\n", ak_fs_verify_input_is_hash(queried_string) ? "true": "false");
@@ -113,17 +118,16 @@ void hash_path_test()
     // printf("Path returned:\t%s\n", resulted_string);
     if ( strcmp(queried_string, resulted_string) != 0 )
     {
-        printf("\t\tPASS!\n");
+        ak_log_info(__func__, "PASSED");
     }
     else
     {
-        printf("\t\tNO PASS :(\n");
+        ak_log_error(__func__, "FAILED");
     }
 }
 
-void hash_dir_test()
+static void test_hash_dir_test()
 {
-    printf("%s\t", __func__);
     char queried_string[] = "921618bc6d9f8059437c5e0397b13f973ab7c7a7b81f0ca31b70bf448fd800a460b67efda0020088bc97bf7d9da97a9e2ce7b20d46e066462ec44cf60284f9a7";
     // printf("Hash given:\t%s\n", queried_string);
     // printf("Is a hash: %s\n", ak_fs_verify_input_is_hash(queried_string) ? "true": "false");
@@ -131,21 +135,22 @@ void hash_dir_test()
     // printf("Path returned:\t%s\n", resulted_string);
     if ( strcmp(queried_string, resulted_string) != 0 )
     {
-        printf("\t\tPASS!\n");
+        ak_log_info(__func__, "PASSED");
     }
     else
     {
-        printf("\t\tNO PASS :(\n");
+        ak_log_error(__func__, "FAILED");
     }
 }
 
-void hash_save_to_file()
+static void test_hash_save_to_file()
 {
-    printf("%s\t", __func__);
     char queried_string[] = "921618bc6d9f8059437c5e0397b13f973ab7c7a7b81f0ca31b70bf448fd800a460b67efda0020088bc97bf7d9da97a9e2ce7b20d46e066462ec44cf60284f9a7";
     // printf("Hash given:\t%s\n", queried_string);
     // printf("Is a hash: %s\n", ak_fs_verify_input_is_hash(queried_string) ? "true": "false");
-    sha512sum resulted_hash = ak_fs_sha512sum_string_to_struct(queried_string);
+    sha512sum hash = {0};
+    sha512sum *resulted_hash = &hash;
+    ak_fs_sha512sum_string_to_struct(queried_string, resulted_hash);
     FILE* fd = fopen("tmpfile", "wb");
     if ( fd == NULL )
     {
@@ -166,48 +171,98 @@ void hash_save_to_file()
     ak_fs_sha512sum_struct_to_string(resulted_hash, resulted_string);
     if ( strcmp(queried_string, resulted_string) == 0 )
     {
-        printf("\tPASS!\n");
+        ak_log_debug(__func__, "PASSED");
     }
     else
     {
-        printf("\tNO PASS :(\n");
+        ak_log_debug(__func__, "FAILED");
     }
     fclose(fd);
 }
 
-void test_map_opener()
+static void test_hash_check()
 {
-    ak_fs_open_map_v3("28bde5fa7aacd8da0ec84b61cf3a69141686906c00f8cff904c9a0b12f5a4cf061da254feb188c32b711b2e1d6a3853d5ac3fb0bcd3564899bae55dd30470392");
+    char queried_string[] = "921618bc6d9f8059437c5e0397b13f973ab7c7a7b81f0ca31b70bf448fd800a460b67efda0020088bc97bf7d9da97a9e2ce7b20d46e066462ec44cf60284f9a7";
+    sha512sum a;
+    sha512sum b;
+    ak_fs_sha512sum_string_to_struct(queried_string, &a);
+    ak_fs_sha512sum_string_to_struct(queried_string, &b);
+    if ( ak_fs_sha512sum_compare(&a,&b) )
+    {
+        ak_log_debug(__func__, "PASSED");
+    }
+    else
+    {
+        ak_log_debug(__func__, "FAILED");
+    }
+}
+
+static void test_map_opener()
+{
+    akfs_map_v3 map;
+    char *map_string = "28bde5fa7aacd8da0ec84b61cf3a69141686906c00f8cff904c9a0b12f5a4cf061da254feb188c32b711b2e1d6a3853d5ac3fb0bcd3564899bae55dd30470392";
+    ak_fs_open_map_v3_file(map_string, &map);
+    char *orig_string = "fa19bdc471bedc42abf3ff52069214bc7339a7eafc03f8551e8af892a0e3ce175cff0dde6f815da031cd0566fded455c937f7cae27181f7a90ab92e6131ba2be";
+    char *root_string = "438aebe24c89d36f84a68ea29327b27af1abc05f8f85e69af650159c4928834bd6fd2b3df690de74d42f861a8dbe30cebc6cba6afe07fabb1066d1380cd3adea";
+    char *filename = "mixtapes-v0.0.0.tar.gz";
+    if (
+        (strcmp(map_string,  ak_fs_sha512sum_struct_read_as_string(&(map.mh)))!=0) ||
+        (strcmp(orig_string, ak_fs_sha512sum_struct_read_as_string(&(map.oh)))!=0) ||
+        (strcmp(root_string, ak_fs_sha512sum_struct_read_as_string(&(map.rh)))!=0) ||
+        (strcmp(filename, map.filename)!=0))
+    {
+        ak_log_debug(__func__, "FAILED");
+    }
+    else
+    {
+        ak_log_debug(__func__, "PASSED");
+    }
+}
+
+static void test_ak_fs_ls()
+{
+    ak_log_test(__func__, ".....=====.....");
+    ak_fs_ls();
+    ak_log_test(__func__, ".....=END=.....");
 }
 
 
 int main(void)
 {
     // Correct one
-    correct_string_correct_length();
+    test_correct_string_correct_length();
 
     // Supposingly a bad string but in correct length
-    bad_string_correct_length();
+    test_bad_string_correct_length();
 
     // Less than must be length
-    less_than_length();
+    test_less_than_length();
 
     // More than must be length
-    more_than_length();
+    test_more_than_length();
 
     // Empty string
-    string_is_empty();
+    test_string_is_empty();
 
     // Hash path
-    hash_path_test();
+    test_hash_path_test();
 
     // Hash dir
-    hash_dir_test();
+    test_hash_dir_test();
 
     // Tempfile test read-write
-    hash_save_to_file();
+    test_hash_save_to_file();
+
+    // Hash checking
+    test_hash_check();
 
     // Map file opener
     test_map_opener();
+
+    // Test ak_fs_ls
+    test_ak_fs_ls();
+    printf("%lu\n", sizeof(sha512sum));
+    printf("%lu\n", sizeof(akfs_map_v3));
+    printf("%lu\n", sizeof(akfs_map_v4));
     return 0;
 }

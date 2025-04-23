@@ -2,6 +2,7 @@
 #define AKFS
 
 #include <stdbool.h>
+#include <stddef.h>
 
 /**
  * This struct represents a HEX output of the SHA-512 algorithm.
@@ -61,17 +62,22 @@ typedef struct {
      * Original file's name
      *
      */
-    char* filename;
+    char filename[256];
     /**
      * Root hash
      *
      */
     sha512sum rh;
     /**
+     * Map hash
+     *
+     */
+    sha512sum mh;
+    /**
      * Should be "level.1.map" at all times
      *
      */
-    char* root_name;
+    char *root_name;
 } akfs_map_v3;
 
 /**
@@ -96,24 +102,240 @@ typedef struct {
      *
      */
     sha512sum rh;
+    /**
+     * Map hash
+     *
+     */
+    sha512sum mh;
 } akfs_map_v4;
 
 //typedef char[64] sha512sum_as_string;
 
+/**
+ * Gets maps_dir
+ * return char*
+ */
+const char* ak_fs_maps_v3_get_dir();
+
+/**
+ * Experimental
+ */
 char* ak_fs_return_hash_path(char*);
 
+/**
+ * Experimental
+ */
 char* ak_fs_return_hash_dir(char*);
 
+/**
+ * Verify that string looks like a SHA512 hash
+ */
 bool ak_fs_verify_input_is_hash(char*);
 
+/**
+ * Unused
+ */
 int ak_fs_create_dir_for_hash(char*);
 
-sha512sum ak_fs_sha512sum_string_to_struct(char*);
+/**
+ * Converts string hash to struct
+ * @param char*      Hash as string
+ * @param sha512sum* Pointer to a sha512sum
+ * @returns int      Status of exit
+ */
+int ak_fs_sha512sum_string_to_struct(char*, sha512sum*);
 
-void ak_fs_sha512sum_struct_to_string(sha512sum, char*);
+/**
+ * Returns struct from string hash
+ * @param char*        Hash as string
+ * @returns sha512sum* Pointer to a sha512sum
+ */
+sha512sum* ak_fs_sha512sum_from_string(char*);
 
-int ak_fs_open_map_v3(char*);
-int ak_fs_from_map_v3_to_file(akfs_map_v3);
+/**
+ * Converts hash struct to string
+ */
+void ak_fs_sha512sum_struct_to_string(sha512sum*, char*);
+
+/**
+ * Opens a map file to an akfs_map_v3 struct
+ */
+int ak_fs_open_map_v3_file(char*, akfs_map_v3*);
+
+/**
+ * Unused
+ */
+int ak_fs_map_v3_to_file(akfs_map_v3);
+
+/**
+ * Unused
+ */
+int ak_fs_convert_map_v3_string_to_struct(char *, size_t, akfs_map_v3*);
+
+/**
+ * Unused
+ */
+void ak_fs_map_v3_print_map_hash(akfs_map_v3*);
+
+/**
+ * Unused
+ */
+void ak_fs_map_v3_print_original_hash(akfs_map_v3*);
+
+/**
+ * Unused
+ */
+void ak_fs_map_v3_print_root_hash(akfs_map_v3*);
+
+/**
+ * Unused
+ */
+void ak_fs_map_v3_print_filename(akfs_map_v3*);
+
+/**
+ * Unused
+ */
+void ak_fs_map_v3_print(akfs_map_v3*);
+
+/**
+ * Unused
+ */
+int ak_fs_load_available_maps(sha512sum**, size_t, akfs_map_v3**, size_t);
+
+/**
+ * Unused
+ */
+void ak_fs_print_available_maps(sha512sum**, size_t);
+
+/**
+ * Unused
+ */
+void ak_fs_print_loaded_maps(akfs_map_v3**, size_t);
+
+/**
+ * Reads maps_dir and outputs it in an array of sha512sum
+ */
+void ak_fs_prepare_available_maps(sha512sum**, size_t);
+
+/**
+ * Unused
+ */
+void ak_fs_get_available_maps_from_fs(sha512sum**, size_t);
+
+/**
+ * Unused
+ */
+void ak_fs_print_map_all_avail(sha512sum**, size_t);
+
+/**
+ * Unused
+ */
+char* ak_fs_sha512sum_struct_read_as_string(sha512sum *);
+
+/**
+ * Unused
+ */
+void ak_fs_init_string(char *, size_t );
+
+/**
+ * Unused
+ */
+bool ak_fs_sha512sum_compare(sha512sum*, sha512sum*);
+/**
+ * Unused
+ */
+bool ak_fs_sha512sum_is_null(sha512sum*);
+/**
+ * Unused
+ */
+void ak_fs_sha512sum_init(sha512sum*);
+/**
+ * Unused
+ */
+void ak_fs_sha512sum_init_avail(sha512sum**, size_t);
+
+/**
+ * Initialize an akfs_map_v3
+ */
+void ak_fs_map_v3_init(akfs_map_v3*);
+
+/**
+ * Initializes an array of akfs_map_v3
+ */
+void ak_fs_map_v3_init_store(akfs_map_v3**, size_t);
+
+/**
+ * returns: boolean
+ * param: akfs_map_v3
+ */
+bool ak_fs_map_v3_is_null(akfs_map_v3*);
+/**
+ * Unused
+ */
+char* ak_fs_map_v3_get_filename(akfs_map_v3*);
+/**
+ * Unused
+ */
+sha512sum* ak_fs_map_v3_get_map_hash(akfs_map_v3*);
+/**
+ * Unused
+ */
+sha512sum* ak_fs_map_v3_get_root_hash(akfs_map_v3*);
+/**
+ * Unused
+ */
+sha512sum* ak_fs_map_v3_get_orig_hash(akfs_map_v3*);
+/**
+ * Unused
+ */
+bool ak_fs_map_v3_compare(akfs_map_v3*, akfs_map_v3*);
+
+/**
+ * Initializes an array of akfs_map_v4
+ */
+void ak_fs_init_map_v4_store(akfs_map_v4**, size_t);
+
+
+/**
+ * Unused
+ */
+void ak_fs_map_v4_init(akfs_map_v4*);
+
+/**
+ * Initializes an array of sha512sum
+ */
+void ak_fs_init_map_avail(sha512sum**, size_t);
+
+
+/**
+ * Unused
+ */
+bool ak_fs_map_v4_compare(akfs_map_v4*, akfs_map_v4*);
+/**
+ * Unused
+ */
+bool ak_fs_map_v4_is_null(akfs_map_v4*);
+/**
+ * Unused
+ */
+char* ak_fs_map_v4_get_filename(akfs_map_v4*);
+/**
+ * Unused
+ */
+sha512sum* ak_fs_map_v4_get_map_hash(akfs_map_v4*);
+/**
+ * Unused
+ */
+sha512sum* ak_fs_map_v4_get_root_hash(akfs_map_v4*);
+/**
+ * Unused
+ */
+sha512sum* ak_fs_map_v4_get_orig_hash(akfs_map_v4*);
+
+/**
+ * Unused
+ */
+int ak_fs_ls();
 
 #endif // AKFS
 

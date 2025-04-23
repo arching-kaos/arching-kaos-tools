@@ -4,7 +4,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <libakfs.h>
+#include <libaklog.h>
+#include <libaksettings.h>
 #include <sys/stat.h>
+#include <dirent.h>
+
+const char* ak_fs_maps_v3_get_dir()
+{
+    return getenv("AK_MAPSDIR");
+}
 
 char* ak_fs_return_hash_path(char* string)
 {
@@ -62,7 +70,7 @@ char* ak_fs_return_hash_dir(char* string)
 
 bool ak_fs_verify_input_is_hash(char* string)
 {
-    unsigned int i = 0;
+    size_t i = 0;
     while ( string[i] != '\0' )
     {
         if (
@@ -144,11 +152,6 @@ int ak_fs_create_dir_for_hash(char* string)
                 free(incremental_dir_path);
             }
         }
-        //printf("%d\n", len);
-        //printf("%s\n", dir_path);
-        //const char *pathname = dir_path;
-        //int ec = mkdir(pathname, 0777);
-        //return ec;
         free(dir_path);
         return 0;
     }
@@ -158,192 +161,231 @@ int ak_fs_create_dir_for_hash(char* string)
     }
 }
 
-sha512sum ak_fs_sha512sum_string_to_struct(char* string)
+int ak_fs_convert_map_v3_string_to_struct(char *string, size_t ssize, akfs_map_v3* map)
 {
-    sha512sum hash = {0};
-    if ( ak_fs_verify_input_is_hash(string) )
+    size_t sa[] = { -1, -1, -1, -1, -1 };
+    size_t na[] = { -1, -1, -1 };
+    int spaces_found = 0;
+    int newlines_found = 0;
+    char original_hash_string[129] = {0};
+    char root_hash_string[129] = {0};
+    char filename[256] = {0};
+    if ( map == 0x0 || map == NULL)
     {
-        for (size_t l = 0; l < 8; ++l)
-        {
-            hash.sum[l]=0;
-        }
-        unsigned int i = 0;
-        unsigned int j = 0;
-        unsigned int k = 4;
-        while ( string[i] != '\0' )
-        {
-            assert( i < 128  && "Length exceeded limit");
-            if ( i % 16 == 0 ) j = i / 16;
-            switch (string[i])
-            {
-                case 0x30:
-                    hash.sum[j] = hash.sum[j] << k;
-                    hash.sum[j] += 0x0;
-                    break;
-                case 0x31:
-                    hash.sum[j] = hash.sum[j] << k;
-                    hash.sum[j] += 0x1;
-                    break;
-                case 0x32:
-                    hash.sum[j] = hash.sum[j] << k;
-                    hash.sum[j] += 0x2;
-                    break;
-                case 0x33:
-                    hash.sum[j] = hash.sum[j] << k;
-                    hash.sum[j] += 0x3;
-                    break;
-                case 0x34:
-                    hash.sum[j] = hash.sum[j] << k;
-                    hash.sum[j] += 0x4;
-                    break;
-                case 0x35:
-                    hash.sum[j] = hash.sum[j] << k;
-                    hash.sum[j] += 0x5;
-                    break;
-                case 0x36:
-                    hash.sum[j] = hash.sum[j] << k;
-                    hash.sum[j] += 0x6;
-                    break;
-                case 0x37:
-                    hash.sum[j] = hash.sum[j] << k;
-                    hash.sum[j] += 0x7;
-                    break;
-                case 0x38:
-                    hash.sum[j] = hash.sum[j] << k;
-                    hash.sum[j] += 0x8;
-                    break;
-                case 0x39:
-                    hash.sum[j] = hash.sum[j] << k;
-                    hash.sum[j] += 0x9;
-                    break;
-                case 0x61:
-                    hash.sum[j] = hash.sum[j] << k;
-                    hash.sum[j] += 0xa;
-                    break;
-                case 0x62:
-                    hash.sum[j] = hash.sum[j] << k;
-                    hash.sum[j] += 0xb;
-                    break;
-                case 0x63:
-                    hash.sum[j] = hash.sum[j] << k;
-                    hash.sum[j] += 0xc;
-                    break;
-                case 0x64:
-                    hash.sum[j] = hash.sum[j] << k;
-                    hash.sum[j] += 0xd;
-                    break;
-                case 0x65:
-                    hash.sum[j] = hash.sum[j] << k;
-                    hash.sum[j] += 0xe;
-                    break;
-                case 0x66:
-                    hash.sum[j] = hash.sum[j] << k;
-                    hash.sum[j] += 0xf;
-                    break;
-                default:
-                    assert(0 && "Character out of range");
-            }
-            i++;
-        }
-        if ( i != 128 )
-        {
-            sha512sum hash0 = {0};
-            return hash0;
-        }
-        return hash;
-    }
-    else
-    {
-        return hash;
-    }
-}
-
-void ak_fs_sha512sum_struct_to_string(sha512sum hash, char* string)
-{
-	int counter = 0;
-    for (size_t i = 0; i < 8; ++i)
-    {
-        for (size_t j = 0; j < 16; ++j)
-        {
-            long unsigned first = hash.sum[i]/0xfffffffffffffff;
-            switch(first){
-                case 0:
-                    string[counter] = '0';
-                    break;
-                case 1:
-                    string[counter] = '1';
-                    break;
-                case 2:
-                    string[counter] = '2';
-                    break;
-                case 3:
-                    string[counter] = '3';
-                    break;
-                case 4:
-                    string[counter] = '4';
-                    break;
-                case 5:
-                    string[counter] = '5';
-                    break;
-                case 6:
-                    string[counter] = '6';
-                    break;
-                case 7:
-                    string[counter] = '7';
-                    break;
-                case 8:
-                    string[counter] = '8';
-                    break;
-                case 9:
-                    string[counter] = '9';
-                    break;
-                case 0xa:
-                    string[counter] = 'a';
-                    break;
-                case 0xb:
-                    string[counter] = 'b';
-                    break;
-                case 0xc:
-                    string[counter] = 'c';
-                    break;
-                case 0xd:
-                    string[counter] = 'd';
-                    break;
-                case 0xe:
-                    string[counter] = 'e';
-                    break;
-                case 0xf:
-                    string[counter] = 'f';
-                    break;
-                default:
-                    assert(0 && "Should be unreachable");
-            }
-            counter++;
-            hash.sum[i] = hash.sum[i] << 4;
-        }
-    }
-    string[128] = '\0';
-}
-
-int ak_fs_open_map_v3(char* maphash)
-{
-    if ( ak_fs_verify_input_is_hash(maphash) )
-    {
-        //FILE *fd;
-        //char *mapsdir = "/home/kaotisk/.arching-kaos/akfs/maps/";
-        //strncat(mapsdir, maphash);
-        // printf("%s\n", mapsdir);
-        // exit(1);
-        return 0;
-    }
-    else
-    {
+        printf("FAILED IN %s! : %p \n", __func__, (void*)map);
         return 1;
     }
-}
-
-int ak_fs_from_map_v3_to_file(akfs_map_v3 maphash)
-{
-    (void)maphash;
+    for ( size_t i = 0; i < ssize; ++i)
+    {
+        if ( string[i] == ' ' )
+        {
+            spaces_found++;
+            sa[spaces_found] = i;
+        }
+        if ( string[i] == '\n' )
+        {
+            newlines_found++;
+            na[newlines_found] = i;
+        }
+    }
+    int si = 0;
+    for ( size_t i = 0; i < sa[1]; ++i)
+    {
+        original_hash_string[si] = string[i];
+        si++;
+    }
+    original_hash_string[si] = '\0';
+    if( !ak_fs_verify_input_is_hash(original_hash_string) )
+    {
+        ak_log_error(__func__, "original_hash_string not a hash");
+        return 1;
+    }
+    if ( ak_fs_sha512sum_string_to_struct(original_hash_string, &(map->oh)) != 0 )
+    {
+        ak_log_error(__func__, "String convertion of original_hash_string");
+        return 1;
+    }
+    si = 0;
+    for ( size_t i = na[1]+1; i < sa[3]; ++i)
+    {
+        root_hash_string[si] = string[i];
+        si++;
+    }
+    root_hash_string[si] = '\0';
+    if( !ak_fs_verify_input_is_hash(root_hash_string) )
+    {
+        ak_log_error(__func__, "root_hash_string not a hash");
+        return 1;
+    }
+    if ( ak_fs_sha512sum_string_to_struct(root_hash_string, &(map->rh)) != 0 )
+    {
+        ak_log_error(__func__, "String convertion of root_hash_string");
+        return 1;
+    }
+    si = 0;
+    if ( sa[2] < na[1] )
+    {
+        for ( size_t i = sa[2]+1; i < na[1]; ++i)
+        {
+            filename[si] = string[i];
+            si++;
+        }
+        filename[si] = '\0';
+    }
+    strncpy(map->filename, filename, sizeof(map->filename));
     return 0;
 }
+
+void ak_fs_get_available_maps_from_fs(sha512sum **ma, size_t length)
+{
+    DIR *d;
+    struct dirent *dir;
+    d = opendir(ak_fs_maps_v3_get_dir());
+    sha512sum *ptr = NULL;
+    ptr = *ma;
+    if (d)
+    {
+        for ( ptr = *ma; ptr < *ma+length; ++ptr)
+        {
+            if ((dir = readdir(d)) == NULL ) break;
+            if (!ak_fs_verify_input_is_hash(dir->d_name)) continue;
+            ak_fs_sha512sum_string_to_struct(dir->d_name, ptr);
+        }
+    }
+    closedir(d);
+}
+
+int ak_fs_load_available_maps(sha512sum **ma, size_t ma_len, akfs_map_v3 **ms, size_t ms_len)
+{
+    sha512sum *ptr = NULL;
+    akfs_map_v3 *mptr = NULL;
+    mptr = *ms;
+    (void)ms_len;
+    for ( ptr = *ma; ptr < *ma+ma_len; ++ptr)
+    {
+        if ( ak_fs_sha512sum_is_null(ptr))
+        {
+            continue;
+        }
+        if( ak_fs_open_map_v3_file(ak_fs_sha512sum_struct_read_as_string(ptr), mptr) != 2)
+        {
+            ++(mptr);
+            continue;
+        }
+        else
+        {
+            ++(mptr);
+            // return 1;
+        }
+    }
+    return 0;
+}
+
+void ak_fs_print_loaded_maps(akfs_map_v3 **map_store, size_t length)
+{
+    akfs_map_v3 *ptr = NULL;
+    for ( ptr = *map_store; ptr < *map_store + length; ++ptr)
+    {
+        if ( !ak_fs_map_v3_is_null(ptr) ) ak_fs_map_v3_print(ptr);
+    }
+}
+
+bool ak_fs_map_v3_compare(akfs_map_v3* a, akfs_map_v3* b)
+{
+    return (
+            (ak_fs_sha512sum_compare(&a->oh, &b->oh) == true) &&
+            (ak_fs_sha512sum_compare(&a->rh, &b->rh) == true) &&
+            (ak_fs_sha512sum_compare(&a->mh, &b->mh) == true) &&
+            (strcmp(a->filename, b->filename) == 0)
+           );
+}
+
+bool ak_fs_map_v3_is_null(akfs_map_v3* m)
+{
+    akfs_map_v3 n;
+    ak_fs_map_v3_init(&n);
+    return ak_fs_map_v3_compare(m, &n);
+}
+
+void ak_fs_print_available_maps(sha512sum **ma, size_t ma_len)
+{
+    sha512sum *ptr = NULL;
+    for ( ptr = *ma; ptr < *ma+ma_len; ++ptr)
+    {
+        ak_log_debug(__func__, ak_fs_sha512sum_struct_read_as_string(ptr));
+    }
+
+}
+
+void ak_fs_init_string(char *string, size_t len)
+{
+    for (size_t i = 0; i < len; ++i)
+    {
+        string[i] = '\0';
+    }
+}
+
+
+void ak_fs_print_map_avail(sha512sum* m)
+{
+    printf(" .MA: %s\n", ak_fs_sha512sum_struct_read_as_string(m));
+}
+
+void ak_fs_print_map_all_avail(sha512sum** m, size_t s)
+{
+    sha512sum *ptr = NULL;
+    for (ptr = *m; ptr < *m+s; ++ptr)
+    {
+        ak_fs_print_map_avail(ptr);
+    }
+}
+
+void ak_fs_print_filenames_from_map_store(akfs_map_v3** m, size_t s)
+{
+    akfs_map_v3 *ptr = NULL;
+    for (ptr = *m; ptr < *m+s; ++ptr)
+    {
+        if ( !ak_fs_map_v3_is_null(ptr) ) ak_fs_map_v3_print_filename(ptr);
+    }
+}
+
+// char* ak_fs_fuse_list_filenames_from_map_store(akfs_map_v3** m, size_t s)
+// {
+//     akfs_map_v3 *ptr = NULL;
+//     for (ptr = *m; ptr < *m+s; ++ptr)
+//     {
+//         if ( !ak_fs_map_v3_is_null(ptr) ) ak_fs_map_v3_get_filename(ptr);
+//     }
+// }
+
+void ak_fs_print_all_maps_from_map_store(akfs_map_v3** m, size_t s)
+{
+    akfs_map_v3 *ptr = NULL;
+    for (ptr = *m; ptr < *m+s; ++ptr)
+    {
+        if (!ak_fs_map_v3_is_null(ptr)) ak_fs_map_v3_print(ptr);
+    }
+}
+
+int ak_fs_ls()
+{
+    size_t ms_len = 100;
+    size_t ma_len = 100;
+    akfs_map_v3 map_store[ms_len];
+    akfs_map_v3* mps_ptr = &map_store[0];
+    void* mps_start = &map_store[0];
+    (void)mps_start;
+    sha512sum maps_avail[ma_len];
+    sha512sum *mav_ptr = &maps_avail[0];
+    void* mav_start = &map_store[0];
+    (void)mav_start;
+    ak_fs_map_v3_init_store(&mps_ptr, ms_len);
+    ak_fs_sha512sum_init_avail(&mav_ptr, ma_len);
+    ak_fs_print_all_maps_from_map_store(&mps_ptr, ms_len);
+    ak_fs_get_available_maps_from_fs(&mav_ptr, ma_len);
+    ak_fs_load_available_maps(&mav_ptr, ma_len, &mps_ptr, ms_len);
+    // ak_fs_print_loaded_maps(&mps_ptr, ms_len);
+    ak_fs_print_filenames_from_map_store(&mps_ptr, ms_len);
+    return 0;
+}
+
