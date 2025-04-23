@@ -2,11 +2,12 @@
 #define AKLOG
 
 typedef enum {
+    TEST,
     INFO,
     WARNING,
     ERROR,
     EXIT,
-    DEBUG
+    DEBUG,
 } LogMessageType;
 
 void ak_log_print_log_line(char* line);
@@ -20,5 +21,6 @@ void ak_log_warning(const char* program, char* message);
 void ak_log_debug(const char* program, char* message);
 void ak_log_error(const char* program, char* message);
 void ak_log_info(const char* program, char* message);
+void ak_log_test(const char* program, char* message);
 
 #endif // AKLOG

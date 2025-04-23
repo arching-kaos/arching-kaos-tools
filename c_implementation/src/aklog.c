@@ -6,12 +6,18 @@
 #include "libaklog.h"
 
 #define AK_DEBUG true
+#define AK_DEBUG_LEVEL DEBUG
+
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 
 int ak_log_write_to_file(char* message)
 {
     FILE *fp;
-    fp = fopen("/home/kaotisk/.arching-kaos/logs/log", "ab");
+    char *fullpath_to_log_file={0};
+    char *relative_location = "/.arching-kaos/logs/log";
+    char *home_dir = getenv("HOME");
+    asprintf(&fullpath_to_log_file, "%s%s", home_dir, relative_location);
+    fp = fopen(fullpath_to_log_file, "ab");
     if (!fp)
     {
         perror("fopen");
@@ -26,7 +32,6 @@ int ak_log_write_to_file(char* message)
 void ak_log_print_log_line(char* line)
 {
     int spaces_found = 0;
-    int last_space = -1;
     int sa[] = { -1, -1, -1, -1 };
     long int l = 1000000000;
     long int ts = 0;
@@ -37,7 +42,6 @@ void ak_log_print_log_line(char* line)
         if ( line[i] == ' ' && spaces_found < 3 )
         {
             spaces_found++;
-            last_space = i;
             sa[spaces_found] = i;
         }
     }
@@ -81,22 +85,22 @@ void ak_log_print_log_line(char* line)
     timeInfo = localtime(&ts);
     strftime(ts_string, sizeof(ts_string), "%Y%m%d_%H%M%S", timeInfo);
     printf("%s", ts_string);
-    printf(" \e[1;32m");
+    printf(" \033[1;32m");
     for ( int k = sa[1]+1; k < sa[2]; ++k)
     {
         printf("%c", line[k]);
     }
-    printf("\e[0m \e[1;31m");
+    printf("\033[0m \033[1;31m");
     for ( int k = sa[2]+1; k < sa[3]; ++k)
     {
         printf("%c", line[k]);
     }
-    printf("\e[0m ");
-    for ( int k = sa[3]+1; k < strlen(line); ++k)
+    printf("\033[0m ");
+    for ( size_t k = sa[3]+1; k < strlen(line); ++k)
     {
         printf("%c", line[k]);
     }
-    printf("\e[0m");
+    printf("\033[0m");
     printf("\n");
 }
 
@@ -157,53 +161,50 @@ void ak_log_message(const char* program, LogMessageType lmtype, char* message)
     time(&ts);
     char* some_string = {0};
     char* type = {0};
-    if ( program != NULL )
-    {
-        switch(lmtype)
-        {
-            case ERROR:
-                type = "ERROR";
-                break;
-            case INFO:
-                type = "INFO";
-                break;
-            case WARNING:
-                type = "WARNING";
-                break;
-            case EXIT:
-                type = "EXIT";
-                break;
-            case DEBUG:
-                type = "DEBUG";
-                break;
-            default:
-                asprintf(&some_string, "%ld <%s> [ERROR] No message type\n", ts, program);
-                ak_log_write_to_file(some_string);
-                if ( AK_DEBUG ) ak_log_print_log_line(some_string);
-                exit(1);
-        }
-        if ( message != NULL )
-        {
-            asprintf(&some_string, "%ld <%s> [%s] %s", ts, program, type, message);
-            ak_log_write_to_file(some_string);
-            if ( AK_DEBUG ) ak_log_print_log_line(some_string);
-        }
-        else
-        {
-            asprintf(&some_string, "%ld <%s> [ERROR] No message\n", ts, program);
-            ak_log_write_to_file(some_string);
-            if ( AK_DEBUG ) ak_log_print_log_line(some_string);
-            exit(1);
-        }
-    }
-    else
+    if ( program == NULL )
     {
         // echo "$TS" "<$(basename $0)>" "[ERROR]" "No arguments given" >> $AK_LOGSFILE
-        asprintf(&some_string, "%ld <%s> [ERROR] No arguments given\n", ts, program);
+        asprintf(&some_string, "%ld <NULL> [ERROR] No arguments given\n", ts);
         ak_log_write_to_file(some_string);
         if ( AK_DEBUG ) ak_log_print_log_line(some_string);
-        exit(1);
+        return;
     }
+    if ( message == NULL )
+    {
+        asprintf(&some_string, "%ld <%s> [ERROR] No message\n", ts, program);
+        ak_log_write_to_file(some_string);
+        if ( AK_DEBUG ) ak_log_print_log_line(some_string);
+        return;
+    }
+    switch(lmtype)
+    {
+        case ERROR:
+            type = "ERROR";
+            break;
+        case INFO:
+            type = "INFO";
+            break;
+        case WARNING:
+            type = "WARNING";
+            break;
+        case EXIT:
+            type = "EXIT";
+            break;
+        case DEBUG:
+            type = "DEBUG";
+            break;
+        case TEST:
+            type = "TEST";
+            break;
+        default:
+            asprintf(&some_string, "%ld <%s> [ERROR] No message type\n", ts, program);
+            ak_log_write_to_file(some_string);
+            if ( AK_DEBUG ) ak_log_print_log_line(some_string);
+            return;
+    }
+    asprintf(&some_string, "%ld <%s> [%s] %s", ts, program, type, message);
+    ak_log_write_to_file(some_string);
+    if ( lmtype <= AK_DEBUG_LEVEL ) ak_log_print_log_line(some_string);
 }
 
 void ak_log_exit(const char* program, char* message)
@@ -231,3 +232,7 @@ void ak_log_info(const char* program, char* message)
     ak_log_message(program, INFO, message);
 }
 
+void ak_log_test(const char* program, char* message)
+{
+    ak_log_message(program, TEST, message);
+}
