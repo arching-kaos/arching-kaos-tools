@@ -1,18 +1,27 @@
 ACLOCAL_AMFLAGS = -I m4
-AM_CPPFLAGS = -I$(top_srcdir)/include
+AM_CPPFLAGS = -Wall -Werror -Wextra -Wpedantic -ggdb -I$(top_srcdir)/include
+#AM_CFLAGS = -Wall -Werror -Wextra -Wpedantic -ggdb -I$(top_srcdir)/include
 
 lib_LTLIBRARIES = libaklog.la libaksettings.la libakfs.la libakdatetime.la libakutils.la
 libaklog_la_SOURCES = $(top_srcdir)/src/aklog.c
-libakfs_la_SOURCES = $(top_srcdir)/src/akfs.c
-libakutils_la_SOURCES = $(top_srcdir)/src/akutils.c
-libakdatetime_la_SOURCES = $(top_srcdir)/src/akdatetime.c
+
 libaksettings_la_SOURCES = $(top_srcdir)/src/aksettings.c
+
+libakfs_LDADD = libaksettings.la
+libakfs_la_SOURCES = $(top_srcdir)/src/akfs.c $(top_srcdir)/src/aksettings.c $(top_srcdir)/src/akfs_sha512sum.c $(top_srcdir)/src/akfs_map_v3.c $(top_srcdir)/src/akfs_map_v4.c
+
+libakutils_la_SOURCES = $(top_srcdir)/src/akutils.c
+
+libakdatetime_la_SOURCES = $(top_srcdir)/src/akdatetime.c
 
 include_HEADERS = include/libaklog.h include/libaksettings.h include/libakfs.h
 
-bin_PROGRAMS = ak
-ak_LDADD = libaklog.la
-ak_SOURCES = src/ak.c
+bin_PROGRAMS = akt akdefuse
+akt_LDADD = libaklog.la libakfs.la libaksettings.la
+akt_SOURCES = src/ak.c
+akdefuse_CFLAGS = -I/usr/include/fuse3 -lfuse3 -lpthread
+akdefuse_LDADD = libaklog.la libakfs.la
+akdefuse_SOURCES = src/akfs_defuse.c
 
 check_PROGRAMS = test_aklog test_aksettings test_akfs test_akutils test_akdatetime
 test_akdatetime_SOURCES = ./tests/test_akdatetime.c ./src/akdatetime.c
