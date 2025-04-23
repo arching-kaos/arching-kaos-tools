@@ -2,7 +2,7 @@
 #include <libaklog.h>
 #include <stdio.h>
 
-void test_ak_settings_from_file()
+static void test_ak_settings_from_file()
 {
     printf("Testing: %s\n", __func__);
     if (!ak_settings_load_settings_binary()) {

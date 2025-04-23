@@ -9,6 +9,46 @@
 AKSetting settings[MAX_SETTINGS];
 int settings_count = 0;
 
+AKSetting* ak_settings_get_all(){
+    return settings;
+}
+
+void ak_settings_import_from_environment()
+{
+    ak_settings_set_setting("AK_BINDIR",getenv("AK_BINDIR"));
+    ak_settings_set_setting("AK_BLOCKDIR",getenv("AK_BLOCKDIR"));
+    ak_settings_set_setting("AK_CACHEDIR",getenv("AK_CACHEDIR"));
+    ak_settings_set_setting("AK_CHUNKSDIR",getenv("AK_CHUNKSDIR"));
+    ak_settings_set_setting("AK_CONFIGDIR",getenv("AK_CONFIGDIR"));
+    ak_settings_set_setting("AK_DATADIR",getenv("AK_DATADIR"));
+    ak_settings_set_setting("AK_GENESIS",getenv("AK_GENESIS"));
+    ak_settings_set_setting("AK_GENESISASC",getenv("AK_GENESISASC"));
+    ak_settings_set_setting("AK_GPGHOME",getenv("AK_GPGHOME"));
+    ak_settings_set_setting("AK_IPFS",getenv("AK_IPFS"));
+    ak_settings_set_setting("AK_LEAFSDIR",getenv("AK_LEAFSDIR"));
+    ak_settings_set_setting("AK_LIBDIR",getenv("AK_LIBDIR"));
+    ak_settings_set_setting("AK_MAPSDIR",getenv("AK_MAPSDIR"));
+    ak_settings_set_setting("AK_MINEDBLOCKSDIR",getenv("AK_MINEDBLOCKSDIR"));
+    ak_settings_set_setting("AK_MODULESDIR",getenv("AK_MODULESDIR"));
+    ak_settings_set_setting("AK_ROOT",getenv("AK_ROOT"));
+    ak_settings_set_setting("AK_SETTINGS",getenv("AK_SETTINGS"));
+    ak_settings_set_setting("AK_WORKDIR",getenv("AK_WORKDIR"));
+    ak_settings_set_setting("AK_ZBLOCKDIR",getenv("AK_ZBLOCKDIR"));
+    ak_settings_set_setting("AK_ZBLOCKSFILE",getenv("AK_ZBLOCKSFILE"));
+    ak_settings_set_setting("AK_ZCHAIN",getenv("AK_ZCHAIN"));
+    ak_settings_set_setting("AK_ZCHAINASC",getenv("AK_ZCHAINASC"));
+    ak_settings_set_setting("AK_ZGENESIS",getenv("AK_ZGENESIS"));
+    ak_settings_set_setting("AK_ZGENESISASC",getenv("AK_ZGENESISASC"));
+    ak_settings_set_setting("AK_ZLATEST",getenv("AK_ZLATEST"));
+    ak_settings_set_setting("AK_ZLATEST_HISTORY",getenv("AK_ZLATEST_HISTORY"));
+    ak_settings_set_setting("AK_ZLIST",getenv("AK_ZLIST"));
+    ak_settings_set_setting("AK_ZPAIRSFILE",getenv("AK_ZPAIRSFILE"));
+    ak_settings_set_setting("AK_ZPEERSDIR",getenv("AK_ZPEERSDIR"));
+    ak_settings_set_setting("AK_ZPEERSFILE",getenv("AK_ZPEERSFILE"));
+    ak_settings_set_setting("AK_ZZCHAIN",getenv("AK_ZZCHAIN"));
+    ak_settings_set_setting("AK_ARCHIVESDIR",getenv("AK_ARCHIVESDIR"));
+}
+
 bool ak_settings_write_string(FILE *file, const char *str) {
     size_t len = strlen(str) + 1; // Include null terminator
     if (fwrite(&len, sizeof(size_t), 1, file) != 1) return false;
@@ -107,7 +147,7 @@ bool ak_settings_set_setting(const char *key, const char *value) {
     return true;
 }
 
-const char *ak_settings_get_setting(const char *key) {
+char *ak_settings_get_setting(const char *key) {
     int index = ak_settings_find_setting(key);
     return (index == -1) ? NULL : settings[index].value;
 }
