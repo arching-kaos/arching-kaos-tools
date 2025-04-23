@@ -1,6 +1,6 @@
 #include <libaklog.h>
 
-void test_write()
+static void test_write()
 {
     ak_log_info(__func__, "test message info");
     ak_log_warning(__func__, "test message warning");

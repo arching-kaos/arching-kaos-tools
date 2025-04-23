@@ -1,56 +1,61 @@
 #include <libaklog.h>
 
-void test_message_output()
+static void test_message_output()
 {
     ak_log_print_log_line("1731664790 <TEST> [INFO] test message info");
 }
 
-void test_follow()
+static void test_follow()
 {
     ak_log_follow();
 }
 
-void test_grep()
+static void test_grep()
 {
     ak_log_grep("-h");
 }
 
-void test_rotate()
+static void test_rotate()
 {
     ak_log_rotate();
 }
 
-void test_log_message()
+static void test_log_message()
 {
     ak_log_message(__func__, DEBUG, "test message info");
 }
 
-void test_exit()
+static void test_exit()
 {
-    ak_log_exit(__func__, "test message info");
+    ak_log_exit(__func__, "test message exit");
 }
 
-void test_warning()
+static void test_warning()
 {
-    ak_log_warning(__func__, "test message info");
+    ak_log_warning(__func__, "test message WARNING");
 }
 
-void test_debug()
+static void test_debug()
 {
-    ak_log_debug(__func__, "test message info");
+    ak_log_debug(__func__, "test message debug");
 }
 
-void test_error()
+static void test_error()
 {
-    ak_log_error(__func__, "test message info");
+    ak_log_error(__func__, "test message error");
 }
 
-void test_info()
+static void test_info()
 {
     ak_log_info(__func__, "test message info");
 }
 
-void test_one_word()
+static void test_test()
+{
+    ak_log_test(__func__, "test message test");
+}
+
+static void test_one_word()
 {
     ak_log_info(__func__, "test");
 }
@@ -64,6 +69,7 @@ int main (void)
     test_error();
     test_debug();
     test_warning();
+    test_test();
     test_log_message();
     test_rotate();
     test_grep();
