@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <unistd.h>
 #include <stdbool.h>
 #include <assert.h>
 #include <stdlib.h>
@@ -14,15 +15,19 @@ const char* ak_fs_maps_v3_get_dir()
     return getenv("AK_MAPSDIR");
 }
 
-char* ak_fs_return_hash_path(char* string)
+char* ak_fs_return_hash_path(const char* str)
 {
-    if ( ak_fs_verify_input_is_hash(string) )
+    if ( ak_fs_verify_input_is_hash(str) )
     {
         unsigned int i = 0;
         char *result = malloc((128*2)+1);
-        while ( string[i] != '\0' )
+        if ( result == NULL )
         {
-            result[i*2] = string[i];
+            return "";
+        }
+        while ( str[i] != '\0' )
+        {
+            result[i*2] = str[i];
             if ( (i*2) + 1 <= 254 )
             {
                 result[(i*2)+1] = '/';
@@ -41,15 +46,16 @@ char* ak_fs_return_hash_path(char* string)
     }
 }
 
-char* ak_fs_return_hash_dir(char* string)
+char* ak_fs_return_hash_dir(const char* str)
 {
-    if ( ak_fs_verify_input_is_hash(string) )
+    if ( ak_fs_verify_input_is_hash(str) )
     {
         unsigned int i = 0;
         char *result = malloc((128*2)+1);
-        while ( string[i] != '\0' )
+        if ( result == NULL ) return "";
+        while ( str[i] != '\0' )
         {
-            result[i*2] = string[i];
+            result[i*2] = str[i];
             if ( (i*2) + 1 <= 254-2 )
             {
                 result[(i*2)+1] = '/';
@@ -68,17 +74,17 @@ char* ak_fs_return_hash_dir(char* string)
     }
 }
 
-bool ak_fs_verify_input_is_hash(char* string)
+bool ak_fs_verify_input_is_hash(const char* str)
 {
     size_t i = 0;
-    while ( string[i] != '\0' )
+    while ( str[i] != '\0' )
     {
         if (
                 i < 128 &&
                 !(
-                    ( string[i] >= 0x30 ) &&
-                    (( string[i] <= 0x39) || ( string[i] >= 0x61 )) &&
-                    ( string[i] <= 0x66 )
+                    ( str[i] >= 0x30 ) &&
+                    (( str[i] <= 0x39) || ( str[i] >= 0x61 )) &&
+                    ( str[i] <= 0x66 )
                 )
             )
         {
@@ -95,7 +101,7 @@ bool ak_fs_verify_input_is_hash(char* string)
     return true;
 }
 
-int ak_fs_create_dir_for_hash(char* string)
+int ak_fs_create_dir_for_hash(const char* str)
 {
     /* TODO
      * Some aspects of this function
@@ -106,9 +112,9 @@ int ak_fs_create_dir_for_hash(char* string)
      * 2. We might need to "lock" onto some version of glibc and be aware of
      *    other systems that do not use that one.
      */
-    if ( ak_fs_verify_input_is_hash(string) )
+    if ( ak_fs_verify_input_is_hash(str) )
     {
-        char* dir_path = ak_fs_return_hash_dir(string);
+        char* dir_path = ak_fs_return_hash_dir(str);
         // We will need to separate the string so we can create the path one
         // directory at the time
         int len = strlen(dir_path);
@@ -161,28 +167,28 @@ int ak_fs_create_dir_for_hash(char* string)
     }
 }
 
-int ak_fs_convert_map_v3_string_to_struct(char *string, size_t ssize, akfs_map_v3* map)
+int ak_fs_convert_map_v3_string_to_struct(const char *str, size_t ssize, akfs_map_v3* map)
 {
     size_t sa[] = { -1, -1, -1, -1, -1 };
     size_t na[] = { -1, -1, -1 };
     int spaces_found = 0;
     int newlines_found = 0;
-    char original_hash_string[129] = {0};
-    char root_hash_string[129] = {0};
+    char original_hash_str[129] = {0};
+    char root_hash_str[129] = {0};
     char filename[256] = {0};
-    if ( map == 0x0 || map == NULL)
+    if ( map == 0x0 )
     {
         printf("FAILED IN %s! : %p \n", __func__, (void*)map);
         return 1;
     }
     for ( size_t i = 0; i < ssize; ++i)
     {
-        if ( string[i] == ' ' )
+        if ( str[i] == ' ' )
         {
             spaces_found++;
             sa[spaces_found] = i;
         }
-        if ( string[i] == '\n' )
+        if ( str[i] == '\n' )
         {
             newlines_found++;
             na[newlines_found] = i;
@@ -191,35 +197,35 @@ int ak_fs_convert_map_v3_string_to_struct(char *string, size_t ssize, akfs_map_v
     int si = 0;
     for ( size_t i = 0; i < sa[1]; ++i)
     {
-        original_hash_string[si] = string[i];
+        original_hash_str[si] = str[i];
         si++;
     }
-    original_hash_string[si] = '\0';
-    if( !ak_fs_verify_input_is_hash(original_hash_string) )
+    original_hash_str[si] = '\0';
+    if( !ak_fs_verify_input_is_hash(original_hash_str) )
     {
-        ak_log_error(__func__, "original_hash_string not a hash");
+        ak_log_error(__func__, "original_hash_str not a hash");
         return 1;
     }
-    if ( ak_fs_sha512sum_string_to_struct(original_hash_string, &(map->oh)) != 0 )
+    if ( ak_fs_sha512sum_string_to_struct(original_hash_str, &(map->oh)) != 0 )
     {
-        ak_log_error(__func__, "String convertion of original_hash_string");
+        ak_log_error(__func__, "String convertion of original_hash_str");
         return 1;
     }
     si = 0;
     for ( size_t i = na[1]+1; i < sa[3]; ++i)
     {
-        root_hash_string[si] = string[i];
+        root_hash_str[si] = str[i];
         si++;
     }
-    root_hash_string[si] = '\0';
-    if( !ak_fs_verify_input_is_hash(root_hash_string) )
+    root_hash_str[si] = '\0';
+    if( !ak_fs_verify_input_is_hash(root_hash_str) )
     {
-        ak_log_error(__func__, "root_hash_string not a hash");
+        ak_log_error(__func__, "root_hash_str not a hash");
         return 1;
     }
-    if ( ak_fs_sha512sum_string_to_struct(root_hash_string, &(map->rh)) != 0 )
+    if ( ak_fs_sha512sum_string_to_struct(root_hash_str, &(map->rh)) != 0 )
     {
-        ak_log_error(__func__, "String convertion of root_hash_string");
+        ak_log_error(__func__, "String convertion of root_hash_str");
         return 1;
     }
     si = 0;
@@ -227,7 +233,7 @@ int ak_fs_convert_map_v3_string_to_struct(char *string, size_t ssize, akfs_map_v
     {
         for ( size_t i = sa[2]+1; i < na[1]; ++i)
         {
-            filename[si] = string[i];
+            filename[si] = str[i];
             si++;
         }
         filename[si] = '\0';
@@ -239,14 +245,13 @@ int ak_fs_convert_map_v3_string_to_struct(char *string, size_t ssize, akfs_map_v
 void ak_fs_get_available_maps_from_fs(sha512sum **ma, size_t length)
 {
     DIR *d;
-    struct dirent *dir;
     d = opendir(ak_fs_maps_v3_get_dir());
     sha512sum *ptr = NULL;
-    ptr = *ma;
     if (d)
     {
         for ( ptr = *ma; ptr < *ma+length; ++ptr)
         {
+            const struct dirent *dir;
             if ((dir = readdir(d)) == NULL ) break;
             if (!ak_fs_verify_input_is_hash(dir->d_name)) continue;
             ak_fs_sha512sum_string_to_struct(dir->d_name, ptr);
@@ -317,16 +322,16 @@ void ak_fs_print_available_maps(sha512sum **ma, size_t ma_len)
 
 }
 
-void ak_fs_init_string(char *string, size_t len)
+void ak_fs_init_string(char *str, size_t len)
 {
     for (size_t i = 0; i < len; ++i)
     {
-        string[i] = '\0';
+        str[i] = '\0';
     }
 }
 
 
-void ak_fs_print_map_avail(sha512sum* m)
+void ak_fs_print_map_avail(const sha512sum* m)
 {
     printf(" .MA: %s\n", ak_fs_sha512sum_struct_read_as_string(m));
 }
@@ -384,8 +389,38 @@ int ak_fs_ls()
     ak_fs_print_all_maps_from_map_store(&mps_ptr, ms_len);
     ak_fs_get_available_maps_from_fs(&mav_ptr, ma_len);
     ak_fs_load_available_maps(&mav_ptr, ma_len, &mps_ptr, ms_len);
-    // ak_fs_print_loaded_maps(&mps_ptr, ms_len);
+    ak_fs_print_loaded_maps(&mps_ptr, ms_len);
     ak_fs_print_filenames_from_map_store(&mps_ptr, ms_len);
+    return 0;
+}
+
+int ak_fs_usage()
+{
+    ak_log_debug(__func__, "Available commands:");
+    ak_log_debug(__func__, "ak fs --list");
+    return 1;
+}
+
+int ak_fs_main(int c, char** v)
+{
+    (void)c;
+    (void)v;
+    int option;
+    while ( (option = getopt(c, v, ":h|:help")) != -1 )
+    {
+        printf("%d\n", option);
+        switch(option)
+        {
+            case 'h':
+                return ak_fs_usage();
+            case ':':
+                printf("kek\n");
+                return 1;
+            case '?':
+                printf("lol\n");
+                return 2;
+        }
+    }
     return 0;
 }
 

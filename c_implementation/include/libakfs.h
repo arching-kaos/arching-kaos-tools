@@ -109,8 +109,6 @@ typedef struct {
     sha512sum mh;
 } akfs_map_v4;
 
-//typedef char[64] sha512sum_as_string;
-
 /**
  * Gets maps_dir
  * return char*
@@ -120,22 +118,25 @@ const char* ak_fs_maps_v3_get_dir();
 /**
  * Experimental
  */
-char* ak_fs_return_hash_path(char*);
+char* ak_fs_return_hash_path(const char*);
 
 /**
  * Experimental
  */
-char* ak_fs_return_hash_dir(char*);
+char* ak_fs_return_hash_dir(const char*);
 
 /**
  * Verify that string looks like a SHA512 hash
+ *
+ * param char* string to be checked
+ * returns boolean
  */
-bool ak_fs_verify_input_is_hash(char*);
+bool ak_fs_verify_input_is_hash(const char*);
 
 /**
  * Unused
  */
-int ak_fs_create_dir_for_hash(char*);
+int ak_fs_create_dir_for_hash(const char*);
 
 /**
  * Converts string hash to struct
@@ -143,7 +144,7 @@ int ak_fs_create_dir_for_hash(char*);
  * @param sha512sum* Pointer to a sha512sum
  * @returns int      Status of exit
  */
-int ak_fs_sha512sum_string_to_struct(char*, sha512sum*);
+int ak_fs_sha512sum_string_to_struct(const char*, sha512sum*);
 
 /**
  * Returns struct from string hash
@@ -155,7 +156,7 @@ sha512sum* ak_fs_sha512sum_from_string(char*);
 /**
  * Converts hash struct to string
  */
-void ak_fs_sha512sum_struct_to_string(sha512sum*, char*);
+void ak_fs_sha512sum_struct_to_string(const sha512sum*, char*);
 
 /**
  * Opens a map file to an akfs_map_v3 struct
@@ -170,7 +171,7 @@ int ak_fs_map_v3_to_file(akfs_map_v3);
 /**
  * Unused
  */
-int ak_fs_convert_map_v3_string_to_struct(char *, size_t, akfs_map_v3*);
+int ak_fs_convert_map_v3_string_to_struct(const char *, size_t, akfs_map_v3*);
 
 /**
  * Unused
@@ -198,7 +199,7 @@ void ak_fs_map_v3_print_filename(akfs_map_v3*);
 void ak_fs_map_v3_print(akfs_map_v3*);
 
 /**
- * Unused
+ * Takes an array of sha512sums (maps) and puts it in an array of maps (v3)
  */
 int ak_fs_load_available_maps(sha512sum**, size_t, akfs_map_v3**, size_t);
 
@@ -230,7 +231,7 @@ void ak_fs_print_map_all_avail(sha512sum**, size_t);
 /**
  * Unused
  */
-char* ak_fs_sha512sum_struct_read_as_string(sha512sum *);
+char* ak_fs_sha512sum_struct_read_as_string(const sha512sum *);
 
 /**
  * Unused
@@ -240,11 +241,11 @@ void ak_fs_init_string(char *, size_t );
 /**
  * Unused
  */
-bool ak_fs_sha512sum_compare(sha512sum*, sha512sum*);
+bool ak_fs_sha512sum_compare(const sha512sum*, const sha512sum*);
 /**
  * Unused
  */
-bool ak_fs_sha512sum_is_null(sha512sum*);
+bool ak_fs_sha512sum_is_null(const sha512sum*);
 /**
  * Unused
  */
@@ -336,6 +337,11 @@ sha512sum* ak_fs_map_v4_get_orig_hash(akfs_map_v4*);
  * Unused
  */
 int ak_fs_ls();
+
+/**
+ * Main function
+ */
+int ak_fs_main(int, char**);
 
 #endif // AKFS
 

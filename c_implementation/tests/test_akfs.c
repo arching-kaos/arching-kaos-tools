@@ -6,7 +6,7 @@
 
 static void test_correct_string_correct_length()
 {
-    char queried_string[] = "921618bc6d9f8059437c5e0397b13f973ab7c7a7b81f0ca31b70bf448fd800a460b67efda0020088bc97bf7d9da97a9e2ce7b20d46e066462ec44cf60284f9a7";
+    const char *queried_string = "921618bc6d9f8059437c5e0397b13f973ab7c7a7b81f0ca31b70bf448fd800a460b67efda0020088bc97bf7d9da97a9e2ce7b20d46e066462ec44cf60284f9a7";
     // printf("Hash given:\t%s\n", queried_string);
     // printf("Is a hash: %s\n", ak_fs_verify_input_is_hash(queried_string) ? "true": "false");
     sha512sum hash = {0};
@@ -27,7 +27,7 @@ static void test_correct_string_correct_length()
 
 static void test_bad_string_correct_length()
 {
-    char queried_string[] = "921618bc6d9f8059437c5e0397b13f973ab7c7a7b81f0ca31b70bf448fd800a460b67efda0020088bc97bf7d9da97a9e2ce7b20d46e066462ec44cf60284f9az";
+    const char *queried_string = "921618bc6d9f8059437c5e0397b13f973ab7c7a7b81f0ca31b70bf448fd800a460b67efda0020088bc97bf7d9da97a9e2ce7b20d46e066462ec44cf60284f9az";
     // printf("Hash given:\t%s\n", queried_string);
     // printf("Is a hash: %s\n", ak_fs_verify_input_is_hash(queried_string) ? "true": "false");
     sha512sum hash = {0};
@@ -48,7 +48,7 @@ static void test_bad_string_correct_length()
 
 static void test_less_than_length()
 {
-    char queried_string[] = "921618bc6d9f8059437c5e0397b13f973ab7c7a7b81f0ca31b70bf";
+    const char *queried_string = "921618bc6d9f8059437c5e0397b13f973ab7c7a7b81f0ca31b70bf";
     // printf("Hash given:\t%s\n", queried_string);
     // printf("Is a hash: %s\n", ak_fs_verify_input_is_hash(queried_string) ? "true": "false");
     sha512sum hash = {0};
@@ -69,7 +69,7 @@ static void test_less_than_length()
 
 static void test_more_than_length()
 {
-    char queried_string[] = "921618bc6d9f8059437c5e0397b13f973ab7c7a7b81f0ca31b70bf448fd800a460b67efda0020088bc97bf7d9da97a9e2ce7b20d46e066462ec44cf60284f9a7aaa";
+    const char *queried_string = "921618bc6d9f8059437c5e0397b13f973ab7c7a7b81f0ca31b70bf448fd800a460b67efda0020088bc97bf7d9da97a9e2ce7b20d46e066462ec44cf60284f9a7aaa";
     // printf("Hash given:\t%s\n", queried_string);
     // printf("Is a hash: %s\n", ak_fs_verify_input_is_hash(queried_string) ? "true": "false");
     sha512sum hash = {0};
@@ -90,7 +90,7 @@ static void test_more_than_length()
 
 static void test_string_is_empty()
 {
-    char queried_string[128] = "";
+    const char *queried_string = "";
     // printf("Hash given:\t%s\n", queried_string);
     //printf("Is a hash: %s\n", ak_fs_verify_input_is_hash(queried_string) ? "true": "false");
     sha512sum hash = {0};
@@ -111,10 +111,10 @@ static void test_string_is_empty()
 
 static void test_hash_path_test()
 {
-    char queried_string[] = "921618bc6d9f8059437c5e0397b13f973ab7c7a7b81f0ca31b70bf448fd800a460b67efda0020088bc97bf7d9da97a9e2ce7b20d46e066462ec44cf60284f9a7";
+    const char *queried_string = "921618bc6d9f8059437c5e0397b13f973ab7c7a7b81f0ca31b70bf448fd800a460b67efda0020088bc97bf7d9da97a9e2ce7b20d46e066462ec44cf60284f9a7";
     // printf("Hash given:\t%s\n", queried_string);
     // printf("Is a hash: %s\n", ak_fs_verify_input_is_hash(queried_string) ? "true": "false");
-    char* resulted_string = ak_fs_return_hash_path(queried_string);
+    const char *resulted_string = ak_fs_return_hash_path(queried_string);
     // printf("Path returned:\t%s\n", resulted_string);
     if ( strcmp(queried_string, resulted_string) != 0 )
     {
@@ -128,10 +128,10 @@ static void test_hash_path_test()
 
 static void test_hash_dir_test()
 {
-    char queried_string[] = "921618bc6d9f8059437c5e0397b13f973ab7c7a7b81f0ca31b70bf448fd800a460b67efda0020088bc97bf7d9da97a9e2ce7b20d46e066462ec44cf60284f9a7";
+    const char *queried_string = "921618bc6d9f8059437c5e0397b13f973ab7c7a7b81f0ca31b70bf448fd800a460b67efda0020088bc97bf7d9da97a9e2ce7b20d46e066462ec44cf60284f9a7";
     // printf("Hash given:\t%s\n", queried_string);
     // printf("Is a hash: %s\n", ak_fs_verify_input_is_hash(queried_string) ? "true": "false");
-    char* resulted_string = ak_fs_return_hash_dir(queried_string);
+    const char *resulted_string = ak_fs_return_hash_dir(queried_string);
     // printf("Path returned:\t%s\n", resulted_string);
     if ( strcmp(queried_string, resulted_string) != 0 )
     {
@@ -145,7 +145,7 @@ static void test_hash_dir_test()
 
 static void test_hash_save_to_file()
 {
-    char queried_string[] = "921618bc6d9f8059437c5e0397b13f973ab7c7a7b81f0ca31b70bf448fd800a460b67efda0020088bc97bf7d9da97a9e2ce7b20d46e066462ec44cf60284f9a7";
+    const char *queried_string = "921618bc6d9f8059437c5e0397b13f973ab7c7a7b81f0ca31b70bf448fd800a460b67efda0020088bc97bf7d9da97a9e2ce7b20d46e066462ec44cf60284f9a7";
     // printf("Hash given:\t%s\n", queried_string);
     // printf("Is a hash: %s\n", ak_fs_verify_input_is_hash(queried_string) ? "true": "false");
     sha512sum hash = {0};
@@ -182,7 +182,7 @@ static void test_hash_save_to_file()
 
 static void test_hash_check()
 {
-    char queried_string[] = "921618bc6d9f8059437c5e0397b13f973ab7c7a7b81f0ca31b70bf448fd800a460b67efda0020088bc97bf7d9da97a9e2ce7b20d46e066462ec44cf60284f9a7";
+    const char *queried_string = "921618bc6d9f8059437c5e0397b13f973ab7c7a7b81f0ca31b70bf448fd800a460b67efda0020088bc97bf7d9da97a9e2ce7b20d46e066462ec44cf60284f9a7";
     sha512sum a;
     sha512sum b;
     ak_fs_sha512sum_string_to_struct(queried_string, &a);
@@ -202,9 +202,9 @@ static void test_map_opener()
     akfs_map_v3 map;
     char *map_string = "28bde5fa7aacd8da0ec84b61cf3a69141686906c00f8cff904c9a0b12f5a4cf061da254feb188c32b711b2e1d6a3853d5ac3fb0bcd3564899bae55dd30470392";
     ak_fs_open_map_v3_file(map_string, &map);
-    char *orig_string = "fa19bdc471bedc42abf3ff52069214bc7339a7eafc03f8551e8af892a0e3ce175cff0dde6f815da031cd0566fded455c937f7cae27181f7a90ab92e6131ba2be";
-    char *root_string = "438aebe24c89d36f84a68ea29327b27af1abc05f8f85e69af650159c4928834bd6fd2b3df690de74d42f861a8dbe30cebc6cba6afe07fabb1066d1380cd3adea";
-    char *filename = "mixtapes-v0.0.0.tar.gz";
+    const char *orig_string = "fa19bdc471bedc42abf3ff52069214bc7339a7eafc03f8551e8af892a0e3ce175cff0dde6f815da031cd0566fded455c937f7cae27181f7a90ab92e6131ba2be";
+    const char *root_string = "438aebe24c89d36f84a68ea29327b27af1abc05f8f85e69af650159c4928834bd6fd2b3df690de74d42f861a8dbe30cebc6cba6afe07fabb1066d1380cd3adea";
+    const char *filename = "mixtapes-v0.0.0.tar.gz";
     if (
         (strcmp(map_string,  ak_fs_sha512sum_struct_read_as_string(&(map.mh)))!=0) ||
         (strcmp(orig_string, ak_fs_sha512sum_struct_read_as_string(&(map.oh)))!=0) ||
@@ -261,8 +261,8 @@ int main(void)
 
     // Test ak_fs_ls
     test_ak_fs_ls();
-    printf("%lu\n", sizeof(sha512sum));
-    printf("%lu\n", sizeof(akfs_map_v3));
-    printf("%lu\n", sizeof(akfs_map_v4));
+    printf("%lu\n", (unsigned long)sizeof(sha512sum));
+    printf("%lu\n", (unsigned long)sizeof(akfs_map_v3));
+    printf("%lu\n", (unsigned long)sizeof(akfs_map_v4));
     return 0;
 }
