@@ -16,12 +16,14 @@ libakdatetime_la_SOURCES = $(top_srcdir)/src/akdatetime.c
 
 include_HEADERS = include/libaklog.h include/libaksettings.h include/libakfs.h
 
-bin_PROGRAMS = akt akdefuse
+bin_PROGRAMS = akt akdefuse aklog
 akt_LDADD = libaklog.la libakfs.la libaksettings.la
 akt_SOURCES = src/ak.c
 akdefuse_CFLAGS = -I/usr/include/fuse3 -lfuse3 -lpthread
 akdefuse_LDADD = libaklog.la libakfs.la
 akdefuse_SOURCES = src/akfs_defuse.c
+aklog_LDADD = libaklog.la
+aklog_SOURCES = src/aklog_main.c
 
 check_PROGRAMS = test_aklog test_aksettings test_akfs test_akutils test_akdatetime
 test_akdatetime_SOURCES = ./tests/test_akdatetime.c ./src/akdatetime.c
@@ -45,3 +47,5 @@ TESTS = $(check_PROGRAMS)
 
 CLEANFILES = $(TESTS)
 
+cppcheck:
+		cppcheck --std=c99 --enable=all --check-library -I /usr/include -I $(top_srcdir)/include/*.h $(top_srcdir)/include/*.h $(top_srcdir)/src/*.c $(top_srcdir)/tests/test*.c
