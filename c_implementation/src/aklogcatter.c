@@ -27,6 +27,7 @@ int ak_logcatter()
         else
         {
             line[i] = buffer[0];
+            line[i+1] = '\0';
             i++;
         }
     }

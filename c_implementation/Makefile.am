@@ -8,7 +8,7 @@ libaklog_la_SOURCES = $(top_srcdir)/src/aklog.c
 libaksettings_la_SOURCES = $(top_srcdir)/src/aksettings.c
 
 libakfs_LDADD = libaksettings.la
-libakfs_la_SOURCES = $(top_srcdir)/src/akfs.c $(top_srcdir)/src/aksettings.c $(top_srcdir)/src/akfs_sha512sum.c $(top_srcdir)/src/akfs_map_v3.c $(top_srcdir)/src/akfs_map_v4.c
+libakfs_la_SOURCES = $(top_srcdir)/src/akfs.c $(top_srcdir)/src/aksettings.c $(top_srcdir)/src/akfs_sha512sum.c $(top_srcdir)/src/akfs_map_v3.c $(top_srcdir)/src/akfs_map_v4.c $(top_srcdir)/src/akfs_main.c
 
 libakutils_la_SOURCES = $(top_srcdir)/src/akutils.c
 
@@ -16,7 +16,10 @@ libakdatetime_la_SOURCES = $(top_srcdir)/src/akdatetime.c
 
 include_HEADERS = include/libaklog.h include/libaksettings.h include/libakfs.h
 
-bin_PROGRAMS = akt akdefuse aklog
+bin_PROGRAMS = akt akdefuse aklog akfs
+akfs_LDADD = libaklog.la libakfs.la libaksettings.la
+akfs_SOURCES = src/akfs_main.c
+akt_SOURCES = src/ak.c
 akt_LDADD = libaklog.la libakfs.la libaksettings.la
 akt_SOURCES = src/ak.c
 akdefuse_CFLAGS = -I/usr/include/fuse3 -lfuse3 -lpthread
@@ -48,4 +51,4 @@ TESTS = $(check_PROGRAMS)
 CLEANFILES = $(TESTS)
 
 cppcheck:
-		cppcheck --std=c99 --enable=all --check-library -I /usr/include -I $(top_srcdir)/include/*.h $(top_srcdir)/include/*.h $(top_srcdir)/src/*.c $(top_srcdir)/tests/test*.c
+		cppcheck --std=c99 --force --enable=all --check-library -I $(top_srcdir)/include/*.h $(top_srcdir)/include/*.h $(top_srcdir)/src/*.c $(top_srcdir)/tests/test*.c

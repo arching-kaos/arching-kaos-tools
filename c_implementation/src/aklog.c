@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 #include <time.h>
 #include "libaklog.h"
 
@@ -10,7 +11,7 @@
 
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 
-int ak_log_write_to_file(char* message)
+int ak_log_write_to_file(const char* message)
 {
     FILE *fp;
     char *fullpath_to_log_file={0};
@@ -29,13 +30,13 @@ int ak_log_write_to_file(char* message)
     return 0;
 }
 
-void ak_log_print_log_line(char* line)
+void ak_log_print_log_line(const char* line)
 {
     int spaces_found = 0;
     int sa[] = { -1, -1, -1, -1 };
     long int l = 1000000000;
     long int ts = 0;
-    struct tm *timeInfo;
+    const struct tm *timeInfo;
     char ts_string[16]; // %Y%Y%Y%Y%m%m%d%d_%H%H%M%M%S%S
     for (size_t i = 0; i < strlen(line); ++i)
     {
@@ -114,20 +115,21 @@ void ak_log_follow()
 
 void ak_log_grep(char* message)
 {
+    (void)message;
     printf("ak_log_grep: not implemented\n");
     return;
-    exit(2);
-    if ( message )
-    {
-        if ( strcmp(message, "-h") || strcmp(message, "--help") )
-        {
-            // description();
-            printf("Launch with no arguments and select from the menu that will appear\n");
-            exit(1);
-        }
-    }
-    printf("The following scripts have entries in the log file.\n");
-    printf("Select one of those by entering the number of it below and hit enter:\n");
+    // exit(2);
+    // if ( message )
+    // {
+    //     if ( strcmp(message, "-h") || strcmp(message, "--help") )
+    //     {
+    //         // description();
+    //         printf("Launch with no arguments and select from the menu that will appear\n");
+    //         exit(1);
+    //     }
+    // }
+    // printf("The following scripts have entries in the log file.\n");
+    // printf("Select one of those by entering the number of it below and hit enter:\n");
     //    select x in $(cat $AK_LOGSFILE | cut -d ' ' -f 2 | sort | uniq)
     //    do
     //        grep $x $AK_LOGSFILE | while read line
@@ -152,7 +154,7 @@ void ak_log_rotate()
     //    fi
     printf("ak_log_rotate: not implemented\n");
     return;
-    exit(2);
+    // exit(2);
 }
 
 void ak_log_message(const char* program, LogMessageType lmtype, char* message)
@@ -235,4 +237,32 @@ void ak_log_info(const char* program, char* message)
 void ak_log_test(const char* program, char* message)
 {
     ak_log_message(program, TEST, message);
+}
+
+static int ak_log_usage()
+{
+    ak_log_info(__func__, "Available commands:");
+    ak_log_info(__func__, "  ak_log");
+    return 1;
+}
+
+int ak_log_main(int argc, char **argv)
+{
+    int option;
+    while ( (option = getopt(argc, argv, ":h|:help")) != -1 )
+    {
+        printf("%d\n", option);
+        switch(option)
+        {
+            case 'h':
+                return ak_log_usage();
+            case ':':
+                printf("kek\n");
+                return 1;
+            case '?':
+                printf("lol\n");
+                return 2;
+        }
+    }
+    return 0;
 }
