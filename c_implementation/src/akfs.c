@@ -305,13 +305,6 @@ bool ak_fs_map_v3_compare(akfs_map_v3* a, akfs_map_v3* b)
            );
 }
 
-bool ak_fs_map_v3_is_null(akfs_map_v3* m)
-{
-    akfs_map_v3 n;
-    ak_fs_map_v3_init(&n);
-    return ak_fs_map_v3_compare(m, &n);
-}
-
 void ak_fs_print_available_maps(sha512sum **ma, size_t ma_len)
 {
     sha512sum *ptr = NULL;
@@ -393,34 +386,3 @@ int ak_fs_ls()
     ak_fs_print_filenames_from_map_store(&mps_ptr, ms_len);
     return 0;
 }
-
-int ak_fs_usage()
-{
-    ak_log_debug(__func__, "Available commands:");
-    ak_log_debug(__func__, "ak fs --list");
-    return 1;
-}
-
-int ak_fs_main(int c, char** v)
-{
-    (void)c;
-    (void)v;
-    int option;
-    while ( (option = getopt(c, v, ":h|:help")) != -1 )
-    {
-        printf("%d\n", option);
-        switch(option)
-        {
-            case 'h':
-                return ak_fs_usage();
-            case ':':
-                printf("kek\n");
-                return 1;
-            case '?':
-                printf("lol\n");
-                return 2;
-        }
-    }
-    return 0;
-}
-

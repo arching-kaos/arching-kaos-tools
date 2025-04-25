@@ -23,6 +23,13 @@ void ak_fs_map_v3_init_store(akfs_map_v3** ms, size_t l)
     }
 }
 
+bool ak_fs_map_v3_is_null(akfs_map_v3* m)
+{
+    akfs_map_v3 n;
+    ak_fs_map_v3_init(&n);
+    return ak_fs_map_v3_compare(m, &n);
+}
+
 void ak_fs_map_v3_print_original_hash(akfs_map_v3 *map)
 {
     if (!ak_fs_map_v3_is_null(map))
