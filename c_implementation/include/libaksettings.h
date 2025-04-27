@@ -18,6 +18,7 @@ char *ak_settings_get_setting(const char*);
 bool ak_settings_set_setting(const char*, const char*);
 bool ak_settings_save_settings();
 bool ak_settings_load_settings_binary();
+int ak_settings_find_setting(const char *key);
 void ak_settings_free_settings();
 bool ak_settings_save_settings_binary();
 void ak_settings_import_from_environment();

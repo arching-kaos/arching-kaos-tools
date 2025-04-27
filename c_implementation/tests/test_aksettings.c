@@ -95,11 +95,28 @@ static int test_read_and_dump()
     return 0;
 }
 
+static int test_find()
+{
+    printf("Testing: %s\n", __func__);
+    if (!ak_settings_load_settings_binary())
+    {
+        ak_log_warning(__func__, "No existing settings or error loading.\n");
+    }
+    AKSetting* ak_settings;
+    ak_settings = ak_settings_get_all();
+    int i =  ak_settings_find_setting("volume");
+    if ( i > -1 )
+        printf("%s=%s\n", ak_settings[i].key, ak_settings[i].value);
+    ak_settings_free_settings();
+    return 0;
+}
+
 int main()
 {
     test_import();
     test_ak_settings();
     test_ak_settings_read_example();
     test_read_and_dump();
+    test_find();
     return 0;
 }
