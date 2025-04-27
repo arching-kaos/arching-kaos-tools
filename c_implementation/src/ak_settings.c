@@ -76,7 +76,7 @@ void ak_settings_free_settings() {
     settings_count = 0;
 }
 
-int ak_settings_find_setting(const char *key) {
+static int ak_settings_find_setting(const char *key) {
     for (int i = 0; i < settings_count; i++) {
         if (strcmp(settings[i].key, key) == 0) {
             return i;

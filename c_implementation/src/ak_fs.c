@@ -10,11 +10,6 @@
 #include <sys/stat.h>
 #include <dirent.h>
 
-const char* ak_fs_maps_v3_get_dir()
-{
-    return getenv("AK_MAPSDIR");
-}
-
 char* ak_fs_return_hash_path(const char* str)
 {
     if ( ak_fs_verify_input_is_hash(str) )
@@ -185,13 +180,13 @@ int ak_fs_convert_map_v3_string_to_struct(const char *str, size_t ssize, akfs_ma
     {
         if ( str[i] == ' ' )
         {
-            spaces_found++;
-            sa[spaces_found] = i;
+            // spaces_found++;
+            sa[++spaces_found] = i;
         }
         if ( str[i] == '\n' )
         {
-            newlines_found++;
-            na[newlines_found] = i;
+            // newlines_found++;
+            na[++newlines_found] = i;
         }
     }
     int si = 0;
@@ -260,60 +255,37 @@ void ak_fs_get_available_maps_from_fs(sha512sum **ma, size_t length)
     closedir(d);
 }
 
-int ak_fs_load_available_maps(sha512sum **ma, size_t ma_len, akfs_map_v3 **ms, size_t ms_len)
+int ak_fs_map_v3_resolve_maps(akfs_map_v3 **ms, size_t ms_len)
 {
-    sha512sum *ptr = NULL;
-    akfs_map_v3 *mptr = NULL;
-    mptr = *ms;
-    (void)ms_len;
-    for ( ptr = *ma; ptr < *ma+ma_len; ++ptr)
+    akfs_map_v3 *ptr = NULL;
+    for ( ptr = *ms; ptr < *ms+ms_len; ++ptr)
     {
-        if ( ak_fs_sha512sum_is_null(ptr))
+        if ( ak_fs_sha512sum_is_null(&(ptr->mh)) )
         {
             continue;
         }
-        if( ak_fs_open_map_v3_file(ak_fs_sha512sum_struct_read_as_string(ptr), mptr) != 2)
+        if( ak_fs_map_v3_open_from_file(ptr) != 2)
         {
-            ++(mptr);
+            ++(ptr);
             continue;
         }
         else
         {
-            ++(mptr);
+            ++(ptr);
             // return 1;
         }
     }
     return 0;
 }
 
-void ak_fs_print_loaded_maps(akfs_map_v3 **map_store, size_t length)
-{
-    akfs_map_v3 *ptr = NULL;
-    for ( ptr = *map_store; ptr < *map_store + length; ++ptr)
-    {
-        if ( !ak_fs_map_v3_is_null(ptr) ) ak_fs_map_v3_print(ptr);
-    }
-}
-
-bool ak_fs_map_v3_compare(akfs_map_v3* a, akfs_map_v3* b)
-{
-    return (
-            (ak_fs_sha512sum_compare(&a->oh, &b->oh) == true) &&
-            (ak_fs_sha512sum_compare(&a->rh, &b->rh) == true) &&
-            (ak_fs_sha512sum_compare(&a->mh, &b->mh) == true) &&
-            (strcmp(a->filename, b->filename) == 0)
-           );
-}
-
-void ak_fs_print_available_maps(sha512sum **ma, size_t ma_len)
-{
-    sha512sum *ptr = NULL;
-    for ( ptr = *ma; ptr < *ma+ma_len; ++ptr)
-    {
-        ak_log_debug(__func__, ak_fs_sha512sum_struct_read_as_string(ptr));
-    }
-
-}
+// void ak_fs_print_available_maps(sha512sum **ma, size_t ma_len)
+// {
+//     sha512sum *ptr = NULL;
+//     for ( ptr = *ma; ptr < *ma+ma_len; ++ptr)
+//     {
+//         ak_log_debug(__func__, ak_fs_sha512sum_struct_read_as_string(ptr));
+//     }
+// }
 
 void ak_fs_init_string(char *str, size_t len)
 {
@@ -323,66 +295,38 @@ void ak_fs_init_string(char *str, size_t len)
     }
 }
 
-
-void ak_fs_print_map_avail(const sha512sum* m)
-{
-    printf(" .MA: %s\n", ak_fs_sha512sum_struct_read_as_string(m));
-}
-
-void ak_fs_print_map_all_avail(sha512sum** m, size_t s)
-{
-    sha512sum *ptr = NULL;
-    for (ptr = *m; ptr < *m+s; ++ptr)
-    {
-        ak_fs_print_map_avail(ptr);
-    }
-}
-
-void ak_fs_print_filenames_from_map_store(akfs_map_v3** m, size_t s)
-{
-    akfs_map_v3 *ptr = NULL;
-    for (ptr = *m; ptr < *m+s; ++ptr)
-    {
-        if ( !ak_fs_map_v3_is_null(ptr) ) ak_fs_map_v3_print_filename(ptr);
-    }
-}
-
-// char* ak_fs_fuse_list_filenames_from_map_store(akfs_map_v3** m, size_t s)
+// void ak_fs_print_map_avail(const sha512sum* m)
 // {
-//     akfs_map_v3 *ptr = NULL;
+//     printf(" .MA: %s\n", ak_fs_sha512sum_struct_read_as_string(m));
+// }
+// 
+// void ak_fs_print_map_all_avail(sha512sum** m, size_t s)
+// {
+//     sha512sum *ptr = NULL;
 //     for (ptr = *m; ptr < *m+s; ++ptr)
 //     {
-//         if ( !ak_fs_map_v3_is_null(ptr) ) ak_fs_map_v3_get_filename(ptr);
+//         ak_fs_print_map_avail(ptr);
 //     }
 // }
 
-void ak_fs_print_all_maps_from_map_store(akfs_map_v3** m, size_t s)
-{
-    akfs_map_v3 *ptr = NULL;
-    for (ptr = *m; ptr < *m+s; ++ptr)
-    {
-        if (!ak_fs_map_v3_is_null(ptr)) ak_fs_map_v3_print(ptr);
-    }
-}
-
 int ak_fs_ls()
 {
-    size_t ms_len = 100;
-    size_t ma_len = 100;
-    akfs_map_v3 map_store[ms_len];
-    akfs_map_v3* mps_ptr = &map_store[0];
+    size_t len = ak_fs_maps_v3_found_in_fs();
+    printf("Found: %lu\n", len);
+    akfs_map_v3 map_store[len];
+    akfs_map_v3* maps_ptr = &map_store[0];
     void* mps_start = &map_store[0];
     (void)mps_start;
-    sha512sum maps_avail[ma_len];
-    sha512sum *mav_ptr = &maps_avail[0];
-    void* mav_start = &map_store[0];
-    (void)mav_start;
-    ak_fs_map_v3_init_store(&mps_ptr, ms_len);
-    ak_fs_sha512sum_init_avail(&mav_ptr, ma_len);
-    ak_fs_print_all_maps_from_map_store(&mps_ptr, ms_len);
-    ak_fs_get_available_maps_from_fs(&mav_ptr, ma_len);
-    ak_fs_load_available_maps(&mav_ptr, ma_len, &mps_ptr, ms_len);
-    ak_fs_print_loaded_maps(&mps_ptr, ms_len);
-    ak_fs_print_filenames_from_map_store(&mps_ptr, ms_len);
+    ak_fs_maps_v3_init(&maps_ptr, len);
+    ak_fs_maps_v3_print(&maps_ptr, len);
+
+    // TODO Rename the following to "ak_fs_resolve_map_v3_array" or close to it
+    ak_fs_map_v3_resolve_maps(&maps_ptr, len);
+
+    // TODO Decide what we should be printing
+    // Possibly, something like "maphex(6)_filename" so we can put multiple
+    // files with the same name into the list
+    ak_fs_maps_v3_print(&maps_ptr, len);
+    ak_fs_maps_v3_print_filenames(&maps_ptr, len);
     return 0;
 }

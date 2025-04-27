@@ -85,24 +85,24 @@ void ak_log_print_log_line(const char* line)
     }
     timeInfo = localtime(&ts);
     strftime(ts_string, sizeof(ts_string), "%Y%m%d_%H%M%S", timeInfo);
-    printf("%s", ts_string);
-    printf(" \033[1;32m");
+    fprintf(stderr, "%s", ts_string);
+    fprintf(stderr, " \033[1;32m");
     for ( int k = sa[1]+1; k < sa[2]; ++k)
     {
-        printf("%c", line[k]);
+        fprintf(stderr, "%c", line[k]);
     }
-    printf("\033[0m \033[1;31m");
+    fprintf(stderr, "\033[0m \033[1;31m");
     for ( int k = sa[2]+1; k < sa[3]; ++k)
     {
-        printf("%c", line[k]);
+        fprintf(stderr, "%c", line[k]);
     }
-    printf("\033[0m ");
+    fprintf(stderr, "\033[0m ");
     for ( size_t k = sa[3]+1; k < strlen(line); ++k)
     {
-        printf("%c", line[k]);
+        fprintf(stderr, "%c", line[k]);
     }
-    printf("\033[0m");
-    printf("\n");
+    fprintf(stderr, "\033[0m");
+    fprintf(stderr, "\n");
 }
 
 void ak_log_follow()
@@ -237,32 +237,4 @@ void ak_log_info(const char* program, char* message)
 void ak_log_test(const char* program, char* message)
 {
     ak_log_message(program, TEST, message);
-}
-
-static int ak_log_usage()
-{
-    ak_log_info(__func__, "Available commands:");
-    ak_log_info(__func__, "  ak_log");
-    return 1;
-}
-
-int ak_log_main(int argc, char **argv)
-{
-    int option;
-    while ( (option = getopt(argc, argv, ":h|:help")) != -1 )
-    {
-        printf("%d\n", option);
-        switch(option)
-        {
-            case 'h':
-                return ak_log_usage();
-            case ':':
-                printf("kek\n");
-                return 1;
-            case '?':
-                printf("lol\n");
-                return 2;
-        }
-    }
-    return 0;
 }

@@ -1,4 +1,5 @@
 #include <libakfs.h>
+#include <libaklog.h>
 #include <stdlib.h>
 #include <assert.h>
 
@@ -40,6 +41,7 @@ char* ak_fs_sha512sum_struct_read_as_string(const sha512sum *ptr)
 {
     char *str = malloc(129*sizeof(char));
     ak_fs_sha512sum_struct_to_string(ptr, str);
+    ak_log_debug(__func__, str);
     return str;
 }
 

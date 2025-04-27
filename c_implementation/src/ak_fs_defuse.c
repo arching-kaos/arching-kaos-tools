@@ -37,36 +37,37 @@ static int akfs_fuse_readdir(const char *path, void *buf, fuse_fill_dir_t filler
 	if (strcmp(path, "/") != 0)  // Only support root dir
 		return -ENOENT;
 
-	filler(buf, ".", NULL, 0, 0);   // Current dir
-	filler(buf, "..", NULL, 0, 0);  // Parent dir
-	filler(buf, "hello", NULL, 0, 0);  // Our file
-    size_t ms_len = 100;
-    size_t ma_len = 100;
+	filler(buf, ".", NULL, 0, 0);
+	filler(buf, "..", NULL, 0, 0);
+
+    // example file
+	filler(buf, "hello", NULL, 0, 0);
+
+    // ak fs integration
+    size_t ms_len = ak_fs_maps_v3_found_in_fs();
     akfs_map_v3 map_store[ms_len];
     akfs_map_v3* mps_ptr = &map_store[0];
     void* mps_start = &map_store[0];
     (void)mps_start;
-    sha512sum maps_avail[ma_len];
-    sha512sum *mav_ptr = &maps_avail[0];
-    void* mav_start = &map_store[0];
-    (void)mav_start;
-    ak_fs_map_v3_init_store(&mps_ptr, ms_len);
-    ak_fs_sha512sum_init_avail(&mav_ptr, ma_len);
-    ak_fs_get_available_maps_from_fs(&mav_ptr, ma_len);
-    ak_fs_load_available_maps(&mav_ptr, ma_len, &mps_ptr, ms_len);
+    ak_fs_maps_v3_init(&mps_ptr, ms_len);
+    ak_fs_map_v3_resolve_maps(&mps_ptr, ms_len);
     akfs_map_v3 *ptr = NULL;
     for (ptr = mps_ptr; ptr < mps_ptr + ms_len; ++ptr)
     {
-        if ( !ak_fs_map_v3_is_null(ptr) ) ak_fs_map_v3_print_filename(ptr);
-        filler(buf, ak_fs_map_v3_get_filename(ptr), NULL, 0, 0);
+        if ( ak_fs_map_v3_is_null(ptr) )
+        {
+            ak_fs_map_v3_print_filename(ptr);
+            filler(buf, ak_fs_map_v3_get_filename(ptr), NULL, 0, 0);
+        }
     }
-	return 0;
+
+    return 0;
 }
 
 // Called to get file attributes (metadata)
 static int akfs_fuse_getattr(const char *path, struct stat *st, struct fuse_file_info *fi)
 {
-	(void) fi;  // Unused
+	(void) fi;
 	st->st_uid = getuid();
 	st->st_gid = getgid();
 	st->st_atime = st->st_mtime = time(NULL);
