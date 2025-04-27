@@ -161,7 +161,12 @@ void ak_fs_sha512sum_struct_to_string(const sha512sum*, char*);
 /**
  * Opens a map file to an akfs_map_v3 struct
  */
-int ak_fs_open_map_v3_file(char*, akfs_map_v3*);
+int ak_fs_map_v3_open_from_file(akfs_map_v3*);
+
+/**
+ * Prints filenames from a map_store
+ */
+void ak_fs_print_filenames_from_map_store(akfs_map_v3**, size_t);
 
 /**
  * Unused
@@ -196,12 +201,19 @@ void ak_fs_map_v3_print_filename(akfs_map_v3*);
 /**
  * Unused
  */
+void ak_fs_maps_v3_print_filenames(akfs_map_v3**, size_t);
+
+void ak_fs_map_v3_print_as_json(akfs_map_v3*);
+
+/**
+ * Unused
+ */
 void ak_fs_map_v3_print(akfs_map_v3*);
 
 /**
  * Takes an array of sha512sums (maps) and puts it in an array of maps (v3)
  */
-int ak_fs_load_available_maps(sha512sum**, size_t, akfs_map_v3**, size_t);
+int ak_fs_map_v3_resolve_maps(akfs_map_v3**, size_t);
 
 /**
  * Unused
@@ -211,7 +223,7 @@ void ak_fs_print_available_maps(sha512sum**, size_t);
 /**
  * Unused
  */
-void ak_fs_print_loaded_maps(akfs_map_v3**, size_t);
+void ak_fs_maps_v3_print(akfs_map_v3**, size_t);
 
 /**
  * Reads maps_dir and outputs it in an array of sha512sum
@@ -263,7 +275,7 @@ void ak_fs_map_v3_init(akfs_map_v3*);
 /**
  * Initializes an array of akfs_map_v3
  */
-void ak_fs_map_v3_init_store(akfs_map_v3**, size_t);
+void ak_fs_maps_v3_init(akfs_map_v3**, size_t);
 
 /**
  * returns: boolean
@@ -281,11 +293,11 @@ sha512sum* ak_fs_map_v3_get_map_hash(akfs_map_v3*);
 /**
  * Unused
  */
-sha512sum* ak_fs_map_v3_get_root_hash(akfs_map_v3*);
+char* ak_fs_map_v3_get_root_hash(akfs_map_v3*);
 /**
  * Unused
  */
-sha512sum* ak_fs_map_v3_get_orig_hash(akfs_map_v3*);
+char* ak_fs_map_v3_get_orig_hash(akfs_map_v3*);
 /**
  * Unused
  */
@@ -332,6 +344,11 @@ sha512sum* ak_fs_map_v4_get_root_hash(akfs_map_v4*);
  * Unused
  */
 sha512sum* ak_fs_map_v4_get_orig_hash(akfs_map_v4*);
+
+/**
+ * Returns number of files found in maps fs location
+ */
+size_t ak_fs_maps_v3_found_in_fs();
 
 /**
  * Unused
