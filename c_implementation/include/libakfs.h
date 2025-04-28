@@ -129,7 +129,7 @@ char* ak_fs_return_hash_dir(const char*);
  * Verify that string looks like a SHA512 hash
  *
  * param char* string to be checked
- * returns boolean
+ * @return boolean
  */
 bool ak_fs_verify_input_is_hash(const char*, size_t);
 
@@ -142,14 +142,14 @@ int ak_fs_create_dir_for_hash(const char*);
  * Converts string hash to struct
  * @param char*      Hash as string
  * @param sha512sum* Pointer to a sha512sum
- * @returns int      Status of exit
+ * @return int      Status of exit
  */
 int ak_fs_sha512sum_string_to_struct(const char*, sha512sum*);
 
 /**
  * Returns struct from string hash
  * @param char*        Hash as string
- * @returns sha512sum* Pointer to a sha512sum
+ * @return sha512sum* Pointer to a sha512sum
  */
 sha512sum* ak_fs_sha512sum_from_string(char*);
 
@@ -215,6 +215,9 @@ void ak_fs_map_v3_print(akfs_map_v3*);
 
 /**
  * Takes an array of sha512sums (maps) and puts it in an array of maps (v3)
+ * @param akfs_map_v3** Pointer to an array of akfs_map_v3
+ * @param size_t        Length of the array
+ * @return int         Exit code (0 on success)
  */
 int ak_fs_maps_v3_resolve(akfs_map_v3**, size_t);
 
@@ -281,10 +284,11 @@ void ak_fs_map_v3_init(akfs_map_v3*);
 void ak_fs_maps_v3_init(akfs_map_v3**, size_t);
 
 /**
- * returns: boolean
- * param: akfs_map_v3
+ * @param akfs_map_v3
+ * @return boolean
  */
 bool ak_fs_map_v3_is_null(akfs_map_v3*);
+
 /**
  * Unused
  */
@@ -299,8 +303,8 @@ sha512sum* ak_fs_map_v3_get_map_hash(akfs_map_v3*);
 sha512sum* ak_fs_map_v3_get_root_hash(akfs_map_v3*);
 /**
  * Gets original hash out of the akfs_map_v3
- * param: akfs_map_v3
- * return: pointer to sha512sum
+ * @param akfs_map_v3
+ * @return pointer to sha512sum
  */
 sha512sum* ak_fs_map_v3_get_orig_hash(akfs_map_v3*);
 /**
@@ -313,17 +317,10 @@ bool ak_fs_map_v3_compare(akfs_map_v3*, akfs_map_v3*);
  */
 void ak_fs_init_map_v4_store(akfs_map_v4**, size_t);
 
-
 /**
  * Unused
  */
 void ak_fs_map_v4_init(akfs_map_v4*);
-
-/**
- * Initializes an array of sha512sum
- */
-void ak_fs_init_map_avail(sha512sum**, size_t);
-
 
 /**
  * Unused
@@ -351,21 +348,23 @@ sha512sum* ak_fs_map_v4_get_root_hash(akfs_map_v4*);
 sha512sum* ak_fs_map_v4_get_orig_hash(akfs_map_v4*);
 
 /**
- * Returns number of files found in maps fs location
+ *
+ * @return size_t Number of files found in maps fs location
  */
 size_t ak_fs_maps_v3_found_in_fs();
 
 /**
  * Prints a list of the maps (version 3 format) available on the local fs along
  * with their root hash and file name.
- * @returns int Status value
  *
+ * @return int Status value
  */
 int ak_fs_ls();
 
 /**
  * Main function for call from other programs
- * @returns: status
+ *
+ * @return int Exit value
  */
 int ak_fs_main(int, char**);
 
