@@ -278,3 +278,101 @@ int ak_fs_ls()
     ak_fs_maps_v3_print_bif(&maps_ptr, len);
     return 0;
 }
+
+int ak_fs_root_hash_resolve(merkletree_node *h)
+{
+    const char* leafs_dir = getenv("AK_LEAFSDIR");
+    FILE *fd;
+    char *fullpath;
+    asprintf(&fullpath, "%s/%s", leafs_dir, ak_fs_sha512sum_struct_read_as_string(&h->head));
+    fd = fopen(fullpath, "r");
+    if ( fd == NULL )
+    {
+        perror("fopen");
+        return 1;
+    }
+    char buffer[258];
+    fread(&buffer, sizeof(buffer), 1, fd);
+    fclose(fd);
+    char h1[129] = {0};
+    char h2[129] = {0};
+    if ( buffer[128] == '\n' && buffer[257] == '\n' ) printf("\\n found on the expected spot!\n");
+    merkletree_node h0;
+    ak_fs_sha512sum_init(&h0.root);
+    ak_fs_sha512sum_init(&h0.head);
+    ak_fs_sha512sum_init(&h0.tail);
+    h0.root = h->root;
+    for( size_t i = 0; i < 128; ++i )
+    {
+        h1[i] = buffer[i];
+    }
+    h1[128] = '\0';
+    for( size_t i = 0; i < 128; ++i )
+    {
+        h2[i] = buffer[i+129];
+    }
+    h2[128] = '\0';
+    ak_fs_sha512sum_string_to_struct(h1, &h0.head);
+    ak_fs_sha512sum_string_to_struct(h2, &h0.tail);
+    ak_fs_root_hash_resolve(&h0);
+
+    return 0;
+}
+
+int ak_fs_cat_file_from_root_hash(sha512sum* rh)
+{
+    printf("%s: %s\n", __func__, getenv("AK_CHUNKSDIR"));
+    const char* leafs_dir = getenv("AK_LEAFSDIR");
+    // We always expect root hash to be in the AK_LEAFSDIR directory, however it
+    // might as well not be there
+    FILE *fd;
+    // We need to join the root_hash with the directory first
+    char *fullpath;
+    asprintf(&fullpath, "%s/%s", leafs_dir, ak_fs_sha512sum_struct_read_as_string(rh));
+    fd = fopen(fullpath, "r");
+    if ( fd == NULL )
+    {
+        perror("fopen");
+        return 1;
+    }
+    char buffer[258];
+    fread(&buffer, sizeof(buffer), 1, fd);
+    fclose(fd);
+    char h1[129] = {0};
+    char h2[129] = {0};
+    if ( buffer[128] == '\n' && buffer[257] == '\n' ) printf("\\n found on the expected spot!\n");
+    merkletree_node h0;
+    ak_fs_sha512sum_init(&h0.root);
+    ak_fs_sha512sum_init(&h0.head);
+    ak_fs_sha512sum_init(&h0.tail);
+    h0.root = *rh;
+    for( size_t i = 0; i < 128; ++i )
+    {
+        h1[i] = buffer[i];
+    }
+    h1[128] = '\0';
+    for( size_t i = 0; i < 128; ++i )
+    {
+        h2[i] = buffer[i+129];
+    }
+    h2[128] = '\0';
+    ak_fs_sha512sum_string_to_struct(h1, &h0.head);
+    ak_fs_sha512sum_string_to_struct(h2, &h0.tail);
+    ak_fs_root_hash_resolve(&h0);
+    // ak_log_debug(__func__, ak_fs_sha512sum_struct_read_as_string(&h0.root));
+    // ak_log_debug(__func__, ak_fs_sha512sum_struct_read_as_string(&h0.head));
+    // ak_log_debug(__func__, ak_fs_sha512sum_struct_read_as_string(&h0.tail));
+    // if ( ak_fs_verify_input_is_hash(h1, strlen(h1))) printf("head:\n%s\n---\n", h1);
+    // if ( ak_fs_verify_input_is_hash(h2, strlen(h2))) printf("tail:\n%s\n---\n", h2);
+    return 0;
+}
+
+int ak_fs_cfm(akfs_map_v3* map)
+{
+    sha512sum x;
+    ak_fs_sha512sum_init(&x);
+    x = *(ak_fs_map_v3_get_root_hash(map));
+    // printf("%s\n", ak_fs_sha512sum_struct_read_as_string(&x));
+    ak_fs_cat_file_from_root_hash(&x);
+    return 0;
+}

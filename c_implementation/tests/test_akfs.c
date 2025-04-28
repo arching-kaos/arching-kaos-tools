@@ -241,6 +241,21 @@ static void test_ak_fs_ls()
     ak_fs_ls();
 }
 
+static void test_ak_fs_cfm()
+{
+    ak_log_test(__func__, ".....=====.....");
+    akfs_map_v3 map;
+    ak_fs_map_v3_init(&map);
+    char *map_string = "28bde5fa7aacd8da0ec84b61cf3a69141686906c00f8cff904c9a0b12f5a4cf061da254feb188c32b711b2e1d6a3853d5ac3fb0bcd3564899bae55dd30470392";
+    ak_fs_sha512sum_string_to_struct(map_string, &(map.mh));
+    if ( ak_fs_map_v3_open_from_file(&map) != 0 )
+    {
+        ak_log_debug(__func__, "FAILED");
+        return;
+    }
+    ak_fs_cfm(&map);
+}
+
 
 int main(void)
 {
@@ -279,5 +294,8 @@ int main(void)
     printf("%lu\n", (unsigned long)sizeof(sha512sum));
     printf("%lu\n", (unsigned long)sizeof(akfs_map_v3));
     printf("%lu\n", (unsigned long)sizeof(akfs_map_v4));
+
+    // Test ak_fs_cfm
+    test_ak_fs_cfm();
     return 0;
 }

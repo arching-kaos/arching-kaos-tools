@@ -21,10 +21,9 @@ typedef struct {
 } sha512sum;
 
 /**
- * This struct describes explicitly the structure of a root_hash. It is the root
- * of a hash merkle tree. Note, that this structure can be used for roots and
- * branches. Possibly, the name will change to something more generic in the
- * future.
+ * This struct describes explicitly the structure of a merkletree_node. Note,
+ * that this structure can be used for roots and branches.
+ *
  * Another note is that instead of approaching this as left and right, as seen
  * in other codebases, we do a head-tail naming. That's because of the BASH
  * implementation that you can find at lib/_ak_fs.
@@ -43,7 +42,7 @@ typedef struct {
      * Hash of tail
      */
     sha512sum tail;
-} root_hash;
+} merkletree_node;
 
 /**
  * This is the current structure of an akfs_map. Due to potential short-comings
@@ -402,6 +401,9 @@ int ak_fs_ls();
  * @return int Exit value
  */
 int ak_fs_main(int, char**);
+
+int ak_fs_cat_file_from_root_hash(sha512sum*);
+int ak_fs_cfm(akfs_map_v3*);
 
 #endif // AKFS
 
