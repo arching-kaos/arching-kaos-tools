@@ -50,6 +50,11 @@ void ak_fs_maps_v3_print(akfs_map_v3 **map_store, size_t length)
     }
 }
 
+/**
+ * @brief Prints each map in the array as JSON.
+ *
+ * Iterates over an array of akfs_map_v3 structures and prints each map's details in JSON format.
+ */
 void ak_fs_maps_v3_print_as_json(akfs_map_v3 **map_store, size_t length)
 {
     akfs_map_v3 *ptr = NULL;
@@ -59,6 +64,14 @@ void ak_fs_maps_v3_print_as_json(akfs_map_v3 **map_store, size_t length)
     }
 }
 
+/**
+ * @brief Prints each map in the array in BIF format.
+ *
+ * Iterates over an array of akfs_map_v3 structures and prints each map using the BIF format, followed by a newline.
+ *
+ * @param map_store Pointer to the array of akfs_map_v3 structures.
+ * @param length Number of elements in the array.
+ */
 void ak_fs_maps_v3_print_bif(akfs_map_v3 **map_store, size_t length)
 {
     akfs_map_v3 *ptr = NULL;
@@ -69,6 +82,13 @@ void ak_fs_maps_v3_print_bif(akfs_map_v3 **map_store, size_t length)
     }
 }
 
+/**
+ * @brief Counts the number of valid map hash files in the maps directory.
+ *
+ * Scans the directory specified by the "AK_MAPSDIR" environment variable and counts entries whose names are recognized as valid map hashes.
+ *
+ * @return size_t The number of valid map hash files found in the directory.
+ */
 size_t ak_fs_maps_v3_found_in_fs()
 {
     DIR *d;
@@ -86,6 +106,15 @@ size_t ak_fs_maps_v3_found_in_fs()
     return counter;
 }
 
+/**
+ * @brief Loads map data from files for each non-null map hash in the array.
+ *
+ * Iterates over an array of `akfs_map_v3` structures and attempts to open and load map data from file for each element whose map hash (`mh`) is not null.
+ *
+ * @param ms Pointer to the array of `akfs_map_v3` structures.
+ * @param ms_len Number of elements in the array.
+ * @return Always returns 0.
+ */
 int ak_fs_maps_v3_resolve(akfs_map_v3 **ms, size_t ms_len)
 {
     akfs_map_v3 *ptr = NULL;

@@ -118,6 +118,11 @@ void ak_fs_map_v3_print_filename(akfs_map_v3 *map)
     printf("%s", ak_fs_map_v3_get_filename(map));
 }
 
+/**
+ * @brief Prints the contents of an akfs_map_v3 structure in a formatted, multi-line style.
+ *
+ * Displays the map hash, original hash, root hash, and filename fields with labels for each.
+ */
 void ak_fs_map_v3_print(akfs_map_v3 *map)
 {
     printf("map_v3 {");
@@ -132,6 +137,11 @@ void ak_fs_map_v3_print(akfs_map_v3 *map)
     printf("\n}\n");
 }
 
+/**
+ * @brief Prints the akfs_map_v3 structure as a JSON object.
+ *
+ * Outputs the map hash, original hash, root hash, and filename fields in JSON format to standard output.
+ */
 void ak_fs_map_v3_print_as_json(akfs_map_v3 *map)
 {
     printf("{\"type\":\"map_v3\",");
@@ -150,6 +160,11 @@ void ak_fs_map_v3_print_as_json(akfs_map_v3 *map)
     printf("}\n");
 }
 
+/**
+ * @brief Prints the map hash, root hash, and filename of an akfs_map_v3 structure in a single line.
+ *
+ * The output format is: "<map_hash> <root_hash> <filename>", with each field separated by a space.
+ */
 void ak_fs_map_v3_print_bif(akfs_map_v3 *map)
 {
     ak_fs_map_v3_print_map_hash(map);
@@ -159,6 +174,15 @@ void ak_fs_map_v3_print_bif(akfs_map_v3 *map)
     ak_fs_map_v3_print_filename(map);
 }
 
+/**
+ * @brief Loads an akfs_map_v3 structure from a file based on its map hash.
+ *
+ * Constructs the file path using the map hash and attempts to open and read the file.
+ * Parses the file content into the provided akfs_map_v3 structure.
+ *
+ * @param map Pointer to the akfs_map_v3 structure to populate.
+ * @return int 0 on success, 1 if the map pointer is null, file cannot be opened, or conversion fails, 2 if file stat fails.
+ */
 int ak_fs_map_v3_open_from_file(akfs_map_v3 * map)
 {
     if (map==0x0)
@@ -201,6 +225,13 @@ int ak_fs_map_v3_open_from_file(akfs_map_v3 * map)
     return 0;
 }
 
+/**
+ * @brief Placeholder for writing an akfs_map_v3 structure to a file.
+ *
+ * This function currently does nothing and always returns 0.
+ *
+ * @return int Always returns 0.
+ */
 int ak_fs_map_v3_to_file(akfs_map_v3 maphash)
 {
     (void)maphash;

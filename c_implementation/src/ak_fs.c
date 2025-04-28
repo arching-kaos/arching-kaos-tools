@@ -69,6 +69,15 @@ char* ak_fs_return_hash_dir(const char* str)
     }
 }
 
+/**
+ * @brief Validates whether a string is a 128-character lowercase hexadecimal hash.
+ *
+ * Checks that the input string is exactly 128 characters long and consists only of characters '0'-'9' and 'a'-'f'.
+ *
+ * @param str Input string to validate.
+ * @param len Length of the input string.
+ * @return true if the string is a valid 128-character lowercase hexadecimal hash, false otherwise.
+ */
 bool ak_fs_verify_input_is_hash(const char* str, size_t len)
 {
     size_t i = 0;
@@ -166,6 +175,17 @@ int ak_fs_create_dir_for_hash(const char* str)
     }
 }
 
+/**
+ * @brief Parses a map entry string into an akfs_map_v3 structure.
+ *
+ * Extracts the original hash, root hash, and filename from the input string,
+ * validates the hashes, and populates the provided akfs_map_v3 structure.
+ *
+ * @param str Input string representing a map entry.
+ * @param ssize Length of the input string.
+ * @param map Pointer to the akfs_map_v3 structure to populate.
+ * @return 0 on success, 1 on failure (invalid input or conversion error).
+ */
 int ak_fs_convert_map_v3_string_to_struct(const char *str, size_t ssize, akfs_map_v3* map)
 {
     size_t sa[] = { -1, -1, -1, -1, -1 };
@@ -239,6 +259,11 @@ int ak_fs_convert_map_v3_string_to_struct(const char *str, size_t ssize, akfs_ma
     return 0;
 }
 
+/**
+ * @brief Populates an array of map structures with hashes found in the filesystem.
+ *
+ * Scans the directory returned by ak_fs_maps_v3_get_dir(), identifies entries whose names are valid 128-character SHA-512 hashes, and converts each valid entry into a hash structure stored in the provided array.
+ */
 void ak_fs_maps_v3_get_from_fs(akfs_map_v3 **ma, size_t length)
 {
     (void)length;
@@ -259,6 +284,14 @@ void ak_fs_maps_v3_get_from_fs(akfs_map_v3 **ma, size_t length)
     closedir(d);
 }
 
+/**
+ * @brief Sets all characters in a string buffer to null bytes.
+ *
+ * Initializes the specified buffer by filling it with null characters (`'\0'`) up to the given length.
+ *
+ * @param str Pointer to the character buffer to initialize.
+ * @param len Number of bytes to set to null.
+ */
 void ak_fs_init_string(char *str, size_t len)
 {
     for (size_t i = 0; i < len; ++i)
@@ -267,6 +300,13 @@ void ak_fs_init_string(char *str, size_t len)
     }
 }
 
+/**
+ * @brief Lists and prints all map entries found in the filesystem.
+ *
+ * Initializes, loads, resolves, and displays all map entries present in the filesystem using the akfs_map_v3 structure.
+ *
+ * @return int Always returns 0.
+ */
 int ak_fs_ls()
 {
     size_t len = ak_fs_maps_v3_found_in_fs();

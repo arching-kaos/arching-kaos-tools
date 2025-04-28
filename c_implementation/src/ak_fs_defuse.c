@@ -27,7 +27,16 @@ static int akfs_fuse_read(const char *path, char *buf, size_t size, off_t offset
 	return size;
 }
 
-// Called to list files in the root directory
+/**
+ * @brief Lists entries in the root directory, including static and AKFS-integrated files.
+ *
+ * Adds standard directory entries (".", ".."), a static file ("hello"), and any files discovered via AKFS map integration to the directory listing when the root directory ("/") is requested.
+ *
+ * @param path Path to the directory being listed; must be "/".
+ * @param buf Buffer to which directory entries are added.
+ * @param filler Callback used to add entries to the buffer.
+ * @return 0 on success, or -ENOENT if the path is not the root directory.
+ */
 static int akfs_fuse_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 		off_t offset, struct fuse_file_info *fi,
 		enum fuse_readdir_flags flags)
