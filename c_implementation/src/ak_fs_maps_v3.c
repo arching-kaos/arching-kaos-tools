@@ -91,14 +91,8 @@ int ak_fs_maps_v3_resolve(akfs_map_v3 **ms, size_t ms_len)
     akfs_map_v3 *ptr = NULL;
     for ( ptr = *ms; ptr < *ms+ms_len; ++ptr)
     {
-        if ( ak_fs_sha512sum_is_null(&(ptr->mh)) )
-        {
-            continue;
-        }
-        if( ak_fs_map_v3_open_from_file(ptr) != 2)
-        {
-            continue;
-        }
+        if ( ak_fs_sha512sum_is_null(&(ptr->mh)) ) continue;
+        ak_fs_map_v3_open_from_file(ptr);
     }
     return 0;
 }
