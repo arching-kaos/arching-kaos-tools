@@ -200,11 +200,25 @@ static void test_hash_check()
 static void test_map_opener()
 {
     akfs_map_v3 map;
+    ak_fs_map_v3_init(&map);
     char *map_string = "28bde5fa7aacd8da0ec84b61cf3a69141686906c00f8cff904c9a0b12f5a4cf061da254feb188c32b711b2e1d6a3853d5ac3fb0bcd3564899bae55dd30470392";
-    ak_fs_open_map_v3_file(map_string, &map);
+    ak_fs_sha512sum_string_to_struct(map_string, &(map.mh));
+    if ( ak_fs_map_v3_open_from_file(&map) != 0 )
+    {
+        ak_log_debug(__func__, "FAILED");
+        return;
+    }
     const char *orig_string = "fa19bdc471bedc42abf3ff52069214bc7339a7eafc03f8551e8af892a0e3ce175cff0dde6f815da031cd0566fded455c937f7cae27181f7a90ab92e6131ba2be";
     const char *root_string = "438aebe24c89d36f84a68ea29327b27af1abc05f8f85e69af650159c4928834bd6fd2b3df690de74d42f861a8dbe30cebc6cba6afe07fabb1066d1380cd3adea";
     const char *filename = "mixtapes-v0.0.0.tar.gz";
+    // printf("%s\n",ak_fs_sha512sum_struct_read_as_string((const sha512sum*)&(map.mh)));
+    // printf("%s\n",ak_fs_sha512sum_struct_read_as_string((const sha512sum*)&(map.oh)));
+    // printf("%s\n",ak_fs_sha512sum_struct_read_as_string((const sha512sum*)&(map.rh)));
+    // printf("%s\n",map.filename);
+
+    ak_fs_map_v3_print(&map);
+    ak_fs_map_v3_print_as_json(&map);
+
     if (
         (strcmp(map_string,  ak_fs_sha512sum_struct_read_as_string(&(map.mh)))!=0) ||
         (strcmp(orig_string, ak_fs_sha512sum_struct_read_as_string(&(map.oh)))!=0) ||
@@ -212,18 +226,35 @@ static void test_map_opener()
         (strcmp(filename, map.filename)!=0))
     {
         ak_log_debug(__func__, "FAILED");
+        return;
     }
     else
     {
         ak_log_debug(__func__, "PASSED");
+        return;
     }
 }
 
 static void test_ak_fs_ls()
 {
     ak_log_test(__func__, ".....=====.....");
+    // size_t len = ak_fs_maps_v3_found_in_fs();
+    // akfs_map_v3 map_store[len];
+    // akfs_map_v3* mps_ptr = &map_store[0];
+    // void* mps_start = &map_store[0];
+    // (void)mps_start;
+    // ak_fs_map_v3_init_store(&mps_ptr, len);
+
+    // // TODO Rename the following to "ak_fs_resolve_map_v3_array" or close to it
+    // ak_fs_map_v3_resolve_maps(&mps_ptr, len);
+
+    // // TODO Decide what we should be printing
+    // // Possibly, something like "maphex(6)_filename" so we can put multiple
+    // // files with the same name into the list
+    // ak_fs_maps_v3_print(&mps_ptr, len);
+    // ak_fs_print_filenames_from_map_store(&mps_ptr, len);
     ak_fs_ls();
-    ak_log_test(__func__, ".....=END=.....");
+    // ak_log_test(__func__, ".....=END=.....");
 }
 
 

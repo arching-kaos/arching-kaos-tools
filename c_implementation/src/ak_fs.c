@@ -12,7 +12,7 @@
 
 char* ak_fs_return_hash_path(const char* str)
 {
-    if ( ak_fs_verify_input_is_hash(str) )
+    if ( ak_fs_verify_input_is_hash(str, strlen(str)) )
     {
         unsigned int i = 0;
         char *result = malloc((128*2)+1);
@@ -43,7 +43,7 @@ char* ak_fs_return_hash_path(const char* str)
 
 char* ak_fs_return_hash_dir(const char* str)
 {
-    if ( ak_fs_verify_input_is_hash(str) )
+    if ( ak_fs_verify_input_is_hash(str, strlen(str)) )
     {
         unsigned int i = 0;
         char *result = malloc((128*2)+1);
@@ -69,20 +69,27 @@ char* ak_fs_return_hash_dir(const char* str)
     }
 }
 
-bool ak_fs_verify_input_is_hash(const char* str)
+bool ak_fs_verify_input_is_hash(const char* str, size_t len)
 {
     size_t i = 0;
+    printf("%s: this %lu is %lu: %s\n", __func__, i, len, str);
+    if (len != 128)
+    {
+        ak_log_debug(__func__, "Hash string length not right");
+        return false;
+    }
     while ( str[i] != '\0' )
     {
         if (
                 i < 128 &&
                 !(
                     ( str[i] >= 0x30 ) &&
-                    (( str[i] <= 0x39) || ( str[i] >= 0x61 )) &&
+                    ( str[i] <= 0x39 || str[i] >= 0x61 ) &&
                     ( str[i] <= 0x66 )
-                )
-            )
+                 )
+           )
         {
+            ak_log_debug(__func__, "Char out of range");
             return false;
         }
         else {
@@ -91,8 +98,10 @@ bool ak_fs_verify_input_is_hash(const char* str)
     }
     if ( i > 128 )
     {
+        ak_log_debug(__func__, "String exceeds limit");
         return false;
     }
+    ak_log_debug(__func__, "String okay");
     return true;
 }
 
@@ -107,7 +116,7 @@ int ak_fs_create_dir_for_hash(const char* str)
      * 2. We might need to "lock" onto some version of glibc and be aware of
      *    other systems that do not use that one.
      */
-    if ( ak_fs_verify_input_is_hash(str) )
+    if ( ak_fs_verify_input_is_hash(str, strlen(str)) )
     {
         char* dir_path = ak_fs_return_hash_dir(str);
         // We will need to separate the string so we can create the path one
@@ -196,7 +205,7 @@ int ak_fs_convert_map_v3_string_to_struct(const char *str, size_t ssize, akfs_ma
         si++;
     }
     original_hash_str[si] = '\0';
-    if( !ak_fs_verify_input_is_hash(original_hash_str) )
+    if( !ak_fs_verify_input_is_hash(original_hash_str, strlen(original_hash_str)) )
     {
         ak_log_error(__func__, "original_hash_str not a hash");
         return 1;
@@ -213,7 +222,7 @@ int ak_fs_convert_map_v3_string_to_struct(const char *str, size_t ssize, akfs_ma
         si++;
     }
     root_hash_str[si] = '\0';
-    if( !ak_fs_verify_input_is_hash(root_hash_str) )
+    if( !ak_fs_verify_input_is_hash(root_hash_str, strlen(root_hash_str)) )
     {
         ak_log_error(__func__, "root_hash_str not a hash");
         return 1;
@@ -237,40 +246,55 @@ int ak_fs_convert_map_v3_string_to_struct(const char *str, size_t ssize, akfs_ma
     return 0;
 }
 
-void ak_fs_get_available_maps_from_fs(sha512sum **ma, size_t length)
+void ak_fs_maps_v3_get_from_fs(akfs_map_v3 **ma, size_t length)
 {
+    (void)length;
     DIR *d;
     d = opendir(ak_fs_maps_v3_get_dir());
-    sha512sum *ptr = NULL;
+    akfs_map_v3 *ptr = NULL;
+    ptr = *ma;
+    ak_log_debug(__func__, "gonna if");
     if (d)
     {
-        for ( ptr = *ma; ptr < *ma+length; ++ptr)
+        ak_log_debug(__func__, "in if");
+        const struct dirent *dir;
+        while((dir = readdir(d)) != NULL )
         {
-            const struct dirent *dir;
-            if ((dir = readdir(d)) == NULL ) break;
-            if (!ak_fs_verify_input_is_hash(dir->d_name)) continue;
-            ak_fs_sha512sum_string_to_struct(dir->d_name, ptr);
+            ak_log_debug(__func__, "in while");
+            // if ( ptr >= *ma+length ) break;
+            printf("iMH: %s\n", dir->d_name);
+            if (!ak_fs_verify_input_is_hash(dir->d_name, 128)) continue;
+            ak_fs_sha512sum_string_to_struct(dir->d_name, &(ptr->mh));
+            ++ptr;
         }
+        ak_log_debug(__func__, "out while");
     }
+    ak_log_debug(__func__, "out if");
     closedir(d);
 }
 
 int ak_fs_map_v3_resolve_maps(akfs_map_v3 **ms, size_t ms_len)
 {
     akfs_map_v3 *ptr = NULL;
+    // char s[129] = {0};
+    printf("%s: %lu\n", __func__, ms_len);
     for ( ptr = *ms; ptr < *ms+ms_len; ++ptr)
     {
+        printf("MH: %s\n", ak_fs_sha512sum_struct_read_as_string(&(ptr->mh)));
         if ( ak_fs_sha512sum_is_null(&(ptr->mh)) )
         {
+            ak_log_debug(__func__, "map hash is null");
             continue;
         }
         if( ak_fs_map_v3_open_from_file(ptr) != 2)
         {
+            ak_log_debug(__func__, "not 2");
             ++(ptr);
             continue;
         }
         else
         {
+            ak_log_debug(__func__, "2");
             ++(ptr);
             // return 1;
         }
@@ -318,9 +342,9 @@ int ak_fs_ls()
     void* mps_start = &map_store[0];
     (void)mps_start;
     ak_fs_maps_v3_init(&maps_ptr, len);
+    // ak_fs_maps_v3_print(&maps_ptr, len);
+    ak_fs_maps_v3_get_from_fs(&maps_ptr, len);
     ak_fs_maps_v3_print(&maps_ptr, len);
-
-    // TODO Rename the following to "ak_fs_resolve_map_v3_array" or close to it
     ak_fs_map_v3_resolve_maps(&maps_ptr, len);
 
     // TODO Decide what we should be printing

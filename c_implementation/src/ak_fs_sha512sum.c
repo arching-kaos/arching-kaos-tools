@@ -2,6 +2,7 @@
 #include <libaklog.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 
 void ak_fs_sha512sum_init(sha512sum *hash)
 {
@@ -41,7 +42,7 @@ char* ak_fs_sha512sum_struct_read_as_string(const sha512sum *ptr)
 {
     char *str = malloc(129*sizeof(char));
     ak_fs_sha512sum_struct_to_string(ptr, str);
-    ak_log_debug(__func__, str);
+    // ak_log_debug(__func__, str);
     return str;
 }
 
@@ -54,7 +55,7 @@ bool ak_fs_sha512sum_is_null(const sha512sum *h)
 
 int ak_fs_sha512sum_string_to_struct(const char* str, sha512sum* hash)
 {
-    if ( ak_fs_verify_input_is_hash(str) )
+    if ( ak_fs_verify_input_is_hash(str, strlen(str)) )
     {
         for (size_t l = 0; l < 8; ++l)
         {

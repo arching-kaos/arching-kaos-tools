@@ -1,6 +1,8 @@
-#include <libakfs.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include <dirent.h>
+#include "libakfs.h"
 
 const char* ak_fs_maps_v3_get_dir()
 {
@@ -30,7 +32,11 @@ void ak_fs_maps_v3_print_filenames(akfs_map_v3** m, size_t s)
     akfs_map_v3 *ptr = NULL;
     for (ptr = *m; ptr < *m+s; ++ptr)
     {
-        if ( ptr != NULL ) ak_fs_map_v3_print_filename(ptr);
+        if ( ptr != NULL )
+        {
+            ak_fs_map_v3_print_filename(ptr);
+            printf("\n");
+        }
     }
 }
 
@@ -40,10 +46,18 @@ void ak_fs_maps_v3_print(akfs_map_v3 **map_store, size_t length)
     for ( ptr = *map_store; ptr < *map_store + length; ++ptr)
     {
         ak_fs_map_v3_print(ptr);
-        ak_fs_map_v3_print_as_json(ptr);
+        printf("\n");
     }
 }
 
+void ak_fs_maps_v3_print_as_json(akfs_map_v3 **map_store, size_t length)
+{
+    akfs_map_v3 *ptr = NULL;
+    for ( ptr = *map_store; ptr < *map_store + length; ++ptr)
+    {
+        ak_fs_map_v3_print_as_json(ptr);
+    }
+}
 
 size_t ak_fs_maps_v3_found_in_fs()
 {
@@ -55,7 +69,7 @@ size_t ak_fs_maps_v3_found_in_fs()
         const struct dirent *dir;
         while ((dir = readdir(d)) != NULL )
         {
-            if (ak_fs_verify_input_is_hash(dir->d_name)) counter++;
+            if (ak_fs_verify_input_is_hash(dir->d_name, strlen(dir->d_name))) counter++;
         }
     }
     closedir(d);

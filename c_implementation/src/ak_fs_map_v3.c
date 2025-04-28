@@ -84,15 +84,27 @@ sha512sum* ak_fs_map_v3_get_map_hash(akfs_map_v3 *map)
     return &(map->mh);
 }
 
-char* ak_fs_map_v3_get_root_hash(akfs_map_v3 *map)
+sha512sum* ak_fs_map_v3_get_root_hash(akfs_map_v3 *map)
 {
     if (!ak_fs_sha512sum_is_null(&(map->rh)))
     {
-        return ak_fs_sha512sum_struct_read_as_string(&(map->rh));
+        return &(map->rh);
     }
     else
     {
-        return "";
+        return NULL;
+    }
+}
+
+sha512sum* ak_fs_map_v3_get_orig_hash(akfs_map_v3 *map)
+{
+    if (!ak_fs_sha512sum_is_null(&(map->oh)))
+    {
+        return &(map->oh);
+    }
+    else
+    {
+        return NULL;
     }
 }
 
@@ -103,7 +115,7 @@ char* ak_fs_map_v3_get_filename(akfs_map_v3 *map)
 
 void ak_fs_map_v3_print_filename(akfs_map_v3 *map)
 {
-    printf(" .fn: %s\n", ak_fs_map_v3_get_filename(map));
+    printf("%s", ak_fs_map_v3_get_filename(map));
 }
 
 void ak_fs_map_v3_print(akfs_map_v3 *map)
@@ -126,13 +138,13 @@ void ak_fs_map_v3_print_as_json(akfs_map_v3 *map)
     printf("\"map\":\"");
     ak_fs_map_v3_print_map_hash(map);
     printf("\",");
-    printf("{\"original\":\"");
+    printf("\"original\":\"");
     ak_fs_map_v3_print_original_hash(map);
     printf("\",");
-    printf("{\"root\":\"");
+    printf("\"root\":\"");
     ak_fs_map_v3_print_root_hash(map);
     printf("\",");
-    printf("{\"filename\":\"");
+    printf("\"filename\":\"");
     ak_fs_map_v3_print_filename(map);
     printf("\"");
     printf("}\n");
@@ -189,7 +201,7 @@ int ak_fs_open_map_v3_file(char* maphash, akfs_map_v3 * map)
         ak_log_debug(__func__, "Zeropointer");
         return 1;
     }
-    if ( !ak_fs_verify_input_is_hash(maphash) )
+    if ( !ak_fs_verify_input_is_hash(maphash, strlen(maphash)) )
     {
         ak_log_debug(__func__,"not a hash");
         return 1;

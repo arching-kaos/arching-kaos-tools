@@ -131,7 +131,7 @@ char* ak_fs_return_hash_dir(const char*);
  * param char* string to be checked
  * returns boolean
  */
-bool ak_fs_verify_input_is_hash(const char*);
+bool ak_fs_verify_input_is_hash(const char*, size_t);
 
 /**
  * Unused
@@ -293,11 +293,13 @@ sha512sum* ak_fs_map_v3_get_map_hash(akfs_map_v3*);
 /**
  * Unused
  */
-char* ak_fs_map_v3_get_root_hash(akfs_map_v3*);
+sha512sum* ak_fs_map_v3_get_root_hash(akfs_map_v3*);
 /**
- * Unused
+ * Gets original hash out of the akfs_map_v3
+ * param: akfs_map_v3
+ * return: pointer to sha512sum
  */
-char* ak_fs_map_v3_get_orig_hash(akfs_map_v3*);
+sha512sum* ak_fs_map_v3_get_orig_hash(akfs_map_v3*);
 /**
  * Unused
  */
