@@ -353,12 +353,16 @@ sha512sum* ak_fs_map_v4_get_orig_hash(akfs_map_v4*);
 size_t ak_fs_maps_v3_found_in_fs();
 
 /**
- * Unused
+ * Prints a list of the maps (version 3 format) available on the local fs along
+ * with their root hash and file name.
+ * @returns int Status value
+ *
  */
 int ak_fs_ls();
 
 /**
- * Main function
+ * Main function for call from other programs
+ * @returns: status
  */
 int ak_fs_main(int, char**);
 
