@@ -50,7 +50,7 @@ static int akfs_fuse_readdir(const char *path, void *buf, fuse_fill_dir_t filler
     void* mps_start = &map_store[0];
     (void)mps_start;
     ak_fs_maps_v3_init(&mps_ptr, ms_len);
-    ak_fs_map_v3_resolve_maps(&mps_ptr, ms_len);
+    ak_fs_maps_v3_resolve(&mps_ptr, ms_len);
     akfs_map_v3 *ptr = NULL;
     for (ptr = mps_ptr; ptr < mps_ptr + ms_len; ++ptr)
     {

@@ -72,10 +72,8 @@ char* ak_fs_return_hash_dir(const char* str)
 bool ak_fs_verify_input_is_hash(const char* str, size_t len)
 {
     size_t i = 0;
-    printf("%s: this %lu is %lu: %s\n", __func__, i, len, str);
     if (len != 128)
     {
-        ak_log_debug(__func__, "Hash string length not right");
         return false;
     }
     while ( str[i] != '\0' )
@@ -89,7 +87,6 @@ bool ak_fs_verify_input_is_hash(const char* str, size_t len)
                  )
            )
         {
-            ak_log_debug(__func__, "Char out of range");
             return false;
         }
         else {
@@ -98,10 +95,8 @@ bool ak_fs_verify_input_is_hash(const char* str, size_t len)
     }
     if ( i > 128 )
     {
-        ak_log_debug(__func__, "String exceeds limit");
         return false;
     }
-    ak_log_debug(__func__, "String okay");
     return true;
 }
 
@@ -189,12 +184,10 @@ int ak_fs_convert_map_v3_string_to_struct(const char *str, size_t ssize, akfs_ma
     {
         if ( str[i] == ' ' )
         {
-            // spaces_found++;
             sa[++spaces_found] = i;
         }
         if ( str[i] == '\n' )
         {
-            // newlines_found++;
             na[++newlines_found] = i;
         }
     }
@@ -253,63 +246,18 @@ void ak_fs_maps_v3_get_from_fs(akfs_map_v3 **ma, size_t length)
     d = opendir(ak_fs_maps_v3_get_dir());
     akfs_map_v3 *ptr = NULL;
     ptr = *ma;
-    ak_log_debug(__func__, "gonna if");
     if (d)
     {
-        ak_log_debug(__func__, "in if");
         const struct dirent *dir;
         while((dir = readdir(d)) != NULL )
         {
-            ak_log_debug(__func__, "in while");
-            // if ( ptr >= *ma+length ) break;
-            printf("iMH: %s\n", dir->d_name);
             if (!ak_fs_verify_input_is_hash(dir->d_name, 128)) continue;
             ak_fs_sha512sum_string_to_struct(dir->d_name, &(ptr->mh));
             ++ptr;
         }
-        ak_log_debug(__func__, "out while");
     }
-    ak_log_debug(__func__, "out if");
     closedir(d);
 }
-
-int ak_fs_map_v3_resolve_maps(akfs_map_v3 **ms, size_t ms_len)
-{
-    akfs_map_v3 *ptr = NULL;
-    // char s[129] = {0};
-    printf("%s: %lu\n", __func__, ms_len);
-    for ( ptr = *ms; ptr < *ms+ms_len; ++ptr)
-    {
-        printf("MH: %s\n", ak_fs_sha512sum_struct_read_as_string(&(ptr->mh)));
-        if ( ak_fs_sha512sum_is_null(&(ptr->mh)) )
-        {
-            ak_log_debug(__func__, "map hash is null");
-            continue;
-        }
-        if( ak_fs_map_v3_open_from_file(ptr) != 2)
-        {
-            ak_log_debug(__func__, "not 2");
-            ++(ptr);
-            continue;
-        }
-        else
-        {
-            ak_log_debug(__func__, "2");
-            ++(ptr);
-            // return 1;
-        }
-    }
-    return 0;
-}
-
-// void ak_fs_print_available_maps(sha512sum **ma, size_t ma_len)
-// {
-//     sha512sum *ptr = NULL;
-//     for ( ptr = *ma; ptr < *ma+ma_len; ++ptr)
-//     {
-//         ak_log_debug(__func__, ak_fs_sha512sum_struct_read_as_string(ptr));
-//     }
-// }
 
 void ak_fs_init_string(char *str, size_t len)
 {
@@ -319,38 +267,14 @@ void ak_fs_init_string(char *str, size_t len)
     }
 }
 
-// void ak_fs_print_map_avail(const sha512sum* m)
-// {
-//     printf(" .MA: %s\n", ak_fs_sha512sum_struct_read_as_string(m));
-// }
-// 
-// void ak_fs_print_map_all_avail(sha512sum** m, size_t s)
-// {
-//     sha512sum *ptr = NULL;
-//     for (ptr = *m; ptr < *m+s; ++ptr)
-//     {
-//         ak_fs_print_map_avail(ptr);
-//     }
-// }
-
 int ak_fs_ls()
 {
     size_t len = ak_fs_maps_v3_found_in_fs();
-    printf("Found: %lu\n", len);
     akfs_map_v3 map_store[len];
     akfs_map_v3* maps_ptr = &map_store[0];
-    void* mps_start = &map_store[0];
-    (void)mps_start;
     ak_fs_maps_v3_init(&maps_ptr, len);
-    // ak_fs_maps_v3_print(&maps_ptr, len);
     ak_fs_maps_v3_get_from_fs(&maps_ptr, len);
-    ak_fs_maps_v3_print(&maps_ptr, len);
-    ak_fs_map_v3_resolve_maps(&maps_ptr, len);
-
-    // TODO Decide what we should be printing
-    // Possibly, something like "maphex(6)_filename" so we can put multiple
-    // files with the same name into the list
-    ak_fs_maps_v3_print(&maps_ptr, len);
-    ak_fs_maps_v3_print_filenames(&maps_ptr, len);
+    ak_fs_maps_v3_resolve(&maps_ptr, len);
+    ak_fs_maps_v3_print_bif(&maps_ptr, len);
     return 0;
 }

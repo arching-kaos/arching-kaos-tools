@@ -59,6 +59,16 @@ void ak_fs_maps_v3_print_as_json(akfs_map_v3 **map_store, size_t length)
     }
 }
 
+void ak_fs_maps_v3_print_bif(akfs_map_v3 **map_store, size_t length)
+{
+    akfs_map_v3 *ptr = NULL;
+    for ( ptr = *map_store; ptr < *map_store + length; ++ptr)
+    {
+        ak_fs_map_v3_print_bif(ptr);
+        printf("\n");
+    }
+}
+
 size_t ak_fs_maps_v3_found_in_fs()
 {
     DIR *d;
@@ -74,4 +84,21 @@ size_t ak_fs_maps_v3_found_in_fs()
     }
     closedir(d);
     return counter;
+}
+
+int ak_fs_maps_v3_resolve(akfs_map_v3 **ms, size_t ms_len)
+{
+    akfs_map_v3 *ptr = NULL;
+    for ( ptr = *ms; ptr < *ms+ms_len; ++ptr)
+    {
+        if ( ak_fs_sha512sum_is_null(&(ptr->mh)) )
+        {
+            continue;
+        }
+        if( ak_fs_map_v3_open_from_file(ptr) != 2)
+        {
+            continue;
+        }
+    }
+    return 0;
 }

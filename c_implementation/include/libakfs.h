@@ -203,7 +203,10 @@ void ak_fs_map_v3_print_filename(akfs_map_v3*);
  */
 void ak_fs_maps_v3_print_filenames(akfs_map_v3**, size_t);
 
+void ak_fs_maps_v3_print_as_json(akfs_map_v3**, size_t);
 void ak_fs_map_v3_print_as_json(akfs_map_v3*);
+void ak_fs_maps_v3_print_bif(akfs_map_v3**, size_t);
+void ak_fs_map_v3_print_bif(akfs_map_v3*);
 
 /**
  * Unused
@@ -213,7 +216,7 @@ void ak_fs_map_v3_print(akfs_map_v3*);
 /**
  * Takes an array of sha512sums (maps) and puts it in an array of maps (v3)
  */
-int ak_fs_map_v3_resolve_maps(akfs_map_v3**, size_t);
+int ak_fs_maps_v3_resolve(akfs_map_v3**, size_t);
 
 /**
  * Unused

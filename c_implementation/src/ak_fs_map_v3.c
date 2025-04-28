@@ -120,7 +120,7 @@ void ak_fs_map_v3_print_filename(akfs_map_v3 *map)
 
 void ak_fs_map_v3_print(akfs_map_v3 *map)
 {
-    printf("map_v3 {\n");
+    printf("map_v3 {");
     printf("\n .mh: ");
     ak_fs_map_v3_print_map_hash(map);
     printf("\n .oh: ");
@@ -150,9 +150,17 @@ void ak_fs_map_v3_print_as_json(akfs_map_v3 *map)
     printf("}\n");
 }
 
+void ak_fs_map_v3_print_bif(akfs_map_v3 *map)
+{
+    ak_fs_map_v3_print_map_hash(map);
+    printf(" ");
+    ak_fs_map_v3_print_root_hash(map);
+    printf(" ");
+    ak_fs_map_v3_print_filename(map);
+}
+
 int ak_fs_map_v3_open_from_file(akfs_map_v3 * map)
 {
-    ak_log_debug(__func__, "Started");
     if (map==0x0)
     {
         ak_log_debug(__func__, "Zeropointer");
