@@ -201,50 +201,6 @@ int ak_fs_map_v3_open_from_file(akfs_map_v3 * map)
     return 0;
 }
 
-int ak_fs_open_map_v3_file(char* maphash, akfs_map_v3 * map)
-{
-    ak_log_debug(__func__, "Started");
-    if (map==0x0)
-    {
-        ak_log_debug(__func__, "Zeropointer");
-        return 1;
-    }
-    if ( !ak_fs_verify_input_is_hash(maphash, strlen(maphash)) )
-    {
-        ak_log_debug(__func__,"not a hash");
-        return 1;
-    }
-    FILE *fd;
-    char *full_path = {0};
-    asprintf(&full_path, "%s/%s", ak_fs_maps_v3_get_dir(), maphash);
-    printf("Trying path: %s\n", full_path);
-    fd = fopen(full_path, "rb");
-    if (!fd)
-    {
-        // perror("fopen");
-        ak_log_debug(__func__, "file not found");
-        return 1;
-    }
-    struct stat sb;
-    if (stat(full_path, &sb) == -1) {
-        perror("stat");
-        fclose(fd);
-        return 2;
-    }
-    // File size: %lld in bytes: (long long) sb.st_size);
-    char buffer[(long long) sb.st_size+1];
-    fread(&buffer, sizeof(buffer), (long long) sb.st_size, fd);
-    ak_fs_sha512sum_string_to_struct(maphash, &(map->mh));
-    if ( ak_fs_convert_map_v3_string_to_struct(buffer, strlen(buffer), map) != 0 )
-    {
-        ak_log_debug(__func__,"conversion failed");
-        fclose(fd);
-        return 1;
-    }
-    fclose(fd);
-    return 0;
-}
-
 int ak_fs_map_v3_to_file(akfs_map_v3 maphash)
 {
     (void)maphash;
