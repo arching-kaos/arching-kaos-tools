@@ -149,24 +149,23 @@ int ak_fs_sha512sum_string_to_struct(const char*, sha512sum*);
 /**
  * Returns struct from string hash
  * @param char*        Hash as string
- * @return sha512sum* Pointer to a sha512sum
+ * @return sha512sum*  Pointer to a sha512sum
  */
 sha512sum* ak_fs_sha512sum_from_string(char*);
 
 /**
  * Converts hash struct to string
+ * @param sha512sum*   Pointer to a sha512sum
+ * @param char*        Hash as string
  */
 void ak_fs_sha512sum_struct_to_string(const sha512sum*, char*);
 
 /**
  * Opens a map file to an akfs_map_v3 struct
+ * @param akfs_map_v3*
+ * @return int
  */
 int ak_fs_map_v3_open_from_file(akfs_map_v3*);
-
-/**
- * Prints filenames from a map_store
- */
-void ak_fs_print_filenames_from_map_store(akfs_map_v3**, size_t);
 
 /**
  * Unused
@@ -174,44 +173,83 @@ void ak_fs_print_filenames_from_map_store(akfs_map_v3**, size_t);
 int ak_fs_map_v3_to_file(akfs_map_v3);
 
 /**
- * Unused
+ * Converts a string to an akfs_map_v3 struct
+ * @param char*
+ * @param size_t
+ * @param akfs_map_v3*
+ * @return int
  */
 int ak_fs_convert_map_v3_string_to_struct(const char *, size_t, akfs_map_v3*);
 
 /**
- * Unused
+ * Prints an akfs_map_v3 in struct-like format
+ * @param akfs_map_v3*
+ */
+void ak_fs_map_v3_print(akfs_map_v3*);
+
+/**
+ * Prints an array of akfs_map_v3 in struct-like format
+ * @param akfs_map_v3*
+ * @param size_t
+ */
+void ak_fs_maps_v3_print(akfs_map_v3**, size_t);
+
+/**
+ * Prints the map hash out of a akfs_map_v3
+ * @param akfs_map_v3*
  */
 void ak_fs_map_v3_print_map_hash(akfs_map_v3*);
 
 /**
- * Unused
+ * Prints the original hash out of a akfs_map_v3
+ * @param akfs_map_v3*
  */
 void ak_fs_map_v3_print_original_hash(akfs_map_v3*);
 
 /**
- * Unused
+ * Prints the root hash out of a akfs_map_v3
+ * @param akfs_map_v3*
  */
 void ak_fs_map_v3_print_root_hash(akfs_map_v3*);
 
 /**
- * Unused
+ * Prints the filename out of a akfs_map_v3
+ * @param akfs_map_v3*
  */
 void ak_fs_map_v3_print_filename(akfs_map_v3*);
 
 /**
- * Unused
+ * Prints the filenames out of an array of akfs_map_v3
+ * @param akfs_map_v3**
+ * @param size_t
  */
 void ak_fs_maps_v3_print_filenames(akfs_map_v3**, size_t);
 
+/**
+ * Prints an array of akfs_map_v3 in JSON format
+ * @param akfs_map_v3**
+ * @param size_t
+ */
 void ak_fs_maps_v3_print_as_json(akfs_map_v3**, size_t);
-void ak_fs_map_v3_print_as_json(akfs_map_v3*);
-void ak_fs_maps_v3_print_bif(akfs_map_v3**, size_t);
-void ak_fs_map_v3_print_bif(akfs_map_v3*);
 
 /**
- * Unused
+ * Prints an akfs_map_v3 in JSON format
+ * @param akfs_map_v3*
  */
-void ak_fs_map_v3_print(akfs_map_v3*);
+void ak_fs_map_v3_print_as_json(akfs_map_v3*);
+
+/**
+ * Prints an array of akfs_map_v3 in bif format
+ * @param akfs_map_v3**
+ * @param size_t
+ */
+void ak_fs_maps_v3_print_bif(akfs_map_v3**, size_t);
+
+/**
+ * Prints an akfs_map_v3 in bif format
+ * @param akfs_map_v3*
+ */
+void ak_fs_map_v3_print_bif(akfs_map_v3*);
 
 /**
  * Takes an array of sha512sums (maps) and puts it in an array of maps (v3)
@@ -224,50 +262,34 @@ int ak_fs_maps_v3_resolve(akfs_map_v3**, size_t);
 /**
  * Unused
  */
-void ak_fs_print_available_maps(sha512sum**, size_t);
-
-/**
- * Unused
- */
-void ak_fs_maps_v3_print(akfs_map_v3**, size_t);
-
-/**
- * Reads maps_dir and outputs it in an array of sha512sum
- */
-void ak_fs_prepare_available_maps(sha512sum**, size_t);
-
-/**
- * Unused
- */
-void ak_fs_get_available_maps_from_fs(sha512sum**, size_t);
-
-/**
- * Unused
- */
-void ak_fs_print_map_all_avail(sha512sum**, size_t);
-
-/**
- * Unused
- */
 char* ak_fs_sha512sum_struct_read_as_string(const sha512sum *);
 
 /**
  * Unused
  */
-void ak_fs_init_string(char *, size_t );
+void ak_fs_init_string(char *, size_t);
 
 /**
- * Unused
+ * Compares two sha512sum structs
+ * @param sha512sum*
+ * @param sha512sum*
+ * @return bool
  */
 bool ak_fs_sha512sum_compare(const sha512sum*, const sha512sum*);
+
 /**
- * Unused
+ * Checks if an sha512sum struct is NULL
+ * @param sha512sum*
+ * @return bool
  */
 bool ak_fs_sha512sum_is_null(const sha512sum*);
+
 /**
- * Unused
+ * Initializes a sha512sum struct
+ * @param sha512sum*
  */
 void ak_fs_sha512sum_init(sha512sum*);
+
 /**
  * Unused
  */
@@ -290,25 +312,38 @@ void ak_fs_maps_v3_init(akfs_map_v3**, size_t);
 bool ak_fs_map_v3_is_null(akfs_map_v3*);
 
 /**
- * Unused
+ * Gets filename out of the akfs_map_v3
+ * @param akfs_map_v3*
+ * @return pointer to char
  */
 char* ak_fs_map_v3_get_filename(akfs_map_v3*);
+
 /**
- * Unused
+ * Gets map hash out of the akfs_map_v3
+ * @param akfs_map_v3
+ * @return pointer to sha512sum
  */
 sha512sum* ak_fs_map_v3_get_map_hash(akfs_map_v3*);
+
 /**
- * Unused
+ * Gets root hash out of the akfs_map_v3
+ * @param akfs_map_v3
+ * @return pointer to sha512sum
  */
 sha512sum* ak_fs_map_v3_get_root_hash(akfs_map_v3*);
+
 /**
  * Gets original hash out of the akfs_map_v3
  * @param akfs_map_v3
  * @return pointer to sha512sum
  */
 sha512sum* ak_fs_map_v3_get_orig_hash(akfs_map_v3*);
+
 /**
- * Unused
+ * Compares two akfs_map_v3 structs
+ * @param akfs_map_v3*
+ * @param akfs_map_v3*
+ * @return bool
  */
 bool ak_fs_map_v3_compare(akfs_map_v3*, akfs_map_v3*);
 

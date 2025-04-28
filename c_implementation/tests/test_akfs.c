@@ -238,23 +238,7 @@ static void test_map_opener()
 static void test_ak_fs_ls()
 {
     ak_log_test(__func__, ".....=====.....");
-    // size_t len = ak_fs_maps_v3_found_in_fs();
-    // akfs_map_v3 map_store[len];
-    // akfs_map_v3* mps_ptr = &map_store[0];
-    // void* mps_start = &map_store[0];
-    // (void)mps_start;
-    // ak_fs_map_v3_init_store(&mps_ptr, len);
-
-    // // TODO Rename the following to "ak_fs_resolve_map_v3_array" or close to it
-    // ak_fs_map_v3_resolve_maps(&mps_ptr, len);
-
-    // // TODO Decide what we should be printing
-    // // Possibly, something like "maphex(6)_filename" so we can put multiple
-    // // files with the same name into the list
-    // ak_fs_maps_v3_print(&mps_ptr, len);
-    // ak_fs_print_filenames_from_map_store(&mps_ptr, len);
     ak_fs_ls();
-    // ak_log_test(__func__, ".....=END=.....");
 }
 
 
