@@ -319,11 +319,14 @@ int ak_fs_cat_file_from_root_hash(sha512sum* rh)
         {
             ak_log_error(__func__, "File is smaller than expected. Wrong format?");
             fclose(fd);
+            free(fullpath);
             return 2;
         }
         if ( buffer[128] != '\n' || buffer[257] != '\n' )
         {
             ak_log_error(__func__, "Unknown format");
+            fclose(fd);
+            free(fullpath);
             return 2;
         }
         char h_str[129] = {0};

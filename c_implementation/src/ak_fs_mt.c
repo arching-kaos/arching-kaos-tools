@@ -3,17 +3,17 @@
 #include <libaklog.h>
 #include <stdbool.h>
 
-bool ak_fs_mt_branch_is_null(mt_branch* node)
+bool ak_fs_mt_branch_is_null(mt_branch* n)
 {
-    if ( node == NULL )
+    if ( n == NULL )
     {
         ak_log_warning(__func__, "A NULL mt_branch* node was given");
         return false;
     }
     if (
-            ak_fs_sha512sum_is_null(&node->root) &&
-            ak_fs_sha512sum_is_null(&node->head) &&
-            ak_fs_sha512sum_is_null(&node->tail)
+            ak_fs_sha512sum_is_null(&n->root) &&
+            ak_fs_sha512sum_is_null(&n->head) &&
+            ak_fs_sha512sum_is_null(&n->tail)
        )
     {
         return true;
@@ -41,6 +41,11 @@ bool ak_fs_mt_branch_compare(mt_branch *a, mt_branch *b)
 
 void ak_fs_mt_branch_print(mt_branch *n)
 {
+    if ( n == NULL )
+    {
+        ak_log_warning(__func__, "NULL mt_branch* was given");
+        return;
+    }
     printf("r: %s\n", ak_fs_sha512sum_struct_read_as_string(&n->root));
     printf("h: %s\n", ak_fs_sha512sum_struct_read_as_string(&n->head));
     printf("t: %s\n", ak_fs_sha512sum_struct_read_as_string(&n->tail));
