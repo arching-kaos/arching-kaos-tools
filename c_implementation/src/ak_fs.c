@@ -310,16 +310,15 @@ int ak_fs_cat_file_from_root_hash(sha512sum* rh)
             return 1;
         }
         is_chunk = true;
-        free(fullpath);
     }
     if ( !is_chunk )
     {
-        char buffer[258];
-        size_t bytes_read = fread(&buffer, sizeof(buffer), 1, fd);
-        fclose(fd);
+        char buffer[258] = {0};
+        size_t bytes_read = fread(&buffer, 1, sizeof(buffer), fd);
         if ( bytes_read < sizeof(buffer) )
         {
             ak_log_error(__func__, "File is smaller than expected. Wrong format?");
+            fclose(fd);
             return 2;
         }
         if ( buffer[128] != '\n' || buffer[257] != '\n' )
@@ -349,6 +348,7 @@ int ak_fs_cat_file_from_root_hash(sha512sum* rh)
         if (stat(fullpath, &sb) == -1) {
             perror("stat");
             fclose(fd);
+            free(fullpath);
             return 2;
         }
         char buffer[(long long) sb.st_size+1];
@@ -357,6 +357,7 @@ int ak_fs_cat_file_from_root_hash(sha512sum* rh)
         buffer[sizeof(buffer)-1] = '\0';
         printf("%s", buffer);
     }
+    free(fullpath);
     return 0;
 }
 
