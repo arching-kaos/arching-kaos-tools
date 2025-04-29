@@ -327,15 +327,9 @@ int ak_fs_cat_file_from_root_hash(sha512sum* rh)
         ak_fs_sha512sum_init(&h0.head);
         ak_fs_sha512sum_init(&h0.tail);
         h0.root = *rh;
-        for( size_t i = 0; i < 128; ++i )
-        {
-            h1[i] = buffer[i];
-        }
+        memcpy(h1, buffer, 128);
         h1[128] = '\0';
-        for( size_t i = 0; i < 128; ++i )
-        {
-            h2[i] = buffer[i+129];
-        }
+        memcpy(h2, buffer + 129, 128);
         h2[128] = '\0';
         ak_fs_sha512sum_string_to_struct(h1, &h0.head);
         ak_fs_sha512sum_string_to_struct(h2, &h0.tail);
