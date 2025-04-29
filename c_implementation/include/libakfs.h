@@ -21,7 +21,7 @@ typedef struct {
 } sha512sum;
 
 /**
- * This struct describes explicitly the structure of a merkletree_node. Note,
+ * This struct describes explicitly the structure of a mt_branch. Note,
  * that this structure can be used for roots and branches.
  *
  * Another note is that instead of approaching this as left and right, as seen
@@ -42,7 +42,7 @@ typedef struct {
      * Hash of tail
      */
     sha512sum tail;
-} merkletree_node;
+} mt_branch;
 
 /**
  * This is the current structure of an akfs_map. Due to potential short-comings
@@ -402,6 +402,9 @@ int ak_fs_ls();
  */
 int ak_fs_main(int, char**);
 
+bool ak_fs_mt_branch_is_null(mt_branch*);
+bool ak_fs_mt_branch_compare(mt_branch*, mt_branch*);
+int ak_fs_mt_branch_resolve(mt_branch *);
 int ak_fs_cat_file_from_root_hash(sha512sum*);
 int ak_fs_cfm(akfs_map_v3*);
 

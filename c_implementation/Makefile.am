@@ -14,6 +14,7 @@ libakfs_la_SOURCES = $(top_srcdir)/src/ak_fs.c \
 					 $(top_srcdir)/src/ak_fs_maps_v3.c \
 					 $(top_srcdir)/src/ak_fs_map_v3.c \
 					 $(top_srcdir)/src/ak_fs_map_v4.c \
+					 $(top_srcdir)/src/ak_fs_mt.c \
 					 $(top_srcdir)/src/ak_fs_sha512sum.c
 
 libakutils_la_SOURCES = $(top_srcdir)/src/ak_utils.c
