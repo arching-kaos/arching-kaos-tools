@@ -281,44 +281,73 @@ int ak_fs_ls()
 
 int ak_fs_cat_file_from_root_hash(sha512sum* rh)
 {
-    printf("%s: %s\n", __func__, getenv("AK_CHUNKSDIR"));
+    const char* chunks_dir = getenv("AK_CHUNKSDIR");
     const char* leafs_dir = getenv("AK_LEAFSDIR");
-    // We always expect root hash to be in the AK_LEAFSDIR directory, however it
-    // might as well not be there
     FILE *fd;
-    // We need to join the root_hash with the directory first
     char *fullpath;
-    asprintf(&fullpath, "%s/%s", leafs_dir, ak_fs_sha512sum_struct_read_as_string(rh));
+    bool is_chunk = false;
+    if ( asprintf(&fullpath, "%s/%s", leafs_dir, ak_fs_sha512sum_struct_read_as_string(rh))  == -1 ) return -1;
     fd = fopen(fullpath, "r");
     if ( fd == NULL )
     {
-        perror("fopen");
-        return 1;
+        // perror("fopen");
+        if ( asprintf(&fullpath, "%s/%s", chunks_dir, ak_fs_sha512sum_struct_read_as_string(rh)) == -1 ) return -1;
+        fd = fopen(fullpath, "r");
+        if ( fd == NULL )
+        {
+            ak_log_error(__func__, "Could not be found");
+            return 1;
+        }
+        is_chunk = true;
     }
-    char buffer[258];
-    fread(&buffer, sizeof(buffer), 1, fd);
-    fclose(fd);
-    char h1[129] = {0};
-    char h2[129] = {0};
-    if ( buffer[128] == '\n' && buffer[257] == '\n' ) printf("\\n found on the expected spot!\n");
-    mt_branch h0;
-    ak_fs_sha512sum_init(&h0.root);
-    ak_fs_sha512sum_init(&h0.head);
-    ak_fs_sha512sum_init(&h0.tail);
-    h0.root = *rh;
-    for( size_t i = 0; i < 128; ++i )
+    if ( !is_chunk )
     {
-        h1[i] = buffer[i];
+        char buffer[258];
+        fread(&buffer, sizeof(buffer), 1, fd);
+        fclose(fd);
+        char h1[129] = {0};
+        char h2[129] = {0};
+        if ( buffer[128] != '\n' && buffer[257] != '\n' )
+        {
+            ak_log_error(__func__, "Unknown format");
+            return 2;
+        }
+        mt_branch h0;
+        ak_fs_sha512sum_init(&h0.root);
+        ak_fs_sha512sum_init(&h0.head);
+        ak_fs_sha512sum_init(&h0.tail);
+        h0.root = *rh;
+        for( size_t i = 0; i < 128; ++i )
+        {
+            h1[i] = buffer[i];
+        }
+        h1[128] = '\0';
+        for( size_t i = 0; i < 128; ++i )
+        {
+            h2[i] = buffer[i+129];
+        }
+        h2[128] = '\0';
+        ak_fs_sha512sum_string_to_struct(h1, &h0.head);
+        ak_fs_sha512sum_string_to_struct(h2, &h0.tail);
+        ak_fs_cat_file_from_root_hash(&h0.head);
+        if ( !ak_fs_sha512sum_compare(&h0.head, &h0.tail) ) ak_fs_cat_file_from_root_hash(&h0.tail);
+        // ak_fs_mt_branch_resolve(&h0);
     }
-    h1[128] = '\0';
-    for( size_t i = 0; i < 128; ++i )
+    else
     {
-        h2[i] = buffer[i+129];
+        struct stat sb;
+        if (stat(fullpath, &sb) == -1) {
+            perror("stat");
+            fclose(fd);
+            return 2;
+        }
+        // File size: %lld in bytes: (long long) sb.st_size);
+        char buffer[(long long) sb.st_size+1];
+        fread(&buffer, sizeof(buffer), 1, fd);
+        fclose(fd);
+        buffer[sizeof(buffer)-1] = '\0';
+        printf("%s", buffer);
     }
-    h2[128] = '\0';
-    ak_fs_sha512sum_string_to_struct(h1, &h0.head);
-    ak_fs_sha512sum_string_to_struct(h2, &h0.tail);
-    ak_fs_mt_branch_resolve(&h0);
     // ak_log_debug(__func__, ak_fs_sha512sum_struct_read_as_string(&h0.root));
     // ak_log_debug(__func__, ak_fs_sha512sum_struct_read_as_string(&h0.head));
     // ak_log_debug(__func__, ak_fs_sha512sum_struct_read_as_string(&h0.tail));
