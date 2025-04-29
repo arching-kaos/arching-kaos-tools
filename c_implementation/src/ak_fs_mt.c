@@ -1,10 +1,15 @@
 #include <stdio.h>
 #include <libakfs.h>
 #include <libaklog.h>
-#include <stdlib.h>
+#include <stdbool.h>
 
 bool ak_fs_mt_branch_is_null(mt_branch* node)
 {
+    if ( node == NULL )
+    {
+        ak_log_warning(__func__, "A NULL mt_branch* node was given");
+        return false;
+    }
     if (
             ak_fs_sha512sum_is_null(&node->root) &&
             ak_fs_sha512sum_is_null(&node->head) &&
@@ -18,6 +23,11 @@ bool ak_fs_mt_branch_is_null(mt_branch* node)
 
 bool ak_fs_mt_branch_compare(mt_branch *a, mt_branch *b)
 {
+    if ( a == NULL || b == NULL )
+    {
+        ak_log_warning(__func__, "One or two NULL mt_branch* node was given");
+        return false;
+    }
     if (
             ak_fs_sha512sum_compare(&a->root, &b->root) &&
             ak_fs_sha512sum_compare(&a->head, &b->head) &&
