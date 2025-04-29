@@ -253,7 +253,14 @@ static void test_ak_fs_cfm()
         ak_log_debug(__func__, "FAILED");
         return;
     }
-    ak_fs_cfm(&map);
+    if ( ak_fs_cfm(&map) == 0 )
+    {
+        ak_log_info(__func__, "PASSED");
+    }
+    else
+    {
+        ak_log_error(__func__, "FAILED");
+    }
 }
 
 
