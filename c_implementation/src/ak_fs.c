@@ -300,42 +300,48 @@ int ak_fs_cat_file_from_root_hash(sha512sum* rh)
     fd = fopen(fullpath, "r");
     if ( fd == NULL )
     {
-        // perror("fopen");
+        free(fullpath);
         if ( asprintf(&fullpath, "%s/%s", chunks_dir, ak_fs_sha512sum_struct_read_as_string(rh)) == -1 ) return -1;
         fd = fopen(fullpath, "r");
         if ( fd == NULL )
         {
             ak_log_error(__func__, "Could not be found");
+            free(fullpath);
             return 1;
         }
         is_chunk = true;
+        free(fullpath);
     }
     if ( !is_chunk )
     {
         char buffer[258];
-        fread(&buffer, sizeof(buffer), 1, fd);
+        size_t bytes_read = fread(&buffer, sizeof(buffer), 1, fd);
         fclose(fd);
-        char h1[129] = {0};
-        char h2[129] = {0};
+        if ( bytes_read < sizeof(buffer) )
+        {
+            ak_log_error(__func__, "File is smaller than expected. Wrong format?");
+            return 2;
+        }
         if ( buffer[128] != '\n' || buffer[257] != '\n' )
         {
             ak_log_error(__func__, "Unknown format");
             return 2;
         }
+        char h_str[129] = {0};
+        char t_str[129] = {0};
         mt_branch h0;
         ak_fs_sha512sum_init(&h0.root);
         ak_fs_sha512sum_init(&h0.head);
         ak_fs_sha512sum_init(&h0.tail);
         h0.root = *rh;
-        memcpy(h1, buffer, 128);
-        h1[128] = '\0';
-        memcpy(h2, buffer + 129, 128);
-        h2[128] = '\0';
-        ak_fs_sha512sum_string_to_struct(h1, &h0.head);
-        ak_fs_sha512sum_string_to_struct(h2, &h0.tail);
+        memcpy(h_str, buffer, 128);
+        h_str[128] = '\0';
+        memcpy(t_str, buffer + 129, 128);
+        t_str[128] = '\0';
+        ak_fs_sha512sum_string_to_struct(h_str, &h0.head);
+        ak_fs_sha512sum_string_to_struct(t_str, &h0.tail);
         ak_fs_cat_file_from_root_hash(&h0.head);
         if ( !ak_fs_sha512sum_compare(&h0.head, &h0.tail) ) ak_fs_cat_file_from_root_hash(&h0.tail);
-        // ak_fs_mt_branch_resolve(&h0);
     }
     else
     {
@@ -345,18 +351,12 @@ int ak_fs_cat_file_from_root_hash(sha512sum* rh)
             fclose(fd);
             return 2;
         }
-        // File size: %lld in bytes: (long long) sb.st_size);
         char buffer[(long long) sb.st_size+1];
         fread(&buffer, sizeof(buffer), 1, fd);
         fclose(fd);
         buffer[sizeof(buffer)-1] = '\0';
         printf("%s", buffer);
     }
-    // ak_log_debug(__func__, ak_fs_sha512sum_struct_read_as_string(&h0.root));
-    // ak_log_debug(__func__, ak_fs_sha512sum_struct_read_as_string(&h0.head));
-    // ak_log_debug(__func__, ak_fs_sha512sum_struct_read_as_string(&h0.tail));
-    // if ( ak_fs_verify_input_is_hash(h1, strlen(h1))) printf("head:\n%s\n---\n", h1);
-    // if ( ak_fs_verify_input_is_hash(h2, strlen(h2))) printf("tail:\n%s\n---\n", h2);
     return 0;
 }
 
@@ -365,7 +365,6 @@ int ak_fs_cfm(akfs_map_v3* map)
     sha512sum x;
     ak_fs_sha512sum_init(&x);
     x = *(ak_fs_map_v3_get_root_hash(map));
-    // printf("%s\n", ak_fs_sha512sum_struct_read_as_string(&x));
     ak_fs_cat_file_from_root_hash(&x);
     return 0;
 }
