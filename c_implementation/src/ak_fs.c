@@ -282,7 +282,17 @@ int ak_fs_ls()
 int ak_fs_cat_file_from_root_hash(sha512sum* rh)
 {
     const char* chunks_dir = getenv("AK_CHUNKSDIR");
+    if ( chunks_dir == NULL )
+    {
+        ak_log_error(__func__, "No directory for chunks found");
+        return -2;
+    }
     const char* leafs_dir = getenv("AK_LEAFSDIR");
+    if ( leafs_dir == NULL )
+    {
+        ak_log_error(__func__, "No directory for leafs found");
+        return -3;
+    }
     FILE *fd;
     char *fullpath;
     bool is_chunk = false;
