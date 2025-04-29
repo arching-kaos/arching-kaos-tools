@@ -307,7 +307,7 @@ int ak_fs_cat_file_from_root_hash(sha512sum* rh)
         fclose(fd);
         char h1[129] = {0};
         char h2[129] = {0};
-        if ( buffer[128] != '\n' && buffer[257] != '\n' )
+        if ( buffer[128] != '\n' || buffer[257] != '\n' )
         {
             ak_log_error(__func__, "Unknown format");
             return 2;
