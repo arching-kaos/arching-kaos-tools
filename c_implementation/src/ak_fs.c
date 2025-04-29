@@ -279,7 +279,7 @@ int ak_fs_ls()
     return 0;
 }
 
-int ak_fs_cat_file_from_root_hash(sha512sum* rh)
+int ak_fs_cat_file_from_root_hash(const sha512sum* rh)
 {
     const char* chunks_dir = getenv("AK_CHUNKSDIR");
     if ( chunks_dir == NULL )
@@ -372,7 +372,7 @@ int ak_fs_cfm(akfs_map_v3* map)
 {
     sha512sum x;
     ak_fs_sha512sum_init(&x);
-    sha512sum *rh_ptr = ak_fs_map_v3_get_root_hash(map);
+    const sha512sum *rh_ptr = ak_fs_map_v3_get_root_hash(map);
     if ( rh_ptr == NULL )
     {
         ak_log_debug(__func__, "No root hash found on the map");

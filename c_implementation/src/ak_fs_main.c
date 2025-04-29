@@ -6,7 +6,8 @@
 static int ak_fs_usage()
 {
     ak_log_debug(__func__, "Available commands:");
-    ak_log_debug(__func__, "ak fs --list");
+    ak_log_debug(__func__, "akfs --list");
+    ak_log_debug(__func__, "akfs --cfm <map hash>");
     return 1;
 }
 

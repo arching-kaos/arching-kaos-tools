@@ -421,7 +421,7 @@ bool ak_fs_mt_branch_compare(mt_branch*, mt_branch*);
  * @param sha512sum*
  * @return int status
  */
-int ak_fs_cat_file_from_root_hash(sha512sum*);
+int ak_fs_cat_file_from_root_hash(const sha512sum*);
 
 /**
  * Concatenates a file from a akfs_map_v3 map
