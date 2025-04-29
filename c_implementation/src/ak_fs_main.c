@@ -33,8 +33,8 @@ int ak_fs_main(int argc, char** argv)
                 return ak_fs_ls();
             case 'C':
                 ak_fs_map_v3_init(&map);
-                ak_fs_sha512sum_string_to_struct(optarg, &map.mh);
-                ak_fs_map_v3_open_from_file(&map);
+                if ( ak_fs_sha512sum_string_to_struct(optarg, &map.mh) != 0 ) return -1;
+                if ( ak_fs_map_v3_open_from_file(&map) != 0 ) return -2;
                 return ak_fs_cfm(&map);
             default:
                 printf("double lol\n");

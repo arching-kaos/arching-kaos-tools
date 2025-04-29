@@ -40,7 +40,7 @@ void ak_fs_sha512sum_init_avail(sha512sum** m, size_t s)
 
 char* ak_fs_sha512sum_struct_read_as_string(const sha512sum *ptr)
 {
-    char *str = malloc(129*sizeof(char));
+    static char str[129] = {0}; // = malloc(129*sizeof(char));
     ak_fs_sha512sum_struct_to_string(ptr, str);
     // ak_log_debug(__func__, str);
     return str;

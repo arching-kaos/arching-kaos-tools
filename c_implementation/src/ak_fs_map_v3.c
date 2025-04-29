@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include <libakfs.h>
 #include <libaklog.h>
 #include <sys/stat.h>
@@ -179,12 +180,14 @@ int ak_fs_map_v3_open_from_file(akfs_map_v3 * map)
     {
         // perror("fopen");
         ak_log_debug(__func__, "File not found or other error");
+        free(full_path);
         return 1;
     }
     struct stat sb;
     if (stat(full_path, &sb) == -1) {
         perror("stat");
         fclose(fd);
+        free(full_path);
         return 2;
     }
     // File size: %lld in bytes: (long long) sb.st_size);
@@ -195,9 +198,11 @@ int ak_fs_map_v3_open_from_file(akfs_map_v3 * map)
     {
         ak_log_debug(__func__,"conversion failed");
         fclose(fd);
+        free(full_path);
         return 1;
     }
     fclose(fd);
+    free(full_path);
     return 0;
 }
 

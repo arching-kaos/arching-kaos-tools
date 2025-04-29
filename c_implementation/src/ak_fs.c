@@ -340,6 +340,8 @@ int ak_fs_cat_file_from_root_hash(sha512sum* rh)
         h_str[128] = '\0';
         memcpy(t_str, buffer + 129, 128);
         t_str[128] = '\0';
+        fclose(fd);
+        // free(fullpath);
         ak_fs_sha512sum_string_to_struct(h_str, &h0.head);
         ak_fs_sha512sum_string_to_struct(t_str, &h0.tail);
         ak_fs_cat_file_from_root_hash(&h0.head);
