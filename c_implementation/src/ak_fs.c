@@ -296,7 +296,9 @@ int ak_fs_cat_file_from_root_hash(sha512sum* rh)
     FILE *fd;
     char *fullpath;
     bool is_chunk = false;
-    if ( asprintf(&fullpath, "%s/%s", leafs_dir, ak_fs_sha512sum_struct_read_as_string(rh))  == -1 ) return -1;
+    char root_hash_str[129] = {0};
+    ak_fs_sha512sum_struct_to_string(rh, root_hash_str);
+    if ( asprintf(&fullpath, "%s/%s", leafs_dir, root_hash_str) == -1 ) return -1;
     fd = fopen(fullpath, "r");
     if ( fd == NULL )
     {
