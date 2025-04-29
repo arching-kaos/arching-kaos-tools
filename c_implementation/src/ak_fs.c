@@ -370,7 +370,12 @@ int ak_fs_cfm(akfs_map_v3* map)
 {
     sha512sum x;
     ak_fs_sha512sum_init(&x);
-    x = *(ak_fs_map_v3_get_root_hash(map));
-    ak_fs_cat_file_from_root_hash(&x);
-    return 0;
+    sha512sum *rh_ptr = ak_fs_map_v3_get_root_hash(map);
+    if ( rh_ptr == NULL )
+    {
+        ak_log_debug(__func__, "No root hash found on the map");
+        return -1;
+    }
+    x = *rh_ptr;
+    return ak_fs_cat_file_from_root_hash(&x);
 }
