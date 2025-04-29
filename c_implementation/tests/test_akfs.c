@@ -17,11 +17,11 @@ static void test_correct_string_correct_length()
     // printf("Hash returned:\t%s\n", resulted_string);
     if ( strcmp(queried_string, resulted_string) == 0 )
     {
-        ak_log_info(__func__, "PASSED");
+        ak_log_test(__func__, "PASSED");
     }
     else
     {
-        ak_log_error(__func__, "FAILED");
+        ak_log_test(__func__, "FAILED");
     }
 }
 
@@ -38,11 +38,11 @@ static void test_bad_string_correct_length()
     // printf("Hash returned:\t%s\n", resulted_string);
     if ( strcmp(queried_string, resulted_string) != 0 )
     {
-        ak_log_info(__func__, "PASSED");
+        ak_log_test(__func__, "PASSED");
     }
     else
     {
-        ak_log_error(__func__, "FAILED");
+        ak_log_test(__func__, "FAILED");
     }
 }
 
@@ -59,11 +59,11 @@ static void test_less_than_length()
     // printf("Hash returned:\t%s\n", resulted_string);
     if ( strcmp(queried_string, resulted_string) != 0 )
     {
-        ak_log_info(__func__, "PASSED");
+        ak_log_test(__func__, "PASSED");
     }
     else
     {
-        ak_log_error(__func__, "FAILED");
+        ak_log_test(__func__, "FAILED");
     }
 }
 
@@ -80,11 +80,11 @@ static void test_more_than_length()
     // printf("Hash returned:\t%s\n", resulted_string);
     if ( strcmp(queried_string, resulted_string) != 0 )
     {
-        ak_log_info(__func__, "PASSED");
+        ak_log_test(__func__, "PASSED");
     }
     else
     {
-        ak_log_error(__func__, "FAILED");
+        ak_log_test(__func__, "FAILED");
     }
 }
 
@@ -101,11 +101,11 @@ static void test_string_is_empty()
     // printf("Hash returned:\t%s\n", resulted_string);
     if ( strcmp(queried_string, resulted_string) != 0 )
     {
-        ak_log_info(__func__, "PASSED");
+        ak_log_test(__func__, "PASSED");
     }
     else
     {
-        ak_log_error(__func__, "FAILED");
+        ak_log_test(__func__, "FAILED");
     }
 }
 
@@ -118,11 +118,11 @@ static void test_hash_path_test()
     // printf("Path returned:\t%s\n", resulted_string);
     if ( strcmp(queried_string, resulted_string) != 0 )
     {
-        ak_log_info(__func__, "PASSED");
+        ak_log_test(__func__, "PASSED");
     }
     else
     {
-        ak_log_error(__func__, "FAILED");
+        ak_log_test(__func__, "FAILED");
     }
 }
 
@@ -135,11 +135,11 @@ static void test_hash_dir_test()
     // printf("Path returned:\t%s\n", resulted_string);
     if ( strcmp(queried_string, resulted_string) != 0 )
     {
-        ak_log_info(__func__, "PASSED");
+        ak_log_test(__func__, "PASSED");
     }
     else
     {
-        ak_log_error(__func__, "FAILED");
+        ak_log_test(__func__, "FAILED");
     }
 }
 
@@ -171,11 +171,11 @@ static void test_hash_save_to_file()
     ak_fs_sha512sum_struct_to_string(resulted_hash, resulted_string);
     if ( strcmp(queried_string, resulted_string) == 0 )
     {
-        ak_log_debug(__func__, "PASSED");
+        ak_log_test(__func__, "PASSED");
     }
     else
     {
-        ak_log_debug(__func__, "FAILED");
+        ak_log_test(__func__, "FAILED");
     }
     fclose(fd);
 }
@@ -189,11 +189,11 @@ static void test_hash_check()
     ak_fs_sha512sum_string_to_struct(queried_string, &b);
     if ( ak_fs_sha512sum_compare(&a,&b) )
     {
-        ak_log_debug(__func__, "PASSED");
+        ak_log_test(__func__, "PASSED");
     }
     else
     {
-        ak_log_debug(__func__, "FAILED");
+        ak_log_test(__func__, "FAILED");
     }
 }
 
@@ -205,7 +205,7 @@ static void test_map_opener()
     ak_fs_sha512sum_string_to_struct(map_string, &(map.mh));
     if ( ak_fs_map_v3_open_from_file(&map) != 0 )
     {
-        ak_log_debug(__func__, "FAILED");
+        ak_log_test(__func__, "FAILED");
         return;
     }
     const char *orig_string = "fa19bdc471bedc42abf3ff52069214bc7339a7eafc03f8551e8af892a0e3ce175cff0dde6f815da031cd0566fded455c937f7cae27181f7a90ab92e6131ba2be";
@@ -225,12 +225,12 @@ static void test_map_opener()
         (strcmp(root_string, ak_fs_sha512sum_struct_read_as_string(&(map.rh)))!=0) ||
         (strcmp(filename, map.filename)!=0))
     {
-        ak_log_debug(__func__, "FAILED");
+        ak_log_test(__func__, "FAILED");
         return;
     }
     else
     {
-        ak_log_debug(__func__, "PASSED");
+        ak_log_test(__func__, "PASSED");
         return;
     }
 }
@@ -243,23 +243,22 @@ static void test_ak_fs_ls()
 
 static void test_ak_fs_cfm()
 {
-    ak_log_test(__func__, ".....=====.....");
     akfs_map_v3 map;
     ak_fs_map_v3_init(&map);
     char *map_string = "28bde5fa7aacd8da0ec84b61cf3a69141686906c00f8cff904c9a0b12f5a4cf061da254feb188c32b711b2e1d6a3853d5ac3fb0bcd3564899bae55dd30470392";
     ak_fs_sha512sum_string_to_struct(map_string, &(map.mh));
     if ( ak_fs_map_v3_open_from_file(&map) != 0 )
     {
-        ak_log_debug(__func__, "FAILED");
+        ak_log_test(__func__, "FAILED");
         return;
     }
     if ( ak_fs_cfm(&map) == 0 )
     {
-        ak_log_info(__func__, "PASSED");
+        ak_log_test(__func__, "PASSED");
     }
     else
     {
-        ak_log_error(__func__, "FAILED");
+        ak_log_test(__func__, "FAILED");
     }
 }
 
