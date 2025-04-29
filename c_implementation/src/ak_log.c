@@ -22,11 +22,13 @@ int ak_log_write_to_file(const char* message)
     if (!fp)
     {
         perror("fopen");
+        free(fullpath_to_log_file);
         return EXIT_FAILURE;
     }
     fwrite(message, strlen(message),1,fp);
     fwrite("\n", strlen("\n"),1,fp);
     fclose(fp);
+    free(fullpath_to_log_file);
     return 0;
 }
 
@@ -169,6 +171,7 @@ void ak_log_message(const char* program, LogMessageType lmtype, char* message)
         asprintf(&some_string, "%ld <NULL> [ERROR] No arguments given\n", ts);
         ak_log_write_to_file(some_string);
         if ( AK_DEBUG ) ak_log_print_log_line(some_string);
+        free(some_string);
         return;
     }
     if ( message == NULL )
@@ -176,6 +179,7 @@ void ak_log_message(const char* program, LogMessageType lmtype, char* message)
         asprintf(&some_string, "%ld <%s> [ERROR] No message\n", ts, program);
         ak_log_write_to_file(some_string);
         if ( AK_DEBUG ) ak_log_print_log_line(some_string);
+        free(some_string);
         return;
     }
     switch(lmtype)
@@ -202,11 +206,13 @@ void ak_log_message(const char* program, LogMessageType lmtype, char* message)
             asprintf(&some_string, "%ld <%s> [ERROR] No message type\n", ts, program);
             ak_log_write_to_file(some_string);
             if ( AK_DEBUG ) ak_log_print_log_line(some_string);
+            free(some_string);
             return;
     }
     asprintf(&some_string, "%ld <%s> [%s] %s", ts, program, type, message);
     ak_log_write_to_file(some_string);
     if ( lmtype <= AK_DEBUG_LEVEL ) ak_log_print_log_line(some_string);
+    free(some_string);
 }
 
 void ak_log_exit(const char* program, char* message)
