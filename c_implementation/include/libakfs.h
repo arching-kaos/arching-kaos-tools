@@ -402,10 +402,32 @@ int ak_fs_ls();
  */
 int ak_fs_main(int, char**);
 
+/**
+ * Compares an mt_branch with a NULL one
+ * @param mt_branch*
+ * @return boolean
+ */
 bool ak_fs_mt_branch_is_null(mt_branch*);
+
+/**
+ * Compares two mt_branch between them
+ * @param mt_branch*
+ * @return boolean
+ */
 bool ak_fs_mt_branch_compare(mt_branch*, mt_branch*);
-int ak_fs_mt_branch_resolve(mt_branch *);
+
+/**
+ * Concatenates a file from a root hash.
+ * @param sha512sum*
+ * @return int status
+ */
 int ak_fs_cat_file_from_root_hash(sha512sum*);
+
+/**
+ * Concatenates a file from a akfs_map_v3 map
+ * @param akfs_map_v3*
+ * @return int status
+ */
 int ak_fs_cfm(akfs_map_v3*);
 
 #endif // AKFS
