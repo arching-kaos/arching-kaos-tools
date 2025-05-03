@@ -393,3 +393,20 @@ $ ak pkg --help
 #    --uninstall                          Uninstalls a module selected from a menu
 #
 ```
+
+Donations
+---------
+While this project is developed with enthusiasm and it uses the spare time of
+the only developer that is coding for it, donations would help allocating more
+time on the project instead of the developer looking for different occupations
+to support their life and project.
+
+If you do appreciate the project's goals and the developers efforts towards it,
+take your time and consider donating some satoshis to the developer via BTC at
+the following address
+
+```
+bc1q70rgp65t7acfgpwp74m7vdz0g4eduxm6a43gd8
+```
+
+Thank you!
