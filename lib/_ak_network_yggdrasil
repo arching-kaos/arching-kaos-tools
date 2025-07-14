@@ -71,8 +71,12 @@ function _ak_network_yggdrasil_scan_full(){
         if [ ! -d ${node_fs_path} ]
         then
             mkdir -p ${node_fs_path}
+            echo ${scan_ts} > ${node_fs_path}/first_seen
+            echo ${scan_ts} > ${node_fs_path}/last_seen
+        else
+            echo ${scan_ts} > ${node_fs_path}/last_seen
         fi
-        node_fs_pathname="${node_fs_path}/${scan_ts}"
+        node_fs_pathname="${node_fs_path}/${scan_ts}_node_info"
         curl \
             --connect-timeout 3 \
             -A 'akd/0.1.0; https://github.com/arching-kaos' \
@@ -80,6 +84,12 @@ function _ak_network_yggdrasil_scan_full(){
         node_info="$(cat ${node_fs_pathname})"
         if [ $? -eq 0 ] && [ $(echo -n "$node_info" | wc -c) -gt 0 ]
         then
+            ni_hash="$(echo -n "${node_info}" | sha512sum | cut -d ' ' -f 1)"
+            if [ ! -f "${node_fs_path}/${ni_hash}" ]
+            then
+                mv ${node_fs_pathname} ${node_fs_path}/${ni_hash}
+                echo "${scan_ts} ${ni_hash}" >> ${node_fs_path}/db
+            fi
             if [ "$counter" -ne "0" ]
             then
                 printf ',' >> walk.aknet
@@ -91,6 +101,8 @@ function _ak_network_yggdrasil_scan_full(){
             printf '{"yggdrasil":{"public_key":"%s","ip":"%s"},"node_info":%s}' \
                 "$pkey" "$ip" "$node_info" >> walk.aknet
             counter="`expr $counter + 1`"
+        else
+            rm ${node_fs_pathname}
         fi
     done
     printf ']' >> walk.aknet
