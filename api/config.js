@@ -25,6 +25,7 @@ const config = {
     chunksDir: env.AK_CHUNKSDIR,
     leafsDir: env.AK_LEAFSDIR,
     mapsDir: env.AK_MAPSDIR,
-    printDebug: env.AK_DEBUG
+    printDebug: env.AK_DEBUG,
+    akNSDir: `${env.AK_WORKDIR}/akns`
 }
 module.exports = config; 
