@@ -74,6 +74,7 @@ programs used are:
 - curl (v7.79.1)
 - git (v2.34.1)
 - which (v2.21)
+- rlwrap (v0.46.2)
 - jq (v1.6)
 - nodejs (v16+)
 - npm (v9.5.0)
@@ -104,14 +105,15 @@ git pull
 
 Uninstall
 ---------
+> WARNING: It will REMOVE the whole $HOME/.arching-kaos directory but your GPG
+> keyring. Proceed with caution! Back up if you want to.
+
 Navigate to your cloned repository and execute the following command:
 
 ```
 ./uninstall.sh
 ```
 This will output an archive with your aknet-gpg-keyring to your $HOME folder.
-
-It will NOT remove your IPFS repository, neither is going to clean it.
 
 Podman (or Docker)
 ------------------
@@ -170,6 +172,8 @@ Utilities
  - ak-network              # Network Tools (connect to, scan for, dump peers)
  - ak-node-info            # Returns IPFS CID or IPNS key for your online config
  - ak-pkg                  # Package manager
+ - ak-fs                   # File system
+ - ak-ns                   # Name system
  - ak-sblock               # sblock tools
  - ak-schain               # schain tools
  - ak-zblock               # zblock tools
@@ -234,6 +238,7 @@ Libraries
  - lib/_ak_settings
  - lib/_ak_gpg
  - lib/_ak_fs
+ - lib/_ak_ns
  - lib/_ak_pkg
  - lib/_ak_zblock
  - lib/_ak_log
@@ -392,6 +397,35 @@ $ ak pkg --help
 #    --install-from-akfs <maphash>        Installs from an AKFS map
 #    --uninstall                          Uninstalls a module selected from a menu
 #
+```
+
+NS tools
+--------
+ - ak-ns
+
+```bash
+$ ak ns --help
+# ak-ns - Name system
+# ===================
+#
+# AKNS is a name system for Arching Kaos
+#
+# Usage:
+#
+#    -h,  --help                          Prints this help message
+#    -c,  --create <name>                 Creates a new key-pair with name
+#    -l,  --list                          List names
+#    -ll, --list-long                     List names with keys
+#    -rn, --resolve-name <name>           Resolves value from name
+#    -rk, --resolve-key <key>             Resolves value from key
+#    -p,  --publish <key> <value>         Publishes value to key
+#    -pn, --publish2name <name> <value>   Publishes value to name
+#    -pz, --publish-zchain                Publishes zchain
+#    -pc, --publish-config                Publishes config
+#    -ek, --encode-key <key>              Encodes a key to Base64
+#    -dk, --decode-key <base64 key>       Decodes a key from Base64
+#
+ns command finished
 ```
 
 Donations
