@@ -2,6 +2,7 @@ const http = require("node:http");
 
 const welcomeMessage = require("./routes/default/index.js");
 const getAKNSKey = require("./routes/getAKNSKey/index.js");
+const getAKNSKeyFromBase = require("./routes/getAKNSKeyFromBase/index.js");
 const getNodeInfo = require('./routes/getNodeInfo/index.js');
 const getPeers = require('./routes/getPeers/index.js');
 const getIPFSHash = require('./routes/getIPFSHash/index.js');
@@ -70,6 +71,7 @@ function getRoutes(req, res)
             case 'remote_node_info': getRemoteNodeInfo(req, res); break;
             case 'remote_peers': getRemotePeers(req, res); break;
             case 'ns_get': getAKNSKey(req, res); break;
+            case 'ns_get_base': getAKNSKeyFromBase(req, res); break;
             default: notImplemented(req, res);
         }
     }

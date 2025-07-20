@@ -32,6 +32,8 @@
 ##    -pn, --publish2name <name> <value>   Publishes value to name
 ##    -pz, --publish-zchain                Publishes zchain
 ##    -pc, --publish-config                Publishes config
+##    -ek, --encode-key <key>              Encodes a key to Base64
+##    -dk, --decode-key <base64 key>       Decodes a key from Base64
 ##
 fullprogrampath="$(realpath $0)"
 PROGRAM=$(basename $0)
@@ -51,6 +53,8 @@ then
         -ll | --list-long) shift; _ak_ns_list_long; exit;;
         -rn | --resolve-name) shift; _ak_ns_resolve_from_name $1; exit;;
         -rk | --resolve-key) shift; _ak_ns_resolve_from_key $1; exit;;
+        -ek | --encode-key) shift; _ak_ns_encode_key $1; exit;;
+        -dk | --decode-key) shift; _ak_ns_decode_key $1; exit;;
         -p | --publish) shift; _ak_ns_publish $1 $2; exit;;
         -pn | --publish2name) shift; _ak_ns_publish2name $1 $2; exit;;
         -pz | --publish-zchain) _ak_ns_publish_zchain; exit;;

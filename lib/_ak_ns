@@ -56,7 +56,12 @@ function _ak_ns_list(){
 }
 
 function _ak_ns_list_long(){
-    _ak_gpg_list_secret_keys_long | grep '@keynames.kaos.kaos'
+    _ak_gpg_list_secret_keys_long \
+        | grep '@keynames.kaos.kaos' \
+        | while read key name
+    do
+        printf '%s %s %s\n'  "${key}" "$(_ak_ns_encode_key ${key})" "${name}"
+    done
 }
 
 function _ak_ns_resolve_from_key(){
@@ -74,6 +79,30 @@ function _ak_ns_resolve_from_key(){
         exit 1
     fi
     _ak_gpg_verify_clear_signature ${AK_NS_DIR}/${key}
+}
+
+function _ak_ns_encode_key(){
+    # $1; exit;;
+    if [ -z $1 ] || [ ! -n "$1" ]
+    then
+        _ak_log_error "No key was given"
+        exit 1
+    fi
+    key="$1"
+    _ak_log_info "${key} was given"
+    printf '%s' "$(echo -n ${key}|xxd -r -p|base64)"
+}
+
+function _ak_ns_decode_key(){
+    # $1; exit;;
+    if [ -z $1 ] || [ ! -n "$1" ]
+    then
+        _ak_log_error "No key was given"
+        exit 1
+    fi
+    key="$1"
+    _ak_log_info "${key} was given"
+    printf '%s' "$(echo -n ${key}|base64 -d|xxd -p|tr '[:lower:]' '[:upper:]')"
 }
 
 function _ak_ns_resolve_from_name(){
