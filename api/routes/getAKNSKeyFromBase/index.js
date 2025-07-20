@@ -68,7 +68,7 @@ function getAKNSKeyFromBase(req, res)
     var args = req.url.split("/");
     var key = args[3];
     regex= /[a-zA-Z0-9+\/=]{29}/
-    const base64Regex = /^[A-Z0-9+\/=]/i;
+    const base64Regex = /^[A-Z0-9+\/=]{28}/i;
     if (base64Regex.test(key))
     {
     // key = key.toUpperCase();
