@@ -34,7 +34,7 @@ function _ak_config_show(){
 {
     "profile":'$profile',
     "genesis":"'$(cat $AK_WORKDIR/config/zgenesis)'",
-    "keys":'$(ak gpg -l 2>/dev/null | while read line; do ak gpg --export-key $line $line && ak fs --add $line ; done | sed 's/^/"/;s/$/",/' | tr -d '\n'|sed 's/^/[/;s/,$/],/')'
+    "keymaps":'$(ak gpg -l 2>/dev/null | while read line; do ak gpg --export-key $line $line && ak fs --add $line | sed -e 's/.*/{"fingerprint":"'$line'","map":"&"},/' ; done | tr -d '\n'|sed 's/^/[/;s/,$/],/')'
     "gpg":{
         "ipfs":"'$GPG_PUB_KEY'",
         "fingerprint":"'$(ak gpg --get-key-fingerprint-from-ipfs $GPG_PUB_KEY)'"
