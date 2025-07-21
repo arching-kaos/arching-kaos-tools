@@ -82,6 +82,23 @@ function _ak_ns_resolve_from_key(){
     _ak_gpg_verify_clear_signature ${AK_NS_DIR}/${key}
 }
 
+function _ak_ns_resolve_from_key_with_proof(){
+    # $1; exit;;
+    if [ -z $1 ] || [ ! -n "$1" ]
+    then
+        _ak_log_error "No key was given"
+        exit 1
+    fi
+    key="$1"
+    _ak_log_info "${key} was given"
+    if [ ! -f ${AK_NS_DIR}/${key}.map ]
+    then
+        _ak_log_error "${key} was not found"
+        exit 1
+    fi
+    cat ${AK_NS_DIR}/${key}.map
+}
+
 function _ak_ns_encode_key(){
     # $1; exit;;
     if [ -z $1 ] || [ ! -n "$1" ]
@@ -211,10 +228,11 @@ function _ak_ns_publish_zchain(){
         printf '%s %s\n' "$(echo -n $signed_akfs_map)" \
             "$(_ak_gpg_verify_clear_signature ${AK_NS_DIR}/${zchain_key})" \
             >> ${AK_NS_DIR}/${zchain_key}.history_map
-
     fi
-    echo ${signed_akfs_map} > ${AK_NS_DIR}/${zchain_key}.map
     mv ${zlatest_csigned_file} ${AK_NS_DIR}/${zchain_key}
+    printf '%s %s\n' "$(echo -n $signed_akfs_map)" \
+        "$(_ak_gpg_verify_clear_signature ${AK_NS_DIR}/${zchain_key})" \
+        > ${AK_NS_DIR}/${zchain_key}.map
 }
 
 function _ak_ns_publish_config(){
@@ -243,8 +261,10 @@ function _ak_ns_publish_config(){
             >> ${AK_NS_DIR}/${zconfig_key}.history_map
 
     fi
-    echo ${signed_akfs_map} > ${AK_NS_DIR}/${zconfig_key}.map
     mv ${zconfig_csigned_file} ${AK_NS_DIR}/${zconfig_key}
+    printf '%s %s\n' "$(echo -n $signed_akfs_map)" \
+        "$(_ak_gpg_verify_clear_signature ${AK_NS_DIR}/${zconfig_key})" \
+        > ${AK_NS_DIR}/${zconfig_key}.map
 }
 
 _ak_log_debug "_ak_ns loaded $(caller)"
