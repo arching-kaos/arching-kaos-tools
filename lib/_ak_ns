@@ -21,6 +21,7 @@ source $AK_LIBDIR/_ak_lib_load
 _ak_lib_load _ak_log
 _ak_lib_load _ak_script
 _ak_lib_load _ak_gpg
+_ak_lib_load _ak_fs
 _ak_lib_load _ak_zchain
 
 AK_NS_DIR="${AK_WORKDIR}/akns"
@@ -204,6 +205,15 @@ function _ak_ns_publish_zchain(){
     then
         _ak_gpg_verify_clear_signature ${AK_NS_DIR}/${zchain_key} >> ${AK_NS_DIR}/${zchain_key}.history
     fi
+    signed_akfs_map=$(_ak_fs_import ${zlatest_csigned_file})
+    if [ -f ${AK_NS_DIR}/${zchain_key}.map ]
+    then
+        printf '%s %s\n' "$(echo -n $signed_akfs_map)" \
+            "$(_ak_gpg_verify_clear_signature ${AK_NS_DIR}/${zchain_key})" \
+            >> ${AK_NS_DIR}/${zchain_key}.history_map
+
+    fi
+    echo ${signed_akfs_map} > ${AK_NS_DIR}/${zchain_key}.map
     mv ${zlatest_csigned_file} ${AK_NS_DIR}/${zchain_key}
 }
 
@@ -225,6 +235,15 @@ function _ak_ns_publish_config(){
     then
         _ak_gpg_verify_clear_signature ${AK_NS_DIR}/${zconfig_key} >> ${AK_NS_DIR}/${zconfig_key}.history
     fi
+    signed_akfs_map=$(_ak_fs_import ${zconfig_csigned_file})
+    if [ -f ${AK_NS_DIR}/${zconfig_key}.map ]
+    then
+        printf '%s %s\n' "$(echo -n $signed_akfs_map)" \
+            "$(_ak_gpg_verify_clear_signature ${AK_NS_DIR}/${zconfig_key})" \
+            >> ${AK_NS_DIR}/${zconfig_key}.history_map
+
+    fi
+    echo ${signed_akfs_map} > ${AK_NS_DIR}/${zconfig_key}.map
     mv ${zconfig_csigned_file} ${AK_NS_DIR}/${zconfig_key}
 }
 
