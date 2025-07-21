@@ -22,6 +22,8 @@ _ak_lib_load _ak_node
 
 function _ak_config_show(){
     # We will be using our public key also to put it in the block later
+    tempdir="$(_ak_make_temp_directory)"
+    cd $tempdir
     KEY="self.pub"
     ak-gpg --export-key-self-to-file
     _ak_log_debug "$KEY"
@@ -32,6 +34,7 @@ function _ak_config_show(){
 {
     "profile":'$profile',
     "genesis":"'$(cat $AK_WORKDIR/config/zgenesis)'",
+    "keys":'$(ak gpg -l 2>/dev/null | while read line; do ak gpg --export-key $line $line && ak fs --add $line ; done | sed 's/^/"/;s/$/",/' | tr -d '\n'|sed 's/^/[/;s/,$/],/')'
     "gpg":{
         "ipfs":"'$GPG_PUB_KEY'",
         "fingerprint":"'$(ak gpg --get-key-fingerprint-from-ipfs $GPG_PUB_KEY)'"
@@ -39,6 +42,8 @@ function _ak_config_show(){
     "zchain":"'$(cat $AK_WORKDIR/config/zchain)'",
     "zlatest":"'$(ak zchain --get-latest)'"
 }'| jq;
+    cd
+    rm -rf $tempdir
 }
 
 function _ak_config_publish(){
