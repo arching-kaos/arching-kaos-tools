@@ -26,6 +26,8 @@
 ##    --get-key-self-as-ipfs              Returns your key as an IPFS hash
 ##    --get-key-self-as-fingerprint       Returns the fingerprint of your key
 ##    --get-key-fingerprint-from-ipfs     Returns the fingerprint of a given key
+##    --export-key <fingerprint> <out>    Exports a public key as <out> filename
+##    --export-selected-key               Selects a key to export
 ##    --export-key-self-to-file           Exports self public key as 'self.pub'
 ##    --clear-sign <file> <output>        Sign a file clearly
 ##    --verify-file <file>                Verify a clear signed file
@@ -67,6 +69,8 @@ if [ ! -z $1 ]; then
         --get-key-self-as-fingerprint) _ak_gpg_key_self_get_fingerprint; exit;;
         --get-key-fingerprint-from-ipfs) shift; _ak_gpg_key_get_fingerprint_from_ipfs $1; exit;;
         --export-key-self-to-file) _ak_gpg_key_self_export 'self.pub'; exit;;
+        --export-selected-key) _ak_gpg_select_key_to_export; exit;;
+        --export-key) _ak_gpg_key_export "$2" "$3"; exit;;
         --clear-sign) shift; _ak_gpg_sign_clear "$2" "$1"; exit;;
         --verify-file) shift; _ak_gpg_verify_clear_signature "$1"; exit;;
         --list-keys | -l) _ak_gpg_list_keys; exit;;

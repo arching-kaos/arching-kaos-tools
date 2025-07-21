@@ -206,10 +206,19 @@ function _ak_gpg_verify_signature(){
     fi
 }
 
+function _ak_gpg_key_export(){
+    if [ ! -z $1 ] && [ -n "$1" ] && [ ! -z $2 ] && [ -n "$2" ]
+    then
+        _ak_gpg --armour --output $2 --export $1
+    else
+        exit 1
+    fi
+}
+
 function _ak_gpg_key_self_export(){
     if [ ! -z $1 ] && [ -n "$1" ]
     then
-        _ak_gpg --armour --output $1 --export $AK_FINGERPRINT
+        _ak_gpg_key_export $AK_FINGERPRINT $1
     else
         exit 1
     fi
@@ -251,6 +260,20 @@ function _ak_gpg_list_secret_keys_long(){
         awk '{print $1 " " $4}' | \
         sort | \
         uniq
+}
+
+function _ak_gpg_select_key_to_export(){
+    select x in $(_ak_gpg_list_secret_keys | tr '\n' ' ')
+    do
+        if [ -n "$x" ]
+        then
+            _ak_log_info "$x was selected"
+            _ak_gpg_key_export "$x" "$x.asc"
+            break
+        else
+            _ak_log_warning "You didn't select a key"
+        fi
+    done
 }
 
 function _ak_gpg_select_key(){
