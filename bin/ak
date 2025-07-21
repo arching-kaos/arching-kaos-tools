@@ -18,6 +18,7 @@
 ### along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
 export AK_DEBUG="yes"
+export AK_DEBUG_IRC="no"
 ##
 ## Arching Kaos CLI tool is the main executable script to use for exploring,
 ## creating and distributing local blockchain(s) called zchain(s).
@@ -48,6 +49,13 @@ source $HOME/.arching-kaos/rc
 source $AK_LIBDIR/_ak_lib_load
 _ak_lib_load _ak_log
 _ak_lib_load _ak_script
+
+if [ "$1" == "-vi" ]
+then
+    export AK_DEBUG_IRC="yes"
+    export AK_DEBUG="no"
+    shift
+fi
 
 if [ $# -eq 0 ]
 then

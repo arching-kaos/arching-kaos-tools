@@ -75,6 +75,21 @@ function _ak_log_print_log_line(){
     fi
 }
 
+function _ak_log_print_log_line_irc(){
+    if [ -n "$1" ]
+    then
+        timestamp="$(echo "$*" | awk '{print $1}')"
+        program="$(echo "$*" | awk '{print $2}')"
+        messagetype="$(echo "$*" | awk '{print $3}')"
+        message="$(echo "$*" | cut -d ' ' -f4-)"
+        printf '\x0300,01%s \x0303,01%s\x0300,01 \x0304,01%s\x0300,01 %s\x0301,00\n' \
+            "$(_ak_datetime_unix_to_human $timestamp)" \
+            "$program" \
+            "$messagetype" \
+            "$message"
+    fi
+}
+
 function _ak_log_follow(){
     tail -f $AK_LOGSFILE | while read -r p || [ -n "$p" ]
     do
@@ -143,6 +158,10 @@ function _ak_log_message(){
                 if [ ! -z $AK_DEBUG ] && [ -n "$AK_DEBUG" ] && [ "$AK_DEBUG" == "yes" ]
                 then
                     _ak_log_print_log_line "$TS <$prg> [$tp] $msg" >&2
+                fi
+                if [ ! -z $AK_DEBUG_IRC ] && [ -n "$AK_DEBUG_IRC" ] && [ "$AK_DEBUG_IRC" == "yes" ]
+                then
+                    _ak_log_print_log_line_irc "$TS <$prg> [$tp] $msg" >&2
                 fi
             else
                     echo "$TS" "<$prg>" "[ERROR]" "No message" >> $AK_LOGSFILE
