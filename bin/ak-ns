@@ -30,6 +30,7 @@
 ##    -rk, --resolve-key <key>             Resolves value from key
 ##    -rp, --resolve-key-proof <key>       Resolves value from key and provides
 ##                                         an akfs_map_v3 to clear signed proof
+##    -rj, --resolve-key-json <key>        Resolves a key to a JSON format
 ##    -p,  --publish <key> <value>         Publishes value to key
 ##    -pn, --publish2name <name> <value>   Publishes value to name
 ##    -pz, --publish-zchain                Publishes zchain
@@ -56,6 +57,7 @@ then
         -rn | --resolve-name) shift; _ak_ns_resolve_from_name $1; exit;;
         -rk | --resolve-key) shift; _ak_ns_resolve_from_key $1; exit;;
         -rp | --resolve-key-proof) shift; _ak_ns_resolve_from_key_with_proof $1; exit;;
+        -rj | --resolve-key-json) shift; _ak_ns_resolve_from_key_with_proof_json $1; exit;;
         -ek | --encode-key) shift; _ak_ns_encode_key $1; exit;;
         -dk | --decode-key) shift; _ak_ns_decode_key $1; exit;;
         -p | --publish) shift; _ak_ns_publish $1 $2; exit;;

@@ -35,7 +35,7 @@ function replyIfOkay(key, res)
     const base64String = key;
     const decodedHexString = decodeBase64ToHex(base64String);
     formatted_key = decodedHexString.toUpperCase();
-    const command = spawn(program, ["-rk", `${formatted_key}`]);
+    const command = spawn(program, ["-rj", `${formatted_key}`]);
 
     var buffer = "";
     command.stdout.on("data", data => {
@@ -52,10 +52,7 @@ function replyIfOkay(key, res)
         if (code === 0){
             buffer = buffer.trim()
             res.writeHead(200, {'Content-Type': 'application/json'});
-            res.end(JSON.stringify({
-                key:`${formatted_key}`,
-                resolved:`${buffer}`
-            }));
+            res.end(`${buffer}`);
         } else {
             res.writeHead(404, {'Content-Type': 'application/json'});
             res.end(JSON.stringify({error:"unreachable"}));

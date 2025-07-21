@@ -13,7 +13,7 @@ const config = require("../../config.js");
 function replyIfOkay(key, res)
 {
     const program = "ak-ns";
-    const command = spawn(program, ["-rk", key]);
+    const command = spawn(program, ["-rj", key]);
     var buffer = "";
     command.stdout.on("data", data => {
         buffer += data;
@@ -29,10 +29,7 @@ function replyIfOkay(key, res)
         if (code === 0){
             buffer = buffer.trim()
             res.writeHead(200, {'Content-Type': 'application/json'});
-            res.end(JSON.stringify({
-                key:`${key}`,
-                resolved:`${buffer}`
-            }));
+            res.end(`${buffer}`);
         } else {
             res.writeHead(404, {'Content-Type': 'application/json'});
             res.end({"error":"unreachable"});

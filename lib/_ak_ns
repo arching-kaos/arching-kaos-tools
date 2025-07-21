@@ -99,6 +99,23 @@ function _ak_ns_resolve_from_key_with_proof(){
     cat ${AK_NS_DIR}/${key}.map
 }
 
+function _ak_ns_resolve_from_key_with_proof_json(){
+    # $1; exit;;
+    if [ -z $1 ] || [ ! -n "$1" ]
+    then
+        _ak_log_error "No key was given"
+        exit 1
+    fi
+    key="$1"
+    json=$(_ak_ns_resolve_from_key_with_proof $key | while read proof resolved; do printf '{"fingerprint":"%s","proof":"%s","resolved":"%s"}' "$1" "$proof" "$resolved";  done)
+    if [ $? -ne 0 ]
+    then
+        _ak_log_error "Something happened"
+        exit 1
+    fi
+    echo $json
+}
+
 function _ak_ns_encode_key(){
     # $1; exit;;
     if [ -z $1 ] || [ ! -n "$1" ]
