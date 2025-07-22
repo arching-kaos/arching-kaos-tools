@@ -19,6 +19,7 @@
 ###
 source $AK_LIBDIR/_ak_lib_load
 _ak_lib_load _ak_node
+_ak_lib_load _ak_fs
 
 function _ak_config_show(){
     # We will be using our public key also to put it in the block later
@@ -48,6 +49,7 @@ function _ak_config_show(){
 
 function _ak_config_publish(){
     _ak_config_show | jq -c -M > tmpfile
+    akfs_map_v3="$(_ak_fs_import tmpfile)"
     ipfs_hash="$(_ak_ipfs_add tmpfile)"
     _ak_ipfs_config_publish $ipfs_hash
     if [ $? != 0 ]

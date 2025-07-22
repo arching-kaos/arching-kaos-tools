@@ -22,9 +22,14 @@ _ak_lib_load _ak_log
 
 AK_IPFS_REPO="$AK_WORKDIR/ipfsrepo"
 AK_IPFS_ARTIFACTS="$AK_WORKDIR/ipfs_artifacts"
+AK_IPNS_ARTIFACTS="$AK_WORKDIR/ipns_artifacts"
 if [ ! -d $AK_IPFS_ARTIFACTS ]
 then
     mkdir -p $AK_IPFS_ARTIFACTS
+fi
+if [ ! -d $AK_IPNS_ARTIFACTS ]
+then
+    mkdir -p $AK_IPNS_ARTIFACTS
 fi
 
 function _ak_ipfs(){
@@ -316,12 +321,17 @@ function _ak_ipfs_name_publish(){
         _ak_log_error "No argument given"
         exit 1
     fi
-    _ak_ipfs name publish --key="$1" "$2"
+    key="$(_ak_ipfs key list -l | grep $1 | cut -d ' ' -f 1)"
     if [ $? -ne 0 ]
     then
         _ak_log_error "Failed to get $1"
         exit 1
     fi
+    if [ -f "$AK_IPNS_ARTIFACTS/$key" ]
+    then
+        cat $AK_IPNS_ARTIFACTS/$key >> $AK_IPNS_ARTIFACTS/$key.history
+    fi
+    echo $2 > $AK_IPNS_ARTIFACTS/$key
 }
 
 function _ak_ipfs_config_publish(){
@@ -340,12 +350,13 @@ function _ak_ipfs_name_resolve(){
         _ak_log_error "No argument given"
         exit 1
     fi
-    _ak_ipfs name resolve "$1"
-    if [ $? -ne 0 ]
+
+    if [ ! -d $AK_IPNS_ARTIFACTS/$1 ]
     then
         _ak_log_error "Failed to resolve $1"
         exit 1
     fi
+    cat $AK_IPNS_ARTIFACTS/$1
 }
 
 function _ak_ipfs_swarm_peers(){
