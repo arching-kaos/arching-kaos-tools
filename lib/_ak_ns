@@ -312,7 +312,7 @@ function _ak_ns_resolve_all_keys(){
     do
         cat keymaps_list.$ip | jq -r '.fingerprint' | while read key
         do
-            map="$(cat keymaps | jq -r 'select(.fingerprint == "'$key'")|.map')"
+            map="$(cat keymaps_list.$ip | jq -r 'select(.fingerprint == "'$key'")|.map')"
             ak fs --net-cat-from-map $map > $key
             ak fs --import $key
             curl -s http://[$ip]:8610/v0/ns_get/$key > $key.reply
