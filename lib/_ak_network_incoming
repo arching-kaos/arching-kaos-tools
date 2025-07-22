@@ -46,9 +46,10 @@ function _ak_network_incoming_scan(){
         counter=0
         count=0
         _ak_fm_sort_uniq_file ${AK_ZPEERSINCOMING}
-        max="$(cat ${AK_ZPEERSINCOMING}|wc -l)"
+        max="$(cat ${AK_ZPEERSINCOMING}|grep -v '\.'|wc -l)"
         printf '[' > walk.aknet
         cat ${AK_ZPEERSINCOMING} \
+            | grep -v '\.' \
             | sort \
             | uniq \
             | while read -r uip || [ -n "$uip" ]
