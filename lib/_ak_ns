@@ -287,63 +287,74 @@ function _ak_ns_publish_config(){
 function _ak_ns_resolve_all_keys(){
     tmpdir="$(_ak_make_temp_directory)"
     cd $tmpdir
+    _ak_log_info "Looking at local IPs..."
     ip a | grep inet6 | sed 's/ *inet6 //g' | cut -d '/' -f 1 > ip_list
-    # cat /dev/null > ip_list
-    ak network -p 2>/dev/null| jq -r '.[].incoming.ip' | while read ip ; do if [ $ip != null ]; then echo $ip ;fi;done > peer_list
-    cat ip_list | while read ip ; do sed -i 's/^'$ip'$//g' peer_list; done
-    # cat peer_list | while read ip ; do ak network -p | jq --arg ip "$ip" '.[] | select(.incoming.ip == $ip )' | jq -r '.node_info.keys.[]'> key_list.$ip; done
-    cat peer_list | while read ip ; do ak network -p | jq --arg ip "$ip" '.[] | select(.incoming.ip == $ip )' | jq '.node_info.keymaps.[]'> keymaps_list.$ip; done
-    # cat peer_list | while read ip
-    # do
-    #     cat key_list.$ip | while read key
-    #     do
-    #         ak fs --net-cat-from-map $key > $key && ak fs --import $key
-    #     done
-    # done
-    # cat peer_list | while read ip
-    # do
-    #     proof="$(cat keymaps_list.$ip | jq -r '.')"
-    #     while read key
-    #     do
-    #         ak fs --net-cat-from-map $key > $key && ak fs --import $key
-    #     done
-    # done
+    ak network -p 2>/dev/null| jq -r '.[].incoming.ip' | while read ip
+    do
+        if [ $ip != "null" ]
+        then
+            echo $ip
+        fi
+    done > peer_list
+    _ak_log_info "Filtering IPs out of locals..."
+    cat ip_list | while read ip
+    do
+        sed -i 's/^'$ip'$//g' peer_list
+    done
+    if [ $(cat peer_list | wc -l) -eq 0 ]
+    then
+        _ak_log_error "No IPs to scan from"
+        exit 1
+    fi
     cat peer_list | while read ip
     do
-        cat keymaps_list.$ip | jq -r '.fingerprint' | while read key
-        do
-            map="$(cat keymaps_list.$ip | jq -r 'select(.fingerprint == "'$key'")|.map')"
-            ak fs --net-cat-from-map $map > $key
-            ak fs --import $key
-            curl -s http://[$ip]:8610/v0/ns_get/$key > $key.reply
-            proof="$(cat $key.reply | jq -r '.proof')"
-            resolved="$(cat $key.reply | jq -r '.resolved')"
-            key="$(cat $key.reply | jq -r '.key')"
-            ak fs --net-cat-from-map $proof > $key.proof
-            _ak_gpg_verify_clear_signature $key.proof
-            if [ $? -ne 0 ]
-            then
-                _ak_log_error "Couldn't verify"
-                exit 1
-            fi
-            if [ -f ${AK_NS_DIR}/${key} ]
-            then
-                _ak_gpg_verify_clear_signature ${AK_NS_DIR}/${key} >> ${AK_NS_DIR}/${key}.history
-            fi
-            signed_akfs_map=$(_ak_fs_import ${key}.proof)
-            if [ -f ${AK_NS_DIR}/${key}.map ]
-            then
-                printf '%s %s\n' "$(echo -n $signed_akfs_map)" \
-                    "$(_ak_gpg_verify_clear_signature ${AK_NS_DIR}/${key})" \
-                    >> ${AK_NS_DIR}/${key}.history_map
-
-            fi
-            mv ${key}.proof ${AK_NS_DIR}/${key}
-            printf '%s %s\n' "$(echo -n $proof)" \
-                "$(_ak_gpg_verify_clear_signature ${AK_NS_DIR}/${key})" \
-                > ${AK_NS_DIR}/${key}.map
-        done
+        _ak_log_info "Extracing keys from $ip..."
+        ak network -p \
+            | jq --arg ip "$ip" '.[] | select(.incoming.ip == $ip )' \
+            | jq '.node_info.keymaps.[]'> keymaps_list.$ip
     done
+    cat peer_list | while read ip
+    do
+        _ak_log_info "Looking at peer $ip"
+        if [ $ip != "null" ]
+        then
+            cat keymaps_list.$ip | jq -r '.fingerprint' | while read key
+            do
+                map="$(cat keymaps_list.$ip | jq -r 'select(.fingerprint == "'$key'")|.map')"
+                ak fs --net-cat-from-map $map > $key
+                ak fs --import $key
+                curl -s http://[$ip]:8610/v0/ns_get/$key > $key.reply
+                proof="$(cat $key.reply | jq -r '.proof')"
+                resolved="$(cat $key.reply | jq -r '.resolved')"
+                key="$(cat $key.reply | jq -r '.key')"
+                ak fs --net-cat-from-map $proof > $key.proof
+                _ak_gpg_verify_clear_signature $key.proof
+                if [ $? -ne 0 ]
+                then
+                    _ak_log_error "Couldn't verify"
+                    exit 1
+                fi
+                if [ -f ${AK_NS_DIR}/${key} ]
+                then
+                    _ak_gpg_verify_clear_signature ${AK_NS_DIR}/${key} >> ${AK_NS_DIR}/${key}.history
+                fi
+                signed_akfs_map=$(_ak_fs_import ${key}.proof)
+                if [ -f ${AK_NS_DIR}/${key}.map ]
+                then
+                    printf '%s %s\n' "$(echo -n $signed_akfs_map)" \
+                        "$(_ak_gpg_verify_clear_signature ${AK_NS_DIR}/${key})" \
+                        >> ${AK_NS_DIR}/${key}.history_map
+
+                fi
+                mv ${key}.proof ${AK_NS_DIR}/${key}
+                printf '%s %s\n' "$(echo -n $proof)" \
+                    "$(_ak_gpg_verify_clear_signature ${AK_NS_DIR}/${key})" \
+                    > ${AK_NS_DIR}/${key}.map
+            done
+            _ak_log_info "Finished peer $ip"
+        fi
+    done
+    _ak_log_info "Finished resolving"
 }
 
 _ak_log_debug "_ak_ns loaded $(caller)"

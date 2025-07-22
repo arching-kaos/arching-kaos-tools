@@ -24,7 +24,7 @@ _ak_lib_load _ak_ipfs
 # Resolves the IPNS key "ak-config" to its current IPFS value
 # Return IPFS CIDv0 without /ipfs/ prefix
 function _ak_node_info_ipfs_hash(){
-    _ak_ipfs_name_resolve /ipns/$(_ak_node_info_ipns_key) | sed -e 's/\/ipfs\///'
+    _ak_ipfs_name_resolve $(_ak_node_info_ipns_key) | sed -e 's/\/ipfs\///'
 }
 
 # Finds ak-config ipns key

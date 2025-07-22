@@ -350,8 +350,7 @@ function _ak_ipfs_name_resolve(){
         _ak_log_error "No argument given"
         exit 1
     fi
-
-    if [ ! -d $AK_IPNS_ARTIFACTS/$1 ]
+    if [ ! -f $AK_IPNS_ARTIFACTS/$1 ]
     then
         _ak_log_error "Failed to resolve $1"
         exit 1
