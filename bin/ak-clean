@@ -54,8 +54,8 @@ then
     case $1 in
         -h | --help) _ak_usage; exit;;
         -c | --clean) _ak_tmp_cleanup; exit;;
-        *) _ak_usage;
+        *) _ak_usage err;
     esac
 else
-    _ak_usage
+    _ak_usage err
 fi

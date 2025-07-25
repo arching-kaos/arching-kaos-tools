@@ -66,7 +66,8 @@ then
         -pn | --publish2name) shift; _ak_ns_publish2name $1 $2; exit;;
         -pz | --publish-zchain) _ak_ns_publish_zchain; exit;;
         -pc | --publish-config) _ak_ns_publish_config; exit;;
-        * ) _ak_usage;;
+        * ) _ak_usage err;;
     esac
-else _ak_usage
+else
+    _ak_usage err
 fi

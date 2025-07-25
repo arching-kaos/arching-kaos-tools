@@ -53,7 +53,8 @@ if [ ! -z $1 ]; then
         -g | --grep) _ak_log_grep; exit;;
         -m | --message) shift; _ak_log_message $*; exit;;
         -r | --rotate) _ak_log_rotate; exit;;
-        * ) _ak_usage;;
+        * ) _ak_usage err;;
     esac
-else _ak_usage
+else
+    _ak_usage err
 fi

@@ -71,7 +71,8 @@ if [ ! -z $1 ]; then
             _ak_zblock_announce $2
             exit
             ;;
-        * ) _ak_usage;;
+        * ) _ak_usage err;;
     esac
-else _ak_usage
+else
+    _ak_usage err
 fi

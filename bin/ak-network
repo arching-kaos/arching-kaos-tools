@@ -49,7 +49,8 @@ if [ ! -z $1 ]; then
         -s | --scan) shift; _ak_network_scan $*; exit;;
         -c | --connect) _ak_network_connect $2; exit;;
         -p | --peers) _ak_network_show_peers $2; exit;;
-        * ) _ak_usage;;
+        * ) _ak_usage err;;
     esac
-else _ak_usage
+else
+    _ak_usage err
 fi

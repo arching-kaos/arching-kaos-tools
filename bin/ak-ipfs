@@ -42,7 +42,8 @@ then
         -h | --help) _ak_usage; exit;;
         -d | --daemon) _ak_ipfs_starter; exit;;
         -r | --run) shift; _ak_ipfs_runner $*; exit;;
-        * ) _ak_usage;;
+        * ) _ak_usage err;;
     esac
-else _ak_usage
+else
+    _ak_usage err
 fi

@@ -286,9 +286,12 @@ function _ak_schain_counting_balances(){
     fi
 }
 
-if [ ! -z $1 ] && [ -n "$1" ]
+if [ ! -z $1 ] && [ -n "$1" ] && [ [ "$1" == "--help" ] || [ "$1" == "-h" ] ]
 then
     _ak_usage
+elif [ ! -z $1 ] && [ -n "$1" ]
+then
+    _ak_usage err
 else
     CUR_TARGET="$LATEST"
     _ak_log_info "$CUR_TARGET $LATEST"

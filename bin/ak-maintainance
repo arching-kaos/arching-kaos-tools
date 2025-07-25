@@ -46,8 +46,9 @@ then
         -r | --restore) _ak_maintainance_restore $2; exit;;
         -b | --backup) _ak_maintainance_backup; exit;;
         -n | --nuke) _ak_maintainance_nuke_all_but_core; exit;;
-        * ) _ak_usage;;
+        * ) _ak_usage err;;
     esac
-else _ak_usage
+else
+    _ak_usage err
 fi
 

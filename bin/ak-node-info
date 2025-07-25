@@ -47,9 +47,9 @@ then
             _ak_node_info_ipns_key
             ;;
         *)
-            _ak_usage
+            _ak_usage err
             ;;
     esac
 else
-    _ak_usage
+    _ak_usage err
 fi

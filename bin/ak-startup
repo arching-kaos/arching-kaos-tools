@@ -55,7 +55,8 @@ then
     case $1 in
         -h | --help) _ak_usage; exit;;
         --start) shift; _ak_start_up_sequence $1; exit;;
-        * ) _ak_usage;;
+        * ) _ak_usage err;;
     esac
-else _ak_usage
+else
+    _ak_usage err
 fi

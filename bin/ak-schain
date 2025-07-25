@@ -44,7 +44,8 @@ then
         -h | --help) _ak_usage; exit;;
         -c | --crawl) shift; _ak_schain_crawl_interface $*; exit;;
         -l | --get-latest) _ak_schain_get_latest; exit;;
-        * ) _ak_usage;;
+        * ) _ak_usage err;;
     esac
-else _ak_usage
+else
+    _ak_usage err
 fi

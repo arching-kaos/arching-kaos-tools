@@ -235,7 +235,8 @@ if [ ! -z $1 ]; then
         -a | --add) _ak_modules_profile_add $2; exit;;
         -s | --set) _ak_modules_profile_propset $2 "$3"; exit;;
         -g | --get) _ak_modules_profile_propget $2; exit;;
-        * ) _ak_usage;;
+        * ) _ak_usage err;;
     esac
-else _ak_usage
+else
+    _ak_usage err
 fi

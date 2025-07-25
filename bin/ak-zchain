@@ -79,7 +79,8 @@ if [ ! -z $1 ]; then
         --crawl-remote-ipns) _ak_zchain_crawl_remote_ipns $2; exit;;
         --get-latest) _ak_zchain_get_latest; exit;;
         --output-types)shift; _ak_zchain_output_types $1; exit;;
-        * ) _ak_usage;;
+        * ) _ak_usage err;;
     esac
-else _ak_usage
+else
+    _ak_usage err
 fi

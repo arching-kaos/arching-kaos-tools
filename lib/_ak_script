@@ -86,11 +86,21 @@ function _ak_title_description(){
 }
 
 function _ak_usage(){
-    (
-        _ak_title_description 2>&1
-        _ak_license 2>&1
-        _ak_help 2>&1
-    ) | sed 's/^/# /g' | while read line; do _ak_log_info "${line}"; done
+    if [ ! -z $1 ] && [ -n "$1" ] && [ "$1" == "err" ]
+    then
+        (
+            _ak_title_description 2>&1
+            _ak_license 2>&1
+            _ak_help 2>&1
+        ) | sed 's/^/# /g' | while read line; do _ak_log_info "${line}"; done
+        exit 1
+    else
+        (
+            _ak_title_description 2>&1
+            _ak_license 2>&1
+            _ak_help 2>&1
+        ) | sed 's/^/# /g' | while read line; do _ak_log_info "${line}" 2>&1; done
+    fi
 }
 
 function _ak_print_version(){

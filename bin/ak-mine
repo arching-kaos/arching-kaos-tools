@@ -90,7 +90,8 @@ then
         -h | --help) _ak_usage; exit;;
         --example) example; exit;;
         --mine) proofofwork; exit;;
-        * ) _ak_usage;;
+        * ) _ak_usage err;;
     esac
-else _ak_usage
+else
+    _ak_usage err
 fi

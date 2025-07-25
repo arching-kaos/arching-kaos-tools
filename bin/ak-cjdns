@@ -47,7 +47,8 @@ then
         --install) _ak_cjdns_install; exit;;
         --connect) _ak_cjdns_connect_peers; exit;;
         --ip) _ak_cjdns_get_ip; exit;;
-        * ) _ak_usage;;
+        * ) _ak_usage err;;
     esac
-else _ak_usage
+else
+    _ak_usage err
 fi

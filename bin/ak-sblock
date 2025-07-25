@@ -41,7 +41,8 @@ then
     case $1 in
         -h | --help) _ak_usage; exit;;
         -s | --show) shift; _ak_sblock_show $1; exit;;
-        * ) _ak_usage;;
+        * ) _ak_usage err;;
     esac
-else _ak_usage
+else
+    _ak_usage err
 fi

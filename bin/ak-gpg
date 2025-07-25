@@ -84,7 +84,8 @@ if [ ! -z $1 ]; then
         --delete-key | -d) _ak_gpg_delete_key; exit;;
         --delete-secret-key | -ds) shift; _ak_gpg_delete_secret_key $1; exit;;
         --run | -r) shift; _ak_gpg $*; exit;;
-        * ) _ak_usage;;
+        * ) _ak_usage err;;
     esac
-else _ak_usage
+else
+    _ak_usage err
 fi

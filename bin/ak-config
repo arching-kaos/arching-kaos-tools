@@ -43,8 +43,8 @@ then
         --publish) _ak_config_publish;exit;;
         --get-published) _ak_config_published;exit;;
         --get-ipns-key) _ak_ipfs_get_config_ipns_key;exit;;
-        *) _ak_usage;exit;;
+        *) _ak_usage err;exit;;
     esac
 else
-    _ak_usage
+    _ak_usage err
 fi
