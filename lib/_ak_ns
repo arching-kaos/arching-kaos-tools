@@ -297,6 +297,9 @@ function _ak_ns_resolve_all_keys(){
         fi
     done > peer_list
     _ak_log_info "Filtering IPs out of locals..."
+    # cat ip_list
+    _ak_log_info "Filtering IPs out from peers..."
+    # cat peer_list
     cat ip_list | while read ip
     do
         sed -i 's/^'$ip'$//g' peer_list
@@ -306,12 +309,17 @@ function _ak_ns_resolve_all_keys(){
         _ak_log_error "No IPs to scan from"
         exit 1
     fi
+    _ak_log_info "Filtered IPs out from peers..."
+    # cat peer_list
     cat peer_list | while read ip
     do
         _ak_log_info "Extracing keys from $ip..."
         ak network -p incoming \
             | jq --arg ip "$ip" '.[] | select(.incoming.ip == $ip )' \
             | jq '.node_info.keymaps.[]'> keymaps_list.$ip
+#        ak network -p incoming \
+#            | jq --arg ip "$ip" '.[] | select(.incoming.ip == $ip )' \
+#            | jq '.node_info.keymaps.[]'
     done
     cat peer_list | while read ip
     do

@@ -354,6 +354,23 @@ function _ak_fs_list(){
     fi
 }
 
+function _ak_fs_long_list(){
+    if [ -d "${AK_MAPSDIR}" ]
+    then
+        find $AK_MAPSDIR -type f | while read fina
+        do
+            stats="$(stat --format=%y ${fina}|tr -d '\n'|tr ' ' '_')"
+            date_stats="$(echo ${stats}|cut -d '_' -f 1)"
+            time_stats="$(echo ${stats}|cut -d '_' -f 2|cut -d '.' -f 1)"
+            cat $fina | tr '\n' ' ' | awk '{ print "'$(basename ${fina})' " "'$date_stats'" " " "'$time_stats'" " "$2 }'
+        done
+    else
+        _ak_log_debug "Making ${AK_MAPSDIR} directory"
+        mkdir -p ${AK_MAPSDIR}
+        _ak_log_debug "Empty directory"
+    fi
+}
+
 function _ak_fs_from_map_get_original_hash(){
     if [ ! -z "$1" ] && [ -n "$1" ]
     then

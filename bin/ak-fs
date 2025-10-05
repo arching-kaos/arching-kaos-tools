@@ -27,6 +27,7 @@
 ##    --get, --export <roothash> <output file>  Exports a file from the AKFS system
 ##    --cat <roothash>                          Concatenates from given hash
 ##    --list                                    Lists names and roots available
+##    --llist                                   Lists names available and their dates
 ##    --net-cat-from-map <maphash>              Concatenates from map via the network
 ##    --net-get-from-map <maphash>              Downloads from map via the network
 ##    --cfm <maphash>                           Concatenates from map
@@ -53,6 +54,7 @@ then
         --net-cat-from-map) _ak_fs_net_cat_from_map_hash $2; exit;;
         --net-get-from-map) _ak_fs_net_get_from_map_hash $2; exit;;
         --list) _ak_fs_list; exit;;
+        --llist) _ak_fs_long_list; exit;;
         --cfm) _ak_fs_cat_from_map_hash $2; exit;;
         --gfm) _ak_fs_get_from_map_hash $2; exit;;
         --rhd) _ak_fs_return_hash_dir $2; echo ;exit;;
