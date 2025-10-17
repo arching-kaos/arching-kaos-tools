@@ -1,5 +1,6 @@
 const http = require("node:http");
 
+// Route functions
 const welcomeMessage = require("./routes/default/index.js");
 const getAKNSKey = require("./routes/getAKNSKey/index.js");
 const getAKNSKeyFromBase = require("./routes/getAKNSKeyFromBase/index.js");
@@ -15,6 +16,7 @@ const getSlatest = require('./routes/getSLatest/index.js');
 const getRemoteNodeInfo = require('./routes/getRemoteNodeInfo/index.js');
 const getRemotePeers = require('./routes/getRemotePeers/index.js');
 
+// Libraries
 const akLogMessage = require('./lib/akLogMessage');
 const checkIfAllowedIP = require('./lib/checkIfAllowedIP/index.js');
 const storeIncomingIP = require("./lib/storeIncomingIP/index.js");
