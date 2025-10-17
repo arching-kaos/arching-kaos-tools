@@ -630,11 +630,16 @@ function _ak_fs_net_cat(){
         counter="$(expr $counter + 1)"
     done
     base64 -d output > output.d
+    if [ $? -ne 0 ]
+    then
+        _ak_log_error "Fatal error during dencoding."
+        exit 1
+    fi
     shaout="$(sha512sum output.d | awk '{print $1}')"
     expHash="$2"
     if [ "$shaout" == "$expHash" ]
     then
-        base64 -d output
+        cat output.d
         _ak_log_info "Recreation of $treeRootHash succeeded!"
     else
         _ak_log_error "Recreation of $treeRootHash failed!"
