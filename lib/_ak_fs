@@ -790,7 +790,7 @@ function _ak_fs_from_map_net_get_root_hash(){
 function _ak_fs_net_get_from_map_hash(){
     if _ak_fs_verify_input_is_hash "$1"
     then
-        _ak_fs_net_get `_ak_fs_from_map_net_get_root_hash $1` `_ak_fs_from_map_net_get_original_hash $1` `_ak_fs_from_map_get_original_filename $1`
+        _ak_fs_net_get `_ak_fs_from_map_net_get_root_hash $1` `_ak_fs_from_map_net_get_original_hash $1` `_ak_fs_from_map_net_get_original_filename $1`
     fi
 }
 
