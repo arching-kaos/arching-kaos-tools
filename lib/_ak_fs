@@ -657,15 +657,18 @@ function _ak_fs_net_get(){
     fi
     if [ -z $1 ] || [ ! -n "$1" ]
     then
-        ak_log_error "Empty 1"
+        _ak_log_error "Empty 1"
+        exit 1
     fi
     if [ -z $2 ] || [ ! -n "$2" ]
     then
-        ak_log_error "Empty 2"
+        _ak_log_error "Empty 2"
+        exit 1
     fi
     if [ -z $3 ] || [ ! -n "$3" ]
     then
-        ak_log_error "Empty 3"
+        _ak_log_error "Empty 3"
+        exit 1
     fi
     _ak_fs_net_cat $1 $2 > $3
 }
