@@ -41,6 +41,7 @@
 ##                                        plain GPG output
 ##    -lsl, --list-secret-keys-long       Returns a list of secret GPG keys with
 ##                                        their 1st uid
+##    -i, --import-key <file>             Imports a GPG key from a <file>
 ##    -c, --create-key <email>            Creates a GPG key with a label <email>
 ##    -s, --select-key                    Selects the GPG key you want to use
 ##    -d, --delete-key                    Delete GPG keys from your keyring
@@ -64,7 +65,6 @@ _ak_lib_load _ak_gpg
 if [ ! -z $1 ]; then
     case $1 in
         -h | --help) _ak_usage; exit;;
-        --example) example; exit;;
         --get-key-self-as-ipfs) _ak_gpg_key_self_get_fingerprint_from_config; exit;;
         --get-key-self-as-fingerprint) _ak_gpg_key_self_get_fingerprint; exit;;
         --get-key-fingerprint-from-ipfs) shift; _ak_gpg_key_get_fingerprint_from_ipfs $1; exit;;
@@ -79,6 +79,7 @@ if [ ! -z $1 ]; then
         --list-secret-keys | -ls) _ak_gpg_list_secret_keys; exit;;
         --list-secret-keys-long | -lsl) _ak_gpg_list_secret_keys_long; exit;;
         --list-secret-keys-plain | -lsp) _ak_gpg_list_secret_keys_plain; exit;;
+        --import-key | -i) shift; _ak_gpg_key_import_from_file $1; exit;;
         --create-key | -c) shift; _ak_gpg_create_key $1; exit;;
         --select-key | -s) _ak_gpg_select_key; exit;;
         --delete-key | -d) _ak_gpg_delete_key; exit;;
