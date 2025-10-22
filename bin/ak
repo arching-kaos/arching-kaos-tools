@@ -17,7 +17,7 @@
 ### You should have received a copy of the GNU General Public License
 ### along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###
-export AK_DEBUG="no"
+export AK_DEBUG=0
 export AK_DEBUG_IRC="no"
 ##
 ## Arching Kaos CLI tool is the main executable script to use for exploring,
@@ -63,9 +63,29 @@ then
     export AK_DEBUG="no"
     shift
 fi
+if [ "$1" == "-vvvvv" ]
+then
+    export AK_DEBUG=5
+    shift
+fi
+if [ "$1" == "-vvvv" ]
+then
+    export AK_DEBUG=4
+    shift
+fi
+if [ "$1" == "-vvv" ]
+then
+    export AK_DEBUG=3
+    shift
+fi
+if [ "$1" == "-vv" ]
+then
+    export AK_DEBUG=2
+    shift
+fi
 if [ "$1" == "-v" ]
 then
-    export AK_DEBUG="yes"
+    export AK_DEBUG=1
     shift
 fi
 
@@ -81,11 +101,11 @@ then
             args="-h"
             if [ -n "$subcmd" ]
             then
-                echo $subcmd | cut -d '-' -f 2 | sort | uniq | sed -e 's/^/ak /g'
+                echo $subcmd | cut -d '-' -f 2 | sort | uniq #| sed -e 's/^/ak /g'
                 #$(echo $subcmd) $args
             fi
         done
-    ) | sort | uniq | sed 's/^/# /g' | while read line; do _ak_log_info "$line";done
+    ) | sort | uniq #| sed 's/^/# /g' | while read line; do _ak_log_info "$line";done
     exit 1
 fi
 

@@ -747,6 +747,7 @@ function _ak_fs_from_map_net_get_original_filename(){
                     _ak_log_error "${reply} doesn't contain the appropriate info"
                     exit 1
                 fi
+                cp ${reply} $AK_MAPSDIR/$1
                 cat ${reply} | head -n 1 | awk '{print $2}'
                 break
             fi

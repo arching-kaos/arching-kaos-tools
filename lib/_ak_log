@@ -155,8 +155,14 @@ function _ak_log_message(){
                 then
                     echo "$TS" "<$prg>" "[$tp]" "$msg" >> $AK_LOGSFILE
                 fi
-                if [ ! -z $AK_DEBUG ] && [ -n "$AK_DEBUG" ] && [ "$AK_DEBUG" == "yes" ]
+                if [ ! -z $AK_DEBUG ] && [ -n "$AK_DEBUG" ] # && [ $AK_DEBUG -gt 0 ]
                 then
+                    case $tp in
+                        INFO) if [[ $AK_DEBUG -lt 1 ]]; then return ;fi ;;
+                        # ERROR) if [[ $AK_DEBUG -lt 2 ]]; then return ;fi ;;
+                        WARNING) if [[ $AK_DEBUG -lt 3 ]]; then return ;fi ;;
+                        DEBUG|EXIT) if [[ $AK_DEBUG -lt 5 ]]; then return ;fi ;;
+                    esac
                     _ak_log_print_log_line "$TS <$prg> [$tp] $msg" >&2
                 fi
                 if [ ! -z $AK_DEBUG_IRC ] && [ -n "$AK_DEBUG_IRC" ] && [ "$AK_DEBUG_IRC" == "yes" ]
@@ -164,8 +170,8 @@ function _ak_log_message(){
                     _ak_log_print_log_line_irc "$TS <$prg> [$tp] $msg" >&2
                 fi
             else
-                    echo "$TS" "<$prg>" "[ERROR]" "No message" >> $AK_LOGSFILE
-                if [ "$AK_DEBUG" == "yes" ]
+                echo "$TS" "<$prg>" "[ERROR]" "No message" >> $AK_LOGSFILE
+                if [ $AK_DEBUG -eq 5 ]
                 then
                     echo "$TS" "<$prg>" "[ERROR]" "No message" >&2
                 fi
@@ -176,7 +182,7 @@ function _ak_log_message(){
             then
                 echo "$TS" "<$prg>" "[ERROR]" "No type and message" >> $AK_LOGSFILE
             fi
-            if [ "$AK_DEBUG" == "yes" ]
+            if [ $AK_DEBUG -eq 5 ]
             then
                 echo "$TS" "<$prg>" "[ERROR]" "No type and message" >&2
             fi
@@ -187,7 +193,7 @@ function _ak_log_message(){
         then
             echo "$TS" "<$(basename $0)>" "[ERROR]" "No arguments given" >> $AK_LOGSFILE
         fi
-        if [ "$AK_DEBUG" == "yes" ]
+        if [ $AK_DEBUG -eq 5 ]
         then
             echo "$TS" "<$(basename $0)>" "[ERROR]" "No arguments given" >&2
         fi
