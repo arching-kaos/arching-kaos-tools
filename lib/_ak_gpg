@@ -2,7 +2,7 @@
 ###
 ### arching-kaos-tools
 ### Tools to interact and build an Arching Kaos Infochain
-### Copyright (C) 2021 - 2025  kaotisk
+### Copyright (C) 2021 - 2026  kaotisk
 ###
 ### This program is free software: you can redistribute it and/or modify
 ### it under the terms of the GNU General Public License as published by
