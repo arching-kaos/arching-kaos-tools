@@ -127,6 +127,7 @@ if [ ! -n "$(echo -n $1 | sed 's/[0-9]//g')" ] && [ "$(( $(echo -n $1 | xxd -p) 
 then
     AK_DEBUG="no"
     echo -n efb8bbe294b3e383863de4b880 | xxd -r -p
+    exit
 fi
 
 subcmd="$(echo $* | sed -e 's/ /-/g')"
